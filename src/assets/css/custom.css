@@ -1,0 +1,86 @@
+g#loading {
+  animation: LittleJump 0.3s infinite alternate;
+}
+
+circle#dot1 {
+  animation: DotOneLeft 0.4s infinite alternate;
+}
+
+circle#dot3 {
+  animation: DotThreeRight 0.4s infinite alternate;
+  animation-delay: 0.4s;
+}
+
+@keyframes LittleJump {
+  from {
+    transform: translate(0, 0px);
+  }
+
+  to {
+    transform: translate(0, -8px);
+  }
+}
+
+@keyframes DotOneLeft {
+  0% {
+    transform: translate(0px);
+  }
+
+  10% {
+    transform: translate(0px);
+  }
+
+  20% {
+    transform: translate(0px);
+  }
+
+  30% {
+    transform: translate(0px);
+  }
+
+  40% {
+    transform: translate(0px);
+  }
+
+  50% {
+    transform: translate(0px);
+  }
+
+  100% {
+    transform: translate(-20px);
+  }
+}
+
+@keyframes DotThreeRight {
+  0% {
+    transform: translate(0px);
+  }
+
+  10% {
+    transform: translate(0px);
+  }
+
+  20% {
+    transform: translate(0px);
+  }
+
+  30% {
+    transform: translate(0px);
+  }
+
+  40% {
+    transform: translate(0px);
+  }
+
+  50% {
+    transform: translate(0px);
+  }
+
+  100% {
+    transform: translate(20px);
+  }
+}
+
+.ni.ni-bold-down.ml-2 {
+  transition: 0.3s;
+}
