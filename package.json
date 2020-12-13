@@ -1,11 +1,12 @@
 {
-  "name": "argon-dashboard-react",
+  "name": "cra-template-argon-react-typescript",
   "version": "1.0.0",
-  "description": "React version of Argon Dashboard by Creative Tim",
-  "main": "index.js",
+  "description": "Argon Dashboard by Creative Tim wrapped with CRA and in Typescript",
+  "main": "template.json",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/creativetimofficial/argon-dashboard-react.git"
+    "url": "https://github.com/MirrorBottle/react-argon-dashboard",
+    "directory": "/"
   },
   "keywords": [
     "react",
@@ -15,14 +16,17 @@
     "dashboard",
     "dashboard-react",
     "argon-dashboard",
-    "argon-dashboard-react"
+    "argon-dashboard-react",
+    "typescript",
+    "cra-template",
+    "template"
   ],
-  "author": "Creative Tim",
+  "author": "MirrorBottle, Creative Tim",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/creativetimofficial/argon-dashboard-react/issues"
+    "url": "https://github.com/MirrorBottle/react-argon-dashboard"
   },
-  "homepage": "https://demos.creative-tim.com/argon-dashboard-react/",
+  "homepage": "https://github.com/MirrorBottle/react-argon-dashboard",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -31,11 +35,17 @@
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm start",
     "compile-sass": "node-sass src/assets/scss/argon-dashboard-react.scss src/assets/css/argon-dashboard-react.css",
     "minify-sass": "node-sass src/assets/scss/argon-dashboard-react.scss src/assets/css/argon-dashboard-react.min.css --output-style compressed",
-    "map-sass": "node-sass src/assets/scss/argon-dashboard-react.scss src/assets/css/argon-dashboard-react.css --source-map true"
+    "map-sass": "node-sass src/assets/scss/argon-dashboard-react.scss src/assets/css/argon-dashboard-react.css --source-map true",
+    "clean-files": "rm -rf ./template/public ./template/src && rm -f ./template/.eslintrc",
+    "copy-files": "cp -a ./src/. template/src && cp -a ./public/. template/public && cp .eslintrc template/"
   },
   "eslintConfig": {
     "extends": "react-app"
   },
+  "files": [
+    "template",
+    "template.json"
+  ],
   "browserslist": [
     ">0.2%",
     "not dead",
@@ -53,7 +63,7 @@
     "chart.js": "2.7.3",
     "classnames": "2.2.6",
     "moment": "2.24.0",
-    "node-sass": "4.13.0",
+    "node-sass": "4.14.0",
     "nouislider": "13.1.1",
     "react": "16.8.4",
     "react-chartjs-2": "2.7.4",
