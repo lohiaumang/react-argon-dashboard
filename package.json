@@ -1,6 +1,6 @@
 {
   "name": "cra-template-argon-react-typescript",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Argon Dashboard by Creative Tim wrapped with CRA and in Typescript",
   "main": "template.json",
   "repository": {
@@ -53,6 +53,7 @@
     "not op_mini all"
   ],
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.1",
     "@types/classnames": "^2.2.10",
     "@types/node": "^13.13.4",
     "@types/react-dom": "^16.9.7",
