@@ -211,7 +211,7 @@ class Index extends React.Component<
                       </td>
                     </tr>
                     <tr>
-                      <th scope="row">/argon/tables.html</th>
+                      <th scope="row">/argon/delivery-orders.html</th>
                       <td>2,050</td>
                       <td>147</td>
                       <td>

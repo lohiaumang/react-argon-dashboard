@@ -59,6 +59,7 @@ type RouteType = {
   icon: string;
   component?: () => JSX.Element;
   layout: string;
+  isNavigable: boolean;
 }[];
 type Props = {
   location: {
@@ -71,52 +72,50 @@ type Props = {
     outterLink?: string;
     imgSrc: string;
     imgAlt: string;
-
   };
 };
 class Sidebar extends React.Component<Props> {
   state = {
-    collapseOpen: false
+    collapseOpen: false,
   };
   constructor(props: Props) {
     super(props);
     this.activeRoute.bind(this);
   }
   // verifies if routeName is the one active (in browser input)
-  activeRoute(routeName:string) {
+  activeRoute(routeName: string) {
     return this.props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
   }
   // toggles collapse between opened and closed (true/false)
   toggleCollapse = () => {
     this.setState({
-      collapseOpen: !this.state.collapseOpen
+      collapseOpen: !this.state.collapseOpen,
     });
   };
   // closes the collapse
   closeCollapse = () => {
     this.setState({
-      collapseOpen: false
+      collapseOpen: false,
     });
   };
   // creates the links that appear in the left menu / Sidebar
   createLinks = (routes: RouteType) => {
     return routes.map((prop, key) => {
-      if ('subMenu' in prop) {
-        return <SidebarDropdownItem key={key} {...prop} />;
+      if (prop.isNavigable) {
+        return (
+          <NavItem key={key}>
+            <NavLink
+              to={prop.layout + prop.path}
+              tag={NavLinkRRD}
+              onClick={this.closeCollapse}
+              activeClassName="active"
+            >
+              <i className={prop.icon} />
+              {prop.name}
+            </NavLink>
+          </NavItem>
+        );
       }
-      return (
-        <NavItem key={key}>
-          <NavLink
-            to={prop.layout + prop.path}
-            tag={NavLinkRRD}
-            onClick={this.closeCollapse}
-            activeClassName="active"
-          >
-            <i className={prop.icon} />
-            {prop.name}
-          </NavLink>
-        </NavItem>
-      );
     });
   };
   render() {
@@ -125,12 +124,12 @@ class Sidebar extends React.Component<Props> {
     if (logo && logo.innerLink) {
       navbarBrandProps = {
         to: logo.innerLink,
-        tag: Link
+        tag: Link,
       };
     } else if (logo && logo.outterLink) {
       navbarBrandProps = {
         href: logo.outterLink,
-        target: "_blank"
+        target: "_blank",
       };
     }
     return (
@@ -179,10 +178,7 @@ class Sidebar extends React.Component<Props> {
               <DropdownToggle nav>
                 <Media className="align-items-center">
                   <span className="avatar avatar-sm rounded-circle">
-                    <img
-                      alt="..."
-                      src={require("assets/img/theme/team-1-800x800.jpg")}
-                    />
+                    <img alt="..." src="assets/img/theme/team-1-800x800.jpg" />
                   </span>
                 </Media>
               </DropdownToggle>
@@ -207,7 +203,7 @@ class Sidebar extends React.Component<Props> {
                   <span>Support</span>
                 </DropdownItem>
                 <DropdownItem divider />
-                <DropdownItem href="#pablo" onClick={e => e.preventDefault()}>
+                <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
                   <i className="ni ni-user-run" />
                   <span>Logout</span>
                 </DropdownItem>
@@ -244,22 +240,6 @@ class Sidebar extends React.Component<Props> {
                 </Col>
               </Row>
             </div>
-            {/* Form */}
-            <Form className="mt-4 mb-3 d-md-none">
-              <InputGroup className="input-group-rounded input-group-merge">
-                <Input
-                  aria-label="Search"
-                  className="form-control-rounded form-control-prepended"
-                  placeholder="Search"
-                  type="search"
-                />
-                <InputGroupAddon addonType="prepend">
-                  <InputGroupText>
-                    <span className="fa fa-search" />
-                  </InputGroupText>
-                </InputGroupAddon>
-              </InputGroup>
-            </Form>
             {/* Navigation */}
             <Nav navbar>{this.createLinks(routes)}</Nav>
           </Collapse>

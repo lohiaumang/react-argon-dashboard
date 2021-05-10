@@ -34,6 +34,8 @@ import {
   Container,
   Media,
 } from "reactstrap";
+import firebase from "firebase/app";
+import "firebase/auth";
 
 type Props = {
   brandText: string;
@@ -52,18 +54,6 @@ class AdminNavbar extends React.PureComponent<Props> {
             >
               {brandText}
             </Link>
-            <Form className="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
-              <FormGroup className="mb-0">
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <i className="fas fa-search" />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input placeholder="Search" type="text" />
-                </InputGroup>
-              </FormGroup>
-            </Form>
             <Nav className="align-items-center d-none d-md-flex" navbar>
               <UncontrolledDropdown nav>
                 <DropdownToggle className="pr-0" nav>
@@ -77,7 +67,7 @@ class AdminNavbar extends React.PureComponent<Props> {
                     </span>
                     <Media className="ml-2 d-none d-lg-block">
                       <span className="mb-0 text-sm font-weight-bold">
-                        Jessica Jones
+                        Vinayak Honda
                       </span>
                     </Media>
                   </Media>
@@ -90,23 +80,12 @@ class AdminNavbar extends React.PureComponent<Props> {
                     <i className="ni ni-single-02" />
                     <span>My profile</span>
                   </DropdownItem>
-                  <DropdownItem to="/admin/user-profile" tag={Link}>
+                  <DropdownItem to="/admin/settings" tag={Link}>
                     <i className="ni ni-settings-gear-65" />
                     <span>Settings</span>
                   </DropdownItem>
-                  <DropdownItem to="/admin/user-profile" tag={Link}>
-                    <i className="ni ni-calendar-grid-58" />
-                    <span>Activity</span>
-                  </DropdownItem>
-                  <DropdownItem to="/admin/user-profile" tag={Link}>
-                    <i className="ni ni-support-16" />
-                    <span>Support</span>
-                  </DropdownItem>
                   <DropdownItem divider />
-                  <DropdownItem
-                    href="#pablo"
-                    onClick={(e) => e.preventDefault()}
-                  >
+                  <DropdownItem onClick={() => firebase.auth().signOut()}>
                     <i className="ni ni-user-run" />
                     <span>Logout</span>
                   </DropdownItem>

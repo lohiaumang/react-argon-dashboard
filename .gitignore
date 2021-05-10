@@ -3,3 +3,4 @@
 yarn-lock.json
 .env
 /build
+.DS_Store

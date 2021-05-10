@@ -38,6 +38,7 @@ type RouteType = {
   icon: string;
   component: () => JSX.Element;
   layout: string;
+  isNavigable: boolean;
 }[];
 
 class Auth extends React.Component {
@@ -52,6 +53,7 @@ class Auth extends React.Component {
   getRoutes = (layoutRoutes: RouteType) => {
     return routes.map((prop, key) => {
       if (prop.layout === "/auth") {
+        // debugger;
         return (
           <Route
             path={prop.layout + prop.path}
@@ -69,15 +71,14 @@ class Auth extends React.Component {
       <>
         <div className="main-content">
           <AuthNavbar />
-          <div className="header bg-gradient-info py-7 py-lg-8">
+          <div className="header bg-gradient-info py-5 py-lg-6">
             <Container>
               <div className="header-body text-center mb-7">
                 <Row className="justify-content-center">
                   <Col lg="5" md="6">
                     <h1 className="text-white">Welcome!</h1>
                     <p className="text-lead text-light">
-                      Use these awesome forms to login or create new account in
-                      your project for free.
+                      Please create an account or sign into an existing account to get started.
                     </p>
                   </Col>
                 </Row>

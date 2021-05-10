@@ -38,19 +38,13 @@ type RouteType = {
   icon: string;
   component: () => JSX.Element;
   layout: string;
-  subMenu?: {
-    path: string;
-    name: string;
-    icon: string;
-    component: () => JSX.Element;
-    layout: string;
-  }[];
+  isNavigable: boolean;
 }[];
 
 class Admin extends React.Component<Props> {
   getRoutes = (layoutRoutes: RouteType) => {
     return layoutRoutes.map((prop, key) => {
-      if (prop.layout === "/admin" && !prop.subMenu) {
+      if (prop.layout === "/admin") {
         return (
           <Route
             exact
@@ -60,18 +54,6 @@ class Admin extends React.Component<Props> {
           />
         );
       }
-      else if (prop.subMenu) {
-        return prop.subMenu !== undefined && prop.subMenu.map((prop, key) => {
-          return (
-            <Route
-              exact
-              path={prop.layout + prop.path}
-              component={prop.component}
-              key={key}
-            />
-          );
-        });
-      }
       return null;
     });
   };
@@ -79,17 +61,8 @@ class Admin extends React.Component<Props> {
   getBrandText = (path: string) => {
     for (let i = 0; i < routes.length; i += 1) {
       let menu = routes[i];
-      if (path.includes(menu.layout + menu.path) && !menu.subMenu) {
+      if (path.includes(menu.layout + menu.path)) {
         return menu.name;
-      }
-      if (menu.subMenu) {
-        for (let j = 0; j < menu.subMenu.length; j++) {
-          let subMenu = menu.subMenu[j];
-          if (path === (subMenu.layout + subMenu.path)) {
-            console.log(path);
-            return subMenu.name;
-          }
-        }
       }
     }
     return "Brand";

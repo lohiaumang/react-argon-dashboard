@@ -16,33 +16,45 @@
 
 */
 import React from "react";
-import Register from "./views/examples/Register";
-import Login from "./views/examples/Login";
-import Profile from "./views/examples/Profile";
+import Login from "./views/pages/Login";
+import CreateAccount from "./views/pages/CreateAccount";
+import Settings from "./views/pages/Settings";
+import Profile from "./views/pages/Profile";
 import Index from "./views/Index";
-import Tables from "./views/examples/Tables";
+import DeliveryOrders from "./views/pages/DeliveryOrders";
 
 const routes = [
   {
     path: "/index",
     name: "Dashboard",
-    icon: "ni ni-tv-2 text-primary",
+    icon: "ni ni-tv-2 text-teal",
     component: () => <Index />,
     layout: "/admin",
+    isNavigable: true,
+  },
+  {
+    path: "/delivery-orders",
+    name: "Delivery Orders",
+    icon: "ni ni-single-copy-04 text-teal",
+    component: () => <DeliveryOrders />,
+    layout: "/admin",
+    isNavigable: true,
   },
   {
     path: "/user-profile",
-    name: "User Profile",
-    icon: "ni ni-single-02 text-yellow",
+    name: "My Profile",
+    icon: "ni ni-single-02 text-teal",
     component: () => <Profile />,
     layout: "/admin",
+    isNavigable: true,
   },
   {
-    path: "/tables",
-    name: "Tables",
-    icon: "ni ni-bullet-list-67 text-red",
-    component: () => <Tables />,
+    path: "/settings",
+    name: "Settings",
+    icon: "ni ni-settings-gear-65 text-info",
+    component: () => <Settings />,
     layout: "/admin",
+    isNavigable: true,
   },
   {
     path: "/login",
@@ -50,29 +62,15 @@ const routes = [
     icon: "ni ni-key-25 text-info",
     component: () => <Login />,
     layout: "/auth",
+    isNavigable: false,
   },
   {
-    path: "/register",
-    name: "Register",
-    icon: "ni ni-circle-08 text-pink",
-    component: () => <Register />,
+    path: "/create-account",
+    name: "Create Account",
+    icon: "ni ni-single-02 text-info",
+    component: () => <CreateAccount />,
     layout: "/auth",
-  },
-  {
-    path: "/subs",
-    name: "Sub Menu",
-    icon: "ni ni-bullet-list-67 text-red",
-    component: () => <Tables />,
-    layout: "/admin",
-    subMenu: [
-      {
-        path: "/subs/table",
-        name: "Tables",
-        icon: "ni ni-bullet-list-67 text-red",
-        component: () => <Tables />,
-        layout: "/admin",
-      },
-    ]
+    isNavigable: false,
   },
 ];
 export default routes;
