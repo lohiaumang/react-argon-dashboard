@@ -30,6 +30,7 @@ import {
   Container,
   Row,
   Col,
+  Table,
 } from "reactstrap";
 // core components
 import Header from "../../components/Headers/Header";
@@ -48,24 +49,14 @@ class Profile extends React.PureComponent {
                 <CardHeader className="bg-white border-0">
                   <Row className="align-items-center">
                     <Col xs="8">
-                      <h3 className="mb-0">My account</h3>
+                      <h3 className="mb-0">Admin Settings</h3>
                     </Col>
-                    {/* <Col className="text-right" xs="4">
-                      <Button
-                        color="primary"
-                        href="#pablo"
-                        onClick={(e) => e.preventDefault()}
-                        size="sm"
-                      >
-                        Settings
-                      </Button>
-                    </Col> */}
                   </Row>
                 </CardHeader>
                 <CardBody>
                   <Form>
                     <h6 className="heading-small text-muted mb-4">
-                      User information
+                      Create users
                     </h6>
                     <div className="pl-lg-4">
                       <Row>
@@ -73,15 +64,14 @@ class Profile extends React.PureComponent {
                           <FormGroup>
                             <label
                               className="form-control-label"
-                              htmlFor="input-username"
+                              htmlFor="input-name"
                             >
-                              Username
+                              Name
                             </label>
                             <Input
                               className="form-control-alternative"
-                              defaultValue="lucky.jesse"
-                              id="input-username"
-                              placeholder="Username"
+                              id="input-name"
+                              placeholder="Jane Doe"
                               type="text"
                             />
                           </FormGroup>
@@ -97,7 +87,7 @@ class Profile extends React.PureComponent {
                             <Input
                               className="form-control-alternative"
                               id="input-email"
-                              placeholder="jesse@example.com"
+                              placeholder="bharat@example.com"
                               type="email"
                             />
                           </FormGroup>
@@ -108,16 +98,15 @@ class Profile extends React.PureComponent {
                           <FormGroup>
                             <label
                               className="form-control-label"
-                              htmlFor="input-first-name"
+                              htmlFor="input-password"
                             >
-                              First name
+                              Password
                             </label>
                             <Input
                               className="form-control-alternative"
-                              defaultValue="Lucky"
-                              id="input-first-name"
-                              placeholder="First name"
-                              type="text"
+                              id="input-password"
+                              placeholder="*******"
+                              type="password"
                             />
                           </FormGroup>
                         </Col>
@@ -125,116 +114,56 @@ class Profile extends React.PureComponent {
                           <FormGroup>
                             <label
                               className="form-control-label"
-                              htmlFor="input-last-name"
+                              htmlFor="input-role"
                             >
-                              Last name
+                              Role
                             </label>
                             <Input
-                              className="form-control-alternative"
-                              defaultValue="Jesse"
-                              id="input-last-name"
-                              placeholder="Last name"
-                              type="text"
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                    </div>
-                    <hr className="my-4" />
-                    {/* Address */}
-                    <h6 className="heading-small text-muted mb-4">
-                      Contact information
-                    </h6>
-                    <div className="pl-lg-4">
-                      <Row>
-                        <Col md="12">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-address"
+                              type="select"
+                              name="select-role"
+                              id="input-role"
                             >
-                              Address
-                            </label>
-                            <Input
-                              className="form-control-alternative"
-                              defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                              id="input-address"
-                              placeholder="Home Address"
-                              type="text"
-                            />
+                              <option>Select</option>
+                              <option value="salesman">Salesman</option>
+                              <option value="office">Office staff</option>
+                            </Input>
                           </FormGroup>
                         </Col>
                       </Row>
                       <Row>
-                        <Col lg="4">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-city"
-                            >
-                              City
-                            </label>
-                            <Input
-                              className="form-control-alternative"
-                              defaultValue="New York"
-                              id="input-city"
-                              placeholder="City"
-                              type="text"
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col lg="4">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-country"
-                            >
-                              Country
-                            </label>
-                            <Input
-                              className="form-control-alternative"
-                              defaultValue="United States"
-                              id="input-country"
-                              placeholder="Country"
-                              type="text"
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col lg="4">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-country"
-                            >
-                              Postal code
-                            </label>
-                            <Input
-                              className="form-control-alternative"
-                              id="input-postal-code"
-                              placeholder="Postal code"
-                              type="number"
-                            />
-                          </FormGroup>
+                        <Col>
+                          <div className="float-right">
+                            <Button color="danger">Cancel</Button>
+                            <Button color="primary">Create</Button>
+                          </div>
                         </Col>
                       </Row>
-                    </div>
-                    <hr className="my-4" />
-                    {/* Description */}
-                    <h6 className="heading-small text-muted mb-4">About me</h6>
-                    <div className="pl-lg-4">
-                      <FormGroup>
-                        <label>About Me</label>
-                        <Input
-                          className="form-control-alternative"
-                          placeholder="A few words about you ..."
-                          rows="4"
-                          defaultValue="A beautiful Dashboard for Bootstrap 4. It is Free and
-                          Open Source."
-                          type="textarea"
-                        />
-                      </FormGroup>
                     </div>
                   </Form>
+                  <h6 className="heading-small text-muted mb-4">All users</h6>
+                  <Table className="align-items-center table-flush" responsive>
+                    <thead className="thead-light">
+                      <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Role</th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">Jane Doe</th>
+                        <td>janedoe@email.com</td>
+                        <td>Salesman</td>
+                        <td className="text-right">
+                          <Button color="danger" size="sm">
+                            {/* <i className="fa fa-times fa-lg" /> */}
+                            Delete
+                          </Button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </Table>
                 </CardBody>
               </Card>
             </Col>

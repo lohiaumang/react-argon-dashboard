@@ -28,7 +28,7 @@ function createWindow() {
     win.webContents.openDevTools({ mode: "detach" });
   }
 
-  mainJS();
+  mainJS(win);
 }
 
 // This method will be called when Electron has finished

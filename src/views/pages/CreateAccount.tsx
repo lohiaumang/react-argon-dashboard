@@ -51,7 +51,7 @@ declare global {
 
 const CreateAccount: React.FC = () => {
   const [name, setName] = useState<string>("Auto Auto");
-  const [email, setEmail] = useState<string>("auto@auto.com");
+  const [email, setEmail] = useState<string>("auto1234@auto.com");
   const [phoneNumber, setPhoneNumber] = useState<string>("9999955555");
   const [password, setPassword] = useState<string>("Qwerty@123");
   const [confirmPassword, setConfirmPassword] = useState<string>("Qwerty@123");
@@ -96,7 +96,7 @@ const CreateAccount: React.FC = () => {
       return;
     }
 
-    setLoading(true);
+    // setLoading(true);
     const user = {
       name,
       phoneNumber: `+91${phoneNumber}`,
@@ -111,12 +111,22 @@ const CreateAccount: React.FC = () => {
     };
 
     if (window && window.api) {
+      window.api.receive("fromMain", (data: any) => {
+        switch (data.type) {
+          case "CREATE_USER_SUCCESS": {
+            window.location.href = "/auth/login";
+          }
+          case "CREATE_USER_FAILURE": {
+            setSignUpError({
+              code: "FIREBASE_ERROR",
+              message: data.err.message!,
+            });
+          }
+        }
+      });
       window.api.send("toMain", {
         type: "CREATE_USER",
         data: user,
-      });
-      window.api.receive("fromMain", (data: any) => {
-        console.log("User Created!", data);
       });
     }
   };
