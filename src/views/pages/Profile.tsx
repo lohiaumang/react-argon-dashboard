@@ -94,7 +94,7 @@ const Profile: React.FC = () => {
 
                 if (userInfo) {
                   // SET_USER
-                  setUserInfo({
+                  const data = {
                     name: userInfo.name,
                     phoneNumber: userInfo.phoneNumber,
                     email: userInfo.email,
@@ -103,7 +103,12 @@ const Profile: React.FC = () => {
                     address: userInfo.address,
                     temporaryCertificate: userInfo.temporaryCertificate,
                     uid: userInfo.uid,
+                  };
+                  window.api.send("toMain", {
+                    type: "SET_DEALER",
+                    data: data,
                   });
+                  setUserInfo(data);
                 }
               }
             });

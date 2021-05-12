@@ -47,7 +47,10 @@ class AdminNavbar extends React.PureComponent<Props> {
     return (
       <>
         <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
-          <Container fluid>
+          <Container
+            fluid
+            className="justify-content-md-end justify-content-lg-between"
+          >
             <Link
               className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block"
               to="/"

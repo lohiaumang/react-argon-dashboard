@@ -84,8 +84,7 @@ module.exports = function (appWindow) {
             JSON.stringify(data)
           );
           appWindow.webContents.send("fromMain", {
-            type: "GET_DEALER_SUCCESS",
-            userData,
+            type: "SET_DEALER_SUCCESS",
           });
         } catch (err) {
           appWindow.webContents.send("fromMain", {
