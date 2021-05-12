@@ -42,6 +42,12 @@ import "firebase/database";
 import UserHeader from "../../components/Headers/UserHeader";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 
+declare global {
+  interface Window {
+    api: any;
+  }
+}
+
 interface UserInfo {
   name: string;
   phoneNumber: string;
@@ -49,10 +55,12 @@ interface UserInfo {
   gst: string;
   pan: string;
   address: string;
-  tempCertificate: string;
+  temporaryCertificate: string;
+  uid: string;
 }
 
 const Profile: React.FC = () => {
+  const currentUser = firebase.auth().currentUser;
   const formRef = useRef(null);
   const [disabled, setDisabled] = useState<boolean>(true);
   const [userInfo, setUserInfo] = useState<UserInfo>({
@@ -62,30 +70,56 @@ const Profile: React.FC = () => {
     gst: "",
     pan: "",
     address: "",
-    tempCertificate: "",
+    temporaryCertificate: "",
+    uid: "",
   });
 
-  firebase
-    .firestore()
-    .collection("users")
-    .doc(firebase.auth().currentUser!.uid!)
-    .onSnapshot((doc) => {
-      if (doc.exists) {
-        const userInfo = doc.data();
+  if (window && window.api) {
+    window.api.receive("fromMain", (data: any) => {
+      switch (data.type) {
+        case "GET_DEALER_SUCCESS": {
+          console.log("User fetch succeeded");
+          setUserInfo(data.userData);
+          break;
+        }
+        case "GET_DEALER_FAILURE": {
+          console.log("User fetch failed");
+          firebase
+            .firestore()
+            .collection("users")
+            .doc(firebase.auth().currentUser!.uid!)
+            .onSnapshot((doc) => {
+              if (doc.exists) {
+                const userInfo = doc.data();
 
-        if (userInfo) {
-          setUserInfo({
-            name: userInfo.name,
-            phoneNumber: userInfo.phonenumber,
-            email: userInfo.email,
-            gst: userInfo.gst,
-            pan: userInfo.pan,
-            address: userInfo.address,
-            tempCertificate: userInfo.temporarycartificate,
-          });
+                if (userInfo) {
+                  // SET_USER
+                  setUserInfo({
+                    name: userInfo.name,
+                    phoneNumber: userInfo.phoneNumber,
+                    email: userInfo.email,
+                    gst: userInfo.gst,
+                    pan: userInfo.pan,
+                    address: userInfo.address,
+                    temporaryCertificate: userInfo.temporaryCertificate,
+                    uid: userInfo.uid,
+                  });
+                }
+              }
+            });
+          break;
         }
       }
     });
+    if (!userInfo.email && currentUser && currentUser.email) {
+      window.api.send("toMain", {
+        type: "GET_DEALER",
+        data: {
+          uid: currentUser.uid,
+        },
+      });
+    }
+  }
 
   return (
     <>
@@ -153,7 +187,13 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue={userInfo.name}
+                            value={userInfo.name}
+                            onChange={(ev) =>
+                              setUserInfo({
+                                ...userInfo,
+                                name: ev.target.value!,
+                              })
+                            }
                             id="input-dealership-name"
                             placeholder="Dealership name"
                             type="text"
@@ -173,7 +213,7 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue={userInfo.email}
+                            value={userInfo.email}
                             id="input-email"
                             placeholder="abc@xyz.def"
                             type="email"
@@ -191,7 +231,7 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue={userInfo.phoneNumber}
+                            value={userInfo.phoneNumber}
                             id="input-phone-number"
                             placeholder="9999999999"
                             type="tel"
@@ -211,7 +251,7 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue={userInfo.gst}
+                            value={userInfo.gst}
                             id="input-gst"
                             placeholder="12AAAAA0000A1Z5"
                             type="text"
@@ -229,7 +269,7 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue={userInfo.pan}
+                            value={userInfo.pan}
                             id="input-pan-number"
                             placeholder="AAAAA0000A"
                             type="text"
@@ -249,7 +289,7 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue={userInfo.address}
+                            value={userInfo.address}
                             id="input-address"
                             placeholder="House No. 2, Street No. 44, Example lane, City, State - Zipcode"
                             type="text"
@@ -269,7 +309,7 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue={userInfo.tempCertificate}
+                            value={userInfo.temporaryCertificate}
                             id="input-temporary-registration"
                             placeholder="AB01CD235 UPTO 11/11/2011 XYZ AB 123456"
                             type="text"
@@ -296,7 +336,6 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue="*******"
                             id="input-password"
                             placeholder="*******"
                             type="password"
@@ -314,7 +353,6 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue="*******"
                             id="input-confirm-password"
                             placeholder="*******"
                             type="password"

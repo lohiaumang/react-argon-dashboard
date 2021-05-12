@@ -1,10 +1,11 @@
-module.exports = function (mainWindow) {
+module.exports = function (appWindow) {
   const path = require("path");
   const fs = require("fs");
   const { ipcMain: ipc } = require("electron");
   var firebase = require("firebase/app");
-
+  require("firebase/auth");
   require("firebase/functions");
+  require("firebase/firestore");
 
   const firebaseConfig = {
     apiKey: "AIzaSyC-Tb0Xfay1bTSZNfAfM3EeBJjPqwvhKBM",
@@ -20,46 +21,81 @@ module.exports = function (mainWindow) {
   firebase.initializeApp(firebaseConfig);
 
   ipc.on("toMain", (event, args) => {
-    console.log(args);
     const { type = "", data = {} } = args;
 
-    // fs.writeFileSync(
-    //   path.join(__dirname, "../dataStore/user-info.json"),
-    //   JSON.stringify(userInfo)
-    // );
-
     switch (type) {
-      case "CREATE_USER": {
-        console.log("create user");
-        console.log(JSON.stringify(data));
+      case "CREATE_DEALER": {
         const functions = firebase.app().functions("asia-south1");
         const createUserFirestore = functions.httpsCallable("createUserIndia");
         createUserFirestore(data)
           .then((resp) => {
-            console.log("User created!", resp.data.result, resp.data);
-            mainWindow.webContents.send("fromMain", {
-              type: "CREATE_USER_SUCCESS",
+            console.log("User created!", JSON.stringify(resp.data));
+            const uid = resp.data.uid || "";
+            delete data.password;
+            fs.writeFileSync(
+              path.join(__dirname, "../dataStore/user-info.json"),
+              JSON.stringify({
+                ...data,
+                uid,
+              })
+            );
+            appWindow.webContents.send("fromMain", {
+              type: "CREATE_DEALER_SUCCESS",
               resp,
             });
           })
           .catch((err) => {
-            console.log("User cration failed!", err);
-            mainWindow.webContents.send("fromMain", {
-              type: "CREATE_USER_FAILURE",
+            console.log("User creation failed!", err);
+            appWindow.webContents.send("fromMain", {
+              type: "CREATE_DEALER_FAILURE",
               err,
             });
           });
         break;
       }
+      case "GET_DEALER": {
+        try {
+          const userData =
+            JSON.parse(
+              fs.readFileSync(
+                path.join(__dirname, "../dataStore/user-info.json")
+              )
+            ) || null;
+          if (userData && userData.uid === data.uid) {
+            appWindow.webContents.send("fromMain", {
+              type: "GET_DEALER_SUCCESS",
+              userData,
+            });
+          } else {
+            appWindow.webContents.send("fromMain", {
+              type: "GET_DEALER_FAILURE",
+            });
+          }
+        } catch (err) {
+          appWindow.webContents.send("fromMain", {
+            type: "GET_DEALER_FAILURE",
+          });
+        }
+      }
+      case "SET_DEALER": {
+        try {
+          fs.writeFileSync(
+            path.join(__dirname, "../dataStore/user-info.json"),
+            JSON.stringify(data)
+          );
+          appWindow.webContents.send("fromMain", {
+            type: "GET_DEALER_SUCCESS",
+            userData,
+          });
+        } catch (err) {
+          appWindow.webContents.send("fromMain", {
+            type: "SET_DEALER_FAILURE",
+          });
+        }
+      }
       default: {
         console.log("default");
       }
     }
-  });
-
-  ipc.on("get-user", (event) => {
-    event.returnValue = JSON.parse(
-      fs.readFileSync(path.join(__dirname, "../dataStore/user-info.json"))
-    );
   });
 };

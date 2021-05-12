@@ -50,17 +50,19 @@ declare global {
 }
 
 const CreateAccount: React.FC = () => {
+  // TODO: Convert to type UserInfo
   const [name, setName] = useState<string>("Auto Auto");
   const [email, setEmail] = useState<string>("auto1234@auto.com");
   const [phoneNumber, setPhoneNumber] = useState<string>("9999955555");
   const [password, setPassword] = useState<string>("Qwerty@123");
-  const [confirmPassword, setConfirmPassword] = useState<string>("Qwerty@123");
   const [gst, setGst] = useState<string>("18AABCU9603R1ZM");
   const [pan, setPan] = useState<string>("AABCU9603R");
   const [address, setAddress] = useState<string>("Home");
-  const [temporaryCertificate, setTemporaryCertificate] = useState<string>(
-    "Registration"
-  );
+  const [temporaryCertificate, setTemporaryCertificate] =
+    useState<string>("Registration");
+  const [confirmPassword, setConfirmPassword] = useState<string>("Qwerty@123");
+
+  // Component specific
   const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
   const [termsAndCondition, setTermsAndCondition] = useState<boolean>(true);
   const [signUpError, setSignUpError] = useState<SignUpError>();
@@ -96,7 +98,8 @@ const CreateAccount: React.FC = () => {
       return;
     }
 
-    // setLoading(true);
+    setLoading(true);
+
     const user = {
       name,
       phoneNumber: `+91${phoneNumber}`,
@@ -113,19 +116,23 @@ const CreateAccount: React.FC = () => {
     if (window && window.api) {
       window.api.receive("fromMain", (data: any) => {
         switch (data.type) {
-          case "CREATE_USER_SUCCESS": {
+          case "CREATE_DEALER_SUCCESS": {
+            setLoading(false);
             window.location.href = "/auth/login";
+            break;
           }
-          case "CREATE_USER_FAILURE": {
+          case "CREATE_DEALER_FAILURE": {
+            setLoading(false);
             setSignUpError({
               code: "FIREBASE_ERROR",
               message: data.err.message!,
             });
+            break;
           }
         }
       });
       window.api.send("toMain", {
-        type: "CREATE_USER",
+        type: "CREATE_DEALER",
         data: user,
       });
     }
