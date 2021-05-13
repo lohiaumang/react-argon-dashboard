@@ -92,6 +92,37 @@ module.exports = function (appWindow) {
           });
         }
       }
+      case "CREATE_USER": {
+        const functions = firebase.app().functions("asia-south1");
+        const createUserDataFirestore = functions.httpsCallable(
+          "createUserdataIndia"
+        );
+        createUserDataFirestore(data)
+          .then((resp) => {
+            console.log("User created!", JSON.stringify(resp.data));
+            const uid = resp.data.uid || "";
+            delete data.password;
+            fs.writeFileSync(
+              path.join(__dirname, "../dataStore/user-info.json"),
+              JSON.stringify({
+                ...data,
+                uid,
+              })
+            );
+            appWindow.webContents.send("fromMain", {
+              type: "CREATE_USER_SUCCESS",
+              resp,
+            });
+          })
+          .catch((err) => {
+            console.log("User creation failed!", err);
+            appWindow.webContents.send("fromMain", {
+              type: "CREATE_USER_FAILURE",
+              err,
+            });
+          });
+        break;
+      }
       default: {
         console.log("default");
       }
