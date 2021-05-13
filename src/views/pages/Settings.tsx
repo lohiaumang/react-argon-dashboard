@@ -37,6 +37,8 @@ import {
 import Header from "../../components/Headers/Header";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 import Loading from "../../components/Share/Loading";
+import firebase from "firebase/app";
+import "firebase/auth";
 export interface SignUpError {
   code: string;
   message: string;
@@ -50,9 +52,9 @@ declare global {
 
 const Settings: React.FC = () => {
   const [name, setName] = useState<string>("Rahul");
-  const [userEmail, setEmail] = useState<string>("rahul@gmail.com");
+  const [email, setEmail] = useState<string>("rahul@gmail.com");
   const [password, setPassword] = useState<string>("Qwerty@123");
-  const [role, setRole] = useState<string>("Saler");
+  const [role, setRole] = useState<string>("salesman");
   const [signUpError, setSignUpError] = useState<SignUpError>();
   const [signUpSuccess, setSignUpSuccess] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -70,38 +72,43 @@ const Settings: React.FC = () => {
   }, [signUpSuccess]);
 
   const userCreate = (ev: React.FormEvent<HTMLFormElement>) => {
+    const currentUser = firebase.auth().currentUser;
     ev.preventDefault();
     debugger;
     setLoading(true);
 
-    const user = {
-      name,
-      userEmail,
-      password,
-      role,
-    };
+    debugger;
+    if (currentUser) {
+      const user = {
+        name,
+        email,
+        password,
+        role,
+        createdBy: currentUser.uid,
+      };
 
-    if (window && window.api) {
-      window.api.receive("fromMain", (data: any) => {
-        switch (data.type) {
-          case "CREATE_USER_SUCCESS": {
-            setLoading(false);
-            break;
+      if (window && window.api) {
+        window.api.receive("fromMain", (data: any) => {
+          switch (data.type) {
+            case "CREATE_USER_SUCCESS": {
+              setLoading(false);
+              break;
+            }
+            case "CREATE_USER_FAILURE": {
+              setLoading(false);
+              setSignUpError({
+                code: "FIREBASE_ERROR",
+                message: data.err.message!,
+              });
+              break;
+            }
           }
-          case "CREATE_USER_FAILURE": {
-            setLoading(false);
-            setSignUpError({
-              code: "FIREBASE_ERROR",
-              message: data.err.message!,
-            });
-            break;
-          }
-        }
-      });
-      window.api.send("toMain", {
-        type: "CREATE_USER",
-        data: user,
-      });
+        });
+        window.api.send("toMain", {
+          type: "CREATE_USER",
+          data: user,
+        });
+      }
     }
   };
 
@@ -160,7 +167,7 @@ const Settings: React.FC = () => {
                             placeholder="bharat@example.com"
                             type="email"
                             required
-                            value={userEmail}
+                            value={email}
                             onChange={(ev) => setEmail(ev.target.value!)}
                             pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$"
                             title="Email should be in the format abc@xyz.def"
@@ -204,12 +211,12 @@ const Settings: React.FC = () => {
                             id="input-role"
                             required
                             placeholder="Role"
-                            value={""}
+                            value={role}
                             onChange={(ev) => setRole(ev.target.value!)}
                           >
-                            <option>Select</option>
+                            <option value="">Select</option>
                             <option value="salesman">Salesman</option>
-                            <option value="office">Office staff</option>
+                            <option value="officeStaff">Office staff</option>
                           </Input>
                         </FormGroup>
                       </Col>

@@ -96,23 +96,15 @@ module.exports = function (appWindow) {
         break;
       }
       case "CREATE_USER": {
-        debugger;
         const functions = firebase.app().functions("asia-south1");
         const createUserDataFirestore = functions.httpsCallable(
           "createUserdataIndia"
         );
+        console.log("Step", step++, data);
         createUserDataFirestore(data)
           .then((resp) => {
             console.log("User created!", JSON.stringify(resp.data));
-            const uid = resp.data.uid || "";
-            delete data.password;
-            fs.writeFileSync(
-              path.join(__dirname, "../dataStore/user-info.json"),
-              JSON.stringify({
-                ...data,
-                uid,
-              })
-            );
+            console.log("Step", step++, resp.data);
             appWindow.webContents.send("fromMain", {
               type: "CREATE_USER_SUCCESS",
               resp,
