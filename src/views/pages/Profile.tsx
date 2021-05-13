@@ -16,7 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 
 // reactstrap components
 import {
@@ -61,7 +61,6 @@ interface UserInfo {
 
 const Profile: React.FC = () => {
   const currentUser = firebase.auth().currentUser;
-  const formRef = useRef(null);
   const [disabled, setDisabled] = useState<boolean>(true);
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: "",
@@ -73,50 +72,51 @@ const Profile: React.FC = () => {
     temporaryCertificate: "",
     uid: "",
   });
+  const [password, setPassword] = useState<string>();
+  const [confirmPassword, setConfirmPassword] = useState<string>();
 
-  if (window && window.api) {
-    window.api.receive("fromMain", (data: any) => {
-      switch (data.type) {
-        case "GET_DEALER_SUCCESS": {
-          console.log("User fetch succeeded");
-          setUserInfo(data.userData);
-          break;
-        }
-        case "GET_DEALER_FAILURE": {
-          console.log("User fetch failed");
-          firebase
-            .firestore()
-            .collection("users")
-            .doc(firebase.auth().currentUser!.uid!)
-            .onSnapshot((doc) => {
-              if (doc.exists) {
-                const userInfo = doc.data();
-
-                if (userInfo) {
-                  // SET_USER
-                  const data = {
-                    name: userInfo.name,
-                    phoneNumber: userInfo.phoneNumber,
-                    email: userInfo.email,
-                    gst: userInfo.gst,
-                    pan: userInfo.pan,
-                    address: userInfo.address,
-                    temporaryCertificate: userInfo.temporaryCertificate,
-                    uid: userInfo.uid,
-                  };
-                  window.api.send("toMain", {
-                    type: "SET_DEALER",
-                    data: data,
-                  });
-                  setUserInfo(data);
+  if (!userInfo.uid && currentUser && currentUser.uid) {
+    if (window && window.api) {
+      window.api.receive("fromMain", (data: any) => {
+        switch (data.type) {
+          case "GET_DEALER_SUCCESS": {
+            console.log("User fetch succeeded", data);
+            setUserInfo(data.userData);
+            break;
+          }
+          case "GET_DEALER_FAILURE": {
+            console.log("User fetch failed");
+            firebase
+              .firestore()
+              .collection("users")
+              .doc(firebase.auth().currentUser!.uid!)
+              .onSnapshot((doc) => {
+                if (doc.exists) {
+                  const info = doc.data();
+                  if (info) {
+                    // SET_USER
+                    const data = {
+                      name: info.name,
+                      phoneNumber: info.phoneNumber.slice(3),
+                      email: info.email,
+                      gst: info.gst,
+                      pan: info.pan,
+                      address: info.address,
+                      temporaryCertificate: info.temporaryCertificate,
+                      uid: info.uid,
+                    };
+                    window.api.send("toMain", {
+                      type: "SET_DEALER",
+                      data: data,
+                    });
+                    setUserInfo(data);
+                  }
                 }
-              }
-            });
-          break;
+              });
+            break;
+          }
         }
-      }
-    });
-    if (!userInfo.email && currentUser && currentUser.email) {
+      });
       window.api.send("toMain", {
         type: "GET_DEALER",
         data: {
@@ -125,6 +125,13 @@ const Profile: React.FC = () => {
       });
     }
   }
+
+  const changePassword = (ev: any) => {
+    ev.preventDefault();
+    if (password !== confirmPassword) {
+      return;
+    }
+  };
 
   return (
     <>
@@ -139,47 +146,48 @@ const Profile: React.FC = () => {
                   <Col xs="8">
                     <h3 className="mb-0">My account</h3>
                   </Col>
-                  <Col className="text-right" xs="4">
-                    {disabled ? (
-                      <Button
-                        color={"primary"}
-                        onClick={() => setDisabled(false)}
-                        size="sm"
-                      >
-                        Edit
-                      </Button>
-                    ) : (
-                      <>
-                        <Button
-                          color={"danger"}
-                          onClick={(e) => {
-                            if (formRef) {
-                              console.log(formRef.current);
-                            }
-                            setDisabled(true);
-                          }}
-                          size="sm"
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          color={"success"}
-                          onClick={(e) => e.preventDefault()}
-                          size="sm"
-                        >
-                          Save
-                        </Button>
-                      </>
-                    )}
-                  </Col>
                 </Row>
               </CardHeader>
               {/*THEIRS*/}
               <CardBody>
-                <Form ref={formRef}>
-                  <h6 className="heading-small text-muted mb-4">
-                    User information
-                  </h6>
+                <Form>
+                  <Row>
+                    <Col xs="8">
+                      <h6 className="heading-small text-muted mb-4">
+                        User information
+                      </h6>
+                    </Col>
+                    <Col className="text-right" xs="4">
+                      {disabled ? (
+                        <Button
+                          color={"primary"}
+                          onClick={() => setDisabled(false)}
+                          size="sm"
+                        >
+                          Edit
+                        </Button>
+                      ) : (
+                        <>
+                          <Button
+                            color={"danger"}
+                            onClick={(e) => {
+                              setDisabled(true);
+                            }}
+                            size="sm"
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            color={"success"}
+                            onClick={(e) => e.preventDefault()}
+                            size="sm"
+                          >
+                            Save
+                          </Button>
+                        </>
+                      )}
+                    </Col>
+                  </Row>
                   <div className="pl-lg-4">
                     <Row>
                       <Col lg="12">
@@ -192,6 +200,7 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
+                            id="input-dealership-name"
                             value={userInfo.name}
                             onChange={(ev) =>
                               setUserInfo({
@@ -199,7 +208,6 @@ const Profile: React.FC = () => {
                                 name: ev.target.value!,
                               })
                             }
-                            id="input-dealership-name"
                             placeholder="Dealership name"
                             type="text"
                             disabled={disabled}
@@ -218,8 +226,14 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            value={userInfo.email}
                             id="input-email"
+                            value={userInfo.email}
+                            onChange={(ev) =>
+                              setUserInfo({
+                                ...userInfo,
+                                email: ev.target.value!,
+                              })
+                            }
                             placeholder="abc@xyz.def"
                             type="email"
                             disabled={disabled}
@@ -236,8 +250,14 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            value={userInfo.phoneNumber}
                             id="input-phone-number"
+                            value={userInfo.phoneNumber}
+                            onChange={(ev) =>
+                              setUserInfo({
+                                ...userInfo,
+                                phoneNumber: ev.target.value!,
+                              })
+                            }
                             placeholder="9999999999"
                             type="tel"
                             disabled={disabled}
@@ -256,8 +276,14 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            value={userInfo.gst}
                             id="input-gst"
+                            value={userInfo.gst}
+                            onChange={(ev) =>
+                              setUserInfo({
+                                ...userInfo,
+                                gst: ev.target.value!,
+                              })
+                            }
                             placeholder="12AAAAA0000A1Z5"
                             type="text"
                             disabled={disabled}
@@ -274,8 +300,14 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            value={userInfo.pan}
                             id="input-pan-number"
+                            value={userInfo.pan}
+                            onChange={(ev) =>
+                              setUserInfo({
+                                ...userInfo,
+                                pan: ev.target.value!,
+                              })
+                            }
                             placeholder="AAAAA0000A"
                             type="text"
                             disabled={disabled}
@@ -294,8 +326,14 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            value={userInfo.address}
                             id="input-address"
+                            value={userInfo.address}
+                            onChange={(ev) =>
+                              setUserInfo({
+                                ...userInfo,
+                                address: ev.target.value!,
+                              })
+                            }
                             placeholder="House No. 2, Street No. 44, Example lane, City, State - Zipcode"
                             type="text"
                             disabled={disabled}
@@ -314,8 +352,14 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            value={userInfo.temporaryCertificate}
                             id="input-temporary-registration"
+                            value={userInfo.temporaryCertificate}
+                            onChange={(ev) =>
+                              setUserInfo({
+                                ...userInfo,
+                                temporaryCertificate: ev.target.value!,
+                              })
+                            }
                             placeholder="AB01CD235 UPTO 11/11/2011 XYZ AB 123456"
                             type="text"
                             disabled={disabled}
@@ -325,10 +369,35 @@ const Profile: React.FC = () => {
                     </Row>
                   </div>
                   <hr className="my-4" />
-                  {/* Address */}
-                  <h6 className="heading-small text-muted mb-4">
-                    Change Password
-                  </h6>
+                </Form>
+                <Form onSubmit={changePassword}>
+                  {/* Change password */}
+                  <Row>
+                    <Col xs="8">
+                      <h6 className="heading-small text-muted mb-4">
+                        Change Password
+                      </h6>
+                    </Col>
+                    <Col className="text-right" xs="4">
+                      {(password || confirmPassword) && (
+                        <>
+                          <Button
+                            color={"danger"}
+                            onClick={(e) => {
+                              setPassword("");
+                              setConfirmPassword("");
+                            }}
+                            size="sm"
+                          >
+                            Cancel
+                          </Button>
+                          <Button color={"success"} type="submit" size="sm">
+                            Save
+                          </Button>
+                        </>
+                      )}
+                    </Col>
+                  </Row>
                   <div className="pl-lg-4">
                     <Row>
                       <Col md="6">
@@ -344,7 +413,10 @@ const Profile: React.FC = () => {
                             id="input-password"
                             placeholder="*******"
                             type="password"
-                            disabled={disabled}
+                            value={password}
+                            onChange={(ev) => setPassword(ev.target.value!)}
+                            pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$"
+                            title="Password should contain uppercase letter, lowercase letter, number, and special chatacter"
                           />
                         </FormGroup>
                       </Col>
@@ -361,7 +433,12 @@ const Profile: React.FC = () => {
                             id="input-confirm-password"
                             placeholder="*******"
                             type="password"
-                            disabled={disabled}
+                            value={confirmPassword}
+                            onChange={(ev) =>
+                              setConfirmPassword(ev.target.value!)
+                            }
+                            pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$"
+                            title="Password should contain uppercase letter, lowercase letter, number, and special chatacter"
                           />
                         </FormGroup>
                       </Col>
