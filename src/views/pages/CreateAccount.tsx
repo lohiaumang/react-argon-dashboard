@@ -52,8 +52,8 @@ declare global {
 const CreateAccount: React.FC = () => {
   // TODO: Convert to type UserInfo
   const [name, setName] = useState<string>("Auto Auto");
-  const [email, setEmail] = useState<string>("auto1234@auto.com");
-  const [phoneNumber, setPhoneNumber] = useState<string>("9999955555");
+  const [email, setEmail] = useState<string>("auto1244734@auto.com");
+  const [phoneNumber, setPhoneNumber] = useState<string>("9999911555");
   const [password, setPassword] = useState<string>("Qwerty@123");
   const [gst, setGst] = useState<string>("18AABCU9603R1ZM");
   const [pan, setPan] = useState<string>("AABCU9603R");
@@ -87,6 +87,7 @@ const CreateAccount: React.FC = () => {
 
   const signUp = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
+    debugger;
 
     if (!termsAndCondition) {
       setSignUpError({
