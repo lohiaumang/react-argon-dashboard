@@ -158,7 +158,7 @@ const CreateAccount: React.FC = () => {
                 <InputGroup className="input-group-alternative">
                   <InputGroupAddon addonType="prepend">
                     <InputGroupText>
-                      <i className="ni ni-single-02" />
+                      <i className="fas fa-user" />
                     </InputGroupText>
                   </InputGroupAddon>
                   <Input
@@ -371,7 +371,7 @@ const CreateAccount: React.FC = () => {
         color="primary"
         isOpen={signUpSuccess}
       >
-        User created successfully!
+        User created successfully
       </Alert>
     </>
   );

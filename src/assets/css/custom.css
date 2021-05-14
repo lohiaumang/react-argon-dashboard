@@ -100,10 +100,14 @@ body {
   width: 100%;
 }
 
-.loading { 
+.loading {
   height: 100%;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-};
+}
+
+.small-button-width {
+  min-width: 70px;
+}

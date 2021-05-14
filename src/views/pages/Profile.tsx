@@ -16,7 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // reactstrap components
 import {
@@ -34,13 +34,15 @@ import {
   InputGroupAddon,
   InputGroupText,
   Label,
+  Alert,
 } from "reactstrap";
 import firebase from "firebase";
 import "firebase/auth";
-import "firebase/database";
+import "firebase/firestore";
 // core components
 import UserHeader from "../../components/Headers/UserHeader";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
+import SmallLoading from "../../components/Share/SmallLoading";
 
 declare global {
   interface Window {
@@ -74,22 +76,50 @@ const Profile: React.FC = () => {
   });
   const [password, setPassword] = useState<string>();
   const [confirmPassword, setConfirmPassword] = useState<string>();
+  const [passwordUpdateError, setPasswordUpdateError] =
+    useState<{
+      code: string;
+      message: string;
+    }>();
+  const [userInfoUpdateError, setUserInfoUpdateError] =
+    useState<{
+      code: string;
+      message: string;
+    }>();
+  const [success, setSuccess] = useState<{ message: string }>();
+  const [userInfoLoading, setUserInfoLoading] = useState<boolean>(false);
+  const [passwordLoading, setPasswordLoading] = useState<boolean>(false);
 
-  if (!userInfo.uid && currentUser && currentUser.uid) {
-    if (window && window.api) {
+  useEffect(() => {
+    if (password !== confirmPassword) {
+      setPasswordUpdateError({
+        code: "PASSWORD_MISMATCH",
+        message: "Please make sure your passwords match",
+      });
+    } else {
+      setPasswordUpdateError(undefined);
+    }
+  }, [confirmPassword]);
+
+  useEffect(() => {
+    if (success) {
+      setTimeout(() => setSuccess(undefined), 1500);
+    }
+  }, [success]);
+
+  const getSetUserData = (uid: string) => {
+    if (uid && window && window.api) {
       window.api.receive("fromMain", (data: any) => {
         switch (data.type) {
           case "GET_DEALER_SUCCESS": {
-            console.log("User fetch succeeded", data);
             setUserInfo(data.userData);
             break;
           }
           case "GET_DEALER_FAILURE": {
-            console.log("User fetch failed");
             firebase
               .firestore()
               .collection("users")
-              .doc(firebase.auth().currentUser!.uid!)
+              .doc(uid)
               .onSnapshot((doc) => {
                 if (doc.exists) {
                   const info = doc.data();
@@ -109,6 +139,7 @@ const Profile: React.FC = () => {
                       type: "SET_DEALER",
                       data: data,
                     });
+
                     setUserInfo(data);
                   }
                 }
@@ -120,16 +151,69 @@ const Profile: React.FC = () => {
       window.api.send("toMain", {
         type: "GET_DEALER",
         data: {
-          uid: currentUser.uid,
+          uid,
         },
       });
     }
+  };
+
+  if (!userInfo.uid && currentUser && currentUser.uid) {
+    getSetUserData(currentUser.uid);
   }
 
   const changePassword = (ev: any) => {
+    setPasswordLoading(true);
     ev.preventDefault();
     if (password !== confirmPassword) {
       return;
+    }
+
+    if (currentUser && password) {
+      currentUser
+        .updatePassword(password)
+        .then(() => {
+          setPassword("");
+          setConfirmPassword("");
+          setSuccess({
+            message: "Password updated successfully",
+          });
+          setPassword("");
+          setConfirmPassword("");
+          setPasswordLoading(false);
+        })
+        .catch((err) => {
+          setPasswordUpdateError(err);
+          setPasswordLoading(false);
+        });
+    }
+  };
+
+  const saveProfileChanges = (ev: any) => {
+    ev.preventDefault();
+    setUserInfoLoading(true);
+    if (currentUser) {
+      const userDocRef = firebase
+        .firestore()
+        .collection("users")
+        .doc(currentUser.uid);
+
+      userDocRef
+        .update(userInfo)
+        .then(function () {
+          window.api.send("toMain", {
+            type: "SET_DEALER",
+            data: userInfo,
+          });
+          setSuccess({
+            message: "User information updated successfully",
+          });
+          setDisabled(true);
+          setUserInfoLoading(false);
+        })
+        .catch(function (error) {
+          setUserInfoUpdateError(error);
+          setUserInfoLoading(false);
+        });
     }
   };
 
@@ -150,7 +234,7 @@ const Profile: React.FC = () => {
               </CardHeader>
               {/*THEIRS*/}
               <CardBody>
-                <Form>
+                <Form onSubmit={saveProfileChanges}>
                   <Row>
                     <Col xs="8">
                       <h6 className="heading-small text-muted mb-4">
@@ -160,6 +244,7 @@ const Profile: React.FC = () => {
                     <Col className="text-right" xs="4">
                       {disabled ? (
                         <Button
+                          className="small-button-width"
                           color={"primary"}
                           onClick={() => setDisabled(false)}
                           size="sm"
@@ -169,8 +254,11 @@ const Profile: React.FC = () => {
                       ) : (
                         <>
                           <Button
+                            className="small-button-width"
                             color={"danger"}
                             onClick={(e) => {
+                              const uid = currentUser ? currentUser.uid : "";
+                              getSetUserData(uid);
                               setDisabled(true);
                             }}
                             size="sm"
@@ -178,11 +266,12 @@ const Profile: React.FC = () => {
                             Cancel
                           </Button>
                           <Button
+                            className="small-button-width"
                             color={"success"}
-                            onClick={(e) => e.preventDefault()}
+                            type="submit"
                             size="sm"
                           >
-                            Save
+                            {userInfoLoading ? <SmallLoading /> : "Save"}
                           </Button>
                         </>
                       )}
@@ -210,7 +299,7 @@ const Profile: React.FC = () => {
                             }
                             placeholder="Dealership name"
                             type="text"
-                            disabled={disabled}
+                            disabled={disabled || userInfoLoading}
                           />
                         </FormGroup>
                       </Col>
@@ -236,7 +325,9 @@ const Profile: React.FC = () => {
                             }
                             placeholder="abc@xyz.def"
                             type="email"
-                            disabled={disabled}
+                            disabled={disabled || userInfoLoading}
+                            pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$"
+                            title="Email should be in the format abc@xyz.def"
                           />
                         </FormGroup>
                       </Col>
@@ -260,7 +351,9 @@ const Profile: React.FC = () => {
                             }
                             placeholder="9999999999"
                             type="tel"
-                            disabled={disabled}
+                            disabled={disabled || userInfoLoading}
+                            pattern="^\d{10}$"
+                            title="Phone number should exactly contain 10 digits"
                           />
                         </FormGroup>
                       </Col>
@@ -286,7 +379,9 @@ const Profile: React.FC = () => {
                             }
                             placeholder="12AAAAA0000A1Z5"
                             type="text"
-                            disabled={disabled}
+                            disabled={disabled || userInfoLoading}
+                            pattern="^[0-9]{2}[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9A-Za-z]{1}[Zz1-9A-Ja-j]{1}[0-9a-zA-Z]{1}$"
+                            title="GST number should be valid and 15 digits long"
                           />
                         </FormGroup>
                       </Col>
@@ -310,7 +405,9 @@ const Profile: React.FC = () => {
                             }
                             placeholder="AAAAA0000A"
                             type="text"
-                            disabled={disabled}
+                            disabled={disabled || userInfoLoading}
+                            pattern="^[A-Z]{5}[0-9]{4}[A-Z]{1}$"
+                            title="PAN number should be valid and 10 digits long"
                           />
                         </FormGroup>
                       </Col>
@@ -336,7 +433,7 @@ const Profile: React.FC = () => {
                             }
                             placeholder="House No. 2, Street No. 44, Example lane, City, State - Zipcode"
                             type="text"
-                            disabled={disabled}
+                            disabled={disabled || userInfoLoading}
                           />
                         </FormGroup>
                       </Col>
@@ -362,11 +459,16 @@ const Profile: React.FC = () => {
                             }
                             placeholder="AB01CD235 UPTO 11/11/2011 XYZ AB 123456"
                             type="text"
-                            disabled={disabled}
+                            disabled={disabled || userInfoLoading}
                           />
                         </FormGroup>
                       </Col>
                     </Row>
+                    {userInfoUpdateError && (
+                      <small className="text-danger">
+                        {userInfoUpdateError.message}
+                      </small>
+                    )}
                   </div>
                   <hr className="my-4" />
                 </Form>
@@ -379,23 +481,31 @@ const Profile: React.FC = () => {
                       </h6>
                     </Col>
                     <Col className="text-right" xs="4">
-                      {(password || confirmPassword) && (
-                        <>
-                          <Button
-                            color={"danger"}
-                            onClick={(e) => {
-                              setPassword("");
-                              setConfirmPassword("");
-                            }}
-                            size="sm"
-                          >
-                            Cancel
-                          </Button>
-                          <Button color={"success"} type="submit" size="sm">
-                            Save
-                          </Button>
-                        </>
-                      )}
+                      <Button
+                        className="small-button-width"
+                        color={"danger"}
+                        onClick={() => {
+                          setPassword("");
+                          setConfirmPassword("");
+                        }}
+                        disabled={
+                          !(password || confirmPassword) || userInfoLoading
+                        }
+                        size="sm"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        className="small-button-width"
+                        color={"success"}
+                        type="submit"
+                        size="sm"
+                        disabled={
+                          !(password || confirmPassword) || userInfoLoading
+                        }
+                      >
+                        {passwordLoading ? <SmallLoading /> : "Save"}
+                      </Button>
                     </Col>
                   </Row>
                   <div className="pl-lg-4">
@@ -417,6 +527,7 @@ const Profile: React.FC = () => {
                             onChange={(ev) => setPassword(ev.target.value!)}
                             pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$"
                             title="Password should contain uppercase letter, lowercase letter, number, and special chatacter"
+                            disabled={passwordLoading}
                           />
                         </FormGroup>
                       </Col>
@@ -439,10 +550,16 @@ const Profile: React.FC = () => {
                             }
                             pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$"
                             title="Password should contain uppercase letter, lowercase letter, number, and special chatacter"
+                            disabled={passwordLoading}
                           />
                         </FormGroup>
                       </Col>
                     </Row>
+                    {passwordUpdateError && (
+                      <small className="text-danger">
+                        {passwordUpdateError.message}
+                      </small>
+                    )}
                   </div>
                 </Form>
               </CardBody>
@@ -450,6 +567,11 @@ const Profile: React.FC = () => {
           </Col>
         </Row>
       </Container>
+      {success && (
+        <div className="position-fixed bottom-0 right-0 w-100 d-flex justify-content-center">
+          <Alert color="primary">{success.message}</Alert>
+        </div>
+      )}
     </>
   );
 };

@@ -18,7 +18,7 @@
 import React from "react";
 import Login from "./views/pages/Login";
 import CreateAccount from "./views/pages/CreateAccount";
-import Settings from "./views/pages/Settings";
+import UserManagement from "./views/pages/UserManagement";
 import Profile from "./views/pages/Profile";
 import Index from "./views/Index";
 import DeliveryOrders from "./views/pages/DeliveryOrders";
@@ -43,16 +43,16 @@ const routes = [
   {
     path: "/user-profile",
     name: "My Profile",
-    icon: "ni ni-single-02 text-teal",
+    icon: "fas fa-user text-teal",
     component: () => <Profile />,
     layout: "/admin",
     isNavigable: true,
   },
   {
     path: "/settings",
-    name: "Settings",
-    icon: "ni ni-settings-gear-65 text-info",
-    component: () => <Settings />,
+    name: "User Management",
+    icon: "fas fa-user-cog text-info",
+    component: () => <UserManagement />,
     layout: "/admin",
     isNavigable: true,
   },
@@ -67,7 +67,7 @@ const routes = [
   {
     path: "/create-account",
     name: "Create Account",
-    icon: "ni ni-single-02 text-info",
+    icon: "fas fa-user text-info",
     component: () => <CreateAccount />,
     layout: "/auth",
     isNavigable: false,

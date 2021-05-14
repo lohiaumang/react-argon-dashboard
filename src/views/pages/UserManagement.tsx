@@ -49,15 +49,39 @@ class Profile extends React.PureComponent {
                 <CardHeader className="bg-white border-0">
                   <Row className="align-items-center">
                     <Col xs="8">
-                      <h3 className="mb-0">Admin Settings</h3>
+                      <h3 className="mb-0">User Management</h3>
                     </Col>
                   </Row>
                 </CardHeader>
                 <CardBody>
                   <Form>
-                    <h6 className="heading-small text-muted mb-4">
-                      Create users
-                    </h6>
+                    <Row>
+                      <Col xs="8">
+                        <h6 className="heading-small text-muted mb-4">
+                          Create Users
+                        </h6>
+                      </Col>
+                      <Col className="text-right" xs="4">
+                        <Button
+                          className="small-button-width"
+                          color={"danger"}
+                          onClick={() => {}}
+                          disabled={false}
+                          size="sm"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          className="small-button-width"
+                          color={"success"}
+                          type="submit"
+                          size="sm"
+                          disabled={false}
+                        >
+                          Create
+                        </Button>
+                      </Col>
+                    </Row>
                     <div className="pl-lg-4">
                       <Row>
                         <Col lg="6">
@@ -87,8 +111,10 @@ class Profile extends React.PureComponent {
                             <Input
                               className="form-control-alternative"
                               id="input-email"
-                              placeholder="bharat@example.com"
+                              placeholder="janedoe@example.com"
                               type="email"
+                              pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$"
+                              title="Email should be in the format abc@xyz.def"
                             />
                           </FormGroup>
                         </Col>
@@ -130,14 +156,6 @@ class Profile extends React.PureComponent {
                           </FormGroup>
                         </Col>
                       </Row>
-                      <Row>
-                        <Col>
-                          <div className="float-right">
-                            <Button color="danger">Cancel</Button>
-                            <Button color="primary">Create</Button>
-                          </div>
-                        </Col>
-                      </Row>
                     </div>
                   </Form>
                   <h6 className="heading-small text-muted mb-4">All users</h6>
@@ -156,7 +174,11 @@ class Profile extends React.PureComponent {
                         <td>janedoe@email.com</td>
                         <td>Salesman</td>
                         <td className="text-right">
-                          <Button color="danger" size="sm">
+                          <Button
+                            className="small-button-width"
+                            color="danger"
+                            size="sm"
+                          >
                             {/* <i className="fa fa-times fa-lg" /> */}
                             Delete
                           </Button>
