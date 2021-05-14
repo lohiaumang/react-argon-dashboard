@@ -65,6 +65,12 @@ const Settings: React.FC = () => {
     }
   }, [signUpSuccess]);
 
+  useEffect(() => {
+    if (signUpSuccess) {
+      setSignUpError(undefined);
+    }
+  }, [signUpSuccess]);
+
   const userCreate = (ev: React.FormEvent<HTMLFormElement>) => {
     const currentUser = firebase.auth().currentUser;
     ev.preventDefault();
