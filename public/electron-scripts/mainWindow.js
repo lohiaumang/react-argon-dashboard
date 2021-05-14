@@ -100,11 +100,11 @@ module.exports = function (appWindow) {
         const createUserDataFirestore = functions.httpsCallable(
           "createUserdataIndia"
         );
-        console.log("Step", step++, data);
+        // console.log("Step", step++, data);
         createUserDataFirestore(data)
           .then((resp) => {
             console.log("User created!", JSON.stringify(resp.data));
-            console.log("Step", step++, resp.data);
+            // console.log("Step", step++, resp.data);
             appWindow.webContents.send("fromMain", {
               type: "CREATE_USER_SUCCESS",
               resp,
@@ -125,10 +125,3 @@ module.exports = function (appWindow) {
     }
   });
 };
-
-// Uncaught Exception:
-// TypeError: Object has been destroyed
-// at IpcMainImpl.<anonymous> (/Users/umanglohia/Desktop/second-attempt/auto-auto-dashboard/public/electron-scripts/mainWindow.js:75:21)
-// at IpcMainImpl.emit (events.js:315:20)
-// at Object.<anonymous> (electron/js2c/browser_init.js:161:9692)
-// at Object.emit (events.js:315:20)

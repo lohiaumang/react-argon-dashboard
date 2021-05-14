@@ -60,12 +60,6 @@ const Settings: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (signUpError) {
-      setSignUpError(undefined);
-    }
-  }, [signUpError]);
-
-  useEffect(() => {
     if (signUpSuccess) {
       setSignUpError(undefined);
     }
