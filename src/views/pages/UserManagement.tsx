@@ -39,11 +39,17 @@ import { withFadeIn } from "../../components/HOC/withFadeIn";
 import Loading from "../../components/Share/Loading";
 import firebase from "firebase/app";
 import "firebase/auth";
+
+
 export interface SignUpError {
   code: string;
   message: string;
 }
 export interface SignUpSuccess {
+  code: string;
+  message: string;
+}
+export interface DeleteSuccess {
   code: string;
   message: string;
 }
@@ -62,14 +68,16 @@ interface UserInfo {
 
 
 const UserManagement:React.FC=()=> {
-  const [name, setName] = useState<string>("Rahul");
-  const [email, setEmail] = useState<string>("rahul@gmail.com");
-  const [password, setPassword] = useState<string>("Qwerty@123");
-  const [role, setRole] = useState<string>("salesman");
+  const [name, setName] = useState<string>();
+  const [email, setEmail] = useState<string>();
+  const [password, setPassword] = useState<string>();
+  const [role, setRole] = useState<string>();
   const [signUpError, setSignUpError] = useState<SignUpError>();
   const [signUpSuccess, setSignUpSuccess] = useState<SignUpSuccess>();
+  const [delteSuccess, setdelteSuccess] = useState<DeleteSuccess>();
   const [userData, setUserData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [Deleteloading, setDeleteLoading] = useState<boolean>(false);
 console.log(userData)
   useEffect(() => {
     if (signUpSuccess) {
@@ -77,7 +85,13 @@ console.log(userData)
     }
   }, [signUpSuccess]);
 
+  useEffect(() => {
+    if (delteSuccess) {
+      setTimeout(() => setdelteSuccess(undefined), 1500);
+    }
+  }, [delteSuccess]);
 
+console.log(signUpSuccess)
   //get user data
 const currentUser = firebase.auth().currentUser;
 
@@ -103,25 +117,51 @@ if (currentUser && currentUser.uid) {
   getUserData(currentUser.uid);
 }
 
-  // const getUserData = (uid: string) => {
-  //   useEffect(()=>{
-  //    const usersRef = firebase.firestore().collection('users')
-  //    usersRef
-  //        .where('createdBy', '==', uid)
-  //        .where('role', 'in', ['salesman', 'office'])
-  //        .get()
-  //        .then(querySnapshot => {
-  //            querySnapshot.forEach(doc => {
-  //                const info = doc.data()
-  //                console.log(info)
-  //                 setUserData(info);
-  //            })
-            
-  //        })
-  //    },[])
-  //  };
-    
 
+// const handleClick=(id: any)=>{
+//   firebase.firestore().collection('users').doc(id).delete();
+// }
+
+const deleteUser = (uid: any ) => {
+  debugger
+  setDeleteLoading(true);
+  if (uid) {
+    const user = {
+      uid,
+    };
+
+    if (window && window.api) {
+      window.api.receive("fromMain", (data: any) => {
+        switch (data.type) {
+          case "DELETE_USER_SUCCESS": {
+            debugger
+            debugger
+            setDeleteLoading(false);
+            setdelteSuccess({
+              code: "FIREBASE_ERROR",
+              message:"User Delete Successfully.",
+              
+            });
+            break;
+          }
+          case "DELETE_USER_FAILURE": {
+            debugger
+            setDeleteLoading(false);
+            setdelteSuccess({
+              code: "FIREBASE_ERROR",
+              message: data.err.message!,
+            });
+            break;
+          }
+        }
+      });
+      window.api.send("toMain", {
+        type: "DELETE_USER",
+        data: user,
+      });
+    }
+  }
+};
 
   const userCreate = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
@@ -142,12 +182,17 @@ if (currentUser && currentUser.uid) {
               setLoading(false);
               setSignUpSuccess({
                 code: "FIREBASE_ERROR",
-                message: data.resp.result!,
+                message: data.resp.data.result,
                 
               });
+              setPassword("");
+              setName("");
+              setEmail("");
+              setRole("");
               break;
             }
             case "CREATE_USER_FAILURE": {
+              debugger
               setLoading(false);
               setSignUpError({
                 code: "FIREBASE_ERROR",
@@ -180,6 +225,9 @@ if (currentUser && currentUser.uid) {
                   <Row className="align-items-center">
                     <Col xs="8">
                       <h3 className="mb-0">User Management</h3>
+                      {signUpError && (
+                   <small className="text-danger">{signUpError.message}</small>
+                   )}
                     </Col>
                   </Row>
                 </CardHeader>
@@ -193,13 +241,15 @@ if (currentUser && currentUser.uid) {
                       </Col>
            
                       <Col className="text-right" xs="4">
-                      {signUpError && (
-                <small className="text-danger">{signUpError.message}</small>
-              )}
-                        <Button
+                      <Button
                           className="small-button-width"
                           color={"danger"}
-                          onClick={() => {}}
+                          onClick={() => {
+                            setPassword("");
+                            setName("");
+                            setEmail("");
+                            setRole("");
+                          }}
                           disabled={false}
                           size="sm"
                         >
@@ -309,6 +359,9 @@ if (currentUser && currentUser.uid) {
                     </div>
                   </Form>
                   <h6 className="heading-small text-muted mb-4">All users</h6>
+                  {delteSuccess && (
+                   <small className="text-danger">{delteSuccess.message}</small>
+                   )}
                   <Table className="align-items-center table-flush" responsive>
                     <thead className="thead-light">
                       <tr>
@@ -321,7 +374,7 @@ if (currentUser && currentUser.uid) {
                     <tbody>
                     {userData.map((curElem:any)=>{
                       return(
-                        <tr>
+                        <tr key={curElem.email}>
                         <th scope="row">{curElem.name}</th>
                         <td>{curElem.email}</td>
                         <td>{curElem.role}</td>
@@ -330,9 +383,10 @@ if (currentUser && currentUser.uid) {
                             className="small-button-width"
                             color="danger"
                             size="sm"
+                            onClick={() => deleteUser(curElem.id)}
                           >
-                            {/* <i className="fa fa-times fa-lg" /> */}
-                            Delete
+                               {/* {Deleteloading ? <Loading /> : "Delete"} */}
+                               Delete
                           </Button>
                         </td>
                       </tr>
