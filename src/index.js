@@ -27,6 +27,7 @@ import "./assets/css/custom.css";
 import App from "./layouts/App";
 import firebase from "firebase/app";
 
+
 const firebaseConfig = {
   apiKey: "AIzaSyC-Tb0Xfay1bTSZNfAfM3EeBJjPqwvhKBM",
   authDomain: "autoauto-97af8.firebaseapp.com",

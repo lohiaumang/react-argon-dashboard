@@ -52,8 +52,8 @@ declare global {
 const CreateAccount: React.FC = () => {
   // TODO: Convert to type UserInfo
   const [name, setName] = useState<string>("Auto Auto");
-  const [email, setEmail] = useState<string>("auto1244734@auto.com");
-  const [phoneNumber, setPhoneNumber] = useState<string>("9999911555");
+  const [email, setEmail] = useState<string>("auto1234@auto.com");
+  const [phoneNumber, setPhoneNumber] = useState<string>("9999955555");
   const [password, setPassword] = useState<string>("Qwerty@123");
   const [gst, setGst] = useState<string>("18AABCU9603R1ZM");
   const [pan, setPan] = useState<string>("AABCU9603R");
@@ -87,7 +87,6 @@ const CreateAccount: React.FC = () => {
 
   const signUp = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
-    debugger;
 
     if (!termsAndCondition) {
       setSignUpError({
@@ -159,7 +158,7 @@ const CreateAccount: React.FC = () => {
                 <InputGroup className="input-group-alternative">
                   <InputGroupAddon addonType="prepend">
                     <InputGroupText>
-                      <i className="ni ni-single-02" />
+                      <i className="fas fa-user" />
                     </InputGroupText>
                   </InputGroupAddon>
                   <Input
@@ -372,7 +371,7 @@ const CreateAccount: React.FC = () => {
         color="primary"
         isOpen={signUpSuccess}
       >
-        User created successfully!
+        User created successfully
       </Alert>
     </>
   );

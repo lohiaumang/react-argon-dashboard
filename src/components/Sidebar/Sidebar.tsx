@@ -190,7 +190,7 @@ class Sidebar extends React.Component<Props> {
                   <h6 className="text-overflow m-0">Welcome!</h6>
                 </DropdownItem>
                 <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-single-02" />
+                  <i className="fas fa-user" />
                   <span>My profile</span>
                 </DropdownItem>
                 <DropdownItem to="/admin/user-profile" tag={Link}>
