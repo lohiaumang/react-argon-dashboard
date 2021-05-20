@@ -99,7 +99,7 @@ module.exports = function (appWindow) {
         const createUserDataFirestore = functions.httpsCallable(
           "createUserdataIndia"
         );
-         console.log("Step", step++, data);
+        //  console.log("Step", step++, data);
         createUserDataFirestore(data)
           .then((resp) => {
             console.log("User created!", JSON.stringify(resp.data));
@@ -123,7 +123,7 @@ module.exports = function (appWindow) {
         const deleteUserDataFirestore = functions.httpsCallable(
           "deleteUserDataIndia"
         );
-         console.log("Step", step++, data);
+        //  console.log("Step", step++, data);
         deleteUserDataFirestore(data)
           .then((resp) => {
             appWindow.webContents.send("fromMain", {
