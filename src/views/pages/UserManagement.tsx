@@ -32,6 +32,7 @@ import {
   Col,
   Table,
   Alert,
+  Nav,
 } from "reactstrap";
 // core components
 import Header from "../../components/Headers/Header";
@@ -39,7 +40,7 @@ import { withFadeIn } from "../../components/HOC/withFadeIn";
 import Loading from "../../components/Share/Loading";
 import firebase from "firebase/app";
 import "firebase/auth";
-
+import _ from "lodash";
 
 export interface SignUpError {
   code: string;
@@ -94,7 +95,7 @@ console.log(userData)
 console.log(signUpSuccess)
   //get user data
 const currentUser = firebase.auth().currentUser;
-
+const pageSize=10;
 const getUserData=(uid: string)=>{
   useEffect(()=>{
   firebase.firestore().collection('users')
@@ -113,10 +114,13 @@ const getUserData=(uid: string)=>{
   });
 },[])
 }
+
 if (currentUser && currentUser.uid) {
   getUserData(currentUser.uid);
 }
-
+// const pageCount = userData? Math.ceil(userData.length/pageSize):0;
+//  if(pageCount ===1) return null;
+//  const pages= _.range(1, pageCount+1);
 
 // const handleClick=(id: any)=>{
 //   firebase.firestore().collection('users').doc(id).delete();
@@ -134,8 +138,8 @@ const deleteUser = (uid: any ) => {
       window.api.receive("fromMain", (data: any) => {
         switch (data.type) {
           case "DELETE_USER_SUCCESS": {
-            debugger
-            debugger
+           
+            
             setDeleteLoading(false);
             setdelteSuccess({
               code: "FIREBASE_ERROR",
@@ -374,7 +378,7 @@ const deleteUser = (uid: any ) => {
                     <tbody>
                     {userData.map((curElem:any)=>{
                       return(
-                        <tr key={curElem.email}>
+                        <tr key={curElem.id}>
                         <th scope="row">{curElem.name}</th>
                         <td>{curElem.email}</td>
                         <td>{curElem.role}</td>
@@ -396,6 +400,16 @@ const deleteUser = (uid: any ) => {
                       
                     </tbody>
                   </Table>
+                  {/* <Nav className="d-flex justify-content-center">
+                    <ul className="pagination">
+                      {
+                        pages.map((page)=>{
+                          <li className="page-link">{page}</li>
+                        })
+                      }
+                      
+                    </ul>
+                  </Nav> */}
                 </CardBody>
               </Card>
             </Col>
