@@ -36,7 +36,7 @@ import {
 import Header from "../../components/Headers/Header";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 
-class Profile extends React.PureComponent {
+class UserManagement extends React.PureComponent {
   render() {
     return (
       <>
@@ -56,12 +56,12 @@ class Profile extends React.PureComponent {
                 <CardBody>
                   <Form>
                     <Row>
-                      <Col xs="8">
+                      <Col lg="8" md="6" xs="4">
                         <h6 className="heading-small text-muted mb-4">
                           Create Users
                         </h6>
                       </Col>
-                      <Col className="text-right" xs="4">
+                      <Col className="text-right" lg="4" md="6" xs="8">
                         <Button
                           className="small-button-width"
                           color={"danger"}
@@ -196,4 +196,4 @@ class Profile extends React.PureComponent {
   }
 }
 
-export default withFadeIn(Profile);
+export default withFadeIn(UserManagement);

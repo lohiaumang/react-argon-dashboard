@@ -85,7 +85,7 @@ class AdminNavbar extends React.PureComponent<Props> {
                   </DropdownItem>
                   <DropdownItem to="/admin/settings" tag={Link}>
                     <i className="ni ni-settings-gear-65" />
-                    <span>User Management</span>
+                    <span>Settings</span>
                   </DropdownItem>
                   <DropdownItem divider />
                   <DropdownItem onClick={() => firebase.auth().signOut()}>

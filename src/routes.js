@@ -19,6 +19,7 @@ import React from "react";
 import Login from "./views/pages/Login";
 import CreateAccount from "./views/pages/CreateAccount";
 import UserManagement from "./views/pages/UserManagement";
+import Settings from "./views/pages/Settings";
 import Profile from "./views/pages/Profile";
 import Index from "./views/Index";
 import DeliveryOrders from "./views/pages/DeliveryOrders";
@@ -49,10 +50,18 @@ const routes = [
     isNavigable: true,
   },
   {
-    path: "/settings",
+    path: "/user-management",
     name: "User Management",
     icon: "fas fa-user-cog text-info",
     component: () => <UserManagement />,
+    layout: "/admin",
+    isNavigable: true,
+  },
+  {
+    path: "/settings",
+    name: "Settings",
+    icon: "ni ni-settings-gear-65 text-info",
+    component: () => <Settings />,
     layout: "/admin",
     isNavigable: true,
   },
