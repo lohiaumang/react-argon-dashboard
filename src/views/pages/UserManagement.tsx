@@ -35,6 +35,7 @@ import {
 // core components
 import Header from "../../components/Headers/Header";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
+import Bike from "../../components/Bikeconfig/Bike";
 
 class UserManagement extends React.PureComponent {
   render() {
@@ -191,6 +192,7 @@ class UserManagement extends React.PureComponent {
             </Col>
           </Row>
         </Container>
+        <Bike />
       </>
     );
   }
