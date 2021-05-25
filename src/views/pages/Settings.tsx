@@ -48,7 +48,7 @@ const Settings: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [newKey, setNewKey] = useState<string>();
   const [insuranceConfig, setInsuranceConfig] = useState<any>({});
-  const [priceceConfig, setPriceConfig] = useState<any>({});
+  const [priceConfig, setPriceConfig] = useState<any>({});
   const db = firebase.firestore();
 
   useEffect(() => {
@@ -68,7 +68,7 @@ const Settings: React.FC = () => {
 
   //Get price collection data
   useEffect(() => {
-    const docRef = db.collection("price").doc("priceConfig");
+    const docRef = db.collection("priceConfig").doc("config");
 
     docRef
       .get()
@@ -126,8 +126,8 @@ const Settings: React.FC = () => {
                <ConfigTable
                   onSubmit={savePriceConfig}
                   title="Price Details"
-                  headers={["price", "roadTaxWithRc", "insuranceDepreciation"]}
-                  config={priceceConfig}
+                  headers={["price", "roadTaxWithRc", "insuranceDeclaredValue"]}
+                  config={priceConfig}
                   formatDownloadLink={require("../../assets/docs/insuranceConfigFormat.csv")}
                 />
               </CardBody>
