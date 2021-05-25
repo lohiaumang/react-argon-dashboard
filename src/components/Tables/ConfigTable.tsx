@@ -42,14 +42,13 @@ import "firebase/firestore";
 // core components
 import Header from "../../components/Headers/Header";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
-import modelData from "../../model-data";
 import Loading from "../Share/Loading";
 
 interface ConfigRow {
   [key: string]: string;
 }
 
-interface Config {
+export interface Config {
   [key: string]: ConfigRow;
 }
 
@@ -58,16 +57,17 @@ interface TableProps {
   config: Config;
   headers: string[];
   formatDownloadLink: string;
-  onSubmit: (ev: React.SyntheticEvent) => void;
+  onSubmit: (config: Config) => void;
 }
 
 const ConfigTable: React.FC<TableProps> = (props) => {
   const { title, config, headers, formatDownloadLink, onSubmit } = props;
   const [disabled, setDisabled] = useState<boolean>(true);
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [newKey, setNewKey] = useState<string>();
   const [currConfig, setCurrConfig] = useState<Config>();
+  const [fileInputKey, setFileInputKey] = useState(new Date().toString());
 
   const camelCaseToReadable = (text: string): string => {
     return (
@@ -82,9 +82,17 @@ const ConfigTable: React.FC<TableProps> = (props) => {
   };
 
   useEffect(() => {
-    setCurrConfig(config);
-    setLoading(false);
+    if (config === null || Object.keys(config).length) {
+      setCurrConfig(config);
+      setLoading(false);
+    }
   }, [config]);
+
+  useEffect(() => {
+    if (!loading) {
+      setDisabled(false);
+    }
+  }, [loading]);
 
   const handleChange = (key: string, header: string, value: string) => {
     const tempCurrConfig = { ...currConfig };
@@ -111,13 +119,15 @@ const ConfigTable: React.FC<TableProps> = (props) => {
   };
 
   const readFile = (ev: React.SyntheticEvent) => {
-    const files = (ev.target as HTMLInputElement).files!;
+    const target = ev.target as HTMLInputElement;
+    const files = target.files!;
+
     Papa.parse(files[0], {
       header: true,
       complete: function (results) {
         // const keys = headers.map((header) => camelCaseToReadable(header).toUpperCase());
-        let tempCurrConfig = {};
-        results.data.forEach((entry) => {
+        let tempCurrConfig: any = {};
+        results.data.forEach((entry: any) => {
           tempCurrConfig[entry["MODEL NAME"]] = {};
           headers.forEach((header) => {
             tempCurrConfig[entry["MODEL NAME"]][header] =
@@ -137,12 +147,11 @@ const ConfigTable: React.FC<TableProps> = (props) => {
           <h6 className="heading-small text-muted mb-4">{title}</h6>
         </Col>
         <Col className="text-right" xs="4">
-          {disabled && !isOpen ? (
+          {!isOpen ? (
             <Button
               className="small-button-width"
               color={"primary"}
               onClick={() => {
-                setDisabled(false);
                 setIsOpen(true);
               }}
               size="sm"
@@ -155,9 +164,8 @@ const ConfigTable: React.FC<TableProps> = (props) => {
                 className="small-button-width"
                 color={"danger"}
                 onClick={(e) => {
-                  // const uid = currentUser ? currentUser.uid : "";
-                  // getSetUserData(uid);
-                  setDisabled(true);
+                  setCurrConfig(config);
+                  setFileInputKey(new Date().toString());
                   setIsOpen(false);
                 }}
                 size="sm"
@@ -169,6 +177,13 @@ const ConfigTable: React.FC<TableProps> = (props) => {
                 color={"success"}
                 type="submit"
                 size="sm"
+                onClick={(ev) => {
+                  ev.preventDefault();
+
+                  onSubmit(currConfig);
+                  setFileInputKey(new Date().toString());
+                  setIsOpen(false);
+                }}
               >
                 {/* {userInfoLoading ? <SmallLoading /> : "Save"} */}
                 Save
@@ -179,59 +194,63 @@ const ConfigTable: React.FC<TableProps> = (props) => {
       </Row>
       <Collapse isOpen={isOpen}>
         {loading ? (
-          <div className="w-100 d-flex justify-content-center">
-            <Loading />
-          </div>
+          <>
+            <div className="w-100 d-flex justify-content-center">
+              <Loading />
+            </div>
+            <hr className="my-4" />
+          </>
         ) : (
           currConfig && (
-            <Table className="align-items-center table-flush" responsive>
-              <thead className="thead-light">
-                <tr>
-                  <th key="modelName" scope="col">
-                    Model Name
-                  </th>
-                  {headers.map((header) => (
-                    <th key={header} scope="col">
-                      {camelCaseToReadable(header)}
+            <>
+              <Table className="align-items-center table-flush" responsive>
+                <thead className="thead-light">
+                  <tr>
+                    <th key="modelName" scope="col">
+                      Model Name
                     </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {Object.keys(currConfig).map((key: string) => (
-                  <tr key={key}>
-                    <th scope="row">{key}</th>
-                    {currConfig[key] &&
-                      headers.map((header: string) => (
-                        <td key={`input-${header}`}>
-                          <Input
-                            required
-                            disabled={disabled}
-                            value={currConfig[key][header] || ""}
-                            onChange={(ev) => {
-                              console.log("change");
-                              handleChange(key, header, ev.target.value!);
-                            }}
-                          />
-                        </td>
-                      ))}
-                    <td>
-                      <Button
-                        size="sm"
-                        color="danger"
-                        onClick={() => removeRow(key)}
-                      >
-                        Delete
-                      </Button>
-                    </td>
+                    {headers.map((header) => (
+                      <th key={header} scope="col">
+                        {camelCaseToReadable(header)}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {Object.keys(currConfig).map((key: string) => (
+                    <tr key={key}>
+                      <th scope="row">{key}</th>
+                      {currConfig[key] &&
+                        headers.map((header: string) => (
+                          <td key={`input-${header}`}>
+                            <Input
+                              required
+                              disabled={disabled}
+                              value={currConfig[key][header] || ""}
+                              onChange={(ev) => {
+                                console.log("change");
+                                handleChange(key, header, ev.target.value!);
+                              }}
+                            />
+                          </td>
+                        ))}
+                      <td>
+                        <Button
+                          size="sm"
+                          color="danger"
+                          onClick={() => removeRow(key)}
+                        >
+                          Delete
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+              <hr className="my-4" />
+            </>
           )
         )}
-        {/* <Row></Row> */}
-        <hr className="my-4" />
         <Row>
           <Col sm={{ size: 6, offset: 3 }} className="text-center">
             <InputGroup>
@@ -239,9 +258,10 @@ const ConfigTable: React.FC<TableProps> = (props) => {
                 value={newKey}
                 placeholder="Model name"
                 onChange={(ev) => setNewKey(ev.target.value!.toUpperCase())}
+                disabled={disabled}
               />
               <InputGroupAddon addonType="append">
-                <Button color="primary" onClick={addRow}>
+                <Button color="primary" onClick={addRow} disabled={disabled}>
                   Add row
                 </Button>
               </InputGroupAddon>
@@ -265,10 +285,13 @@ const ConfigTable: React.FC<TableProps> = (props) => {
                 name="formatFile"
                 label="Choose file"
                 onChange={readFile}
+                key={fileInputKey}
+                disabled={disabled}
               />
             </FormGroup>
           </Col>
         </Row>
+        <hr className="my-4" />
       </Collapse>
     </Form>
   );

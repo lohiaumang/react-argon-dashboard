@@ -40,8 +40,7 @@ import "firebase/firestore";
 // core components
 import Header from "../../components/Headers/Header";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
-import modelData from "../../model-data";
-import ConfigTable from "../../components/Tables/ConfigTable";
+import ConfigTable, { Config } from "../../components/Tables/ConfigTable";
 
 const Settings: React.FC = () => {
   const [disabled, setDisabled] = useState<boolean>(true);
@@ -59,7 +58,7 @@ const Settings: React.FC = () => {
         if (doc.exists) {
           setInsuranceConfig(doc.data());
         } else {
-          console.log("No insurance config set yet!");
+          setInsuranceConfig(null);
         }
       })
       .catch((err) => console.log(err));
@@ -71,8 +70,9 @@ const Settings: React.FC = () => {
   //   setInsuranceConfig(tempModels);
   // };
 
-  const saveInsuranceConfig = (ev: React.SyntheticEvent) => {
-    ev.preventDefault();
+  const saveInsuranceConfig = (config: Config) => {
+    db.collection("insuranceConfig").doc("config").set(config);
+    // ev.preventDefault();
 
     // db.collection("insuranceConfig").doc("config").set();
   };
