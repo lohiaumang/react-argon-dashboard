@@ -93,12 +93,59 @@ module.exports = function (appWindow) {
         }
         break;
       }
+      case "CREATE_USER": {
+        debugger
+        const functions = firebase.app().functions("asia-south1");
+        const createUserDataFirestore = functions.httpsCallable(
+          "createUserdataIndia"
+        );
+        //  console.log("Step", step++, data);
+        createUserDataFirestore(data)
+          .then((resp) => {
+            console.log("User created!", JSON.stringify(resp.data));
+            // console.log("Step", step++, resp.data);
+            appWindow.webContents.send("fromMain", {
+              type: "CREATE_USER_SUCCESS",
+              resp,
+            });
+          })
+          .catch((err) => {
+            console.log("User creation failed!", err);
+            appWindow.webContents.send("fromMain", {
+              type: "CREATE_USER_FAILURE",
+              err,
+            });
+          });
+        break;
+      }
+      case "DELETE_USER": {
+        const functions = firebase.app().functions("asia-south1");
+        const deleteUserDataFirestore = functions.httpsCallable(
+          "deleteUserDataIndia"
+        );
+        //  console.log("Step", step++, data);
+        deleteUserDataFirestore(data)
+          .then((resp) => {
+            appWindow.webContents.send("fromMain", {
+              type: "DELETE_USER_SUCCESS",
+              resp,
+            });
+          })
+          .catch((err) => {
+            appWindow.webContents.send("fromMain", {
+              type: "DELETE_USER_FAILURE",
+              err,
+            });
+          });
+        break;
+      }
       default: {
         console.log("default", args);
       }
     }
   });
 };
+
 
 // Uncaught Exception:
 // TypeError: Object has been destroyed

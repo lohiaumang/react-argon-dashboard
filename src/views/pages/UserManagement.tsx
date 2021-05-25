@@ -16,7 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 // reactstrap components
 import {
@@ -31,13 +31,192 @@ import {
   Row,
   Col,
   Table,
+  Alert,
+  Nav,
 } from "reactstrap";
 // core components
 import Header from "../../components/Headers/Header";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
+import Loading from "../../components/Share/Loading";
+import firebase from "firebase/app";
+import "firebase/auth";
+import _ from "lodash";
 
-class UserManagement extends React.PureComponent {
-  render() {
+export interface SignUpError {
+  code: string;
+  message: string;
+}
+export interface SignUpSuccess {
+  code: string;
+  message: string;
+}
+export interface DeleteSuccess {
+  code: string;
+  message: string;
+}
+
+declare global {
+  interface Window {
+    api: any;
+  }
+}
+interface UserInfo {
+  name: string;
+  email: string;
+  role: string;
+  uid: string;
+}
+
+
+const UserManagement:React.FC=()=> {
+  const [name, setName] = useState<string>();
+  const [email, setEmail] = useState<string>();
+  const [password, setPassword] = useState<string>();
+  const [role, setRole] = useState<string>();
+  const [signUpError, setSignUpError] = useState<SignUpError>();
+  const [signUpSuccess, setSignUpSuccess] = useState<SignUpSuccess>();
+  const [delteSuccess, setdelteSuccess] = useState<DeleteSuccess>();
+  const [userData, setUserData] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [Deleteloading, setDeleteLoading] = useState<boolean>(false);
+console.log(userData)
+  useEffect(() => {
+    if (signUpSuccess) {
+      setTimeout(() => setSignUpError(undefined), 1500);
+    }
+  }, [signUpSuccess]);
+
+  useEffect(() => {
+    if (delteSuccess) {
+      setTimeout(() => setdelteSuccess(undefined), 1500);
+    }
+  }, [delteSuccess]);
+
+console.log(signUpSuccess)
+  //get user data
+const currentUser = firebase.auth().currentUser;
+const pageSize=10;
+const getUserData=(uid: string)=>{
+  useEffect(()=>{
+  firebase.firestore().collection('users')
+  .where('createdBy', '==', uid)
+  .where('role', 'in', ['salesman', 'office'])
+  .onSnapshot
+  (function(querySnapshot){
+ setUserData(
+   querySnapshot.docs.map((doc)=>({
+     id:doc.id,
+     name:doc.data().name,
+     email:doc.data().email,
+     role:doc.data().role,
+   }))
+   );
+  });
+},[])
+}
+
+if (currentUser && currentUser.uid) {
+  getUserData(currentUser.uid);
+}
+// const pageCount = userData? Math.ceil(userData.length/pageSize):0;
+//  if(pageCount ===1) return null;
+//  const pages= _.range(1, pageCount+1);
+
+// const handleClick=(id: any)=>{
+//   firebase.firestore().collection('users').doc(id).delete();
+// }
+
+const deleteUser = (uid: any ) => {
+  debugger
+  setDeleteLoading(true);
+  if (uid) {
+    const user = {
+      uid,
+    };
+
+    if (window && window.api) {
+      window.api.receive("fromMain", (data: any) => {
+        switch (data.type) {
+          case "DELETE_USER_SUCCESS": {
+           
+            
+            setDeleteLoading(false);
+            setdelteSuccess({
+              code: "FIREBASE_ERROR",
+              message:"User Delete Successfully.",
+              
+            });
+            break;
+          }
+          case "DELETE_USER_FAILURE": {
+            debugger
+            setDeleteLoading(false);
+            setdelteSuccess({
+              code: "FIREBASE_ERROR",
+              message: data.err.message!,
+            });
+            break;
+          }
+        }
+      });
+      window.api.send("toMain", {
+        type: "DELETE_USER",
+        data: user,
+      });
+    }
+  }
+};
+
+  const userCreate = (ev: React.FormEvent<HTMLFormElement>) => {
+    ev.preventDefault();
+    setLoading(true);
+    if (currentUser) {
+      const user = {
+        name,
+        email,
+        password,
+        role,
+        createdBy: currentUser.uid,
+      };
+
+      if (window && window.api) {
+        window.api.receive("fromMain", (data: any) => {
+          switch (data.type) {
+            case "CREATE_USER_SUCCESS": {
+              setLoading(false);
+              setSignUpSuccess({
+                code: "FIREBASE_ERROR",
+                message: data.resp.data.result,
+                
+              });
+              setPassword("");
+              setName("");
+              setEmail("");
+              setRole("");
+              break;
+            }
+            case "CREATE_USER_FAILURE": {
+              debugger
+              setLoading(false);
+              setSignUpError({
+                code: "FIREBASE_ERROR",
+                message: data.err.message!,
+              });
+              break;
+            }
+          }
+        });
+        window.api.send("toMain", {
+          type: "CREATE_USER",
+          data: user,
+        });
+      }
+    }
+  };
+
+ 
+
+
     return (
       <>
         <Header />
@@ -50,22 +229,31 @@ class UserManagement extends React.PureComponent {
                   <Row className="align-items-center">
                     <Col xs="8">
                       <h3 className="mb-0">User Management</h3>
+                      {signUpError && (
+                   <small className="text-danger">{signUpError.message}</small>
+                   )}
                     </Col>
                   </Row>
                 </CardHeader>
                 <CardBody>
-                  <Form>
+                  <Form role="form" onSubmit={userCreate}>
                     <Row>
-                      <Col lg="8" md="6" xs="4">
+                      <Col xs="8">
                         <h6 className="heading-small text-muted mb-4">
                           Create Users
                         </h6>
                       </Col>
-                      <Col className="text-right" lg="4" md="6" xs="8">
-                        <Button
+           
+                      <Col className="text-right" xs="4">
+                      <Button
                           className="small-button-width"
                           color={"danger"}
-                          onClick={() => {}}
+                          onClick={() => {
+                            setPassword("");
+                            setName("");
+                            setEmail("");
+                            setRole("");
+                          }}
                           disabled={false}
                           size="sm"
                         >
@@ -78,7 +266,8 @@ class UserManagement extends React.PureComponent {
                           size="sm"
                           disabled={false}
                         >
-                          Create
+                          {loading ? <Loading /> : "Create"}
+                         
                         </Button>
                       </Col>
                     </Row>
@@ -97,6 +286,9 @@ class UserManagement extends React.PureComponent {
                               id="input-name"
                               placeholder="Jane Doe"
                               type="text"
+                              required
+                              value={name}
+                              onChange={(ev) => setName(ev.target.value!)}
                             />
                           </FormGroup>
                         </Col>
@@ -113,8 +305,11 @@ class UserManagement extends React.PureComponent {
                               id="input-email"
                               placeholder="janedoe@example.com"
                               type="email"
-                              pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$"
                               title="Email should be in the format abc@xyz.def"
+                              required
+                              value={email}
+                              onChange={(ev) => setEmail(ev.target.value!)}
+                              pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$"
                             />
                           </FormGroup>
                         </Col>
@@ -133,6 +328,11 @@ class UserManagement extends React.PureComponent {
                               id="input-password"
                               placeholder="*******"
                               type="password"
+                              required
+                              value={password}
+                              onChange={(ev) => setPassword(ev.target.value!)}
+                              pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$"
+                              title="Password should contain uppercase letter, lowercase letter, number, and special chatacter"
                             />
                           </FormGroup>
                         </Col>
@@ -148,6 +348,10 @@ class UserManagement extends React.PureComponent {
                               type="select"
                               name="select-role"
                               id="input-role"
+                              required
+                              placeholder="Role"
+                              value={role}
+                              onChange={(ev) => setRole(ev.target.value!)}
                             >
                               <option>Select</option>
                               <option value="salesman">Salesman</option>
@@ -159,6 +363,9 @@ class UserManagement extends React.PureComponent {
                     </div>
                   </Form>
                   <h6 className="heading-small text-muted mb-4">All users</h6>
+                  {delteSuccess && (
+                   <small className="text-danger">{delteSuccess.message}</small>
+                   )}
                   <Table className="align-items-center table-flush" responsive>
                     <thead className="thead-light">
                       <tr>
@@ -169,31 +376,52 @@ class UserManagement extends React.PureComponent {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <th scope="row">Jane Doe</th>
-                        <td>janedoe@email.com</td>
-                        <td>Salesman</td>
+                    {userData.map((curElem:any)=>{
+                      return(
+                        <tr key={curElem.id}>
+                        <th scope="row">{curElem.name}</th>
+                        <td>{curElem.email}</td>
+                        <td>{curElem.role}</td>
                         <td className="text-right">
                           <Button
                             className="small-button-width"
                             color="danger"
                             size="sm"
+                            onClick={() => deleteUser(curElem.id)}
                           >
-                            {/* <i className="fa fa-times fa-lg" /> */}
-                            Delete
+                               {/* {Deleteloading ? <Loading /> : "Delete"} */}
+                               Delete
                           </Button>
                         </td>
                       </tr>
+                      )
+
+                    })}
+                      
                     </tbody>
                   </Table>
+                  {/* <Nav className="d-flex justify-content-center">
+                    <ul className="pagination">
+                      {
+                        pages.map((page)=>{
+                          <li className="page-link">{page}</li>
+                        })
+                      }
+                      
+                    </ul>
+                  </Nav> */}
                 </CardBody>
               </Card>
             </Col>
           </Row>
         </Container>
+        {signUpSuccess && (
+        <div className="position-fixed bottom-0 right-0 w-100 d-flex justify-content-center">
+          <Alert color="primary">{signUpSuccess.message}</Alert>
+        </div>
+      )}
       </>
     );
   }
-}
 
 export default withFadeIn(UserManagement);
