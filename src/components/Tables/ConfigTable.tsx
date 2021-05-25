@@ -16,6 +16,7 @@
 
 */
 import React, { useState, useEffect } from "react";
+import Papa from "papaparse";
 
 // reactstrap components
 import {
@@ -63,7 +64,7 @@ interface TableProps {
 const ConfigTable: React.FC<TableProps> = (props) => {
   const { title, config, headers, formatDownloadLink, onSubmit } = props;
   const [disabled, setDisabled] = useState<boolean>(true);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
   const [newKey, setNewKey] = useState<string>();
   const [currConfig, setCurrConfig] = useState<Config>();
@@ -113,6 +114,26 @@ const ConfigTable: React.FC<TableProps> = (props) => {
     setCurrConfig(tempCurrConfig);
   };
 
+  const readFile = (ev: React.SyntheticEvent) => {
+    const files = (ev.target as HTMLInputElement).files!;
+    Papa.parse(files[0], {
+      header: true,
+      complete: function (results) {
+        // const keys = headers.map((header) => camelCaseToReadable(header).toUpperCase());
+        let tempCurrConfig = {};
+        results.data.forEach((entry) => {
+          tempCurrConfig[entry["MODEL NAME"]] = {};
+          headers.forEach((header) => {
+            tempCurrConfig[entry["MODEL NAME"]][header] =
+              entry[camelCaseToReadable(header).toUpperCase()];
+          });
+        });
+
+        setCurrConfig(tempCurrConfig);
+      },
+    });
+  };
+
   return (
     <Form onSubmit={onSubmit}>
       <Row>
@@ -120,7 +141,7 @@ const ConfigTable: React.FC<TableProps> = (props) => {
           <h6 className="heading-small text-muted mb-4">{title}</h6>
         </Col>
         <Col className="text-right" xs="4">
-          {disabled ? (
+          {disabled && !isOpen ? (
             <Button
               className="small-button-width"
               color={"primary"}
@@ -247,6 +268,7 @@ const ConfigTable: React.FC<TableProps> = (props) => {
                 id="formatFile"
                 name="formatFile"
                 label="Choose file"
+                onChange={readFile}
               />
             </FormGroup>
           </Col>
