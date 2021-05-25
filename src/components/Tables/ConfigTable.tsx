@@ -85,6 +85,7 @@ const ConfigTable: React.FC<TableProps> = (props) => {
     setCurrConfig(config);
     setLoading(false);
   }, [config]);
+  console.log(currConfig)
 
   const handleChange = (key: string, header: string, value: string) => {
     const tempCurrConfig = { ...currConfig };
@@ -110,25 +111,25 @@ const ConfigTable: React.FC<TableProps> = (props) => {
     setCurrConfig(tempCurrConfig);
   };
 
-  const readFile = (ev: React.SyntheticEvent) => {
-    const files = (ev.target as HTMLInputElement).files!;
-    Papa.parse(files[0], {
-      header: true,
-      complete: function (results) {
-        // const keys = headers.map((header) => camelCaseToReadable(header).toUpperCase());
-        let tempCurrConfig = {};
-        results.data.forEach((entry) => {
-          tempCurrConfig[entry["MODEL NAME"]] = {};
-          headers.forEach((header) => {
-            tempCurrConfig[entry["MODEL NAME"]][header] =
-              entry[camelCaseToReadable(header).toUpperCase()];
-          });
-        });
+  // const readFile = (ev: React.SyntheticEvent) => {
+  //   const files = (ev.target as HTMLInputElement).files!;
+  //   Papa.parse(files[0], {
+  //     header: true,
+  //     complete: function (results) {
+  //       // const keys = headers.map((header) => camelCaseToReadable(header).toUpperCase());
+  //       let tempCurrConfig = {};
+  //       results.data.forEach((entry) => {
+  //         tempCurrConfig[entry["MODEL NAME"]] = {};
+  //         headers.forEach((header) => {
+  //           tempCurrConfig[entry["MODEL NAME"]][header] =
+  //           entry[camelCaseToReadable(header).toUpperCase()];
+  //         });
+  //       });
 
-        setCurrConfig(tempCurrConfig);
-      },
-    });
-  };
+  //       setCurrConfig(tempCurrConfig);
+  //     },
+  //   });
+  // };
 
   return (
     <Form onSubmit={onSubmit}>
@@ -249,7 +250,7 @@ const ConfigTable: React.FC<TableProps> = (props) => {
           </Col>
         </Row>
         <hr className="my-4" />
-        <Row>
+        {/* <Row>
           <Col sm={{ size: 6, offset: 3 }} className="text-center">
             <FormGroup>
               <Label for="formatFile">
@@ -268,7 +269,7 @@ const ConfigTable: React.FC<TableProps> = (props) => {
               />
             </FormGroup>
           </Col>
-        </Row>
+        </Row> */}
       </Collapse>
     </Form>
   );

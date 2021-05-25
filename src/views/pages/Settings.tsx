@@ -48,6 +48,7 @@ const Settings: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [newKey, setNewKey] = useState<string>();
   const [insuranceConfig, setInsuranceConfig] = useState<any>({});
+  const [priceceConfig, setPriceConfig] = useState<any>({});
   const db = firebase.firestore();
 
   useEffect(() => {
@@ -65,6 +66,22 @@ const Settings: React.FC = () => {
       .catch((err) => console.log(err));
   }, []);
 
+  //Get price collection data
+  useEffect(() => {
+    const docRef = db.collection("price").doc("priceConfig");
+
+    docRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          setPriceConfig(doc.data());
+        } else {
+          console.log("No price config set yet!");
+        }
+      })
+      .catch((err) => console.log(err));
+  }, []);
+ 
   // const handleChange = (modelName: string, key: string, value: string) => {
   //   const tempInsuranceConfig = { ...insuranceConfig };
   //   tempInsuranceConfig[modelName][key] = value;
@@ -72,6 +89,11 @@ const Settings: React.FC = () => {
   // };
 
   const saveInsuranceConfig = (ev: React.SyntheticEvent) => {
+    ev.preventDefault();
+
+    // db.collection("insuranceConfig").doc("config").set();
+  };
+  const savePriceConfig = (ev: React.SyntheticEvent) => {
     ev.preventDefault();
 
     // db.collection("insuranceConfig").doc("config").set();
@@ -98,6 +120,14 @@ const Settings: React.FC = () => {
                   title="Insurance Details"
                   headers={["hdfcModelName", "iciciModelName", "userRate"]}
                   config={insuranceConfig}
+                  formatDownloadLink={require("../../assets/docs/insuranceConfigFormat.csv")}
+                />
+
+               <ConfigTable
+                  onSubmit={savePriceConfig}
+                  title="Price Details"
+                  headers={["price", "roadTaxWithRc", "insuranceDepreciation"]}
+                  config={priceceConfig}
                   formatDownloadLink={require("../../assets/docs/insuranceConfigFormat.csv")}
                 />
               </CardBody>
