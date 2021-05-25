@@ -41,12 +41,13 @@ import "firebase/firestore";
 import Header from "../../components/Headers/Header";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 import modelData from "../../model-data";
+import ConfigTable from "../../components/Tables/ConfigTable";
 
 const Settings: React.FC = () => {
   const [disabled, setDisabled] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [newKey, setNewKey] = useState<string>();
-  const [models, setModels] = useState<any>({});
+  const [insuranceConfig, setInsuranceConfig] = useState<any>({});
   const db = firebase.firestore();
 
   useEffect(() => {
@@ -56,7 +57,7 @@ const Settings: React.FC = () => {
       .get()
       .then((doc) => {
         if (doc.exists) {
-          setModels(doc.data());
+          setInsuranceConfig(doc.data());
         } else {
           console.log("No insurance config set yet!");
         }
@@ -64,31 +65,13 @@ const Settings: React.FC = () => {
       .catch((err) => console.log(err));
   }, []);
 
-  const handleChange = (modelName: string, key: string, value: string) => {
-    const tempModels = { ...models };
-    tempModels[modelName][key] = value;
-    setModels(tempModels);
-  };
+  // const handleChange = (modelName: string, key: string, value: string) => {
+  //   const tempInsuranceConfig = { ...insuranceConfig };
+  //   tempInsuranceConfig[modelName][key] = value;
+  //   setInsuranceConfig(tempModels);
+  // };
 
-  const addRow = (ev: any) => {
-    ev.preventDefault();
-    ev.stopPropagation();
-    if (newKey) {
-      const tempModels = { ...models };
-      tempModels[newKey] = {};
-
-      setNewKey("");
-      setModels(tempModels);
-    }
-  };
-
-  const removeRow = (key: string) => {
-    const tempModels = { ...models };
-    delete tempModels[key];
-    setModels(tempModels);
-  };
-
-  const saveChanges = (ev: any) => {
+  const saveInsuranceConfig = (ev: React.SyntheticEvent) => {
     ev.preventDefault();
 
     // db.collection("insuranceConfig").doc("config").set();
@@ -110,148 +93,13 @@ const Settings: React.FC = () => {
                 </Row>
               </CardHeader>
               <CardBody>
-                <Form onSubmit={saveChanges}>
-                  <Row>
-                    <Col xs="8">
-                      <h6 className="heading-small text-muted mb-4">
-                        Insurance Details
-                      </h6>
-                    </Col>
-                    <Col className="text-right" xs="4">
-                      {disabled ? (
-                        <Button
-                          className="small-button-width"
-                          color={"primary"}
-                          onClick={() => {
-                            setDisabled(false);
-                            setIsOpen(true);
-                          }}
-                          size="sm"
-                        >
-                          Edit
-                        </Button>
-                      ) : (
-                        <>
-                          <Button
-                            className="small-button-width"
-                            color={"danger"}
-                            onClick={(e) => {
-                              // const uid = currentUser ? currentUser.uid : "";
-                              // getSetUserData(uid);
-                              setDisabled(true);
-                              setIsOpen(false);
-                            }}
-                            size="sm"
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            className="small-button-width"
-                            color={"success"}
-                            type="submit"
-                            size="sm"
-                          >
-                            {/* {userInfoLoading ? <SmallLoading /> : "Save"} */}
-                            Save
-                          </Button>
-                        </>
-                      )}
-                    </Col>
-                  </Row>
-                  <Collapse isOpen={isOpen}>
-                    <Table
-                      className="align-items-center table-flush"
-                      responsive
-                    >
-                      <thead className="thead-light">
-                        <tr>
-                          <th scope="col">ERP Name</th>
-                          <th scope="col">ICICI Lombard Name</th>
-                          <th scope="col">HDFC Ergo Name</th>
-                          <th scope="col">User Rate</th>
-                          <th scope="col"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {Object.keys(models).map((key: string) => (
-                          <tr key={key}>
-                            <th scope="row">{key}</th>
-                            <td>
-                              <Input
-                                required
-                                disabled={disabled}
-                                value={models[key].hdfcModelName || ""}
-                                onChange={(ev) =>
-                                  handleChange(
-                                    key,
-                                    "hdfcModelName",
-                                    ev.target.value!
-                                  )
-                                }
-                              />
-                            </td>
-                            <td>
-                              <Input
-                                required
-                                disabled={disabled}
-                                value={models[key].iciciModelName || ""}
-                                onChange={(ev) =>
-                                  handleChange(
-                                    key,
-                                    "iciciModelName",
-                                    ev.target.value!
-                                  )
-                                }
-                              />
-                            </td>
-                            <td>
-                              <Input
-                                required
-                                disabled={disabled}
-                                value={models[key].userRate || ""}
-                                onChange={(ev) =>
-                                  handleChange(
-                                    key,
-                                    "userRate",
-                                    ev.target.value!
-                                  )
-                                }
-                              />
-                            </td>
-                            <td>
-                              <Button
-                                size="sm"
-                                color="danger"
-                                onClick={() => removeRow(key)}
-                              >
-                                Delete
-                              </Button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                    {/* <Row></Row>
-                    <hr className="my-4" /> */}
-                    <Row>
-                      <Col sm={{ size: 6, offset: 3 }} className="text-center">
-                        <Form onSubmit={addRow}>
-                          <InputGroup>
-                            <Input
-                              value={newKey}
-                              onChange={(ev) => setNewKey(ev.target.value!)}
-                            />
-                            <InputGroupAddon addonType="append">
-                              <Button color="primary" type="submit">
-                                Add row
-                              </Button>
-                            </InputGroupAddon>
-                          </InputGroup>
-                        </Form>
-                      </Col>
-                    </Row>
-                  </Collapse>
-                </Form>
+                <ConfigTable
+                  onSubmit={saveInsuranceConfig}
+                  title="Insurance Details"
+                  headers={["hdfcModelName", "iciciModelName", "userRate"]}
+                  config={insuranceConfig}
+                  formatDownloadLink={require("../../assets/docs/insuranceConfigFormat.csv")}
+                />
               </CardBody>
             </Card>
           </Col>

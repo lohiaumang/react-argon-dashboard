@@ -50,8 +50,8 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [signInError, setSignInError] = useState<SignInError | null>(null);
 
-  const signIn = (e: any): void => {
-    e.preventDefault();
+  const signIn = (ev: React.SyntheticEvent): void => {
+    ev.preventDefault();
 
     setLoading(true);
     if (username && password) {

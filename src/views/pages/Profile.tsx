@@ -161,7 +161,7 @@ const Profile: React.FC = () => {
     getSetUserData(currentUser.uid);
   }
 
-  const changePassword = (ev: any) => {
+  const changePassword = (ev: React.SyntheticEvent) => {
     setPasswordLoading(true);
     ev.preventDefault();
     if (password !== confirmPassword) {
@@ -188,7 +188,7 @@ const Profile: React.FC = () => {
     }
   };
 
-  const saveProfileChanges = (ev: any) => {
+  const saveProfileChanges = (ev: React.SyntheticEvent) => {
     ev.preventDefault();
     setUserInfoLoading(true);
     if (currentUser) {
