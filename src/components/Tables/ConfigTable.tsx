@@ -104,10 +104,6 @@ const ConfigTable: React.FC<TableProps> = (props) => {
     }
   };
 
-  const downloadExcel = () => {
-    console.log("Download excel");
-  };
-
   const removeRow = (key: string) => {
     const tempCurrConfig: any = { ...currConfig };
     delete tempCurrConfig[key];
