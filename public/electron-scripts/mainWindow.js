@@ -25,12 +25,10 @@ module.exports = function (appWindow) {
 
     switch (type) {
       case "CREATE_DEALER": {
-        debugger;
         const functions = firebase.app().functions("asia-south1");
         const createUserFirestore = functions.httpsCallable("createUserIndia");
         createUserFirestore(data)
           .then((resp) => {
-            debugger;
             console.log("User created!", JSON.stringify(resp.data));
             const uid = resp.data.uid || "";
             delete data.password;
@@ -96,11 +94,12 @@ module.exports = function (appWindow) {
         break;
       }
       case "CREATE_USER": {
+        debugger
         const functions = firebase.app().functions("asia-south1");
         const createUserDataFirestore = functions.httpsCallable(
           "createUserdataIndia"
         );
-        // console.log("Step", step++, data);
+        //  console.log("Step", step++, data);
         createUserDataFirestore(data)
           .then((resp) => {
             console.log("User created!", JSON.stringify(resp.data));
@@ -119,9 +118,38 @@ module.exports = function (appWindow) {
           });
         break;
       }
+      case "DELETE_USER": {
+        const functions = firebase.app().functions("asia-south1");
+        const deleteUserDataFirestore = functions.httpsCallable(
+          "deleteUserDataIndia"
+        );
+        //  console.log("Step", step++, data);
+        deleteUserDataFirestore(data)
+          .then((resp) => {
+            appWindow.webContents.send("fromMain", {
+              type: "DELETE_USER_SUCCESS",
+              resp,
+            });
+          })
+          .catch((err) => {
+            appWindow.webContents.send("fromMain", {
+              type: "DELETE_USER_FAILURE",
+              err,
+            });
+          });
+        break;
+      }
       default: {
         console.log("default", args);
       }
     }
   });
 };
+
+
+// Uncaught Exception:
+// TypeError: Object has been destroyed
+// at IpcMainImpl.<anonymous> (/Users/umanglohia/Desktop/second-attempt/auto-auto-dashboard/public/electron-scripts/mainWindow.js:75:21)
+// at IpcMainImpl.emit (events.js:315:20)
+// at Object.<anonymous> (electron/js2c/browser_init.js:161:9692)
+// at Object.emit (events.js:315:20)

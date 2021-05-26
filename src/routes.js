@@ -18,6 +18,7 @@
 import React from "react";
 import Login from "./views/pages/Login";
 import CreateAccount from "./views/pages/CreateAccount";
+import UserManagement from "./views/pages/UserManagement";
 import Settings from "./views/pages/Settings";
 import Profile from "./views/pages/Profile";
 import Index from "./views/Index";
@@ -43,8 +44,16 @@ const routes = [
   {
     path: "/user-profile",
     name: "My Profile",
-    icon: "ni ni-single-02 text-teal",
+    icon: "fas fa-user text-teal",
     component: () => <Profile />,
+    layout: "/admin",
+    isNavigable: true,
+  },
+  {
+    path: "/user-management",
+    name: "User Management",
+    icon: "fas fa-user-cog text-info",
+    component: () => <UserManagement />,
     layout: "/admin",
     isNavigable: true,
   },
@@ -67,7 +76,7 @@ const routes = [
   {
     path: "/create-account",
     name: "Create Account",
-    icon: "ni ni-single-02 text-info",
+    icon: "fas fa-user text-info",
     component: () => <CreateAccount />,
     layout: "/auth",
     isNavigable: false,
