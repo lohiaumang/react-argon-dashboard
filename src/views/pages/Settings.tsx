@@ -64,17 +64,8 @@ const Settings: React.FC = () => {
       .catch((err) => console.log(err));
   }, []);
 
-  // const handleChange = (modelName: string, key: string, value: string) => {
-  //   const tempInsuranceConfig = { ...insuranceConfig };
-  //   tempInsuranceConfig[modelName][key] = value;
-  //   setInsuranceConfig(tempModels);
-  // };
-
   const saveInsuranceConfig = (config: Config) => {
     db.collection("insuranceConfig").doc("config").set(config);
-    // ev.preventDefault();
-
-    // db.collection("insuranceConfig").doc("config").set();
   };
 
   return (
@@ -94,12 +85,19 @@ const Settings: React.FC = () => {
               </CardHeader>
               <CardBody>
                 <ConfigTable
-                  onSubmit={saveInsuranceConfig}
+                  onSave={saveInsuranceConfig}
                   title="Insurance Details"
                   headers={["hdfcModelName", "iciciModelName", "userRate"]}
                   config={insuranceConfig}
                   formatDownloadLink={require("../../assets/docs/insuranceConfigFormat.csv")}
                 />
+                {/* <ConfigTable
+                  onSave={saveInsuranceConfig}
+                  title="Price Details"
+                  headers={["price", "roadTax", "idv"]}
+                  config={{}}
+                  formatDownloadLink={require("../../assets/docs/insuranceConfigFormat.csv")}
+                /> */}
               </CardBody>
             </Card>
           </Col>

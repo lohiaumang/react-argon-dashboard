@@ -57,17 +57,18 @@ interface TableProps {
   config: Config;
   headers: string[];
   formatDownloadLink: string;
-  onSubmit: (config: Config) => void;
+  onSave: (config: Config) => void;
 }
 
 const ConfigTable: React.FC<TableProps> = (props) => {
-  const { title, config, headers, formatDownloadLink, onSubmit } = props;
+  const { title, config, headers, formatDownloadLink, onSave } = props;
   const [disabled, setDisabled] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [newKey, setNewKey] = useState<string>();
-  const [currConfig, setCurrConfig] = useState<Config>();
+  const [currConfig, setCurrConfig] = useState<Config>({});
   const [fileInputKey, setFileInputKey] = useState(new Date().toString());
+  const [bulkUploadError, setBulkUploadError] = useState<string>();
 
   const camelCaseToReadable = (text: string): string => {
     return (
@@ -125,23 +126,47 @@ const ConfigTable: React.FC<TableProps> = (props) => {
     Papa.parse(files[0], {
       header: true,
       complete: function (results) {
-        // const keys = headers.map((header) => camelCaseToReadable(header).toUpperCase());
         let tempCurrConfig: any = {};
-        results.data.forEach((entry: any) => {
-          tempCurrConfig[entry["MODEL NAME"]] = {};
-          headers.forEach((header) => {
-            tempCurrConfig[entry["MODEL NAME"]][header] =
-              entry[camelCaseToReadable(header).toUpperCase()];
-          });
-        });
+        let error: string | null = null;
 
-        setCurrConfig(tempCurrConfig);
+        try {
+          results.data.forEach((entry: any) => {
+            console.log("Entry: ", entry, "Headers: ", headers);
+            if (Object.keys(entry).length !== headers.length + 1) {
+              throw "Incorrect format";
+            }
+            tempCurrConfig[entry["MODEL NAME"]] = {};
+            headers.forEach((header) => {
+              tempCurrConfig[entry["MODEL NAME"]][header] =
+                entry[camelCaseToReadable(header).toUpperCase()];
+            });
+          });
+        } catch (err) {
+          error = err;
+        }
+
+        if (error === null) {
+          setCurrConfig(tempCurrConfig);
+        } else {
+          setFileInputKey(new Date().toString());
+          setBulkUploadError(
+            "Something went wrong, please try again. Tip: check the file format."
+          );
+        }
       },
     });
   };
 
   return (
-    <Form onSubmit={onSubmit}>
+    <Form
+      onSubmit={(ev) => {
+        ev.preventDefault();
+
+        onSave(currConfig);
+        setFileInputKey(new Date().toString());
+        setIsOpen(false);
+      }}
+    >
       <Row>
         <Col xs="8">
           <h6 className="heading-small text-muted mb-4">{title}</h6>
@@ -177,13 +202,6 @@ const ConfigTable: React.FC<TableProps> = (props) => {
                 color={"success"}
                 type="submit"
                 size="sm"
-                onClick={(ev) => {
-                  ev.preventDefault();
-
-                  onSubmit(currConfig);
-                  setFileInputKey(new Date().toString());
-                  setIsOpen(false);
-                }}
               >
                 {/* {userInfoLoading ? <SmallLoading /> : "Save"} */}
                 Save
@@ -289,6 +307,9 @@ const ConfigTable: React.FC<TableProps> = (props) => {
                 disabled={disabled}
               />
             </FormGroup>
+            {bulkUploadError && (
+              <small className="text-danger">{bulkUploadError}</small>
+            )}
           </Col>
         </Row>
         <hr className="my-4" />
