@@ -37,7 +37,7 @@ import {
 // core components
 import Header from "../../components/Headers/Header";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
-import Loading from "../../components/Share/Loading";
+import SmallLoading from "../../components/Share/SmallLoading";
 import firebase from "firebase/app";
 import "firebase/auth";
 export interface SignUpError {
@@ -72,22 +72,29 @@ const UserManagement: React.FC = () => {
   const [role, setRole] = useState<string>();
   const [signUpError, setSignUpError] = useState<SignUpError>();
   const [signUpSuccess, setSignUpSuccess] = useState<SignUpSuccess>();
-  const [delteSuccess, setdelteSuccess] = useState<DeleteSuccess>();
+  const [deleteSuccess, setDeleteSuccess] = useState<DeleteSuccess>();
   const [userData, setUserData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [Deleteloading, setDeleteLoading] = useState<boolean>(false);
   console.log(userData);
+
+  useEffect(() => {
+    if (signUpError) {
+      setTimeout(() => setSignUpError(undefined), 1500);
+    }
+  }, [signUpError]);
+
   useEffect(() => {
     if (signUpSuccess) {
-      setTimeout(() => setSignUpError(undefined), 1500);
+      setTimeout(() => setSignUpSuccess(undefined), 1500);
     }
   }, [signUpSuccess]);
 
   useEffect(() => {
-    if (delteSuccess) {
-      setTimeout(() => setdelteSuccess(undefined), 1500);
+    if (deleteSuccess) {
+      setTimeout(() => setDeleteSuccess(undefined), 1500);
     }
-  }, [delteSuccess]);
+  }, [deleteSuccess]);
 
   console.log(signUpSuccess);
   //get user data
@@ -137,7 +144,7 @@ const UserManagement: React.FC = () => {
           switch (data.type) {
             case "DELETE_USER_SUCCESS": {
               setDeleteLoading(false);
-              setdelteSuccess({
+              setDeleteSuccess({
                 code: "FIREBASE_ERROR",
                 message: "User Delete Successfully.",
               });
@@ -146,7 +153,7 @@ const UserManagement: React.FC = () => {
             case "DELETE_USER_FAILURE": {
               debugger;
               setDeleteLoading(false);
-              setdelteSuccess({
+              setDeleteSuccess({
                 code: "FIREBASE_ERROR",
                 message: data.err.message!,
               });
@@ -259,7 +266,7 @@ const UserManagement: React.FC = () => {
                         size="sm"
                         disabled={false}
                       >
-                        {loading ? <Loading /> : "Create"}
+                        {loading ? <SmallLoading /> : "Create"}
                       </Button>
                     </Col>
                   </Row>
@@ -354,42 +361,51 @@ const UserManagement: React.FC = () => {
                     </Row>
                   </div>
                 </Form>
-                <h6 className="heading-small text-muted mb-4">All users</h6>
-                {delteSuccess && (
-                  <small className="text-danger">{delteSuccess.message}</small>
-                )}
-                <Table className="align-items-center table-flush" responsive>
-                  <thead className="thead-light">
-                    <tr>
-                      <th scope="col">Name</th>
-                      <th scope="col">Email</th>
-                      <th scope="col">Role</th>
-                      <th scope="col"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {userData.map((curElem: any) => {
-                      return (
-                        <tr key={curElem.id}>
-                          <th scope="row">{curElem.name}</th>
-                          <td>{curElem.email}</td>
-                          <td>{curElem.role}</td>
-                          <td className="text-right">
-                            <Button
-                              className="small-button-width"
-                              color="danger"
-                              size="sm"
-                              onClick={() => deleteUser(curElem.id)}
-                            >
-                              {/* {Deleteloading ? <Loading /> : "Delete"} */}
-                              Delete
-                            </Button>
-                          </td>
+                {userData.length > 0 && (
+                  <>
+                    <h6 className="heading-small text-muted mb-4">All users</h6>
+                    {deleteSuccess && (
+                      <small className="text-success">
+                        {deleteSuccess.message}
+                      </small>
+                    )}
+                    <Table
+                      className="align-items-center table-flush"
+                      responsive
+                    >
+                      <thead className="thead-light">
+                        <tr>
+                          <th scope="col">Name</th>
+                          <th scope="col">Email</th>
+                          <th scope="col">Role</th>
+                          <th scope="col"></th>
                         </tr>
-                      );
-                    })}
-                  </tbody>
-                </Table>
+                      </thead>
+                      <tbody>
+                        {userData.map((curElem: any) => {
+                          return (
+                            <tr key={curElem.id}>
+                              <th scope="row">{curElem.name}</th>
+                              <td>{curElem.email}</td>
+                              <td>{curElem.role}</td>
+                              <td className="text-right">
+                                <Button
+                                  className="small-button-width"
+                                  color="danger"
+                                  size="sm"
+                                  onClick={() => deleteUser(curElem.id)}
+                                >
+                                  {/* {Deleteloading ? <Loading /> : "Delete"} */}
+                                  Delete
+                                </Button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </Table>
+                  </>
+                )}
                 {/* <Nav className="d-flex justify-content-center">
                     <ul className="pagination">
                       {
