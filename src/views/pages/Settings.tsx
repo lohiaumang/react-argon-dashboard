@@ -51,9 +51,9 @@ const Settings: React.FC = () => {
   const db = firebase.firestore();
 
   useEffect(() => {
-    const docRef = db.collection("insuranceConfig").doc("config");
+    const insuranceConfigRef = db.collection("insuranceConfig").doc("config");
 
-    docRef
+    insuranceConfigRef
       .get()
       .then((doc) => {
         if (doc.exists) {
@@ -63,36 +63,20 @@ const Settings: React.FC = () => {
         }
       })
       .catch((err) => console.log(err));
-      const docRef1 = db.collection("priceConfig").doc("config");
 
-      docRef1
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            setPriceConfig(doc.data());
-          } else {
-            console.log("No price config set yet!");
-          }
-        })
-        .catch((err) => console.log(err));
+    const priceConfigRef = db.collection("priceConfig").doc("config");
+
+    priceConfigRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          setPriceConfig(doc.data());
+        } else {
+          console.log("No price config set yet!");
+        }
+      })
+      .catch((err) => console.log(err));
   }, []);
-
-
-
-  // useEffect(() => {
-  //   const docRef = db.collection("priceConfig").doc("config");
-
-  //   docRef
-  //     .get()
-  //     .then((doc) => {
-  //       if (doc.exists) {
-  //         setPriceConfig(doc.data());
-  //       } else {
-  //         console.log("No price config set yet!");
-  //       }
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, []);
 
   const saveInsuranceConfig = (config: Config) => {
     db.collection("insuranceConfig").doc("config").set(config);
@@ -124,14 +108,7 @@ const Settings: React.FC = () => {
                   config={insuranceConfig}
                   formatDownloadLink={require("../../assets/docs/insuranceConfigFormat.csv")}
                 />
-                {/* <ConfigTable
-                  onSave={saveInsuranceConfig}
-                  title="Price Details"
-                  headers={["price", "roadTax", "idv"]}
-                  config={{}}
-                  formatDownloadLink={require("../../assets/docs/insuranceConfigFormat.csv")}
-                /> */}
-                 <ConfigTable
+                <ConfigTable
                   onSave={savePriceConfig}
                   title="Price Details"
                   headers={["price", "roadTaxWithRc", "insuranceDeclaredValue"]}
