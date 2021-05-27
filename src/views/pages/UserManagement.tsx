@@ -65,8 +65,7 @@ interface UserInfo {
   uid: string;
 }
 
-
-const UserManagement:React.FC=()=> {
+const UserManagement: React.FC = () => {
   const [name, setName] = useState<string>();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
@@ -77,7 +76,7 @@ const UserManagement:React.FC=()=> {
   const [userData, setUserData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [Deleteloading, setDeleteLoading] = useState<boolean>(false);
-console.log(userData)
+  console.log(userData);
   useEffect(() => {
     if (signUpSuccess) {
       setTimeout(() => setSignUpError(undefined), 1500);
@@ -90,80 +89,78 @@ console.log(userData)
     }
   }, [delteSuccess]);
 
-console.log(signUpSuccess)
+  console.log(signUpSuccess);
   //get user data
-const currentUser = firebase.auth().currentUser;
-const pageSize=10;
-const getUserData=(uid: string)=>{
-  useEffect(()=>{
-  firebase.firestore().collection('users')
-  .where('createdBy', '==', uid)
-  .where('role', 'in', ['salesman', 'office'])
-  .onSnapshot
-  (function(querySnapshot){
- setUserData(
-   querySnapshot.docs.map((doc)=>({
-     id:doc.id,
-     name:doc.data().name,
-     email:doc.data().email,
-     role:doc.data().role,
-   }))
-   );
-  });
-},[])
-}
+  const currentUser = firebase.auth().currentUser;
+  const pageSize = 10;
+  const getUserData = (uid: string) => {
+    useEffect(() => {
+      firebase
+        .firestore()
+        .collection("users")
+        .where("createdBy", "==", uid)
+        .where("role", "in", ["salesman", "office"])
+        .onSnapshot(function (querySnapshot) {
+          setUserData(
+            querySnapshot.docs.map((doc) => ({
+              id: doc.id,
+              name: doc.data().name,
+              email: doc.data().email,
+              role: doc.data().role,
+            }))
+          );
+        });
+    }, []);
+  };
 
-if (currentUser && currentUser.uid) {
-  getUserData(currentUser.uid);
-}
-// const pageCount = userData? Math.ceil(userData.length/pageSize):0;
-//  if(pageCount ===1) return null;
-//  const pages= _.range(1, pageCount+1);
-
-// const handleClick=(id: any)=>{
-//   firebase.firestore().collection('users').doc(id).delete();
-// }
-
-const deleteUser = (uid: any ) => {
-  debugger
-  setDeleteLoading(true);
-  if (uid) {
-    const user = {
-      uid,
-    };
-
-    if (window && window.api) {
-      window.api.receive("fromMain", (data: any) => {
-        switch (data.type) {
-          case "DELETE_USER_SUCCESS": {
-           
-            
-            setDeleteLoading(false);
-            setdelteSuccess({
-              code: "FIREBASE_ERROR",
-              message:"User Delete Successfully.",
-              
-            });
-            break;
-          }
-          case "DELETE_USER_FAILURE": {
-            debugger
-            setDeleteLoading(false);
-            setdelteSuccess({
-              code: "FIREBASE_ERROR",
-              message: data.err.message!,
-            });
-            break;
-          }
-        }
-      });
-      window.api.send("toMain", {
-        type: "DELETE_USER",
-        data: user,
-      });
-    }
+  if (currentUser && currentUser.uid) {
+    getUserData(currentUser.uid);
   }
-};
+  // const pageCount = userData? Math.ceil(userData.length/pageSize):0;
+  //  if(pageCount ===1) return null;
+  //  const pages= _.range(1, pageCount+1);
+
+  // const handleClick=(id: any)=>{
+  //   firebase.firestore().collection('users').doc(id).delete();
+  // }
+
+  const deleteUser = (uid: any) => {
+    debugger;
+    setDeleteLoading(true);
+    if (uid) {
+      const user = {
+        uid,
+      };
+
+      if (window && window.api) {
+        window.api.receive("fromMain", (data: any) => {
+          switch (data.type) {
+            case "DELETE_USER_SUCCESS": {
+              setDeleteLoading(false);
+              setdelteSuccess({
+                code: "FIREBASE_ERROR",
+                message: "User Delete Successfully.",
+              });
+              break;
+            }
+            case "DELETE_USER_FAILURE": {
+              debugger;
+              setDeleteLoading(false);
+              setdelteSuccess({
+                code: "FIREBASE_ERROR",
+                message: data.err.message!,
+              });
+              break;
+            }
+          }
+        });
+        window.api.send("toMain", {
+          type: "DELETE_USER",
+          data: user,
+        });
+      }
+    }
+  };
 
   const userCreate = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
@@ -185,7 +182,6 @@ const deleteUser = (uid: any ) => {
               setSignUpSuccess({
                 code: "FIREBASE_ERROR",
                 message: data.resp.data.result,
-                
               });
               setPassword("");
               setName("");
@@ -194,7 +190,7 @@ const deleteUser = (uid: any ) => {
               break;
             }
             case "CREATE_USER_FAILURE": {
-              debugger
+              debugger;
               setLoading(false);
               setSignUpError({
                 code: "FIREBASE_ERROR",
@@ -212,193 +208,189 @@ const deleteUser = (uid: any ) => {
     }
   };
 
- 
-
-
-    return (
-      <>
-        <Header />
-        {/* Page content */}
-        <Container className="mt--7" fluid>
-          <Row>
-            <Col className="order-xl-1" xl="12">
-              <Card className="bg-secondary shadow">
-                <CardHeader className="bg-white border-0">
-                  <Row className="align-items-center">
+  return (
+    <>
+      <Header />
+      {/* Page content */}
+      <Container className="mt--7" fluid>
+        <Row>
+          <Col className="order-xl-1" xl="12">
+            <Card className="bg-secondary shadow">
+              <CardHeader className="bg-white border-0">
+                <Row className="align-items-center">
+                  <Col xs="8">
+                    <h3 className="mb-0">User Management</h3>
+                    {signUpError && (
+                      <small className="text-danger">
+                        {signUpError.message}
+                      </small>
+                    )}
+                  </Col>
+                </Row>
+              </CardHeader>
+              <CardBody>
+                <Form role="form" onSubmit={userCreate}>
+                  <Row>
                     <Col xs="8">
-                      <h3 className="mb-0">User Management</h3>
-                      {signUpError && (
-                   <small className="text-danger">{signUpError.message}</small>
-                   )}
+                      <h6 className="heading-small text-muted mb-4">
+                        Create Users
+                      </h6>
+                    </Col>
+
+                    <Col className="text-right" xs="4">
+                      <Button
+                        className="small-button-width"
+                        color={"danger"}
+                        onClick={() => {
+                          setPassword("");
+                          setName("");
+                          setEmail("");
+                          setRole("");
+                        }}
+                        disabled={false}
+                        size="sm"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        className="small-button-width"
+                        color={"success"}
+                        type="submit"
+                        size="sm"
+                        disabled={false}
+                      >
+                        {loading ? <Loading /> : "Create"}
+                      </Button>
                     </Col>
                   </Row>
-                </CardHeader>
-                <CardBody>
-                  <Form role="form" onSubmit={userCreate}>
+                  <div className="pl-lg-4">
                     <Row>
-                      <Col xs="8">
-                        <h6 className="heading-small text-muted mb-4">
-                          Create Users
-                        </h6>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-name"
+                          >
+                            Name
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            id="input-name"
+                            placeholder="Jane Doe"
+                            type="text"
+                            required
+                            value={name}
+                            onChange={(ev) => setName(ev.target.value!)}
+                          />
+                        </FormGroup>
                       </Col>
-           
-                      <Col className="text-right" xs="4">
-                      <Button
-                          className="small-button-width"
-                          color={"danger"}
-                          onClick={() => {
-                            setPassword("");
-                            setName("");
-                            setEmail("");
-                            setRole("");
-                          }}
-                          disabled={false}
-                          size="sm"
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          className="small-button-width"
-                          color={"success"}
-                          type="submit"
-                          size="sm"
-                          disabled={false}
-                        >
-                          {loading ? <Loading /> : "Create"}
-                         
-                        </Button>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-email"
+                          >
+                            Email address
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            id="input-email"
+                            placeholder="janedoe@example.com"
+                            type="email"
+                            title="Email should be in the format abc@xyz.def"
+                            required
+                            value={email}
+                            onChange={(ev) => setEmail(ev.target.value!)}
+                            pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$"
+                          />
+                        </FormGroup>
                       </Col>
                     </Row>
-                    <div className="pl-lg-4">
-                      <Row>
-                        <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-name"
-                            >
-                              Name
-                            </label>
-                            <Input
-                              className="form-control-alternative"
-                              id="input-name"
-                              placeholder="Jane Doe"
-                              type="text"
-                              required
-                              value={name}
-                              onChange={(ev) => setName(ev.target.value!)}
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-email"
-                            >
-                              Email address
-                            </label>
-                            <Input
-                              className="form-control-alternative"
-                              id="input-email"
-                              placeholder="janedoe@example.com"
-                              type="email"
-                              title="Email should be in the format abc@xyz.def"
-                              required
-                              value={email}
-                              onChange={(ev) => setEmail(ev.target.value!)}
-                              pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$"
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-password"
-                            >
-                              Password
-                            </label>
-                            <Input
-                              className="form-control-alternative"
-                              id="input-password"
-                              placeholder="*******"
-                              type="password"
-                              required
-                              value={password}
-                              onChange={(ev) => setPassword(ev.target.value!)}
-                              pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$"
-                              title="Password should contain uppercase letter, lowercase letter, number, and special chatacter"
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-role"
-                            >
-                              Role
-                            </label>
-                            <Input
-                              type="select"
-                              name="select-role"
-                              id="input-role"
-                              required
-                              placeholder="Role"
-                              value={role}
-                              onChange={(ev) => setRole(ev.target.value!)}
-                            >
-                              <option>Select</option>
-                              <option value="salesman">Salesman</option>
-                              <option value="office">Office staff</option>
-                            </Input>
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                    </div>
-                  </Form>
-                  <h6 className="heading-small text-muted mb-4">All users</h6>
-                  {delteSuccess && (
-                   <small className="text-danger">{delteSuccess.message}</small>
-                   )}
-                  <Table className="align-items-center table-flush" responsive>
-                    <thead className="thead-light">
-                      <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Role</th>
-                        <th scope="col"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {userData.map((curElem:any)=>{
-                      return(
-                        <tr key={curElem.id}>
-                        <th scope="row">{curElem.name}</th>
-                        <td>{curElem.email}</td>
-                        <td>{curElem.role}</td>
-                        <td className="text-right">
-                          <Button
-                            className="small-button-width"
-                            color="danger"
-                            size="sm"
-                            onClick={() => deleteUser(curElem.id)}
+                    <Row>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-password"
                           >
-                               {/* {Deleteloading ? <Loading /> : "Delete"} */}
-                               Delete
-                          </Button>
-                        </td>
-                      </tr>
-                      )
-
+                            Password
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            id="input-password"
+                            placeholder="*******"
+                            type="password"
+                            required
+                            value={password}
+                            onChange={(ev) => setPassword(ev.target.value!)}
+                            pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$"
+                            title="Password should contain uppercase letter, lowercase letter, number, and special chatacter"
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-role"
+                          >
+                            Role
+                          </label>
+                          <Input
+                            type="select"
+                            name="select-role"
+                            id="input-role"
+                            required
+                            placeholder="Role"
+                            value={role}
+                            onChange={(ev) => setRole(ev.target.value!)}
+                          >
+                            <option>Select</option>
+                            <option value="salesman">Salesman</option>
+                            <option value="office">Office staff</option>
+                          </Input>
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                  </div>
+                </Form>
+                <h6 className="heading-small text-muted mb-4">All users</h6>
+                {delteSuccess && (
+                  <small className="text-danger">{delteSuccess.message}</small>
+                )}
+                <Table className="align-items-center table-flush" responsive>
+                  <thead className="thead-light">
+                    <tr>
+                      <th scope="col">Name</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Role</th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {userData.map((curElem: any) => {
+                      return (
+                        <tr key={curElem.id}>
+                          <th scope="row">{curElem.name}</th>
+                          <td>{curElem.email}</td>
+                          <td>{curElem.role}</td>
+                          <td className="text-right">
+                            <Button
+                              className="small-button-width"
+                              color="danger"
+                              size="sm"
+                              onClick={() => deleteUser(curElem.id)}
+                            >
+                              {/* {Deleteloading ? <Loading /> : "Delete"} */}
+                              Delete
+                            </Button>
+                          </td>
+                        </tr>
+                      );
                     })}
-                      
-                    </tbody>
-                  </Table>
-                  {/* <Nav className="d-flex justify-content-center">
+                  </tbody>
+                </Table>
+                {/* <Nav className="d-flex justify-content-center">
                     <ul className="pagination">
                       {
                         pages.map((page)=>{
@@ -408,18 +400,18 @@ const deleteUser = (uid: any ) => {
                       
                     </ul>
                   </Nav> */}
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-        {signUpSuccess && (
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+      {signUpSuccess && (
         <div className="position-fixed bottom-0 right-0 w-100 d-flex justify-content-center">
           <Alert color="primary">{signUpSuccess.message}</Alert>
         </div>
       )}
-      </>
-    );
-  }
+    </>
+  );
+};
 
 export default withFadeIn(UserManagement);
