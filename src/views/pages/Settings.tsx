@@ -63,18 +63,18 @@ const Settings: React.FC = () => {
         }
       })
       .catch((err) => console.log(err));
-      const docRef1 = db.collection("priceConfig").doc("config");
+    const docRef1 = db.collection("priceConfig").doc("config");
 
-      docRef1
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            setPriceConfig(doc.data());
-          } else {
-            console.log("No price config set yet!");
-          }
-        })
-        .catch((err) => console.log(err));
+    docRef1
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          setPriceConfig(doc.data());
+        } else {
+          console.log("No price config set yet!");
+        }
+      })
+      .catch((err) => console.log(err));
   }, []);
 
 
@@ -131,7 +131,7 @@ const Settings: React.FC = () => {
                   config={{}}
                   formatDownloadLink={require("../../assets/docs/insuranceConfigFormat.csv")}
                 /> */}
-                 <ConfigTable
+                <ConfigTable
                   onSave={savePriceConfig}
                   title="Price Details"
                   headers={["price", "roadTaxWithRc", "insuranceDeclaredValue"]}

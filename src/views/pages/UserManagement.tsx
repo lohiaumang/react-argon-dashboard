@@ -98,7 +98,7 @@ const getUserData=(uid: string)=>{
   useEffect(()=>{
   firebase.firestore().collection('users')
   .where('createdBy', '==', uid)
-  .where('role', 'in', ['salesman', 'office'])
+  .where('role', 'in', ['salesman', 'officeStaff'])
   .onSnapshot
   (function(querySnapshot){
  setUserData(
@@ -353,7 +353,7 @@ const deleteUser = (uid: any ) => {
                             >
                               <option>Select</option>
                               <option value="salesman">Salesman</option>
-                              <option value="office">Office staff</option>
+                              <option value="officeStaff">Office staff</option>
                             </Input>
                           </FormGroup>
                         </Col>
