@@ -16,7 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
 // reactstrap components
 import {
@@ -34,13 +34,15 @@ import {
   InputGroupAddon,
   InputGroupText,
   Label,
+  Alert,
 } from "reactstrap";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import "firebase/auth";
-import "firebase/database";
+import "firebase/firestore";
 // core components
 import UserHeader from "../../components/Headers/UserHeader";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
+import SmallLoading from "../../components/Share/SmallLoading";
 
 declare global {
   interface Window {
@@ -61,7 +63,6 @@ interface UserInfo {
 
 const Profile: React.FC = () => {
   const currentUser = firebase.auth().currentUser;
-  const formRef = useRef(null);
   const [disabled, setDisabled] = useState<boolean>(true);
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: "",
@@ -73,58 +74,148 @@ const Profile: React.FC = () => {
     temporaryCertificate: "",
     uid: "",
   });
+  const [password, setPassword] = useState<string>();
+  const [confirmPassword, setConfirmPassword] = useState<string>();
+  const [passwordUpdateError, setPasswordUpdateError] =
+    useState<{
+      code: string;
+      message: string;
+    }>();
+  const [userInfoUpdateError, setUserInfoUpdateError] =
+    useState<{
+      code: string;
+      message: string;
+    }>();
+  const [success, setSuccess] = useState<{ message: string }>();
+  const [userInfoLoading, setUserInfoLoading] = useState<boolean>(false);
+  const [passwordLoading, setPasswordLoading] = useState<boolean>(false);
 
-  if (window && window.api) {
-    window.api.receive("fromMain", (data: any) => {
-      switch (data.type) {
-        case "GET_DEALER_SUCCESS": {
-          console.log("User fetch succeeded");
-          setUserInfo(data.userData);
-          break;
-        }
-        case "GET_DEALER_FAILURE": {
-          console.log("User fetch failed");
-          firebase
-            .firestore()
-            .collection("users")
-            .doc(firebase.auth().currentUser!.uid!)
-            .onSnapshot((doc) => {
-              if (doc.exists) {
-                const userInfo = doc.data();
+  useEffect(() => {
+    if (password !== confirmPassword) {
+      setPasswordUpdateError({
+        code: "PASSWORD_MISMATCH",
+        message: "Please make sure your passwords match",
+      });
+    } else {
+      setPasswordUpdateError(undefined);
+    }
+  }, [confirmPassword]);
 
-                if (userInfo) {
-                  // SET_USER
-                  const data = {
-                    name: userInfo.name,
-                    phoneNumber: userInfo.phoneNumber,
-                    email: userInfo.email,
-                    gst: userInfo.gst,
-                    pan: userInfo.pan,
-                    address: userInfo.address,
-                    temporaryCertificate: userInfo.temporaryCertificate,
-                    uid: userInfo.uid,
-                  };
-                  window.api.send("toMain", {
-                    type: "SET_DEALER",
-                    data: data,
-                  });
-                  setUserInfo(data);
+  useEffect(() => {
+    if (success) {
+      setTimeout(() => setSuccess(undefined), 1500);
+    }
+  }, [success]);
+
+  const getSetUserData = (uid: string) => {
+    if (uid && window && window.api) {
+      window.api.receive("fromMain", (data: any) => {
+        switch (data.type) {
+          case "GET_DEALER_SUCCESS": {
+            setUserInfo(data.userData);
+            break;
+          }
+          case "GET_DEALER_FAILURE": {
+            firebase
+              .firestore()
+              .collection("users")
+              .doc(uid)
+              .onSnapshot((doc) => {
+                if (doc.exists) {
+                  const info = doc.data();
+                  if (info) {
+                    // SET_USER
+                    const data = {
+                      name: info.name,
+                      phoneNumber: info.phoneNumber.slice(3),
+                      email: info.email,
+                      gst: info.gst,
+                      pan: info.pan,
+                      address: info.address,
+                      temporaryCertificate: info.temporaryCertificate,
+                      uid: info.uid,
+                    };
+                    window.api.send("toMain", {
+                      type: "SET_DEALER",
+                      data: data,
+                    });
+
+                    setUserInfo(data);
+                  }
                 }
-              }
-            });
-          break;
+              });
+            break;
+          }
         }
-      }
-    });
-    if (!userInfo.email && currentUser && currentUser.email) {
+      });
       window.api.send("toMain", {
         type: "GET_DEALER",
         data: {
-          uid: currentUser.uid,
+          uid,
         },
       });
     }
+  };
+
+  if (!userInfo.uid && currentUser && currentUser.uid) {
+    getSetUserData(currentUser.uid);
   }
+
+  const changePassword = (ev: React.SyntheticEvent) => {
+    setPasswordLoading(true);
+    ev.preventDefault();
+    if (password !== confirmPassword) {
+      return;
+    }
+
+    if (currentUser && password) {
+      currentUser
+        .updatePassword(password)
+        .then(() => {
+          setPassword("");
+          setConfirmPassword("");
+          setSuccess({
+            message: "Password updated successfully",
+          });
+          setPassword("");
+          setConfirmPassword("");
+          setPasswordLoading(false);
+        })
+        .catch((err) => {
+          setPasswordUpdateError(err);
+          setPasswordLoading(false);
+        });
+    }
+  };
+
+  const saveProfileChanges = (ev: React.SyntheticEvent) => {
+    ev.preventDefault();
+    setUserInfoLoading(true);
+    if (currentUser) {
+      const userDocRef = firebase
+        .firestore()
+        .collection("users")
+        .doc(currentUser.uid);
+
+      userDocRef
+        .update(userInfo)
+        .then(function () {
+          window.api.send("toMain", {
+            type: "SET_DEALER",
+            data: userInfo,
+          });
+          setSuccess({
+            message: "User information updated successfully",
+          });
+          setDisabled(true);
+          setUserInfoLoading(false);
+        })
+        .catch(function (error) {
+          setUserInfoUpdateError(error);
+          setUserInfoLoading(false);
+        });
+    }
+  };
 
   return (
     <>
@@ -139,47 +230,53 @@ const Profile: React.FC = () => {
                   <Col xs="8">
                     <h3 className="mb-0">My account</h3>
                   </Col>
-                  <Col className="text-right" xs="4">
-                    {disabled ? (
-                      <Button
-                        color={"primary"}
-                        onClick={() => setDisabled(false)}
-                        size="sm"
-                      >
-                        Edit
-                      </Button>
-                    ) : (
-                      <>
-                        <Button
-                          color={"danger"}
-                          onClick={(e) => {
-                            if (formRef) {
-                              console.log(formRef.current);
-                            }
-                            setDisabled(true);
-                          }}
-                          size="sm"
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          color={"success"}
-                          onClick={(e) => e.preventDefault()}
-                          size="sm"
-                        >
-                          Save
-                        </Button>
-                      </>
-                    )}
-                  </Col>
                 </Row>
               </CardHeader>
               {/*THEIRS*/}
               <CardBody>
-                <Form ref={formRef}>
-                  <h6 className="heading-small text-muted mb-4">
-                    User information
-                  </h6>
+                <Form onSubmit={saveProfileChanges}>
+                  <Row>
+                    <Col xs="8">
+                      <h6 className="heading-small text-muted mb-4">
+                        User information
+                      </h6>
+                    </Col>
+                    <Col className="text-right" xs="4">
+                      {disabled ? (
+                        <Button
+                          className="small-button-width"
+                          color={"primary"}
+                          onClick={() => setDisabled(false)}
+                          size="sm"
+                        >
+                          Edit
+                        </Button>
+                      ) : (
+                        <>
+                          <Button
+                            className="small-button-width"
+                            color={"danger"}
+                            onClick={(e) => {
+                              const uid = currentUser ? currentUser.uid : "";
+                              getSetUserData(uid);
+                              setDisabled(true);
+                            }}
+                            size="sm"
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            className="small-button-width"
+                            color={"success"}
+                            type="submit"
+                            size="sm"
+                          >
+                            {userInfoLoading ? <SmallLoading /> : "Save"}
+                          </Button>
+                        </>
+                      )}
+                    </Col>
+                  </Row>
                   <div className="pl-lg-4">
                     <Row>
                       <Col lg="12">
@@ -192,6 +289,7 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
+                            id="input-dealership-name"
                             value={userInfo.name}
                             onChange={(ev) =>
                               setUserInfo({
@@ -199,10 +297,9 @@ const Profile: React.FC = () => {
                                 name: ev.target.value!,
                               })
                             }
-                            id="input-dealership-name"
                             placeholder="Dealership name"
                             type="text"
-                            disabled={disabled}
+                            disabled={disabled || userInfoLoading}
                           />
                         </FormGroup>
                       </Col>
@@ -218,11 +315,19 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            value={userInfo.email}
                             id="input-email"
+                            value={userInfo.email}
+                            onChange={(ev) =>
+                              setUserInfo({
+                                ...userInfo,
+                                email: ev.target.value!,
+                              })
+                            }
                             placeholder="abc@xyz.def"
                             type="email"
-                            disabled={disabled}
+                            disabled={disabled || userInfoLoading}
+                            pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$"
+                            title="Email should be in the format abc@xyz.def"
                           />
                         </FormGroup>
                       </Col>
@@ -236,11 +341,19 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            value={userInfo.phoneNumber}
                             id="input-phone-number"
+                            value={userInfo.phoneNumber}
+                            onChange={(ev) =>
+                              setUserInfo({
+                                ...userInfo,
+                                phoneNumber: ev.target.value!,
+                              })
+                            }
                             placeholder="9999999999"
                             type="tel"
-                            disabled={disabled}
+                            disabled={disabled || userInfoLoading}
+                            pattern="^\d{10}$"
+                            title="Phone number should exactly contain 10 digits"
                           />
                         </FormGroup>
                       </Col>
@@ -256,11 +369,19 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            value={userInfo.gst}
                             id="input-gst"
+                            value={userInfo.gst}
+                            onChange={(ev) =>
+                              setUserInfo({
+                                ...userInfo,
+                                gst: ev.target.value!,
+                              })
+                            }
                             placeholder="12AAAAA0000A1Z5"
                             type="text"
-                            disabled={disabled}
+                            disabled={disabled || userInfoLoading}
+                            pattern="^[0-9]{2}[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9A-Za-z]{1}[Zz1-9A-Ja-j]{1}[0-9a-zA-Z]{1}$"
+                            title="GST number should be valid and 15 digits long"
                           />
                         </FormGroup>
                       </Col>
@@ -274,11 +395,19 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            value={userInfo.pan}
                             id="input-pan-number"
+                            value={userInfo.pan}
+                            onChange={(ev) =>
+                              setUserInfo({
+                                ...userInfo,
+                                pan: ev.target.value!,
+                              })
+                            }
                             placeholder="AAAAA0000A"
                             type="text"
-                            disabled={disabled}
+                            disabled={disabled || userInfoLoading}
+                            pattern="^[A-Z]{5}[0-9]{4}[A-Z]{1}$"
+                            title="PAN number should be valid and 10 digits long"
                           />
                         </FormGroup>
                       </Col>
@@ -294,11 +423,17 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            value={userInfo.address}
                             id="input-address"
+                            value={userInfo.address}
+                            onChange={(ev) =>
+                              setUserInfo({
+                                ...userInfo,
+                                address: ev.target.value!,
+                              })
+                            }
                             placeholder="House No. 2, Street No. 44, Example lane, City, State - Zipcode"
                             type="text"
-                            disabled={disabled}
+                            disabled={disabled || userInfoLoading}
                           />
                         </FormGroup>
                       </Col>
@@ -314,21 +449,65 @@ const Profile: React.FC = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            value={userInfo.temporaryCertificate}
                             id="input-temporary-registration"
+                            value={userInfo.temporaryCertificate}
+                            onChange={(ev) =>
+                              setUserInfo({
+                                ...userInfo,
+                                temporaryCertificate: ev.target.value!,
+                              })
+                            }
                             placeholder="AB01CD235 UPTO 11/11/2011 XYZ AB 123456"
                             type="text"
-                            disabled={disabled}
+                            disabled={disabled || userInfoLoading}
                           />
                         </FormGroup>
                       </Col>
                     </Row>
+                    {userInfoUpdateError && (
+                      <small className="text-danger">
+                        {userInfoUpdateError.message}
+                      </small>
+                    )}
                   </div>
                   <hr className="my-4" />
-                  {/* Address */}
-                  <h6 className="heading-small text-muted mb-4">
-                    Change Password
-                  </h6>
+                </Form>
+                <Form onSubmit={changePassword}>
+                  {/* Change password */}
+                  <Row>
+                    <Col xs="8">
+                      <h6 className="heading-small text-muted mb-4">
+                        Change Password
+                      </h6>
+                    </Col>
+                    <Col className="text-right" xs="4">
+                      <Button
+                        className="small-button-width"
+                        color={"danger"}
+                        onClick={() => {
+                          setPassword("");
+                          setConfirmPassword("");
+                        }}
+                        disabled={
+                          !(password || confirmPassword) || userInfoLoading
+                        }
+                        size="sm"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        className="small-button-width"
+                        color={"success"}
+                        type="submit"
+                        size="sm"
+                        disabled={
+                          !(password || confirmPassword) || userInfoLoading
+                        }
+                      >
+                        {passwordLoading ? <SmallLoading /> : "Save"}
+                      </Button>
+                    </Col>
+                  </Row>
                   <div className="pl-lg-4">
                     <Row>
                       <Col md="6">
@@ -344,7 +523,11 @@ const Profile: React.FC = () => {
                             id="input-password"
                             placeholder="*******"
                             type="password"
-                            disabled={disabled}
+                            value={password}
+                            onChange={(ev) => setPassword(ev.target.value!)}
+                            pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$"
+                            title="Password should contain uppercase letter, lowercase letter, number, and special chatacter"
+                            disabled={passwordLoading}
                           />
                         </FormGroup>
                       </Col>
@@ -361,11 +544,22 @@ const Profile: React.FC = () => {
                             id="input-confirm-password"
                             placeholder="*******"
                             type="password"
-                            disabled={disabled}
+                            value={confirmPassword}
+                            onChange={(ev) =>
+                              setConfirmPassword(ev.target.value!)
+                            }
+                            pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$"
+                            title="Password should contain uppercase letter, lowercase letter, number, and special chatacter"
+                            disabled={passwordLoading}
                           />
                         </FormGroup>
                       </Col>
                     </Row>
+                    {passwordUpdateError && (
+                      <small className="text-danger">
+                        {passwordUpdateError.message}
+                      </small>
+                    )}
                   </div>
                 </Form>
               </CardBody>
@@ -373,6 +567,11 @@ const Profile: React.FC = () => {
           </Col>
         </Row>
       </Container>
+      {success && (
+        <div className="position-fixed bottom-0 right-0 w-100 d-flex justify-content-center">
+          <Alert color="primary">{success.message}</Alert>
+        </div>
+      )}
     </>
   );
 };

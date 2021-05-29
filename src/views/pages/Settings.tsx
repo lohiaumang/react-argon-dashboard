@@ -31,79 +31,58 @@ import {
   Row,
   Col,
   Table,
-  Alert,
+  Collapse,
+  InputGroup,
+  InputGroupAddon,
 } from "reactstrap";
+import firebase from "firebase/app";
+import "firebase/firestore";
 // core components
 import Header from "../../components/Headers/Header";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
-import Loading from "../../components/Share/Loading";
-export interface SignUpError {
-  code: string;
-  message: string;
-}
-
-declare global {
-  interface Window {
-    api: any;
-  }
-}
+import ConfigTable, { Config } from "../../components/Tables/ConfigTable";
 
 const Settings: React.FC = () => {
-  const [name, setName] = useState<string>("Rahul");
-  const [userEmail, setEmail] = useState<string>("rahul1re234@auto.com");
-  const [password, setPassword] = useState<string>("Qwerty@123");
-  const [role, setRole] = useState<string>("Saler");
-  // Component specific
-  const [signUpError, setSignUpError] = useState<SignUpError>();
-  const [signUpSuccess, setSignUpSuccess] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [disabled, setDisabled] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [newKey, setNewKey] = useState<string>();
+  const [insuranceConfig, setInsuranceConfig] = useState<any>({});
+  const [priceConfig, setPriceConfig] = useState<any>({});
+  const db = firebase.firestore();
 
   useEffect(() => {
-    if (signUpError) {
-      setSignUpError(undefined);
-    }
-  }, [signUpError]);
+    const insuranceConfigRef = db.collection("insuranceConfig").doc("config");
 
-  useEffect(() => {
-    if (signUpSuccess) {
-      setSignUpError(undefined);
-    }
-  }, [signUpSuccess]);
-
-  const createUSER = (ev: React.FormEvent<HTMLFormElement>) => {
-    ev.preventDefault();
-    debugger;
-    setLoading(true);
-
-    const user = {
-      name,
-      userEmail,
-      password,
-      role,
-    };
-
-    if (window && window.api) {
-      window.api.receive("fromMain", (data: any) => {
-        switch (data.type) {
-          case "CREATE_USER_SUCCESS": {
-            setLoading(false);
-            break;
-          }
-          case "CREATE_USER_FAILURE": {
-            setLoading(false);
-            setSignUpError({
-              code: "FIREBASE_ERROR",
-              message: data.err.message!,
-            });
-            break;
-          }
+    insuranceConfigRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          setInsuranceConfig(doc.data());
+        } else {
+          setInsuranceConfig(null);
         }
-      });
-      window.api.send("toMain", {
-        type: "CREATE_USER",
-        data: user,
-      });
-    }
+      })
+      .catch((err) => console.log(err));
+
+    const priceConfigRef = db.collection("priceConfig").doc("config");
+
+    priceConfigRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          setPriceConfig(doc.data());
+        } else {
+          console.log("No price config set yet!");
+        }
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  const saveInsuranceConfig = (config: Config) => {
+    db.collection("insuranceConfig").doc("config").set(config);
+  };
+  const savePriceConfig = (config: Config) => {
+    db.collection("priceConfig").doc("config").set(config);
   };
 
   return (
@@ -117,157 +96,30 @@ const Settings: React.FC = () => {
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
                   <Col xs="8">
-                    <h3 className="mb-0">Admin Settings</h3>
+                    <h3 className="mb-0">App Settings</h3>
                   </Col>
                 </Row>
               </CardHeader>
               <CardBody>
-                <Form role="form" onSubmit={createUSER}>
-                  <h6 className="heading-small text-muted mb-4">
-                    Create users
-                  </h6>
-                  <div className="pl-lg-4">
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-name"
-                          >
-                            Name
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-name"
-                            placeholder="Jane Doe"
-                            type="text"
-                            value={name}
-                            onChange={(ev) => setName(ev.target.value!)}
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-email"
-                          >
-                            Email address
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-email"
-                            placeholder="bharat@example.com"
-                            type="email"
-                            required
-                            value={userEmail}
-                            onChange={(ev) => setEmail(ev.target.value!)}
-                            pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$"
-                            title="Email should be in the format abc@xyz.def"
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-password"
-                          >
-                            Password
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-password"
-                            placeholder="*******"
-                            type="password"
-                            required
-                            value={password}
-                            onChange={(ev) => setPassword(ev.target.value!)}
-                            pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$"
-                            title="Password should contain uppercase letter, lowercase letter, number, and special chatacter"
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-role"
-                          >
-                            Role
-                          </label>
-                          <Input
-                            type="select"
-                            name="select-role"
-                            id="input-role"
-                            required
-                            value={role}
-                            onChange={(ev) => setRole(ev.target.value!)}
-                            pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$"
-                            title="Password should contain uppercase letter, lowercase letter, number, and special chatacter"
-                          >
-                            <option>Select</option>
-                            <option value="salesman">Salesman</option>
-                            <option value="office">Office staff</option>
-                          </Input>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col>
-                        {signUpError && (
-                          <small className="text-danger">
-                            {signUpError.message}
-                          </small>
-                        )}
-                        <div className="float-right">
-                          <Button color="danger">Cancel</Button>
-                          <Button color="primary" type="submit">
-                            {loading ? <Loading /> : "Create"}
-                          </Button>
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
-                </Form>
-                <h6 className="heading-small text-muted mb-4">All users</h6>
-                <Table className="align-items-center table-flush" responsive>
-                  <thead className="thead-light">
-                    <tr>
-                      <th scope="col">Name</th>
-                      <th scope="col">Email</th>
-                      <th scope="col">Role</th>
-                      <th scope="col"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">Jane Doe</th>
-                      <td>janedoe@email.com</td>
-                      <td>Salesman</td>
-                      <td className="text-right">
-                        <Button color="danger" size="sm">
-                          {/* <i className="fa fa-times fa-lg" /> */}
-                          Delete
-                        </Button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
+                <ConfigTable
+                  onSave={saveInsuranceConfig}
+                  title="Insurance Details"
+                  headers={["hdfcModelName", "iciciModelName", "userRate"]}
+                  config={insuranceConfig}
+                  formatDownloadLink={require("../../assets/docs/insuranceConfigFormat.csv")}
+                />
+                <ConfigTable
+                  onSave={savePriceConfig}
+                  title="Price Details"
+                  headers={["price", "roadTaxWithRc", "insuranceDeclaredValue"]}
+                  config={priceConfig}
+                  formatDownloadLink={require("../../assets/docs/priceConfigFormat.csv")}
+                />
               </CardBody>
             </Card>
           </Col>
         </Row>
       </Container>
-      <Alert
-        className="position-fixed bottom-0 start-50 translate-middle-x"
-        color="primary"
-        isOpen={signUpSuccess}
-      >
-        User created successfully!
-      </Alert>
     </>
   );
 };

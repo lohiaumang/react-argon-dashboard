@@ -36,10 +36,12 @@ import {
   Row,
   Col,
 } from "reactstrap";
-
+import firebase from "firebase/app";
+import "firebase/firestore";
 
 import Header from "../components/Headers/Header";
 import { withFadeIn } from "../components/HOC/withFadeIn";
+import modelData from "../model-data";
 
 class Index extends React.Component<
   {},
