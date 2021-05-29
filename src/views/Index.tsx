@@ -62,11 +62,6 @@ class Index extends React.Component<
       activeNav: index,
       chartExample1Data: chartExample1Data === "data1" ? "data2" : "data1",
     });
-    const wow = () => {
-      console.log(this.state);
-    };
-    wow.bind(this);
-    setTimeout(() => wow(), 1000);
     // this.chartReference.update();
   };
 

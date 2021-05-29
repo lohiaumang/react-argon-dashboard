@@ -7,7 +7,6 @@ import Loading from "../components/Share/Loading";
 import AdminLayout from "./Admin";
 import AuthLayout from "./Auth";
 import { UserContext } from "../Context";
-import { userInfo } from "os";
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -26,34 +25,32 @@ const App: React.FC = () => {
             const doc = querySnapshot.docs ? querySnapshot.docs[0] : null;
             if (doc && doc.exists && doc.data()) {
               setCurrentUserDetails(doc.data());
+              setUser(User);
+              setLoading(false);
             }
           });
+      } else if (User === null) {
+        setUser(null);
+        setLoading(false);
       }
-
-      setUser(User);
-      setLoading(false);
     });
   }, []);
 
-  console.log(currentUserDetails);
   const getRoutes = () => {
-    return (
-      <UserContext.Provider value={user}>
-        {user ? (
-          <Switch>
-            <Route
-              path="/admin"
-              render={(props) => <AdminLayout {...props} />}
-            />
-            <Redirect from="/" to="/admin/index" />
-          </Switch>
-        ) : (
-          <Switch>
-            <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
-            <Redirect from="/" to="/auth/login" />
-          </Switch>
-        )}
+    return user ? (
+      <UserContext.Provider value={currentUserDetails}>
+        <Switch>
+          <Redirect exact from="/admin" to="/admin/index" />
+          <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
+          <Redirect from="/" to="/admin/index" />
+        </Switch>
       </UserContext.Provider>
+    ) : (
+      <Switch>
+        <Redirect exact from="/auth" to="/auth/login" />
+        <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
+        <Redirect from="/" to="/auth/login" />
+      </Switch>
     );
   };
 

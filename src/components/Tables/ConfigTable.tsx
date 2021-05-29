@@ -131,7 +131,6 @@ const ConfigTable: React.FC<TableProps> = (props) => {
 
         try {
           results.data.forEach((entry: any) => {
-            console.log("Entry: ", entry, "Headers: ", headers);
             if (Object.keys(entry).length !== headers.length + 1) {
               throw "Incorrect format";
             }
@@ -248,7 +247,6 @@ const ConfigTable: React.FC<TableProps> = (props) => {
                               disabled={disabled}
                               value={currConfig[key][header] || ""}
                               onChange={(ev) => {
-                                console.log("change");
                                 handleChange(key, header, ev.target.value!);
                               }}
                             />

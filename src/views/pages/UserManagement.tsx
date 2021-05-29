@@ -76,7 +76,6 @@ const UserManagement: React.FC = () => {
   const [userData, setUserData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [Deleteloading, setDeleteLoading] = useState<boolean>(false);
-  console.log(userData);
 
   useEffect(() => {
     if (signUpError) {
@@ -96,7 +95,6 @@ const UserManagement: React.FC = () => {
     }
   }, [deleteSuccess]);
 
-  console.log(signUpSuccess);
   //get user data
   const currentUser = firebase.auth().currentUser;
   // const pageSize = 10;
