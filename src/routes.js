@@ -25,7 +25,7 @@ import Index from "./views/Index";
 import DeliveryOrders from "./views/pages/DeliveryOrders";
 import { UserContext } from "./Context";
 
-const user = useContext(UserContext);
+// const user = useContext(UserContext);
 
 const routes = [
   {

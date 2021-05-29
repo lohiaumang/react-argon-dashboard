@@ -99,7 +99,7 @@ const UserManagement: React.FC = () => {
   console.log(signUpSuccess);
   //get user data
   const currentUser = firebase.auth().currentUser;
-  const pageSize = 10;
+  // const pageSize = 10;
   const getUserData = (uid: string) => {
     useEffect(() => {
       firebase
