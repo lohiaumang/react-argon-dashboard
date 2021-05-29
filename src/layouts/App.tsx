@@ -14,7 +14,7 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   // TODO: SAVE IN CONTEXT
   const [user, setUser] = useState<object | null>(null);
-  const [currentUserRole, setCurrentUserRole] = useState<string>();
+  const [currentUserRole, setCurrentUserRole] = useState<any>();
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((User) => {
@@ -41,7 +41,7 @@ const App: React.FC = () => {
   console.log(currentUserRole);
   const getRoutes = () => {
     return (
-      <UserContext.Provider value={user}>
+      <UserContext.Provider value={currentUserRole}>
         {user ? (
           <Switch>
             <Route
