@@ -13,7 +13,7 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   // TODO: SAVE IN CONTEXT
   const [user, setUser] = useState<object | null>(null);
-  const [currentUserRole, setCurrentUserRole] = useState<any>();
+  const [currentUserDetails, setCurrentUserDetails] = useState<any>();
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((User) => {
@@ -25,7 +25,7 @@ const App: React.FC = () => {
           .onSnapshot(function (querySnapshot) {
             const doc = querySnapshot.docs ? querySnapshot.docs[0] : null;
             if (doc && doc.exists && doc.data()) {
-              setCurrentUserRole(doc.data());
+              setCurrentUserDetails(doc.data());
             }
           });
       }
@@ -35,7 +35,7 @@ const App: React.FC = () => {
     });
   }, []);
 
-  console.log(currentUserRole);
+  console.log(currentUserDetails);
   const getRoutes = () => {
     return (
       <UserContext.Provider value={user}>
