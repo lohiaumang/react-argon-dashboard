@@ -10,6 +10,7 @@ import { UserContext } from "../Context";
 import { userInfo } from "os";
 
 const App: React.FC = () => {
+  const currentUser = firebase.auth().currentUser;
   const [loading, setLoading] = useState<boolean>(true);
   // TODO: SAVE IN CONTEXT
   const [user, setUser] = useState<object | null>(null);
@@ -36,6 +37,7 @@ const App: React.FC = () => {
   }, []);
 
   console.log(currentUserDetails);
+  
   const getRoutes = () => {
     return (
       <UserContext.Provider value={user}>
