@@ -163,18 +163,19 @@ const ConfigTable: React.FC<TableProps> = (props) => {
         ev.preventDefault();
 
         onSave(currConfig);
+        setBulkUploadError("");
         setFileInputKey(new Date().toString());
         setIsOpen(false);
       }}
     >
       <Row>
         <Col xs="8">
-          <h6 className="heading-small text-muted mb-4">{title}</h6>
+          <h6 className="heading-small text-muted my-2">{title}</h6>
         </Col>
         <Col className="text-right" xs="4">
           {!isOpen ? (
             <Button
-              className="small-button-width"
+              className="small-button-width my-2"
               color={"primary"}
               onClick={() => {
                 setIsOpen(true);
@@ -186,10 +187,11 @@ const ConfigTable: React.FC<TableProps> = (props) => {
           ) : (
             <>
               <Button
-                className="small-button-width"
+                className="small-button-width my-2"
                 color={"danger"}
                 onClick={(e) => {
                   setCurrConfig(config);
+                  setBulkUploadError("");
                   setFileInputKey(new Date().toString());
                   setIsOpen(false);
                 }}
@@ -198,12 +200,11 @@ const ConfigTable: React.FC<TableProps> = (props) => {
                 Cancel
               </Button>
               <Button
-                className="small-button-width"
+                className="small-button-width my-2"
                 color={"success"}
                 type="submit"
                 size="sm"
               >
-                {/* {userInfoLoading ? <SmallLoading /> : "Save"} */}
                 Save
               </Button>
             </>
@@ -232,6 +233,7 @@ const ConfigTable: React.FC<TableProps> = (props) => {
                         {camelCaseToReadable(header)}
                       </th>
                     ))}
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>

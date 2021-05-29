@@ -47,12 +47,13 @@ const Settings: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [newKey, setNewKey] = useState<string>();
   const [insuranceConfig, setInsuranceConfig] = useState<any>({});
+  const [priceConfig, setPriceConfig] = useState<any>({});
   const db = firebase.firestore();
 
   useEffect(() => {
-    const docRef = db.collection("insuranceConfig").doc("config");
+    const insuranceConfigRef = db.collection("insuranceConfig").doc("config");
 
-    docRef
+    insuranceConfigRef
       .get()
       .then((doc) => {
         if (doc.exists) {
@@ -62,10 +63,26 @@ const Settings: React.FC = () => {
         }
       })
       .catch((err) => console.log(err));
+
+    const priceConfigRef = db.collection("priceConfig").doc("config");
+
+    priceConfigRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          setPriceConfig(doc.data());
+        } else {
+          console.log("No price config set yet!");
+        }
+      })
+      .catch((err) => console.log(err));
   }, []);
 
   const saveInsuranceConfig = (config: Config) => {
     db.collection("insuranceConfig").doc("config").set(config);
+  };
+  const savePriceConfig = (config: Config) => {
+    db.collection("priceConfig").doc("config").set(config);
   };
 
   return (
@@ -91,13 +108,13 @@ const Settings: React.FC = () => {
                   config={insuranceConfig}
                   formatDownloadLink={require("../../assets/docs/insuranceConfigFormat.csv")}
                 />
-                {/* <ConfigTable
-                  onSave={saveInsuranceConfig}
+                <ConfigTable
+                  onSave={savePriceConfig}
                   title="Price Details"
-                  headers={["price", "roadTax", "idv"]}
-                  config={{}}
-                  formatDownloadLink={require("../../assets/docs/insuranceConfigFormat.csv")}
-                /> */}
+                  headers={["price", "roadTaxWithRc", "insuranceDeclaredValue"]}
+                  config={priceConfig}
+                  formatDownloadLink={require("../../assets/docs/priceConfigFormat.csv")}
+                />
               </CardBody>
             </Card>
           </Col>
