@@ -14,7 +14,7 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   // TODO: SAVE IN CONTEXT
   const [user, setUser] = useState<object | null>(null);
-  const [currentUserRole, setCurrentUserRole] = useState<any>([]);
+  const [currentUserRole, setCurrentUserRole] = useState<string>();
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((User) => {
@@ -31,7 +31,7 @@ const App: React.FC = () => {
         .where("uid", "==", currentUser.uid)
         .onSnapshot(function (querySnapshot) {
           const doc = querySnapshot.docs ? querySnapshot.docs[0] : null;
-          if (doc && doc.data()) {
+          if (doc && doc.exists && doc.data()) {
             setCurrentUserRole(doc.data().role);
           }
         });
