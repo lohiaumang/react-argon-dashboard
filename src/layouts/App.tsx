@@ -14,31 +14,30 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   // TODO: SAVE IN CONTEXT
   const [user, setUser] = useState<object | null>(null);
-  const [currentUserRole, setCurrentUserRole] = useState<string>();
+  const [currentUserDetails, setCurrentUserDetails] = useState<any>();
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((User) => {
+      if (User && User.uid) {
+        firebase
+          .firestore()
+          .collection("users")
+          .where("uid", "==", User.uid)
+          .onSnapshot(function (querySnapshot) {
+            const doc = querySnapshot.docs ? querySnapshot.docs[0] : null;
+            if (doc && doc.exists && doc.data()) {
+              setCurrentUserDetails(doc.data());
+            }
+          });
+      }
+
       setUser(User);
       setLoading(false);
     });
   }, []);
 
-  useEffect(() => {
-    if (currentUser && currentUser.uid) {
-      firebase
-        .firestore()
-        .collection("users")
-        .where("uid", "==", currentUser.uid)
-        .onSnapshot(function (querySnapshot) {
-          const doc = querySnapshot.docs ? querySnapshot.docs[0] : null;
-          if (doc && doc.exists && doc.data()) {
-            setCurrentUserRole(doc.data().role);
-          }
-        });
-    }
-  }, [currentUser]);
-
-  console.log(currentUserRole);
+  console.log(currentUserDetails);
+  
   const getRoutes = () => {
     return (
       <UserContext.Provider value={user}>
