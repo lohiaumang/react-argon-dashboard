@@ -18,27 +18,26 @@ const App: React.FC = () => {
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((User) => {
+      if (User && User.uid) {
+        firebase
+          .firestore()
+          .collection("users")
+          .where("uid", "==", User.uid)
+          .onSnapshot(function (querySnapshot) {
+            const doc = querySnapshot.docs ? querySnapshot.docs[0] : null;
+            if (doc && doc.exists && doc.data()) {
+              setCurrentUserRole(doc.data());
+            }
+          });
+      }
+
       setUser(User);
       setLoading(false);
     });
   }, []);
 
-  useEffect(() => {
-    if (currentUser && currentUser.uid) {
-      firebase
-        .firestore()
-        .collection("users")
-        .where("uid", "==", currentUser.uid)
-        .onSnapshot(function (querySnapshot) {
-          const doc = querySnapshot.docs ? querySnapshot.docs[0] : null;
-          if (doc && doc.exists && doc.data()) {
-            setCurrentUserRole(doc.data().role);
-          }
-        });
-    }
-  }, [currentUser]);
-
   console.log(currentUserRole);
+  
   const getRoutes = () => {
     return (
       <UserContext.Provider value={currentUserRole}>
