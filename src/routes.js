@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useContext } from "react";
+import React from "react";
 import Login from "./views/pages/Login";
 import CreateAccount from "./views/pages/CreateAccount";
 import UserManagement from "./views/pages/UserManagement";
@@ -23,7 +23,7 @@ import Settings from "./views/pages/Settings";
 import Profile from "./views/pages/Profile";
 import Index from "./views/Index";
 import DeliveryOrders from "./views/pages/DeliveryOrders";
-import { UserContext } from "./Context";
+// import { UserContext } from "./Context";
 
 // const user = useContext(UserContext);
 
