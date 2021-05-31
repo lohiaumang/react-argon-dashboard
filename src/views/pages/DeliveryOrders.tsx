@@ -70,7 +70,7 @@ console.log(deliveryOrders)
         });
     }
   }, []);
-
+ 
   return (
     <>
       <Header />
@@ -81,7 +81,7 @@ console.log(deliveryOrders)
           <div className="col">
             <Card className="shadow">
               <CardHeader className="border-0">
-                <h3 className="mb-0">Card tables</h3>
+                <h3 className="mb-0">Delivery Order </h3>
               </CardHeader>
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
@@ -96,17 +96,21 @@ console.log(deliveryOrders)
                 <tbody>
                         {deliveryOrders.map((curElem: any) => {
                           return (
-                            <tr key={curElem.id}>
-                           <th scope="row"> 
+                        <tr key={curElem.id}>
+                           {/* <th scope="row"> 
                            <Input
                             className="form-control-alternative"
                             id="input-name"
                             placeholder="Jane Doe"
                             type="radio"
                             required
-                            value={curElem.id}
-                            onChange={(ev) => setdeliveryOrders(ev.target.value!)}
-                          /></th>
+                            // value={curElem.id}
+                            // onChange={(ev) => setdeliveryOrders(ev.target.value!)}
+                          /></th> */}
+                          <td><input type="radio"
+                                   value={curElem.id} 
+                                   checked={curElem.id === curElem.id} 
+                                   onChange={(ev) => setdeliveryOrders(ev.target.value!)}/></td>
                               <td>{curElem.name}</td>
                               <td>{curElem.modelName}</td>
                               <td>{curElem.color}</td>
