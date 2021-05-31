@@ -15,7 +15,6 @@ const App: React.FC = () => {
   // TODO: SAVE IN CONTEXT
   const [user, setUser] = useState<object | null>(null);
   const [currentUserDetails, setCurrentUserDetails] = useState<any>();
-
   useEffect(() => {
     firebase.auth().onAuthStateChanged((User) => {
       if (User && User.uid) {
@@ -37,7 +36,7 @@ const App: React.FC = () => {
     });
   }, []);
 
-  console.log(currentUserDetails);
+  
   
   const getRoutes = () => {
     return (
