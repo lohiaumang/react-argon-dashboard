@@ -13,6 +13,7 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   // TODO: SAVE IN CONTEXT
   const [user, setUser] = useState<object | null>(null);
+  const [signInError, setSignInError] = useState<string>("");
   const [currentUserDetails, setCurrentUserDetails] = useState<any>();
   useEffect(() => {
     firebase.auth().onAuthStateChanged((User) => {
@@ -24,9 +25,17 @@ const App: React.FC = () => {
           .onSnapshot(function (querySnapshot) {
             const doc = querySnapshot.docs ? querySnapshot.docs[0] : null;
             if (doc && doc.exists && doc.data()) {
-              setCurrentUserDetails(doc.data());
-              setUser(User);
-              setLoading(false);
+              if (doc.data().role !== "salesman") {
+                setCurrentUserDetails(doc.data());
+                setUser(User);
+                setLoading(false);
+              } else {
+                setSignInError(
+                  "You don't have permission to access the dashboard."
+                );
+                setTimeout(() => setSignInError(""), 1500);
+                firebase.auth().signOut();
+              }
             }
           });
       } else if (User === null) {
@@ -37,6 +46,8 @@ const App: React.FC = () => {
   }, []);
 
   const getRoutes = () => {
+    // const { role = "" } = currentUserDetails || {};
+
     return user ? (
       <UserContext.Provider value={currentUserDetails}>
         <Switch>
@@ -48,7 +59,12 @@ const App: React.FC = () => {
     ) : (
       <Switch>
         <Redirect exact from="/auth" to="/auth/login" />
-        <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
+        <Route
+          path="/auth"
+          render={(props) => (
+            <AuthLayout {...props} signInError={signInError} />
+          )}
+        />
         <Redirect from="/" to="/auth/login" />
       </Switch>
     );

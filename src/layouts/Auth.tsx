@@ -18,7 +18,7 @@
 import React, { useEffect, useContext } from "react";
 import { Route, Switch } from "react-router-dom";
 // reactstrap components
-import { Container, Row, Col } from "reactstrap";
+import { Container, Row, Col, Alert } from "reactstrap";
 
 // core components
 import AuthNavbar from "../components/Navbars/AuthNavbar";
@@ -30,6 +30,7 @@ type Props = {
   location: {
     pathname: string;
   };
+  signInError: string;
 };
 
 type RouteType = {
@@ -109,6 +110,13 @@ const Auth: React.FC<Props> = (props) => {
             <Switch>{createRoutes(routes)}</Switch>
           </Row>
         </Container>
+        {!!props.signInError && (
+          <div className="position-fixed bottom-0 right-0 w-100 d-flex justify-content-center">
+            <Alert color="primary" isOpen={!!props.signInError}>
+              {props.signInError}
+            </Alert>
+          </div>
+        )}
       </div>
       <AuthFooter />
     </>

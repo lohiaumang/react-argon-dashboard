@@ -60,7 +60,6 @@ const Login: React.FC = () => {
         .signInWithEmailAndPassword(username!, password!)
         .then((userCredential) => {
           setLoading(false);
-          const user = userCredential.user;
         })
         .catch(function (error) {
           console.log(error);
