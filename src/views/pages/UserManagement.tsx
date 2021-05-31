@@ -106,7 +106,7 @@ const UserManagement: React.FC = () => {
         .firestore()
         .collection("users")
         .where("createdBy", "==", uid)
-        .where("role", "in", ["salesman", "office"])
+        .where("role", "in", ["salesman", "officeStaff"])
         .onSnapshot(function (querySnapshot) {
           setUserData(
             querySnapshot.docs.map((doc) => ({
@@ -354,7 +354,7 @@ const UserManagement: React.FC = () => {
                           >
                             <option>Select</option>
                             <option value="salesman">Salesman</option>
-                            <option value="office">Office staff</option>
+                            <option value="officeStaff">Office staff</option>
                           </Input>
                         </FormGroup>
                       </Col>
@@ -364,11 +364,11 @@ const UserManagement: React.FC = () => {
                 {userData.length > 0 && (
                   <>
                     <h6 className="heading-small text-muted mb-4">All users</h6>
-                    {deleteSuccess && (
+                    {/* {deleteSuccess && (
                       <small className="text-success">
                         {deleteSuccess.message}
                       </small>
-                    )}
+                    )} */}
                     <Table
                       className="align-items-center table-flush"
                       responsive
@@ -424,6 +424,11 @@ const UserManagement: React.FC = () => {
       {signUpSuccess && (
         <div className="position-fixed bottom-0 right-0 w-100 d-flex justify-content-center">
           <Alert color="primary">{signUpSuccess.message}</Alert>
+        </div>
+      )}
+       {deleteSuccess && (
+        <div className="position-fixed bottom-0 right-0 w-100 d-flex justify-content-center">
+          <Alert color="primary">{deleteSuccess.message}</Alert>
         </div>
       )}
     </>
