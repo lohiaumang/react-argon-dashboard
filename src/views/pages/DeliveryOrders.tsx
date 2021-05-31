@@ -60,7 +60,10 @@ const DeliveryOrders: React.FC = () => {
         .where("dealerId", "==", dealerId)
         .where("active", "==", "true")
         .onSnapshot(function (querySnapshot) {
-          const dOs = querySnapshot.docs.map((doc) => doc.data());
+          const dOs = querySnapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+          }));
           setDeliveryOrders(dOs);
         });
     }
