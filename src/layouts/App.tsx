@@ -9,11 +9,11 @@ import AuthLayout from "./Auth";
 import { UserContext } from "../Context";
 
 const App: React.FC = () => {
+  const currentUser = firebase.auth().currentUser;
   const [loading, setLoading] = useState<boolean>(true);
   // TODO: SAVE IN CONTEXT
   const [user, setUser] = useState<object | null>(null);
   const [currentUserDetails, setCurrentUserDetails] = useState<any>();
-
   useEffect(() => {
     firebase.auth().onAuthStateChanged((User) => {
       if (User && User.uid) {

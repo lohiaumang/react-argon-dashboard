@@ -16,7 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 
 // reactstrap components
 import {
@@ -38,6 +38,7 @@ import {
 import Header from "../../components/Headers/Header";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 import SmallLoading from "../../components/Share/SmallLoading";
+
 import firebase from "firebase/app";
 import "firebase/auth";
 export interface SignUpError {
