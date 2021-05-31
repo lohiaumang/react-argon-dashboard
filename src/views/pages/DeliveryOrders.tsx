@@ -37,6 +37,7 @@ import {
   Row,
   Input,
   UncontrolledTooltip,
+  FormGroup,
 } from "reactstrap";
 // core components
 import Header from "../../components/Headers/Header";
@@ -46,9 +47,10 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 
 const DeliveryOrders: React.FC = () => {
-const user: any = useContext(UserContext);
-const [deliveryOrders, setdeliveryOrders] = useState<any>([]);
-console.log(deliveryOrders)
+  const user: any = useContext(UserContext);
+  const [deliveryOrders, setdeliveryOrders] = useState<any>([]);
+  const [selected, setSelected] = useState<number>();
+
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
       const dealerId = user.createdBy || user.uid || "";
@@ -65,12 +67,11 @@ console.log(deliveryOrders)
               modelName: doc.data().modelName,
               color: doc.data().color,
             }))
-          )
-          // console.log(querySnapshot.docs.map((doc) => doc.data()));
+          );
         });
     }
   }, []);
- 
+
   return (
     <>
       <Header />
@@ -90,34 +91,30 @@ console.log(deliveryOrders)
                     <th scope="col">Name</th>
                     <th scope="col">Model Name</th>
                     <th scope="col">Color</th>
-                  
                   </tr>
                 </thead>
                 <tbody>
-                        {deliveryOrders.map((curElem: any) => {
-                          return (
-                        <tr key={curElem.id}>
-                           {/* <th scope="row"> 
-                           <Input
-                            className="form-control-alternative"
-                            id="input-name"
-                            placeholder="Jane Doe"
+                  {deliveryOrders.map((curElem: any, index: number) => {
+                    return (
+                      <tr key={curElem.id}>
+                        <td scope="row" className="text-center">
+                          <Input
+                            className="position-relative"
                             type="radio"
-                            required
-                            // value={curElem.id}
-                            // onChange={(ev) => setdeliveryOrders(ev.target.value!)}
-                          /></th> */}
-                          <td><input type="radio"
-                                   value={curElem.id} 
-                                   checked={curElem.id === curElem.id} 
-                                   onChange={(ev) => setdeliveryOrders(ev.target.value!)}/></td>
-                              <td>{curElem.name}</td>
-                              <td>{curElem.modelName}</td>
-                              <td>{curElem.color}</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
+                            color="primary"
+                            selected={index === selected}
+                            onChange={() => {
+                              setSelected(index);
+                            }}
+                          />
+                        </td>
+                        <td>{curElem.name}</td>
+                        <td>{curElem.modelName}</td>
+                        <td>{curElem.color}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
               </Table>
               {/* <CardFooter className="py-4">
                 <nav aria-label="...">
