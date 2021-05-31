@@ -39,6 +39,7 @@ import Header from "../../components/Headers/Header";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 import SmallLoading from "../../components/Share/SmallLoading";
 import firebase from "firebase/app";
+import "firebase/firestore";
 import "firebase/auth";
 export interface SignUpError {
   code: string;
