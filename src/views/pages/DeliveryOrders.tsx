@@ -48,7 +48,7 @@ import "firebase/firestore";
 
 const DeliveryOrders: React.FC = () => {
   const user: any = useContext(UserContext);
-  const [deliveryOrders, setdeliveryOrders] = useState<any>([]);
+  const [deliveryOrders, setDeliveryOrders] = useState<any>([]);
   const [selected, setSelected] = useState<number>();
   
 
@@ -61,17 +61,15 @@ const DeliveryOrders: React.FC = () => {
         .where("dealerId", "==", dealerId)
         .where("active", "==", "true")
         .onSnapshot(function (querySnapshot) {
-          setdeliveryOrders(
-            querySnapshot.docs.map((doc) => ({
-              id: doc.id,
-              name: doc.data().name,
-              modelName: doc.data().modelName,
-              color: doc.data().color,
-            }))
-          );
+          const dOs = querySnapshot.docs.map((doc) => doc.data());
+          setDeliveryOrders(dOs);
         });
     }
   }, []);
+
+  if (selected !== undefined) {
+    console.log("Selected: ", deliveryOrders[selected]);
+  }
 
   return (
     <>
