@@ -94,26 +94,22 @@ const DeliveryOrders: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {deliveryOrders.map((curElem: any, index: number) => {
-                    return (
-                      <tr key={curElem.id}>
-                        <td scope="row" className="text-center">
-                          <Input
-                            className="position-relative"
-                            type="radio"
-                            color="primary"
-                            selected={index === selected}
-                            onChange={() => {
-                              setSelected(index);
-                            }}
-                          />
-                        </td>
-                        <td>{curElem.name}</td>
-                        <td>{curElem.modelName}</td>
-                        <td>{curElem.color}</td>
-                      </tr>
-                    );
-                  })}
+                  {deliveryOrders.map((curElem: any, index: number) => (
+                    <tr key={curElem.id}>
+                      <td scope="row" className="text-center">
+                        <Input
+                          className="position-relative"
+                          type="checkbox"
+                          color="primary"
+                          checked={index === selected}
+                          onChange={() => setSelected(index)}
+                        />
+                      </td>
+                      <td>{curElem.name}</td>
+                      <td>{curElem.modelName}</td>
+                      <td>{curElem.color}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </Table>
               {/* <CardFooter className="py-4">
