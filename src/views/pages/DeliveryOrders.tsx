@@ -66,9 +66,11 @@ const DeliveryOrders: React.FC = () => {
     }
   }, []);
 
-  if (selected !== undefined) {
-    console.log("Selected: ", deliveryOrders[selected]);
-  }
+  useEffect(() => {
+    if (selected !== undefined) {
+      console.log("Selected: ", deliveryOrders[selected]);
+    }
+  }, [selected]);
 
   return (
     <>
