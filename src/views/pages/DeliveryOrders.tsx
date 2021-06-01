@@ -61,15 +61,20 @@ const DeliveryOrders: React.FC = () => {
         .where("dealerId", "==", dealerId)
         .where("active", "==", "true")
         .onSnapshot(function (querySnapshot) {
-          const dOs = querySnapshot.docs.map((doc) => doc.data());
+          const dOs = querySnapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+          }));
           setDeliveryOrders(dOs);
         });
     }
   }, []);
 
-  if (selected !== undefined) {
-    console.log("Selected: ", deliveryOrders[selected]);
-  }
+  useEffect(() => {
+    if (selected !== undefined) {
+      console.log("Selected: ", deliveryOrders[selected]);
+    }
+  }, [selected]);
 
   return (
     <>
