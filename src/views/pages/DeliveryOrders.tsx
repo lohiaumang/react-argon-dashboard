@@ -37,6 +37,7 @@ import {
   Container,
   Row,
   Input,
+  Button,
   UncontrolledTooltip,
   FormGroup,
 } from "reactstrap";
@@ -52,7 +53,7 @@ const DeliveryOrders: React.FC = () => {
   const [deliveryOrders, setDeliveryOrders] = useState<any>([]);
   const [selected, setSelected] = useState<number>();
   const db = firebase.firestore();
-
+console.log({deliveryOrders})
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
       const dealerId = user.createdBy || user.uid || "";
@@ -70,6 +71,7 @@ const DeliveryOrders: React.FC = () => {
   }, []);
 
   const handleClick = () => {
+    debugger
     if (selected !== undefined) {
       const order = deliveryOrders[selected];
       let customerInfo: any, additionalInfo: any, vehicleInfo: any;
@@ -155,10 +157,21 @@ const DeliveryOrders: React.FC = () => {
                     ))}
                   </tbody>
                 </Table>
+                
               ) : (
                 <CardBody className="p-4">You are all done!</CardBody>
               )}
             </Card>
+            <Button
+              className="small-button-width my-2"
+              color={"primary"}
+              onClick={() => {
+                handleClick();
+              }}
+              size="sm"
+            >
+              Erp
+            </Button>
           </div>
         </Row>
       </Container>
