@@ -297,13 +297,13 @@ const DeliveryOrders: React.FC = () => {
             <Card className="shadow">
               <CardHeader className="border-0">
                 <Row>
-                  <Col xs="8">
+                  <Col xs="6">
                     <h3 className="my-3">Delivery Orders</h3>
                   </Col>
                   {selected !== undefined && (
                     <Col
                       className="d-flex justify-content-end align-items-center"
-                      xs="4"
+                      xs="6"
                     >
                       <Button
                         className="small-button-width my-2"
@@ -313,22 +313,22 @@ const DeliveryOrders: React.FC = () => {
                       >
                         Delete
                       </Button>
-                      {/* <Button
+                      <Button
                         className="small-button-width my-2"
                         color={"primary"}
                         onClick={handleFileInErp}
                         size="sm"
                       >
                         File in ERP
-                      </Button> */}
-                      <Button
+                      </Button>
+                      {/* <Button
                         className="small-button-width my-2"
                         color={"primary"}
                         onClick={createDO}
                         size="sm"
                       >
                         Create DO
-                      </Button>
+                      </Button> */}
                     </Col>
                   )}
                 </Row>
