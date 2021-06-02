@@ -74,11 +74,11 @@ const DeliveryOrders: React.FC = () => {
     }
   }, []);
 
-  const handleClick = () => {
-    if (selected !== undefined) {
-      setDeliveryId (deliveryOrders[selected].customerId);
-    }
-  };
+  // const handleClick = () => {
+  //   if (selected !== undefined) {
+  //     setDeliveryId (deliveryOrders[selected].customerId);
+  //   }
+  // };
 
 
   const getCustomerData = (uid: any) => {
