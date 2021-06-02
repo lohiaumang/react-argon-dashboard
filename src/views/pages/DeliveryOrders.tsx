@@ -37,8 +37,6 @@ import {
   Container,
   Row,
   Input,
-  Button,
-  Col,
   UncontrolledTooltip,
   FormGroup,
 } from "reactstrap";
@@ -46,18 +44,15 @@ import {
 import Header from "../../components/Headers/Header";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 import { UserContext } from "../../Context";
-import SmallLoading from "../../components/Share/SmallLoading";
 import firebase from "firebase/app";
 import "firebase/firestore";
 
 const DeliveryOrders: React.FC = () => {
   const user: any = useContext(UserContext);
-  const [loading, setLoading] = useState<boolean>(false);
   const [deliveryOrders, setDeliveryOrders] = useState<any>([]);
-  const [deliveryOrdersData, setDeliveryOrdersData] = useState<any>([]);
   const [selected, setSelected] = useState<number>();
-  const [dealerId, setDeliveryId] = useState<any>();
-  console.log({dealerId})
+  const db = firebase.firestore();
+
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
       const dealerId = user.createdBy || user.uid || "";
@@ -74,48 +69,46 @@ const DeliveryOrders: React.FC = () => {
     }
   }, []);
 
-  // const handleClick = () => {
-  //   if (selected !== undefined) {
-  //     setDeliveryId (deliveryOrders[selected].customerId);
-  //   }
-  // };
+  const handleClick = () => {
+    if (selected !== undefined) {
+      const order = deliveryOrders[selected];
+      let customerInfo: any, additionalInfo: any, vehicleInfo: any;
 
-
-  const getCustomerData = (uid: any) => {
-    debugger
-    if (uid) {
-      
-      firebase
-        .firestore()
-        .collection("deliveryOrders")
-        .where("customerId", "==", uid)
-        .where("active", "==", "true")
-        .onSnapshot(function (querySnapshot) {
-          const dOs = querySnapshot.docs.map((doc) => ({
-            ...doc.data(),
-            id: doc.id,
-          }));
-          setDeliveryOrdersData(dOs);
-           });
-      // if (window && window.api) {
-      //   window.api.receive("fromMain", (data: any) => {
-      //     switch (data.type) {
-      //       case "DELETE_USER_SUCCESS": {
-            
-      //         break;
-      //       }
-      //       case "DELETE_USER_FAILURE": {
-            
-             
-      //         break;
-      //       }
-      //     }
-      //   });
-      //   window.api.send("toMain", {
-      //     type: "DELETE_USER",
-      //     data: user,
-      //   });
-      // }
+      if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
+        db.collection("customers")
+          .doc(order.customerId)
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              customerInfo = doc.data();
+              db.collection("vehicles")
+                .doc(order.vehicleId)
+                .get()
+                .then((doc) => {
+                  if (doc.exists) {
+                    vehicleInfo = doc.data();
+                    db.collection("additionals")
+                      .doc(order.additionalId)
+                      .get()
+                      .then((doc) => {
+                        if (doc.exists) {
+                          additionalInfo = doc.data();
+                          const fullDetails = {
+                            ...deliveryOrders[selected],
+                            customerInfo: customerInfo,
+                            vehicleInfo: vehicleInfo,
+                            additionalInfo: additionalInfo,
+                          };
+                          const tempOrders = deliveryOrders;
+                          tempOrders[selected] = fullDetails;
+                          setDeliveryOrders(tempOrders);
+                        }
+                      });
+                  }
+                });
+            }
+          });
+      }
     }
   };
 
@@ -166,29 +159,6 @@ const DeliveryOrders: React.FC = () => {
                 <CardBody className="p-4">You are all done!</CardBody>
               )}
             </Card>
-            <Row>
-            <Col className="text-right" xs="4">
-              
-                      <Button
-                        className="small-button-width"
-                        color={"success"}
-                        onClick={() => getCustomerData(dealerId)}
-                        disabled={false}
-                        size="sm"
-                      >
-                        {loading ? <SmallLoading /> : "Erp"}
-                      </Button>
-                      <Button
-                        className="small-button-width"
-                        color={"success"}
-                        type="submit"
-                        size="sm"
-                        disabled={false}
-                      >
-                        {loading ? <SmallLoading /> : "Create"}
-                      </Button>
-                    </Col>
-                    </Row>
           </div>
         </Row>
       </Container>
