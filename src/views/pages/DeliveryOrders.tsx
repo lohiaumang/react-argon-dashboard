@@ -41,6 +41,10 @@ import {
   FormGroup,
   Button,
   Col,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from "reactstrap";
 // core components
 import Header from "../../components/Headers/Header";
@@ -53,6 +57,7 @@ const DeliveryOrders: React.FC = () => {
   const user: any = useContext(UserContext);
   const [deliveryOrders, setDeliveryOrders] = useState<any>([]);
   const [selected, setSelected] = useState<number>();
+  const [showDO, setShowDO] = useState<boolean>(false);
   const db = firebase.firestore();
 
   useEffect(() => {
@@ -60,7 +65,7 @@ const DeliveryOrders: React.FC = () => {
       const dealerId = user.createdBy || user.uid || "";
       db.collection("deliveryOrders")
         .where("dealerId", "==", dealerId)
-        .where("active", "==", "true")
+        .where("active", "==", true)
         .onSnapshot(function (querySnapshot) {
           const dOs = querySnapshot.docs.map((doc) => ({
             ...doc.data(),
@@ -131,11 +136,46 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
+  const deleteDeliveryOrder = () => {
+    if (selected !== undefined) {
+      const tempOrders = deliveryOrders;
+      const selectedDoId = deliveryOrders[selected].id;
+      tempOrders.splice(selected, 1);
+
+      setSelected(undefined);
+      setDeliveryOrders(tempOrders);
+      db.collection("deliveryOrders").doc(selectedDoId).set(
+        {
+          active: false,
+        },
+        { merge: true }
+      );
+    }
+  };
+
+  const createDO = () => {
+    setShowDO(!showDO);
+  };
+
   return (
     <>
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
+        {showDO && (
+          <Modal isOpen={showDO} toggle={createDO} style={{ maxWidth: "80%" }}>
+            <ModalHeader toggle={createDO}>Delivery Order</ModalHeader>
+            <ModalBody></ModalBody>
+            <ModalFooter>
+              <Button color="primary" onClick={createDO}>
+                Print
+              </Button>{" "}
+              <Button color="secondary" onClick={createDO}>
+                Close
+              </Button>
+            </ModalFooter>
+          </Modal>
+        )}
         {/* Table */}
         <Row>
           <div className="col">
@@ -143,7 +183,7 @@ const DeliveryOrders: React.FC = () => {
               <CardHeader className="border-0">
                 <Row>
                   <Col xs="8">
-                    <h3 className="my-3">Delivery Order</h3>
+                    <h3 className="my-3">Delivery Orders</h3>
                   </Col>
                   {selected !== undefined && (
                     <Col
@@ -153,18 +193,26 @@ const DeliveryOrders: React.FC = () => {
                       <Button
                         className="small-button-width my-2"
                         color={"danger"}
-                        onClick={() => {}}
+                        onClick={deleteDeliveryOrder}
                         size="sm"
                       >
                         Delete
                       </Button>
-                      <Button
+                      {/* <Button
                         className="small-button-width my-2"
                         color={"primary"}
                         onClick={handleFileInErp}
                         size="sm"
                       >
                         File in ERP
+                      </Button> */}
+                      <Button
+                        className="small-button-width my-2"
+                        color={"primary"}
+                        onClick={createDO}
+                        size="sm"
+                      >
+                        Create DO
                       </Button>
                     </Col>
                   )}
