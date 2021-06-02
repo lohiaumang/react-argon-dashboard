@@ -36,6 +36,8 @@ import {
   Container,
   Row,
   Input,
+  Button,
+  Col,
   UncontrolledTooltip,
   FormGroup,
 } from "reactstrap";
@@ -43,15 +45,18 @@ import {
 import Header from "../../components/Headers/Header";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 import { UserContext } from "../../Context";
+import SmallLoading from "../../components/Share/SmallLoading";
 import firebase from "firebase/app";
 import "firebase/firestore";
 
 const DeliveryOrders: React.FC = () => {
   const user: any = useContext(UserContext);
+  const [loading, setLoading] = useState<boolean>(false);
   const [deliveryOrders, setDeliveryOrders] = useState<any>([]);
+  const [deliveryOrdersData, setDeliveryOrdersData] = useState<any>([]);
   const [selected, setSelected] = useState<number>();
-  
-
+  const [dealerId, setDeliveryId] = useState<any>();
+  console.log({dealerId})
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
       const dealerId = user.createdBy || user.uid || "";
@@ -72,9 +77,48 @@ const DeliveryOrders: React.FC = () => {
 
   useEffect(() => {
     if (selected !== undefined) {
-      console.log("Selected: ", deliveryOrders[selected]);
+      setDeliveryId (deliveryOrders[selected].customerId);
     }
   }, [selected]);
+
+
+  const getCustomerData = (uid: any) => {
+    debugger
+    if (uid) {
+      
+      firebase
+        .firestore()
+        .collection("deliveryOrders")
+        .where("customerId", "==", uid)
+        .where("active", "==", "true")
+        .onSnapshot(function (querySnapshot) {
+          const dOs = querySnapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+          }));
+          setDeliveryOrdersData(dOs);
+           });
+      // if (window && window.api) {
+      //   window.api.receive("fromMain", (data: any) => {
+      //     switch (data.type) {
+      //       case "DELETE_USER_SUCCESS": {
+            
+      //         break;
+      //       }
+      //       case "DELETE_USER_FAILURE": {
+            
+             
+      //         break;
+      //       }
+      //     }
+      //   });
+      //   window.api.send("toMain", {
+      //     type: "DELETE_USER",
+      //     data: user,
+      //   });
+      // }
+    }
+  };
 
   return (
     <>
@@ -116,6 +160,7 @@ const DeliveryOrders: React.FC = () => {
                   ))}
                 </tbody>
               </Table>
+             
               {/* <CardFooter className="py-4">
                 <nav aria-label="...">
                   <Pagination
@@ -169,6 +214,29 @@ const DeliveryOrders: React.FC = () => {
                 </nav>
               </CardFooter> */}
             </Card>
+            <Row>
+            <Col className="text-right" xs="4">
+              
+                      <Button
+                        className="small-button-width"
+                        color={"success"}
+                        onClick={() => getCustomerData(dealerId)}
+                        disabled={false}
+                        size="sm"
+                      >
+                        {loading ? <SmallLoading /> : "Erp"}
+                      </Button>
+                      <Button
+                        className="small-button-width"
+                        color={"success"}
+                        type="submit"
+                        size="sm"
+                        disabled={false}
+                      >
+                        {loading ? <SmallLoading /> : "Create"}
+                      </Button>
+                    </Col>
+                    </Row>
           </div>
         </Row>
       </Container>

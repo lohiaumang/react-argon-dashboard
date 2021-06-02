@@ -132,7 +132,6 @@ const UserManagement: React.FC = () => {
   // }
 
   const deleteUser = (uid: any) => {
-    debugger;
     setDeleteLoading(true);
     if (uid) {
       const user = {
