@@ -168,7 +168,7 @@ const DeliveryOrders: React.FC = () => {
             <ModalBody>
               <Table border="1">
                 <tr>
-                  <th colSpan={13}>Banayak Honda</th>
+                  <th colSpan={13}>BINAYAK HONDA</th>
                 </tr>
                 <tr>
                   <th>Model :</th>
