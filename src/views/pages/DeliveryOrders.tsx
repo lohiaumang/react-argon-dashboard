@@ -37,9 +37,10 @@ import {
   Container,
   Row,
   Input,
-  Button,
   UncontrolledTooltip,
   FormGroup,
+  Button,
+  Col,
 } from "reactstrap";
 // core components
 import Header from "../../components/Headers/Header";
@@ -53,7 +54,7 @@ const DeliveryOrders: React.FC = () => {
   const [deliveryOrders, setDeliveryOrders] = useState<any>([]);
   const [selected, setSelected] = useState<number>();
   const db = firebase.firestore();
-console.log({deliveryOrders})
+
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
       const dealerId = user.createdBy || user.uid || "";
@@ -70,13 +71,17 @@ console.log({deliveryOrders})
     }
   }, []);
 
-  const handleClick = () => {
-    debugger
+  const handleFileInErp = () => {
     if (selected !== undefined) {
       const order = deliveryOrders[selected];
       let customerInfo: any, additionalInfo: any, vehicleInfo: any;
 
       if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
+        window.api.send("toMain", {
+          type: "FILE_IN_ERP",
+          data: order,
+        });
+      } else {
         db.collection("customers")
           .doc(order.customerId)
           .get()
@@ -104,6 +109,10 @@ console.log({deliveryOrders})
                           const tempOrders = deliveryOrders;
                           tempOrders[selected] = fullDetails;
                           setDeliveryOrders(tempOrders);
+                          window.api.send("toMain", {
+                            type: "FILE_IN_ERP",
+                            data: fullDetails,
+                          });
                         }
                       });
                   }
@@ -111,6 +120,14 @@ console.log({deliveryOrders})
             }
           });
       }
+    }
+  };
+
+  const toggleSelected = (index: number) => {
+    if (selected === index) {
+      setSelected(undefined);
+    } else {
+      setSelected(index);
     }
   };
 
@@ -124,7 +141,34 @@ console.log({deliveryOrders})
           <div className="col">
             <Card className="shadow">
               <CardHeader className="border-0">
-                <h3 className="mb-0">Delivery Order </h3>
+                <Row>
+                  <Col xs="8">
+                    <h3 className="my-3">Delivery Order</h3>
+                  </Col>
+                  {selected !== undefined && (
+                    <Col
+                      className="d-flex justify-content-end align-items-center"
+                      xs="4"
+                    >
+                      <Button
+                        className="small-button-width my-2"
+                        color={"danger"}
+                        onClick={() => {}}
+                        size="sm"
+                      >
+                        Delete
+                      </Button>
+                      <Button
+                        className="small-button-width my-2"
+                        color={"primary"}
+                        onClick={handleFileInErp}
+                        size="sm"
+                      >
+                        File in ERP
+                      </Button>
+                    </Col>
+                  )}
+                </Row>
               </CardHeader>
               {deliveryOrders.length > 0 ? (
                 <Table className="align-items-center table-flush" responsive>
@@ -147,7 +191,7 @@ console.log({deliveryOrders})
                             type="checkbox"
                             color="primary"
                             checked={index === selected}
-                            onChange={() => setSelected(index)}
+                            onChange={() => toggleSelected(index)}
                           />
                         </td>
                         <td>{curElem.name}</td>
@@ -157,21 +201,10 @@ console.log({deliveryOrders})
                     ))}
                   </tbody>
                 </Table>
-                
               ) : (
                 <CardBody className="p-4">You are all done!</CardBody>
               )}
             </Card>
-            <Button
-              className="small-button-width my-2"
-              color={"primary"}
-              onClick={() => {
-                handleClick();
-              }}
-              size="sm"
-            >
-              Erp
-            </Button>
           </div>
         </Row>
       </Container>
