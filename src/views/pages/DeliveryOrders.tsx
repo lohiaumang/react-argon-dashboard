@@ -48,6 +48,9 @@ import {
 } from "reactstrap";
 // core components
 import Header from "../../components/Headers/Header";
+import DeliveryOrderTable, {
+  DeliveryOrder,
+} from "../../components/Tables/DeliveryOrderTable";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 import { UserContext } from "../../Context";
 import firebase from "firebase/app";
@@ -55,7 +58,7 @@ import "firebase/firestore";
 
 const DeliveryOrders: React.FC = () => {
   const user: any = useContext(UserContext);
-  const [deliveryOrders, setDeliveryOrders] = useState<any>([]);
+  const [deliveryOrders, setDeliveryOrders] = useState<DeliveryOrder[]>([]);
   const [selected, setSelected] = useState<number>();
   const [showDO, setShowDO] = useState<boolean>(false);
   const db = firebase.firestore();
@@ -67,7 +70,7 @@ const DeliveryOrders: React.FC = () => {
         .where("dealerId", "==", dealerId)
         .where("active", "==", true)
         .onSnapshot(function (querySnapshot) {
-          const dOs = querySnapshot.docs.map((doc) => ({
+          const dOs: any = querySnapshot.docs.map((doc) => ({
             ...doc.data(),
             id: doc.id,
           }));
@@ -154,7 +157,49 @@ const DeliveryOrders: React.FC = () => {
   };
 
   const createDO = () => {
-    setShowDO(!showDO);
+    if (selected !== undefined) {
+      const order = deliveryOrders[selected];
+      let customerInfo: any, additionalInfo: any, vehicleInfo: any;
+
+      if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
+        setShowDO(!showDO);
+      } else {
+        db.collection("customers")
+          .doc(order.customerId)
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              customerInfo = doc.data();
+              db.collection("vehicles")
+                .doc(order.vehicleId)
+                .get()
+                .then((doc) => {
+                  if (doc.exists) {
+                    vehicleInfo = doc.data();
+                    db.collection("additionals")
+                      .doc(order.additionalId)
+                      .get()
+                      .then((doc) => {
+                        if (doc.exists) {
+                          additionalInfo = doc.data();
+                          const fullDetails = {
+                            ...deliveryOrders[selected],
+                            customerInfo: customerInfo,
+                            vehicleInfo: vehicleInfo,
+                            additionalInfo: additionalInfo,
+                          };
+                          const tempOrders = deliveryOrders;
+                          tempOrders[selected] = fullDetails;
+                          setDeliveryOrders(tempOrders);
+                          setShowDO(!showDO);
+                        }
+                      });
+                  }
+                });
+            }
+          });
+      }
+    }
   };
 
   return (
@@ -162,124 +207,13 @@ const DeliveryOrders: React.FC = () => {
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
-        {showDO && (
-          <Modal isOpen={showDO} toggle={createDO} style={{ maxWidth: "80%" }}>
-            <ModalHeader toggle={createDO}>Delivery Order</ModalHeader>
-            <ModalBody>
-              <Table border="1">
-                <tr>
-                  <th colSpan={13}>BINAYAK HONDA</th>
-                </tr>
-                <tr>
-                  <th>Model :</th>
-                  <td>Activa</td>
-                  <th>Opt :</th>
-                  <td>6Gstb</td>
-                  <th>Color :</th>
-                  <td>Blue</td>
-                  <th>Date :</th>
-                  <td>17-02-21</td>
-                  <th>Time :</th>
-                  <td>9 Am</td>
-                  <th>Sl No :</th>
-                  <td>1</td>
-                </tr>
-                <tr>
-                  <th>Name :</th>
-                  <td colSpan={9}>Nayan Kumar</td>
-                  <th>Price :</th>
-                  <td>84000</td>
-                </tr>
-                <tr>
-                  <th>S/D/W/O :</th>
-                  <td colSpan={4}>Hareswer Kumar</td>
-                  <th>GST :</th>
-                  <td colSpan={4}>12365478954632146</td>
-                  <th>Insurance :</th>
-                  <td>5400</td>
-                </tr>
-                <tr>
-                  <th rowSpan={3}>Persent Address :</th>
-                  <td colSpan={9}>Nayan Kumar</td>
-                  <th>MV Tax :</th>
-                  <td>5428 / 5931</td>
-                </tr>
-                <tr>
-                  <td colSpan={9}>Nayan Kumar</td>
-                  <th>Postal Charge<br></br> HYPO :</th>
-                  <td>25 / 48 / 500</td>
-                </tr>
-                <tr>
-                  <td colSpan={9}>Nayan Kumar</td>
-                  <th>Extended <br></br> Warranty  :</th>
-                  <td>536</td>
-                </tr>
-                <tr>
-                  <th>Locality :</th>
-                  <td colSpan={2}>GTB NAGAR</td>
-                  <th>City  :</th>
-                  <td colSpan={2}>Delhi</td>
-                  <th>Pin  :</th>
-                  <td colSpan={3}>110092</td>
-                  <th>Job Clube  :</th>
-                  <td>412</td>
-                </tr>
-                <tr>
-                  <th rowSpan={2}>Permanent Address :</th>
-                  <td colSpan={9}>Laxmi Nager</td>
-                  <th>Honda Roadside <br></br> Assistance :</th>
-                  <td>299</td>
-                </tr>
-                <tr>
-                  <td colSpan={9}>Mandawali Budhamarge Mandaali </td>
-                  <th>PTFE Polish  :</th>
-                  <td>150 500</td>
-                </tr>
-                <tr>
-                  <th>WA No :</th>
-                  <td colSpan={5}>88888888888</td>
-                  <td rowSpan={7} colSpan={4}></td>
-                  <th>Accessones</th>
-                  <td>1704</td>
-                </tr>
-                <tr>
-                  <th>Email ID :</th>
-                  <td colSpan={5}>N/A</td>
-                  <th>Total</th>
-                  <td>55022</td>
-                </tr>
-                <tr>
-                  <th>B day :</th>
-                  <td colSpan={2}>N/A</td>
-                  <th>Annv :</th>
-                  <td colSpan={2}>N/A</td>
-                  <th>TE | WE </th>
-                  <th>ERE | FRE</th>
-                </tr>
-                <tr>
-                  <th>Ref 1 :</th>
-                  <td colSpan={5}>Dinu da</td>
-                  <th colSpan={4}> Financer : HDFC</th>
-                </tr>
-                <tr>
-                  <th>WA No :</th>
-                  <td colSpan={5}>8888888888</td>
-                  <th colSpan={4}> Sales Ex.Sign : </th>
-                </tr>
-                <tr>
-                  <th>Ref 2 :</th>
-                  <td colSpan={5}>8888888888</td>
-                  <th rowSpan={2} colSpan={4}> Customer Sign : </th>
-                </tr>
-                <tr>
-                  <th>WA No :</th>
-                  <td colSpan={5}>8888888888</td>
-                </tr>
-                <tr>
-                  <th colSpan={13}>Occ :  Inst:Y/N  CO./Email</th>
-                </tr>
-                
-              </Table>
+        {showDO && selected !== undefined && (
+          <Modal isOpen={showDO} toggle={createDO} size="lg">
+            <ModalHeader toggle={createDO} tag="h3">
+              Delivery Order
+            </ModalHeader>
+            <ModalBody className="p-5">
+              <DeliveryOrderTable deliveryOrder={deliveryOrders[selected]} />
             </ModalBody>
             <ModalFooter>
               <Button color="primary" onClick={createDO}>
@@ -313,22 +247,22 @@ const DeliveryOrders: React.FC = () => {
                       >
                         Delete
                       </Button>
-                      <Button
+                      {/* <Button
                         className="small-button-width my-2"
                         color={"primary"}
                         onClick={handleFileInErp}
                         size="sm"
                       >
                         File in ERP
-                      </Button>
-                      {/* <Button
+                      </Button> */}
+                      <Button
                         className="small-button-width my-2"
                         color={"primary"}
                         onClick={createDO}
                         size="sm"
                       >
                         Create DO
-                      </Button> */}
+                      </Button>
                     </Col>
                   )}
                 </Row>

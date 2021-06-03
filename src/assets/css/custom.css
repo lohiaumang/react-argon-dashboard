@@ -111,3 +111,15 @@ body {
 .small-button-width {
   min-width: 70px;
 }
+
+.delivery-order-table th {
+  border-color: lightgrey;
+}
+
+.delivery-order-table td {
+  border-color: lightgrey;
+}
+
+.delivery-order-table > * {
+  border: 1px black solid;
+}
