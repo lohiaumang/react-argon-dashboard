@@ -280,13 +280,18 @@ const DeliveryOrders: React.FC = () => {
                   </thead>
                   <tbody>
                     {deliveryOrders.map((curElem: any, index: number) => (
-                      <tr key={curElem.id}>
+                      <tr
+                        key={curElem.id}
+                        onClick={() => toggleSelected(index)}
+                        style={{ cursor: "pointer" }}
+                      >
                         <td scope="row" className="text-center">
                           <Input
                             className="position-relative"
                             type="checkbox"
                             color="primary"
                             checked={index === selected}
+                            style={{ cursor: "pointer" }}
                             onChange={() => toggleSelected(index)}
                           />
                         </td>
