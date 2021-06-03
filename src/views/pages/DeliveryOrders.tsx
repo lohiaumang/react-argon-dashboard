@@ -200,7 +200,9 @@ const DeliveryOrders: React.FC = () => {
       }
     }
   };
-
+const printPage =()=>{
+  window.print();
+}
   return (
     <>
       <Header />
@@ -215,7 +217,7 @@ const DeliveryOrders: React.FC = () => {
               <DeliveryOrderTable deliveryOrder={deliveryOrders[selected]} />
             </ModalBody>
             <ModalFooter>
-              <Button color="primary" onClick={createDO}>
+              <Button color="primary" onClick={printPage}>
                 Print
               </Button>{" "}
               <Button color="secondary" onClick={createDO}>
