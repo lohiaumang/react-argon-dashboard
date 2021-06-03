@@ -59,7 +59,7 @@ const DeliveryOrders: React.FC = () => {
   const [selected, setSelected] = useState<number>();
   const [showDO, setShowDO] = useState<boolean>(false);
   const db = firebase.firestore();
-
+console.log({selected})
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
       const dealerId = user.createdBy || user.uid || "";
@@ -167,6 +167,7 @@ const DeliveryOrders: React.FC = () => {
             <ModalHeader toggle={createDO}>Delivery Order</ModalHeader>
             <ModalBody>
               <Table border="1">
+              <tbody>
                 <tr>
                   <th colSpan={13}>BINAYAK HONDA</th>
                 </tr>
@@ -278,7 +279,7 @@ const DeliveryOrders: React.FC = () => {
                 <tr>
                   <th colSpan={13}>Occ :  Inst:Y/N  CO./Email</th>
                 </tr>
-                
+                </tbody>
               </Table>
             </ModalBody>
             <ModalFooter>
