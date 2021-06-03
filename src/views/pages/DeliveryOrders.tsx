@@ -62,7 +62,6 @@ const DeliveryOrders: React.FC = () => {
   const [selected, setSelected] = useState<number>();
   const [showDO, setShowDO] = useState<boolean>(false);
   const db = firebase.firestore();
-
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
       const dealerId = user.createdBy || user.uid || "";
