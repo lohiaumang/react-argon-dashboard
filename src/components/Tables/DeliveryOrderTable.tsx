@@ -65,11 +65,7 @@ type Props = {
 };
 
 const DeliveryOrderTable: React.FC<Props> = (props) => {
-  const rowLine = {
-    height: "2px",
-    width: "100%",
-    backgroundColor: "blue",
-  };
+ 
 
   if (
     props &&
@@ -78,6 +74,13 @@ const DeliveryOrderTable: React.FC<Props> = (props) => {
     props.deliveryOrder.vehicleInfo &&
     props.deliveryOrder.additionalInfo
   ) {
+    const price= parseInt(props.deliveryOrder.additionalInfo.price)
+    const insurance= parseInt(props.deliveryOrder.additionalInfo.insurance)
+    const mvTax= parseInt(props.deliveryOrder.additionalInfo.mvTax)
+    const postalCharge= parseInt(props.deliveryOrder.additionalInfo.postalCharge)
+    const extendedWarranty= parseInt(props.deliveryOrder.additionalInfo.extendedWarranty)
+    const total=[price+insurance+mvTax+postalCharge+extendedWarranty]
+  
     return (
       <div className="delivery-order-table">
         <Row>
@@ -182,26 +185,44 @@ const DeliveryOrderTable: React.FC<Props> = (props) => {
               </Row>
             </Col>
           </Row>
+          <Row className="p-1 border border-right-0 border-left-0 border-primary w-100">
+            <Col sm="6">
+              <Row>
+                <Col className="p-0">
+                  <h5>Email:</h5>
+                </Col>
+                <Col>{props.deliveryOrder.customerInfo.email}</Col>
+              </Row>
+            </Col>
+            <Col sm="6">
+              <Row>
+                <Col className="p-0">
+                  <h5>Gst:</h5>
+                </Col>
+                <Col>{props.deliveryOrder.customerInfo.gst}</Col>
+              </Row>
+            </Col>
+          </Row>
           <Table className="table table-striped table-bordered ">
             <tr>
               <th>Price :</th>
-              <td>{props.deliveryOrder.additionalInfo.price}</td>
+              <td>{price}</td>
             </tr>
             <tr>
               <th>Insurance :</th>
-              <td>{props.deliveryOrder.additionalInfo.insurance}</td>
+              <td>{insurance}</td>
             </tr>
             <tr>
               <th>MV Tax :</th>
-              <td>{props.deliveryOrder.additionalInfo.mvTax}</td>
+              <td>{mvTax}</td>
             </tr>
             <tr>
               <th>Postal Charge:</th>
-              <td>{props.deliveryOrder.additionalInfo.postalCharge}</td>
+              <td>{postalCharge}</td>
             </tr>
             <tr>
               <th>Extended Warranty :</th>
-              <td>{props.deliveryOrder.additionalInfo.extendedWarranty}</td>
+              <td>{extendedWarranty}</td>
             </tr>
             <tr>
               <th>Joy Club :</th>
@@ -217,7 +238,7 @@ const DeliveryOrderTable: React.FC<Props> = (props) => {
             </tr>
             <tr>
               <th>Total :</th>
-              <td>-</td>
+              <td>{total}</td>
             </tr>
           </Table>
           <Col sm="6">
