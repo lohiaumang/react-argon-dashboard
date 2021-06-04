@@ -200,9 +200,9 @@ const DeliveryOrders: React.FC = () => {
       }
     }
   };
-const printPage =()=>{
-  window.print();
-}
+  const printPage = () => {
+    window.print();
+  };
   return (
     <>
       <Header />
@@ -213,7 +213,7 @@ const printPage =()=>{
             <ModalHeader toggle={createDO} tag="h3">
               Delivery Order
             </ModalHeader>
-            <ModalBody className="p-5">
+            <ModalBody className="p-4">
               <DeliveryOrderTable deliveryOrder={deliveryOrders[selected]} />
             </ModalBody>
             <ModalFooter>

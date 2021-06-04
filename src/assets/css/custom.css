@@ -111,3 +111,23 @@ body {
 .small-button-width {
   min-width: 70px;
 }
+
+.delivery-order-table .row-header {
+  height: 50px;
+  width: 100%;
+  background-color: #5e72e4;
+  padding: 1em;
+  align-items: center;
+}
+
+.delivery-order-table .row {
+  margin: 0;
+}
+
+.delivery-order-table th {
+  padding: 0.5em;
+}
+
+.delivery-order-table td {
+  padding: 0.5em;
+}
