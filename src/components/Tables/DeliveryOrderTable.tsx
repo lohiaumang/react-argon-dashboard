@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef  } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Table, Row, Col } from "reactstrap";
 
 export interface DeliveryOrder {
@@ -65,12 +65,18 @@ type Props = {
 };
 
 const DeliveryOrderTable: React.FC<Props> = (props) => {
-  const divStyle = {
-    height: '120px',
+  const rowHader = {
+    height: '50px',
+    width: '100%',
+    backgroundColor: 'blue',
+    color: 'white'
+  };
+  const rowLine = {
+    height: '2px',
+    width: '100%',
+    backgroundColor: 'blue',
   };
 
-
-  
   if (
     props &&
     props.deliveryOrder &&
@@ -78,7 +84,7 @@ const DeliveryOrderTable: React.FC<Props> = (props) => {
     props.deliveryOrder.vehicleInfo &&
     props.deliveryOrder.additionalInfo
   ) {
-    
+
     return (
       // <div className="delviery-order-table">
       //   <Row className="mb-2">
@@ -108,7 +114,7 @@ const DeliveryOrderTable: React.FC<Props> = (props) => {
       //   </Row>
       // </div>
 
-      
+
       // <Table border="1" className="delivery-order-table table-responsive">
       //   <tr>
       //     <th colSpan={13}>BINAYAK HONDA</th>
@@ -231,154 +237,275 @@ const DeliveryOrderTable: React.FC<Props> = (props) => {
       //     <th colSpan={13}>Occ : Inst:Y/N CO./Email</th>
       //   </tr>
       // </Table>
-      
-       <Table className="table table-striped table-bordered ">
-        <tr>
-          <th colSpan={2} >BINAYAK HONDA</th>
-        </tr>
-        <tr>
-          <th>Name :</th>
-          <td>{props.deliveryOrder.name}</td>
-          
-        </tr>
-        <tr>
-          <th>S/D/W/O :</th>
-          <td>{props.deliveryOrder.customerInfo.swdo}</td>
-        </tr>
-        <tr>
-          <th rowSpan={3}>Persent Address :</th>
-          <td>{props.deliveryOrder.customerInfo.currLineOne}  {props.deliveryOrder.customerInfo.currLineTwo}</td>
-        </tr>
-        <tr>
-          <td>{props.deliveryOrder.customerInfo.currPS}  {props.deliveryOrder.customerInfo.currCity}</td>
-        </tr>
-        <tr>
-          <td >{props.deliveryOrder.customerInfo.currDistrict} {props.deliveryOrder.customerInfo.currState}</td>
-        </tr>
-        <tr>
-          <th>Locality :</th>
-          <td>N/A</td>
-        </tr>
-        <tr>
-          <th>City :</th>
-          <td>{props.deliveryOrder.customerInfo.currCity}</td>
-        </tr>
-        <tr>
-          <th>Pin :</th>
-          <td>{props.deliveryOrder.customerInfo.currPostal}</td>
-        </tr>
-        <tr>
-          <th rowSpan={3}>Permanent Address :</th>
-          <td>{props.deliveryOrder.customerInfo.permLineOne}  {props.deliveryOrder.customerInfo.permLineTwo}</td>
-        </tr>
-        <tr>
-          <td >{props.deliveryOrder.customerInfo.permPS}  {props.deliveryOrder.customerInfo.permPostal} </td>
-        </tr>
-        <tr>
-          <td>{props.deliveryOrder.customerInfo.permState}</td>
-        
-        </tr>
-        <tr>
-          <th>WA No :</th>
-          <td>{props.deliveryOrder.customerInfo.phoneNo}</td>
-       
-         
-        </tr>
-        <tr>
-          <th>Email ID :</th>
-          <td>{props.deliveryOrder.customerInfo.email}</td>
-         
-        </tr>
-        <tr>
-          <th>B day :</th>
-          <td>{props.deliveryOrder.customerInfo.dob}</td>
-        </tr>
-        <tr>
-          <th>Annv :</th>
-          <td>N/A</td>
-        </tr>
-        <tr>
-          <th>Ref 1 :</th>
-          <td></td>
-        
-        </tr>
-        <tr>
-          <th>WA No :</th>
-          <td></td>
-        
-        </tr>
-        <tr>
-          <th>Ref 2 :</th>
-          <td></td>
-        
-        </tr>
-        <tr>
-          <th>WA No :</th>
-          <td></td>
-        </tr>
-        <tr>
-          <th>Price :</th>
-          <td>{props.deliveryOrder.additionalInfo.price}</td>
-        </tr>
-        <tr>
-          <th>Insurance :</th>
-          <td>{props.deliveryOrder.additionalInfo.insurance}</td>
-        </tr>
-        <tr>
-          <th>MV Tax :</th>
-          <td>{props.deliveryOrder.additionalInfo.mvTax}</td>
-        </tr>
-        <tr>
-          <th>Postal Charge<br></br> HYPO :</th>
-          <td>{props.deliveryOrder.additionalInfo.postalCharge}</td>
-        </tr>
-        <tr>
-          <th>Extended Warranty :</th>
-          <td>{props.deliveryOrder.additionalInfo.extendedWarranty}</td>
-        </tr>
-        <tr>
-          <th>Joy Club :</th>
-          <td >{props.deliveryOrder.additionalInfo.joyClub}</td>
-        </tr>
-        <tr>
-          <th>Honda Roadside<br></br> Assistance :</th>
-          <td>N/A</td>
-        </tr>
-        <tr>
-          <th>PTFE Polish :</th>
-          <td>N/A</td>
-        </tr>
-        <tr>
-          <th>Total :</th>
-          <td>N/A</td>
-        </tr>
-        <tr>
-          <td>TE</td>
-          <td >WE</td>
-        </tr>
-        <tr>
-          <th>ERE</th>
-          <td >FRE</td>
-        </tr>
-        <tr>
-          <th>Financer :</th>
-          <td>N/A</td>
-        </tr>
-        <tr>
-          <th>Sale Ex.Sign :</th>
-          <td></td>
-        </tr>
-        <tr>
-          <th>Customer Sign :</th>
-          <td></td>
-        </tr>
-        <tr>
-          <th colSpan={2} style={divStyle}></th>
-        </tr>
-        <tr>
-          <th colSpan={2}>Occ : Inst:Y/N CO./Email</th>
-        </tr>
-      </Table>
+
+
+
+
+      //  <Table className="table table-striped table-bordered ">
+      //   <tr>
+      //     <th colSpan={2} >BINAYAK HONDA</th>
+      //   </tr>
+      //   <tr>
+      //     <th>Name :</th>
+      //     <td>{props.deliveryOrder.name}</td>
+
+      //   </tr>
+      //   <tr>
+      //     <th>S/D/W/O :</th>
+      //     <td>{props.deliveryOrder.customerInfo.swdo}</td>
+      //   </tr>
+      //   <tr>
+      //     <th rowSpan={3}>Persent Address :</th>
+      //     <td>{props.deliveryOrder.customerInfo.currLineOne}  {props.deliveryOrder.customerInfo.currLineTwo}</td>
+      //   </tr>
+      //   <tr>
+      //     <td>{props.deliveryOrder.customerInfo.currPS}  {props.deliveryOrder.customerInfo.currCity}</td>
+      //   </tr>
+      //   <tr>
+      //     <td >{props.deliveryOrder.customerInfo.currDistrict} {props.deliveryOrder.customerInfo.currState}</td>
+      //   </tr>
+      //   <tr>
+      //     <th>Locality :</th>
+      //     <td>N/A</td>
+      //   </tr>
+      //   <tr>
+      //     <th>City :</th>
+      //     <td>{props.deliveryOrder.customerInfo.currCity}</td>
+      //   </tr>
+      //   <tr>
+      //     <th>Pin :</th>
+      //     <td>{props.deliveryOrder.customerInfo.currPostal}</td>
+      //   </tr>
+      //   <tr>
+      //     <th rowSpan={3}>Permanent Address :</th>
+      //     <td>{props.deliveryOrder.customerInfo.permLineOne}  {props.deliveryOrder.customerInfo.permLineTwo}</td>
+      //   </tr>
+      //   <tr>
+      //     <td >{props.deliveryOrder.customerInfo.permPS}  {props.deliveryOrder.customerInfo.permPostal} </td>
+      //   </tr>
+      //   <tr>
+      //     <td>{props.deliveryOrder.customerInfo.permState}</td>
+
+      //   </tr>
+      //   <tr>
+      //     <th>WA No :</th>
+      //     <td>{props.deliveryOrder.customerInfo.phoneNo}</td>
+
+
+      //   </tr>
+      //   <tr>
+      //     <th>Email ID :</th>
+      //     <td>{props.deliveryOrder.customerInfo.email}</td>
+
+      //   </tr>
+      //   <tr>
+      //     <th>B day :</th>
+      //     <td>{props.deliveryOrder.customerInfo.dob}</td>
+      //   </tr>
+      //   <tr>
+      //     <th>Annv :</th>
+      //     <td>N/A</td>
+      //   </tr>
+      //   <tr>
+      //     <th>Ref 1 :</th>
+      //     <td></td>
+
+      //   </tr>
+      //   <tr>
+      //     <th>WA No :</th>
+      //     <td></td>
+
+      //   </tr>
+      //   <tr>
+      //     <th>Ref 2 :</th>
+      //     <td></td>
+
+      //   </tr>
+      //   <tr>
+      //     <th>WA No :</th>
+      //     <td></td>
+      //   </tr>
+      //   <tr>
+      //     <th>Price :</th>
+      //     <td>{props.deliveryOrder.additionalInfo.price}</td>
+      //   </tr>
+      //   <tr>
+      //     <th>Insurance :</th>
+      //     <td>{props.deliveryOrder.additionalInfo.insurance}</td>
+      //   </tr>
+      //   <tr>
+      //     <th>MV Tax :</th>
+      //     <td>{props.deliveryOrder.additionalInfo.mvTax}</td>
+      //   </tr>
+      //   <tr>
+      //     <th>Postal Charge<br></br> HYPO :</th>
+      //     <td>{props.deliveryOrder.additionalInfo.postalCharge}</td>
+      //   </tr>
+      //   <tr>
+      //     <th>Extended Warranty :</th>
+      //     <td>{props.deliveryOrder.additionalInfo.extendedWarranty}</td>
+      //   </tr>
+      //   <tr>
+      //     <th>Joy Club :</th>
+      //     <td >{props.deliveryOrder.additionalInfo.joyClub}</td>
+      //   </tr>
+      //   <tr>
+      //     <th>Honda Roadside<br></br> Assistance :</th>
+      //     <td>N/A</td>
+      //   </tr>
+      //   <tr>
+      //     <th>PTFE Polish :</th>
+      //     <td>N/A</td>
+      //   </tr>
+      //   <tr>
+      //     <th>Total :</th>
+      //     <td>N/A</td>
+      //   </tr>
+      //   <tr>
+      //     <td>TE</td>
+      //     <td >WE</td>
+      //   </tr>
+      //   <tr>
+      //     <th>ERE</th>
+      //     <td >FRE</td>
+      //   </tr>
+      //   <tr>
+      //     <th>Financer :</th>
+      //     <td>N/A</td>
+      //   </tr>
+      //   <tr>
+      //     <th>Sale Ex.Sign :</th>
+      //     <td></td>
+      //   </tr>
+      //   <tr>
+      //     <th>Customer Sign :</th>
+      //     <td></td>
+      //   </tr>
+      //   <tr>
+      //     <th colSpan={2} style={divStyle}></th>
+      //   </tr>
+      //   <tr>
+      //     <th colSpan={2}>Occ : Inst:Y/N CO./Email</th>
+      //   </tr>
+      // </Table>
+      <Row>
+        <Row style={rowHader}>Biayank Honda</Row>
+        <Col sm="6">
+          <Row>
+            <Col>Name</Col>
+            <Col>{props.deliveryOrder.name}</Col>
+          </Row>
+          <Row>
+            <Col>S/D/W/O</Col>
+            <Col>{props.deliveryOrder.customerInfo.swdo}</Col>
+          </Row>
+          <Row>
+            <Col>Persent Address</Col>
+            <Col>{props.deliveryOrder.customerInfo.currLineOne} <br></br>
+              {props.deliveryOrder.customerInfo.currLineTwo}<br></br>
+              {props.deliveryOrder.customerInfo.currPS}<br></br>
+              {props.deliveryOrder.customerInfo.currCity}<br></br>
+              {props.deliveryOrder.customerInfo.currDistrict}<br></br>
+              {props.deliveryOrder.customerInfo.currState}<br></br>
+              {props.deliveryOrder.customerInfo.currPostal}</Col>
+          </Row>
+
+
+        </Col>
+
+        <Col sm="6">
+          <Row>
+            <Col>Persent Address</Col>
+            <Col>{props.deliveryOrder.customerInfo.permLineOne} <br></br>
+              {props.deliveryOrder.customerInfo.permLineTwo}<br></br>
+              {props.deliveryOrder.customerInfo.permPS}<br></br>
+              {props.deliveryOrder.customerInfo.permCity}<br></br>
+              {props.deliveryOrder.customerInfo.permDistrict}<br></br>
+              {props.deliveryOrder.customerInfo.permState}<br></br>
+              {props.deliveryOrder.customerInfo.permPostal}</Col>
+          </Row>
+        </Col>
+        <Row style={rowLine}></Row>
+
+        <Col sm="6">
+          <Row>
+            <Col>Ref 1</Col>
+            <Col>-</Col>
+          </Row>
+          <Row>
+            <Col>WA No</Col>
+            <Col>-</Col>
+          </Row>
+        </Col>
+        <Col sm="6">
+          <Row>
+            <Col>Ref 2</Col>
+            <Col>-</Col>
+          </Row>
+          <Row>
+            <Col>WA No</Col>
+            <Col>-</Col>
+          </Row>
+        </Col>
+        <Row style={rowLine}></Row>
+        <Table className="table table-striped table-bordered ">
+
+
+          <tr>
+            <th>Price :</th>
+            <td>{props.deliveryOrder.additionalInfo.price}</td>
+          </tr>
+          <tr>
+            <th>Insurance :</th>
+            <td>{props.deliveryOrder.additionalInfo.insurance}</td>
+          </tr>
+          <tr>
+            <th>MV Tax :</th>
+            <td>{props.deliveryOrder.additionalInfo.mvTax}</td>
+          </tr>
+          <tr>
+            <th>Postal Charge<br></br> HYPO :</th>
+            <td>{props.deliveryOrder.additionalInfo.postalCharge}</td>
+          </tr>
+          <tr>
+            <th>Extended Warranty :</th>
+            <td>{props.deliveryOrder.additionalInfo.extendedWarranty}</td>
+          </tr>
+          <tr>
+            <th>Joy Club :</th>
+            <td >{props.deliveryOrder.additionalInfo.joyClub}</td>
+          </tr>
+          <tr>
+            <th>Honda Roadside<br></br> Assistance :</th>
+            <td>N/A</td>
+          </tr>
+          <tr>
+            <th>PTFE Polish :</th>
+            <td>N/A</td>
+          </tr>
+          <tr>
+            <th>Total :</th>
+            <td>-</td>
+          </tr>
+        </Table>
+        <Col sm="6">
+          <Row>
+            <Col>Financer</Col>
+            <Col>-</Col>
+          </Row>
+
+        </Col>
+        <Col sm="6">
+          <Row>
+            <Col>Sales Ex.Sign</Col>
+            <Col>-</Col>
+          </Row>
+          <Row>
+            <Col>Customer Sign</Col>
+            <Col>-</Col>
+          </Row>
+        </Col>
+      </Row>
     );
   } else {
     return <></>;
