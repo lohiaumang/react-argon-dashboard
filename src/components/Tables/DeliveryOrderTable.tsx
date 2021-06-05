@@ -79,7 +79,7 @@ const DeliveryOrderTable: React.FC<Props> = (props) => {
     const mvTax= parseInt(props.deliveryOrder.additionalInfo.mvTax)
     const postalCharge= parseInt(props.deliveryOrder.additionalInfo.postalCharge)
     const extendedWarranty= parseInt(props.deliveryOrder.additionalInfo.extendedWarranty)
-    const total=[price+insurance+mvTax+postalCharge+extendedWarranty]
+    const total=[price + insurance+mvTax + postalCharge + extendedWarranty]
   
     return (
       <div className="delivery-order-table">
