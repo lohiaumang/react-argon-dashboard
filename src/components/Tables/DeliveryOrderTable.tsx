@@ -67,12 +67,6 @@ type Props = {
 };
 
 const DeliveryOrderTable: React.FC<Props> = (props) => {
-  const rowLine = {
-    height: "2px",
-    width: "100%",
-    backgroundColor: "blue",
-  };
-
   if (
     props &&
     props.deliveryOrder &&
@@ -80,6 +74,17 @@ const DeliveryOrderTable: React.FC<Props> = (props) => {
     props.deliveryOrder.vehicleInfo &&
     props.deliveryOrder.additionalInfo
   ) {
+    const price = parseInt(props.deliveryOrder.additionalInfo.price);
+    const insurance = parseInt(props.deliveryOrder.additionalInfo.insurance);
+    const mvTax = parseInt(props.deliveryOrder.additionalInfo.mvTax);
+    const postalCharge = parseInt(
+      props.deliveryOrder.additionalInfo.postalCharge
+    );
+    const extendedWarranty = parseInt(
+      props.deliveryOrder.additionalInfo.extendedWarranty
+    );
+    const total = [price + insurance + mvTax + postalCharge + extendedWarranty];
+
     return (
       <div className="delivery-order-table">
         <Row>
