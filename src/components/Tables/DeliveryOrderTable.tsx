@@ -57,6 +57,8 @@ export interface DeliveryOrder {
     extendedWarranty: string;
     insurance: string;
     inquiryType: string;
+    financier?: string;
+    downPayment?: string;
   };
 }
 
@@ -82,22 +84,49 @@ const DeliveryOrderTable: React.FC<Props> = (props) => {
       <div className="delivery-order-table">
         <Row>
           <Row className="row-header">
-            <h4 style={{ color: "white" }}>Vinayak Honda</h4>
+            <Col>
+              <h4 className="m-0" style={{ color: "white" }}>
+                Vinayak Honda
+              </h4>
+            </Col>
+            <Col className="text-right">
+              <p className="m-0" style={{ color: "white" }}>
+                <small>
+                  <strong>Sl. no. {props.deliveryOrder.id}</strong>
+                </small>
+              </p>
+            </Col>
           </Row>
           <Row className="p-1 w-100">
             <Col sm="6" className="p-0">
               <Row>
                 <Col sm="4" className="px-1">
-                  <h5>Name:</h5>
+                  <h5>Name</h5>
                 </Col>
                 <Col sm="8" className="px-1">
                   <small>{props.deliveryOrder.name}</small>
                 </Col>
               </Row>
+              <Row>
+                <Col sm="4" className="px-1">
+                  <h5>S/D/W/o</h5>
+                </Col>
+                <Col sm="8" className="px-1">
+                  <small>{props.deliveryOrder.customerInfo.swdo}</small>
+                </Col>
+              </Row>
+              <Row>
+                <Col sm="4" className="px-1">
+                  <h5>Email</h5>
+                </Col>
+                <Col sm="8" className="px-1">
+                  <small>{props.deliveryOrder.customerInfo.email}</small>
+                </Col>
+              </Row>
 
               <Row>
                 <Col sm="4" className="px-1">
-                  <h5>Present Address: </h5>
+                  <h5>Present Address </h5>
                 </Col>
                 <Col sm="8" className="px-1">
                   <small>{props.deliveryOrder.customerInfo.currLineOne}</small>
@@ -122,15 +151,31 @@ const DeliveryOrderTable: React.FC<Props> = (props) => {
             <Col sm="6" className="p-0">
               <Row>
                 <Col sm="4" className="px-1">
-                  <h5>S/D/W/o:</h5>
+                  <h5>Date</h5>
                 </Col>
                 <Col sm="8" className="px-1">
-                  <small>{props.deliveryOrder.customerInfo.swdo}</small>
+                  <small>{new Date().toDateString()}</small>
                 </Col>
               </Row>
               <Row>
                 <Col sm="4" className="px-1">
-                  <h5>Present Address:</h5>
+                  <h5>Date of birth</h5>
+                </Col>
+                <Col sm="8" className="px-1">
+                  <small>{props.deliveryOrder.customerInfo.dob}</small>
+                </Col>
+              </Row>
+              <Row>
+                <Col sm="4" className="px-1">
+                  <h5>Phone number</h5>
+                </Col>
+                <Col sm="8" className="px-1">
+                  <small>{props.deliveryOrder.customerInfo.phoneNo}</small>
+                </Col>
+              </Row>
+              <Row>
+                <Col sm="4" className="px-1">
+                  <h5>Present Address</h5>
                 </Col>
                 <Col sm="8" className="px-1">
                   <small>{props.deliveryOrder.customerInfo.permLineOne}</small>
@@ -153,89 +198,164 @@ const DeliveryOrderTable: React.FC<Props> = (props) => {
             </Col>
           </Row>
           <Row className="p-1 border border-right-0 border-left-0 border-primary w-100">
-            <Col sm="6">
+            <Col sm="6" className="p-0">
               <Row>
-                <Col className="p-0">
-                  <h5>Ref one:</h5>
+                <Col sm="4" className="px-1">
+                  <h5 className="m-0">Model Name</h5>
                 </Col>
-                <Col>-</Col>
+                <Col sm="8" className="px-1">
+                  <small>{props.deliveryOrder.vehicleInfo.modelName}</small>
+                </Col>
+              </Row>
+              {props.deliveryOrder.additionalInfo.financier && (
+                <Row>
+                  <Col sm="4" className="px-1">
+                    <h5 className="m-0">Financier</h5>
+                  </Col>
+                  <Col sm="8" className="px-1">
+                    <small>
+                      {props.deliveryOrder.additionalInfo.financier}
+                    </small>
+                  </Col>
+                </Row>
+              )}
+              {props.deliveryOrder.additionalInfo.inquiryType && (
+                <Row>
+                  <Col sm="4" className="px-1">
+                    <h5 className="m-0">Inquiry Type</h5>
+                  </Col>
+                  <Col sm="8" className="px-1">
+                    <small>
+                      {props.deliveryOrder.additionalInfo.inquiryType.toUpperCase()}
+                    </small>
+                  </Col>
+                </Row>
+              )}
+              <Row>
+                <Col sm="4" className="px-1">
+                  <h5 className="m-0">Reference one</h5>
+                </Col>
+                <Col sm="8" className="px-1"></Col>
               </Row>
               <Row>
-                <Col className="p-0">
-                  <h5>Phone number:</h5>
+                <Col sm="4" className="px-1">
+                  <h5 className="m-0">Phone number</h5>
                 </Col>
-                <Col>-</Col>
+                <Col sm="8" className="px-1"></Col>
               </Row>
             </Col>
-            <Col sm="6">
+            <Col sm="6" className="p-0">
               <Row>
-                <Col className="p-0">
-                  <h5>Ref two:</h5>
+                <Col sm="4" className="px-1">
+                  <h5 className="m-0">Colour</h5>
                 </Col>
-                <Col>-</Col>
+                <Col sm="8" className="px-1">
+                  <small>{props.deliveryOrder.vehicleInfo.color}</small>
+                </Col>
+              </Row>
+              {props.deliveryOrder.customerInfo.gst && (
+                <Row>
+                  <Col sm="4" className="px-1">
+                    <h5>GST</h5>
+                  </Col>
+                  <Col sm="8" className="px-1">
+                    <small>{props.deliveryOrder.customerInfo.gst}</small>
+                  </Col>
+                </Row>
+              )}
+              <Row>
+                <Col sm="4" className="px-1">
+                  <h5 className="m-0">Reference two</h5>
+                </Col>
+                <Col sm="8" className="px-1"></Col>
               </Row>
               <Row>
-                <Col className="p-0">
-                  <h5>Phone number:</h5>
+                <Col sm="4" className="px-1">
+                  <h5 className="m-0">Phone number</h5>
                 </Col>
-                <Col>-</Col>
+                <Col sm="8" className="px-1"></Col>
               </Row>
             </Col>
           </Row>
-          <Table className="table table-striped table-bordered ">
+          <Table className="table table-striped table-bordered my-3">
+            {props.deliveryOrder.additionalInfo.price && (
+              <tr>
+                <th>Price</th>
+                <td>Rs. {props.deliveryOrder.additionalInfo.price}</td>
+              </tr>
+            )}
+            {props.deliveryOrder.additionalInfo.insurance && (
+              <tr>
+                <th>Insurance</th>
+                <td>Rs. {props.deliveryOrder.additionalInfo.insurance}</td>
+              </tr>
+            )}
+            {props.deliveryOrder.additionalInfo.mvTax && (
+              <tr>
+                <th>MV Tax</th>
+                <td>Rs. {props.deliveryOrder.additionalInfo.mvTax}</td>
+              </tr>
+            )}
+            {props.deliveryOrder.additionalInfo.postalCharge && (
+              <tr>
+                <th>Postal Charge</th>
+                <td>Rs. {props.deliveryOrder.additionalInfo.postalCharge}</td>
+              </tr>
+            )}
+            {props.deliveryOrder.additionalInfo.extendedWarranty && (
+              <tr>
+                <th>
+                  Extended Warranty -{" "}
+                  {props.deliveryOrder.additionalInfo.extendedWarranty} years
+                </th>
+                <td>
+                  {/*Add values to configs and then pull the value from there*/}
+                </td>
+              </tr>
+            )}
+            {props.deliveryOrder.additionalInfo.joyClub && (
+              <tr>
+                <th>Joy Club</th>
+                <td>Rs. 412</td>
+              </tr>
+            )}
+            {props.deliveryOrder.additionalInfo.hra && (
+              <tr>
+                <th>Honda Roadside Assistance</th>
+                <td>Rs. 299</td>
+              </tr>
+            )}
+            {props.deliveryOrder.additionalInfo.ptfePolish && (
+              <tr>
+                <th>PTFE Polish</th>
+                <td>Rs. {props.deliveryOrder.additionalInfo.ptfePolish}</td>
+              </tr>
+            )}
+            {props.deliveryOrder.additionalInfo.accessories && (
+              <tr>
+                <th>Accessories</th>
+                <td>Rs. {props.deliveryOrder.additionalInfo.accessories}</td>
+              </tr>
+            )}
             <tr>
-              <th>Price :</th>
-              <td>{props.deliveryOrder.additionalInfo.price}</td>
-            </tr>
-            <tr>
-              <th>Insurance :</th>
-              <td>{props.deliveryOrder.additionalInfo.insurance}</td>
-            </tr>
-            <tr>
-              <th>MV Tax :</th>
-              <td>{props.deliveryOrder.additionalInfo.mvTax}</td>
-            </tr>
-            <tr>
-              <th>Postal Charge:</th>
-              <td>{props.deliveryOrder.additionalInfo.postalCharge}</td>
-            </tr>
-            <tr>
-              <th>Extended Warranty :</th>
-              <td>{props.deliveryOrder.additionalInfo.extendedWarranty}</td>
-            </tr>
-            <tr>
-              <th>Joy Club :</th>
-              <td>{props.deliveryOrder.additionalInfo.joyClub}</td>
-            </tr>
-            <tr>
-              <th>Honda Roadside Assistance :</th>
-              <td>N/A</td>
-            </tr>
-            <tr>
-              <th>PTFE Polish :</th>
-              <td>N/A</td>
-            </tr>
-            <tr>
-              <th>Total :</th>
+              <th>
+                <strong>Total</strong>
+              </th>
               <td>-</td>
             </tr>
           </Table>
-          <Col sm="6">
-            <Row>
-              <Col>Financer</Col>
-              <Col>-</Col>
-            </Row>
-          </Col>
-          <Col sm="6">
-            <Row>
-              <Col>Sales Ex.Sign</Col>
-              <Col>-</Col>
-            </Row>
-            <Row>
-              <Col>Customer Sign</Col>
-              <Col>-</Col>
-            </Row>
-          </Col>
+          <Row
+            style={{ height: "80px" }}
+            className="w-100 align-items-end border border-right-0 border-left-0 border-primary"
+          >
+            <Col sm="6" className="px-1 text-center">
+              <h5>Sales Executive Signature</h5>
+            </Col>
+
+            <Col sm="6" className="px-1 text-center">
+              <h5>Customer Signature</h5>
+            </Col>
+          </Row>
         </Row>
       </div>
     );

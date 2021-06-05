@@ -210,10 +210,10 @@ const DeliveryOrders: React.FC = () => {
       <Container className="mt--7" fluid>
         {showDO && selected !== undefined && (
           <Modal isOpen={showDO} toggle={createDO} size="lg">
-            <ModalHeader toggle={createDO} tag="h3">
+            <ModalHeader className="p-4" tag="h3" toggle={createDO}>
               Delivery Order
             </ModalHeader>
-            <ModalBody className="p-4">
+            <ModalBody className="px-4 py-0">
               <DeliveryOrderTable deliveryOrder={deliveryOrders[selected]} />
             </ModalBody>
             <ModalFooter>
