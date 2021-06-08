@@ -221,7 +221,7 @@ const ConfigTable: React.FC<TableProps> = (props) => {
         ) : (
           currConfig && (
             <>
-              <Table className="align-items-center table-flush" responsive>
+              <Table className="align-items-center table-flush table table-responsive" >
                 <thead className="thead-light">
                   <tr>
                     <th key="modelName" scope="col">

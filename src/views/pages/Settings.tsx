@@ -48,8 +48,9 @@ const Settings: React.FC = () => {
   const [newKey, setNewKey] = useState<string>();
   const [insuranceConfig, setInsuranceConfig] = useState<any>({});
   const [priceConfig, setPriceConfig] = useState<any>({});
+  const [otherPriceConfig, setOtherPriceConfig] = useState<any>({});
   const db = firebase.firestore();
-
+console.log({priceConfig})
   useEffect(() => {
     const insuranceConfigRef = db.collection("insuranceConfig").doc("config");
 
@@ -65,17 +66,30 @@ const Settings: React.FC = () => {
       .catch((err) => console.log(err));
 
     const priceConfigRef = db.collection("priceConfig").doc("config");
-
     priceConfigRef
       .get()
       .then((doc) => {
         if (doc.exists) {
           setPriceConfig(doc.data());
+          console.log(doc.data())
         } else {
           console.log("No price config set yet!");
         }
       })
       .catch((err) => console.log(err));
+
+      const otherPriceConfigRef = db.collection("priceConfig").doc("joyHondaConfig");
+      otherPriceConfigRef
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            setOtherPriceConfig(doc.data());
+            console.log(doc.data())
+          } else {
+            console.log("No price config set yet!");
+          }
+        })
+        .catch((err) => console.log(err));
   }, []);
 
   const saveInsuranceConfig = (config: Config) => {
@@ -84,7 +98,9 @@ const Settings: React.FC = () => {
   const savePriceConfig = (config: Config) => {
     db.collection("priceConfig").doc("config").set(config);
   };
-
+  const saveOtherPriceConfig = (config: Config) => {
+    db.collection("priceConfig").doc("joyHondaConfig").set(config);
+  };
   return (
     <>
       <Header />
@@ -111,9 +127,16 @@ const Settings: React.FC = () => {
                 <ConfigTable
                   onSave={savePriceConfig}
                   title="Price Details"
-                  headers={["price", "roadTaxWithRc", "insuranceDeclaredValue"]}
+                  headers={["price", "roadTaxWithRc", "insuranceDeclaredValue","extendedWarranty4Years","extendedWarranty6Years"]}
                   config={priceConfig}
                   formatDownloadLink={require("../../assets/docs/priceConfigFormat.csv")}
+                />
+                   <ConfigTable
+                  onSave={saveOtherPriceConfig}
+                  title="Other Price Details"
+                  headers={["extendedWarranty4Years ", "extendedWarranty6Years ", "hondaRoadSideAssistance ","joyClub "]}
+                  config={otherPriceConfig}
+                  formatDownloadLink={require("../../assets/docs/priceOtherConfigFormat.csv")}
                 />
               </CardBody>
             </Card>
