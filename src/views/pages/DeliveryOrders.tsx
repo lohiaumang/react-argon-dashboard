@@ -52,6 +52,7 @@ import DeliveryOrderTable, {
   DeliveryOrder,
 } from "../../components/Tables/DeliveryOrderTable";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
+import SmallLoading from "../../components/Share/SmallLoading";
 import { UserContext } from "../../Context";
 import firebase from "firebase/app";
 import "firebase/firestore";
@@ -61,6 +62,7 @@ const DeliveryOrders: React.FC = () => {
   const [deliveryOrders, setDeliveryOrders] = useState<DeliveryOrder[]>([]);
   const [selected, setSelected] = useState<number>();
   const [showDO, setShowDO] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const db = firebase.firestore();
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
@@ -156,12 +158,15 @@ const DeliveryOrders: React.FC = () => {
   };
 
   const createDO = () => {
+    debugger;
+    setLoading(true);
     if (selected !== undefined) {
       const order = deliveryOrders[selected];
       let customerInfo: any, additionalInfo: any, vehicleInfo: any;
 
       if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
         setShowDO(!showDO);
+        setLoading(false);
       } else {
         db.collection("customers")
           .doc(order.customerId)
@@ -191,6 +196,7 @@ const DeliveryOrders: React.FC = () => {
                           tempOrders[selected] = fullDetails;
                           setDeliveryOrders(tempOrders);
                           setShowDO(!showDO);
+                          setLoading(false);
                         }
                       });
                   }
@@ -262,7 +268,7 @@ const DeliveryOrders: React.FC = () => {
                         onClick={createDO}
                         size="sm"
                       >
-                        Create DO
+                        {loading ? <SmallLoading /> : "Create DO"}
                       </Button>
                     </Col>
                   )}
