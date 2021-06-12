@@ -63,6 +63,7 @@ const DeliveryOrders: React.FC = () => {
   const [selected, setSelected] = useState<number>();
   const [showDO, setShowDO] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [erpData, setErpData] = useState<any>();
   const db = firebase.firestore();
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
@@ -79,6 +80,7 @@ const DeliveryOrders: React.FC = () => {
         });
     }
   }, []);
+console.log({deliveryOrders})
 
   const handleFileInErp = () => {
     if (selected !== undefined) {
@@ -132,11 +134,16 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-  const toggleSelected = (index: number) => {
+
+  
+  const toggleSelected = (index: number,curElem:any) => {
     if (selected === index) {
       setSelected(undefined);
     } else {
       setSelected(index);
+     let erp = JSON.parse(JSON.stringify(curElem.erpStatus));
+      // let hdfc = JSON.parse(JSON.stringify(curElem.hdfcStatus));
+      // let icici = JSON.parse(JSON.stringify(curElem.iciciStatus));
     }
   };
 
@@ -158,7 +165,6 @@ const DeliveryOrders: React.FC = () => {
   };
 
   const createDO = () => {
-    debugger;
     setLoading(true);
     if (selected !== undefined) {
       const order = deliveryOrders[selected];
@@ -209,13 +215,23 @@ const DeliveryOrders: React.FC = () => {
   const printPage = () => {
     window.print();
   };
+
+  // const setHidden = () => {
+  //   console.log(document.body.style.overflow);
+  //   if (document.body.style.overflow !== "hidden") {
+  //     document.body.style.overflow = "hidden";
+  //   } else {
+  //     document.body.style.overflow = "scroll";
+  //   }
+  // };
+
   return (
     <>
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
         {showDO && selected !== undefined && (
-          <Modal isOpen={showDO} toggle={createDO} size="lg">
+          <Modal isOpen={showDO} toggle={createDO} backdrop="static" keyboard={false} size="lg">
             <ModalHeader className="p-4" tag="h3" toggle={createDO}>
               Delivery Order
             </ModalHeader>
@@ -290,7 +306,7 @@ const DeliveryOrders: React.FC = () => {
                     {deliveryOrders.map((curElem: any, index: number) => (
                       <tr
                         key={curElem.id}
-                        onClick={() => toggleSelected(index)}
+                        onClick={() => toggleSelected(index,curElem)}
                         style={{ cursor: "pointer" }}
                       >
                         <td scope="row" className="text-center">
@@ -300,7 +316,7 @@ const DeliveryOrders: React.FC = () => {
                             color="primary"
                             checked={index === selected}
                             style={{ cursor: "pointer" }}
-                            onChange={() => toggleSelected(index)}
+                            onChange={() => toggleSelected(index,curElem)}
                           />
                         </td>
                         <td>{curElem.name}</td>

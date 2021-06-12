@@ -79,6 +79,7 @@ console.log({priceConfig})
       .catch((err) => console.log(err));
 
       const otherPriceConfigRef = db.collection("priceConfig").doc("joyHondaConfig");
+      debugger
       otherPriceConfigRef
         .get()
         .then((doc) => {
@@ -127,14 +128,14 @@ console.log({priceConfig})
                 <ConfigTable
                   onSave={savePriceConfig}
                   title="Price Details"
-                  headers={["price", "roadTaxWithRc", "insuranceDeclaredValue","extendedWarranty4Years","extendedWarranty6Years"]}
+                  headers={["price", "roadTaxWithRc", "insuranceDeclaredValue"]}
                   config={priceConfig}
                   formatDownloadLink={require("../../assets/docs/priceConfigFormat.csv")}
                 />
                    <ConfigTable
                   onSave={saveOtherPriceConfig}
-                  title="Other Price Details"
-                  headers={["extendedWarranty4Years ", "extendedWarranty6Years ", "hondaRoadSideAssistance ","joyClub "]}
+                  title="Add on Details"
+                  headers={["extWarranty4Years", "extWarranty6Years", "hondaRoadSideAssistance","joyClub"]}
                   config={otherPriceConfig}
                   formatDownloadLink={require("../../assets/docs/priceOtherConfigFormat.csv")}
                 />
