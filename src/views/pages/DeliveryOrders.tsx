@@ -37,6 +37,7 @@ import {
   Container,
   Row,
   Input,
+  ButtonDropdown,
   UncontrolledTooltip,
   FormGroup,
   Button,
@@ -53,6 +54,7 @@ import DeliveryOrderTable, {
 } from "../../components/Tables/DeliveryOrderTable";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 import SmallLoading from "../../components/Share/SmallLoading";
+import Loading from "../../components/Share/Loading";
 import { UserContext } from "../../Context";
 import firebase from "firebase/app";
 import "firebase/firestore";
@@ -63,10 +65,18 @@ const DeliveryOrders: React.FC = () => {
   const [selected, setSelected] = useState<number>();
   const [showDO, setShowDO] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [erpData, setErpData] = useState<any>();
+  const [loadingPage, setLoadingPage] = useState<boolean>(true);
+  const [dropdownButton, setDropdownButton] = useState(false);
   const db = firebase.firestore();
+
+  const toggle = () => setDropdownButton(prevState => !prevState);
+
+  //const {active,additionalId,color,customerId,dealerId,deliveryId,id,modelName,name,vehicleId}=erpData;
+  // const name = erpData.name;
+  // console.log({erpData})
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
+      setLoadingPage(true);
       const dealerId = user.createdBy || user.uid || "";
       db.collection("deliveryOrders")
         .where("dealerId", "==", dealerId)
@@ -77,10 +87,11 @@ const DeliveryOrders: React.FC = () => {
             id: doc.id,
           }));
           setDeliveryOrders(dOs);
+          setLoadingPage(false);
         });
     }
   }, []);
-console.log({deliveryOrders})
+  console.log({ deliveryOrders })
 
   const handleFileInErp = () => {
     if (selected !== undefined) {
@@ -135,19 +146,66 @@ console.log({deliveryOrders})
   };
 
 
-  
-  const toggleSelected = (index: number,curElem:any) => {
+  const getActionButton = () => {
+    if (selected || selected===0) {
+      debugger
+      switch (deliveryOrders[selected].status) {
+        case "PENDING": {
+          return <>Create DO</>
+        }
+        case "DO_CREATED": {
+          return <>
+            <DropdownToggle caret size="sm" color={"primary"}>
+              Create Insurance
+          </DropdownToggle>
+            <DropdownMenu>
+              <DropdownItem>HDFC</DropdownItem>
+              <DropdownItem>ICICI</DropdownItem>
+            </DropdownMenu>
+          </>
+        }
+        case "INVOICE_CREATED": {
+          return <>Invoice Generator </>
+        }
+        case "ERP": {
+          return <>Create ERP </>
+        }
+      }
+    }
+  }
+
+  const getFunction = () => {
+    if (selected || selected===0) {
+      debugger
+      switch (deliveryOrders[selected].status) {
+        case "PENDING": {
+          return createDO()
+        }
+        case "DO_CREATED": {
+          return <>Create Insurance</>
+        }
+        case "INVOICE_CREATED": {
+          return inovoice()
+        }
+        case "ERP": {
+          return handleFileInErp()
+        }
+      }
+    }
+  }
+
+
+  const toggleSelected = (index: number) => {
+    debugger
     if (selected === index) {
       setSelected(undefined);
     } else {
       setSelected(index);
-     let erp = JSON.parse(JSON.stringify(curElem.erpStatus));
-      // let hdfc = JSON.parse(JSON.stringify(curElem.hdfcStatus));
-      // let icici = JSON.parse(JSON.stringify(curElem.iciciStatus));
     }
   };
 
   const deleteDeliveryOrder = () => {
+    debugger
     if (selected !== undefined) {
       const tempOrders = deliveryOrders;
       const selectedDoId = deliveryOrders[selected].id;
@@ -165,6 +223,7 @@ console.log({deliveryOrders})
   };
 
   const createDO = () => {
+    debugger
     setLoading(true);
     if (selected !== undefined) {
       const order = deliveryOrders[selected];
@@ -212,6 +271,20 @@ console.log({deliveryOrders})
       }
     }
   };
+
+  const inovoice = () => {
+    debugger
+    setLoading(true);
+    if (selected !== undefined) {
+      const order = deliveryOrders[selected];
+      let customerInfo: any, additionalInfo: any, vehicleInfo: any;
+      if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
+        setShowDO(!showDO);
+        setLoading(false);
+      }
+    }
+  };
+
   const printPage = () => {
     window.print();
   };
@@ -231,8 +304,8 @@ console.log({deliveryOrders})
       {/* Page content */}
       <Container className="mt--7" fluid>
         {showDO && selected !== undefined && (
-          <Modal isOpen={showDO} toggle={createDO} backdrop="static" keyboard={false} size="lg">
-            <ModalHeader className="p-4" tag="h3" toggle={createDO}>
+          <Modal isOpen={showDO} toggle={getFunction} backdrop="static" keyboard={false} size="lg">
+            <ModalHeader className="p-4" tag="h3" toggle={getFunction}>
               Delivery Order
             </ModalHeader>
             <ModalBody className="px-4 py-0">
@@ -242,7 +315,7 @@ console.log({deliveryOrders})
               <Button color="primary" onClick={printPage}>
                 Print
               </Button>{" "}
-              <Button color="secondary" onClick={createDO}>
+              <Button color="secondary" onClick={getFunction}>
                 Close
               </Button>
             </ModalFooter>
@@ -257,7 +330,7 @@ console.log({deliveryOrders})
                   <Col xs="6">
                     <h3 className="my-3">Delivery Orders</h3>
                   </Col>
-                  {selected !== undefined && (
+                  {selected !== undefined && deliveryOrders[selected].status !== "DO_CREATED" && (
                     <Col
                       className="d-flex justify-content-end align-items-center"
                       xs="6"
@@ -281,54 +354,86 @@ console.log({deliveryOrders})
                       <Button
                         className="small-button-width my-2"
                         color={"primary"}
-                        onClick={createDO}
+                        onClick={getFunction}
                         size="sm"
                       >
-                        {loading ? <SmallLoading /> : "Create DO"}
+                        {loading ? <SmallLoading /> : getActionButton()}
                       </Button>
+
+                    </Col>
+                  )}
+                  {selected !== undefined && deliveryOrders[selected].status === "DO_CREATED" && (
+                    <Col
+                      className="d-flex justify-content-end align-items-center"
+                      xs="6"
+                    >
+                      <Button
+                        className="small-button-width my-2"
+                        color={"danger"}
+                        onClick={deleteDeliveryOrder}
+                        size="sm"
+                      >
+                        Delete
+                      </Button>
+                      <ButtonDropdown isOpen={dropdownButton} toggle={toggle}>
+                        {loading ? <SmallLoading /> : getActionButton()}
+                      </ButtonDropdown>
                     </Col>
                   )}
                 </Row>
               </CardHeader>
-              {deliveryOrders.length > 0 ? (
-                <Table className="align-items-center table-flush" responsive>
-                  <thead className="thead-light">
-                    <tr>
-                      <th scope="col" className="text-center">
-                        Select
-                      </th>
-                      <th scope="col">Name</th>
-                      <th scope="col">Model Name</th>
-                      <th scope="col">Color</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {deliveryOrders.map((curElem: any, index: number) => (
-                      <tr
-                        key={curElem.id}
-                        onClick={() => toggleSelected(index,curElem)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        <td scope="row" className="text-center">
-                          <Input
-                            className="position-relative"
-                            type="checkbox"
-                            color="primary"
-                            checked={index === selected}
-                            style={{ cursor: "pointer" }}
-                            onChange={() => toggleSelected(index,curElem)}
-                          />
-                        </td>
-                        <td>{curElem.name}</td>
-                        <td>{curElem.modelName}</td>
-                        <td>{curElem.color}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
+              {loadingPage ? (
+                <>
+                  <div className="w-100 d-flex justify-content-center">
+                    <Loading />
+                  </div>
+                  <hr className="my-4" />
+                </>
               ) : (
-                <CardBody className="p-4">You are all done!</CardBody>
+                <div>
+                  {deliveryOrders.length > 0 ? (
+                    <Table className="align-items-center table-flush" responsive>
+                      <thead className="thead-light">
+                        <tr>
+                          <th scope="col" className="text-center">
+                            Select
+                      </th>
+                          <th scope="col">Name</th>
+                          <th scope="col">Model Name</th>
+                          <th scope="col">Color</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {deliveryOrders.map((curElem: any, index: number) => (
+                          <tr
+                            key={curElem.id}
+                            onClick={() => toggleSelected(index)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            <td scope="row" className="text-center">
+                              <Input
+                                className="position-relative"
+                                type="checkbox"
+                                color="primary"
+                                disabled={!!loading}
+                                checked={index === selected}
+                                style={{ cursor: "pointer" }}
+                                onChange={() => toggleSelected(index)}
+                              />
+                            </td>
+                            <td>{curElem.name}</td>
+                            <td>{curElem.modelName}</td>
+                            <td>{curElem.color}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  ) : (
+                    <CardBody className="p-4">You are all done!</CardBody>
+                  )}
+                </div>
               )}
+
             </Card>
           </div>
         </Row>

@@ -3,6 +3,7 @@ import { Table, Row, Col } from "reactstrap";
 
 export interface DeliveryOrder {
   active: boolean;
+  status: string;
   color: string;
   name: string;
   vehicleId: string;
