@@ -71,9 +71,7 @@ const DeliveryOrders: React.FC = () => {
 
   const toggle = () => setDropdownButton(prevState => !prevState);
 
-  //const {active,additionalId,color,customerId,dealerId,deliveryId,id,modelName,name,vehicleId}=erpData;
-  // const name = erpData.name;
-  // console.log({erpData})
+ 
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
       setLoadingPage(true);
@@ -145,56 +143,6 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-
-  const getActionButton = () => {
-    if (selected || selected===0) {
-      debugger
-      switch (deliveryOrders[selected].status) {
-        case "PENDING": {
-          return <>Create DO</>
-        }
-        case "DO_CREATED": {
-          return <>
-            <DropdownToggle caret size="sm" color={"primary"}>
-              Create Insurance
-          </DropdownToggle>
-            <DropdownMenu>
-              <DropdownItem>HDFC</DropdownItem>
-              <DropdownItem>ICICI</DropdownItem>
-            </DropdownMenu>
-          </>
-        }
-        case "INVOICE_CREATED": {
-          return <>Invoice Generator </>
-        }
-        case "ERP": {
-          return <>Create ERP </>
-        }
-      }
-    }
-  }
-
-  const getFunction = () => {
-    if (selected || selected===0) {
-      debugger
-      switch (deliveryOrders[selected].status) {
-        case "PENDING": {
-          return createDO()
-        }
-        case "DO_CREATED": {
-          return <>Create Insurance</>
-        }
-        case "INVOICE_CREATED": {
-          return inovoice()
-        }
-        case "ERP": {
-          return handleFileInErp()
-        }
-      }
-    }
-  }
-
-
   const toggleSelected = (index: number) => {
     debugger
     if (selected === index) {
@@ -230,7 +178,7 @@ const DeliveryOrders: React.FC = () => {
       let customerInfo: any, additionalInfo: any, vehicleInfo: any;
 
       if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
-        setShowDO(!showDO);
+        // setShowDO(!showDO);
         setLoading(false);
       } else {
         db.collection("customers")
@@ -260,7 +208,7 @@ const DeliveryOrders: React.FC = () => {
                           const tempOrders = deliveryOrders;
                           tempOrders[selected] = fullDetails;
                           setDeliveryOrders(tempOrders);
-                          setShowDO(!showDO);
+                          // setShowDO(!showDO);
                           setLoading(false);
                         }
                       });
@@ -288,6 +236,63 @@ const DeliveryOrders: React.FC = () => {
   const printPage = () => {
     window.print();
   };
+
+  const getActionButton = () => {
+    if (selected || selected===0) {
+      debugger
+      switch (deliveryOrders[selected].status) {
+        case "PENDING": {
+          return <>Create DO</>
+        }
+        case "DO_CREATED": {
+          return <>
+            <DropdownToggle caret size="sm" color={"primary"}>
+              Create Insurance
+          </DropdownToggle>
+            <DropdownMenu>
+              <DropdownItem onClick={()=> hdfc()}>HDFC</DropdownItem>
+              <DropdownItem onClick={()=> icici()}>ICICI</DropdownItem>
+            </DropdownMenu>
+          </>
+        }
+        case "INVOICE_CREATED": {
+          return <>Invoice Generator </>
+        }
+        case "ERP": {
+          return <>Create ERP </>
+        }
+      }
+    }
+  }
+ const icici =()=>{
+   debugger
+   alert("icici");
+ }
+
+ const hdfc =()=>{
+  debugger
+  alert("hdfc");
+}
+
+  const getFunction = () => {
+    if (selected || selected===0) {
+      debugger
+      switch (deliveryOrders[selected].status) {
+        case "PENDING": {
+          return createDO()
+        }
+        case "DO_CREATED": {
+          return <>Create Insurance</>
+        }
+        case "INVOICE_CREATED": {
+          return inovoice()
+        }
+        case "ERP": {
+          return handleFileInErp()
+        }
+      }
+    }
+  }
 
   // const setHidden = () => {
   //   console.log(document.body.style.overflow);
