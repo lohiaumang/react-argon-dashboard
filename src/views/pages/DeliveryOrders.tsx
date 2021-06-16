@@ -92,58 +92,6 @@ const DeliveryOrders: React.FC = () => {
     }
   }, []);
 
-  // const handleFileInErp = () => {
-  //   if (selected !== undefined) {
-  //     const order = deliveryOrders[selected];
-  //     let customerInfo: any, additionalInfo: any, vehicleInfo: any;
-
-  //     if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
-  //       window.api.send("toMain", {
-  //         type: "FILE_IN_ERP",
-  //         data: order,
-  //       });
-  //     } else {
-  //       db.collection("customers")
-  //         .doc(order.customerId)
-  //         .get()
-  //         .then((doc) => {
-  //           if (doc.exists) {
-  //             customerInfo = doc.data();
-  //             db.collection("vehicles")
-  //               .doc(order.vehicleId)
-  //               .get()
-  //               .then((doc) => {
-  //                 if (doc.exists) {
-  //                   vehicleInfo = doc.data();
-  //                   db.collection("additionals")
-  //                     .doc(order.additionalId)
-  //                     .get()
-  //                     .then((doc) => {
-  //                       if (doc.exists) {
-  //                         additionalInfo = doc.data();
-  //                         const fullDetails = {
-  //                           ...deliveryOrders[selected],
-  //                           customerInfo: customerInfo,
-  //                           vehicleInfo: vehicleInfo,
-  //                           additionalInfo: additionalInfo,
-  //                         };
-  //                         const tempOrders = deliveryOrders;
-  //                         tempOrders[selected] = fullDetails;
-  //                         setDeliveryOrders(tempOrders);
-  //                         window.api.send("toMain", {
-  //                           type: "FILE_IN_ERP",
-  //                           data: fullDetails,
-  //                         });
-  //                       }
-  //                     });
-  //                 }
-  //               });
-  //           }
-  //         });
-  //     }
-  //   }
-  // };
-
   const getActionButton = () => {
     if (selected !== undefined) {
       switch (deliveryOrders[selected].status) {
@@ -164,8 +112,8 @@ const DeliveryOrders: React.FC = () => {
                     Create Insurance
                   </DropdownToggle>
                   <DropdownMenu>
-                    <DropdownItem onClick={}>HDFC</DropdownItem>
-                    <DropdownItem>ICICI</DropdownItem>
+                    <DropdownItem onClick={createInsurance}>HDFC</DropdownItem>
+                    <DropdownItem onClick={createInsurance}>ICICI</DropdownItem>
                   </DropdownMenu>
                 </>
               )}
@@ -225,17 +173,15 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-  const createDO = () => {
-    setLoading(true);
-    if (selected !== undefined) {
-      const order = deliveryOrders[selected];
-      let customerInfo: any, additionalInfo: any, vehicleInfo: any;
-
-      if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
-        // setShowDO(!showDO);
-        setLoading(false);
+  // TODO: Make fetching data if it does not exist common
+  const fetchDeliveryOrder = () => {
+    if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
+        return new Promise((resolve, reject) => {
+          resolve(true);
+        })
       } else {
-        db.collection("customers")
+        return new Promise((resolve, reject) => {
+          db.collection("customers")
           .doc(order.customerId)
           .get()
           .then((doc) => {
@@ -255,48 +201,148 @@ const DeliveryOrders: React.FC = () => {
                           additionalInfo = doc.data();
                           const fullDetails = {
                             ...deliveryOrders[selected],
-                            customerInfo: customerInfo,
-                            vehicleInfo: vehicleInfo,
-                            additionalInfo: additionalInfo,
+                            customerInfo,
+                            vehicleInfo,
+                            additionalInfo,
                           };
                           const tempOrders = deliveryOrders;
                           tempOrders[selected] = fullDetails;
                           setDeliveryOrders(tempOrders);
-                          // setShowDO(!showDO);
-                          setLoading(false);
+                          resolve(true);
                         }
-                      });
+                      }).catch(error => reject(error));
                   }
-                });
+                }).catch(error => reject(error));
             }
-          });
+          }).catch(error => reject(error));
+        }
       }
-    }
+  } // -> should return true or false promise
+
+  const createDO = () => {
+    // Type definition for status
+    fetchDeliveryOrder.then((status) => {
+      if(status) {
+        setShowDO(!showDO);
+        setLoading(false);
+      }
+    }).catch(err => console.log(err));
   };
 
   const createInvoice = () => {
-    setLoading(true);
-    if (selected !== undefined) {
-      const order = deliveryOrders[selected];
-      let customerInfo: any, additionalInfo: any, vehicleInfo: any;
-      if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
-        setShowDO(!showDO);
-        setLoading(false);
+    fetchDeliveryOrder.then((status) => {
+      if(status) {
+        window.api.send("toMain", {
+          type: "CREATE_INVOICE",
+          data: deliveryOrder[selected],
+        });
       }
-    }
+    }).catch(err => console.log(err));
+
+    // if (selected !== undefined) {
+    //   const order = deliveryOrders[selected];
+    //   let customerInfo: any, additionalInfo: any, vehicleInfo: any;
+
+    //   fetchDeliveryOrder().then((status: boolean) => {
+    //     if(status) { // true or false
+
+    //     }
+    //   })
+
+    //   if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
+    //     window.api.send("toMain", {
+    //       type: "FILE_IN_ERP",
+    //       data: order,
+    //     });
+    //   } else {
+    //     db.collection("customers")
+    //       .doc(order.customerId)
+    //       .get()
+    //       .then((doc) => {
+    //         if (doc.exists) {
+    //           customerInfo = doc.data();
+    //           db.collection("vehicles")
+    //             .doc(order.vehicleId)
+    //             .get()
+    //             .then((doc) => {
+    //               if (doc.exists) {
+    //                 vehicleInfo = doc.data();
+    //                 db.collection("additionals")
+    //                   .doc(order.additionalId)
+    //                   .get()
+    //                   .then((doc) => {
+    //                     if (doc.exists) {
+    //                       additionalInfo = doc.data();
+    //                       const fullDetails = {
+    //                         ...deliveryOrders[selected],
+    //                         customerInfo: customerInfo,
+    //                         vehicleInfo: vehicleInfo,
+    //                         additionalInfo: additionalInfo,
+    //                       };
+    //                       const tempOrders = deliveryOrders;
+    //                       tempOrders[selected] = fullDetails;
+    //                       setDeliveryOrders(tempOrders);
+    //                       window.api.send("toMain", {
+    //                         type: "FILE_IN_ERP",
+    //                         data: fullDetails,
+    //                       });
+    //                     }
+    //                   });
+    //               }
+    //             });
+    //         }
+    //       });
+    //   }
+    // }
   };
 
-  const createRegistration = () => {
+  const createInsurance = () => {
     setLoading(true);
-    if (selected !== undefined) {
-      const order = deliveryOrders[selected];
-      let customerInfo: any, additionalInfo: any, vehicleInfo: any;
-      if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
-        setShowDO(!showDO);
+    fetchDeliveryOrder.then((status) => {
+      if(status) {
+        window.api.send("toMain", {
+          type: "CREATE_INSURANCE",
+          data: deliveryOrder[selected],
+        });
         setLoading(false);
       }
-    }
-  };
+    }).catch(err => console.log(err));
+  }
+
+  const createRegistration = () => {
+    fetchDeliveryOrder.then((status) => {
+      if(status) {
+        window.api.send("toMain", {
+          type: "CREATE_REGISTRATION",
+          data: deliveryOrder[selected],
+        });
+      }
+    }).catch(err => console.log(err));
+  }
+
+  // const createInvoice = () => {
+  //   setLoading(true);
+  //   if (selected !== undefined) {
+  //     const order = deliveryOrders[selected];
+  //     let customerInfo: any, additionalInfo: any, vehicleInfo: any;
+  //     if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
+  //       setShowDO(!showDO);
+  //       setLoading(false);
+  //     }
+  //   }
+  // };
+
+  // const createRegistration = () => {
+  //   setLoading(true);
+  //   if (selected !== undefined) {
+  //     const order = deliveryOrders[selected];
+  //     let customerInfo: any, additionalInfo: any, vehicleInfo: any;
+  //     if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
+  //       setShowDO(!showDO);
+  //       setLoading(false);
+  //     }
+  //   }
+  // };
 
   const getActionButton = () => {
     if (selected || selected === 0) {
