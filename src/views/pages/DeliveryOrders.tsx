@@ -15,7 +15,8 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { useReactToPrint } from "react-to-print";
 
 // reactstrap components
 import {
@@ -61,6 +62,8 @@ import "firebase/firestore";
 
 const DeliveryOrders: React.FC = () => {
   const user: any = useContext(UserContext);
+  const deliveryOrderTableRef =
+    useRef() as React.MutableRefObject<HTMLDivElement>;
   const [deliveryOrders, setDeliveryOrders] = useState<DeliveryOrder[]>([]);
   const [selected, setSelected] = useState<number>();
   const [showDO, setShowDO] = useState<boolean>(false);
@@ -69,9 +72,8 @@ const DeliveryOrders: React.FC = () => {
   const [dropdownButton, setDropdownButton] = useState(false);
   const db = firebase.firestore();
 
-  const toggle = () => setDropdownButton(prevState => !prevState);
+  const toggle = () => setDropdownButton((prevState) => !prevState);
 
- 
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
       setLoadingPage(true);
@@ -89,62 +91,116 @@ const DeliveryOrders: React.FC = () => {
         });
     }
   }, []);
-  console.log({ deliveryOrders })
 
-  const handleFileInErp = () => {
+  // const handleFileInErp = () => {
+  //   if (selected !== undefined) {
+  //     const order = deliveryOrders[selected];
+  //     let customerInfo: any, additionalInfo: any, vehicleInfo: any;
+
+  //     if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
+  //       window.api.send("toMain", {
+  //         type: "FILE_IN_ERP",
+  //         data: order,
+  //       });
+  //     } else {
+  //       db.collection("customers")
+  //         .doc(order.customerId)
+  //         .get()
+  //         .then((doc) => {
+  //           if (doc.exists) {
+  //             customerInfo = doc.data();
+  //             db.collection("vehicles")
+  //               .doc(order.vehicleId)
+  //               .get()
+  //               .then((doc) => {
+  //                 if (doc.exists) {
+  //                   vehicleInfo = doc.data();
+  //                   db.collection("additionals")
+  //                     .doc(order.additionalId)
+  //                     .get()
+  //                     .then((doc) => {
+  //                       if (doc.exists) {
+  //                         additionalInfo = doc.data();
+  //                         const fullDetails = {
+  //                           ...deliveryOrders[selected],
+  //                           customerInfo: customerInfo,
+  //                           vehicleInfo: vehicleInfo,
+  //                           additionalInfo: additionalInfo,
+  //                         };
+  //                         const tempOrders = deliveryOrders;
+  //                         tempOrders[selected] = fullDetails;
+  //                         setDeliveryOrders(tempOrders);
+  //                         window.api.send("toMain", {
+  //                           type: "FILE_IN_ERP",
+  //                           data: fullDetails,
+  //                         });
+  //                       }
+  //                     });
+  //                 }
+  //               });
+  //           }
+  //         });
+  //     }
+  //   }
+  // };
+
+  const getActionButton = () => {
     if (selected !== undefined) {
-      const order = deliveryOrders[selected];
-      let customerInfo: any, additionalInfo: any, vehicleInfo: any;
+      switch (deliveryOrders[selected].status) {
+        case "PENDING": {
+          return <>Create DO</>;
+        }
+        case "DO_CREATED": {
+          return <>Create Invoice </>;
+        }
+        case "INVOICE_CREATED": {
+          return (
+            <ButtonDropdown isOpen={dropdownButton} toggle={toggle}>
+              {loading ? (
+                <SmallLoading />
+              ) : (
+                <>
+                  <DropdownToggle caret size="sm" color={"primary"}>
+                    Create Insurance
+                  </DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem onClick={}>HDFC</DropdownItem>
+                    <DropdownItem>ICICI</DropdownItem>
+                  </DropdownMenu>
+                </>
+              )}
+            </ButtonDropdown>
+          );
+        }
+        case "INSURANCE_CREATED": {
+          return <>Create Registration </>;
+        }
+      }
+    }
+  };
 
-      if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
-        window.api.send("toMain", {
-          type: "FILE_IN_ERP",
-          data: order,
-        });
-      } else {
-        db.collection("customers")
-          .doc(order.customerId)
-          .get()
-          .then((doc) => {
-            if (doc.exists) {
-              customerInfo = doc.data();
-              db.collection("vehicles")
-                .doc(order.vehicleId)
-                .get()
-                .then((doc) => {
-                  if (doc.exists) {
-                    vehicleInfo = doc.data();
-                    db.collection("additionals")
-                      .doc(order.additionalId)
-                      .get()
-                      .then((doc) => {
-                        if (doc.exists) {
-                          additionalInfo = doc.data();
-                          const fullDetails = {
-                            ...deliveryOrders[selected],
-                            customerInfo: customerInfo,
-                            vehicleInfo: vehicleInfo,
-                            additionalInfo: additionalInfo,
-                          };
-                          const tempOrders = deliveryOrders;
-                          tempOrders[selected] = fullDetails;
-                          setDeliveryOrders(tempOrders);
-                          window.api.send("toMain", {
-                            type: "FILE_IN_ERP",
-                            data: fullDetails,
-                          });
-                        }
-                      });
-                  }
-                });
-            }
-          });
+  // const getFunction = () => {
+  // TODO: Simplify this
+  const getActionFunction = () => {
+    if (selected !== undefined) {
+      switch (deliveryOrders[selected].status) {
+        case "PENDING": {
+          return createDO();
+        }
+        case "DO_CREATED": {
+          return createInvoice();
+        }
+        case "INVOICE_CREATED": {
+          return <>Create Insurance</>;
+        }
+        case "INSURANCE_CREATED": {
+          return createRegistration();
+        }
       }
     }
   };
 
   const toggleSelected = (index: number) => {
-    debugger
     if (selected === index) {
       setSelected(undefined);
     } else {
@@ -153,7 +209,6 @@ const DeliveryOrders: React.FC = () => {
   };
 
   const deleteDeliveryOrder = () => {
-    debugger
     if (selected !== undefined) {
       const tempOrders = deliveryOrders;
       const selectedDoId = deliveryOrders[selected].id;
@@ -171,7 +226,6 @@ const DeliveryOrders: React.FC = () => {
   };
 
   const createDO = () => {
-    debugger
     setLoading(true);
     if (selected !== undefined) {
       const order = deliveryOrders[selected];
@@ -220,8 +274,7 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-  const inovoice = () => {
-    debugger
+  const createInvoice = () => {
     setLoading(true);
     if (selected !== undefined) {
       const order = deliveryOrders[selected];
@@ -233,66 +286,76 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-  const printPage = () => {
-    window.print();
+  const createRegistration = () => {
+    setLoading(true);
+    if (selected !== undefined) {
+      const order = deliveryOrders[selected];
+      let customerInfo: any, additionalInfo: any, vehicleInfo: any;
+      if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
+        setShowDO(!showDO);
+        setLoading(false);
+      }
+    }
   };
 
   const getActionButton = () => {
-    if (selected || selected===0) {
-      debugger
+    if (selected || selected === 0) {
+      debugger;
       switch (deliveryOrders[selected].status) {
         case "PENDING": {
-          return <>Create DO</>
+          return <>Create DO</>;
         }
         case "DO_CREATED": {
-          return <>
-            <DropdownToggle caret size="sm" color={"primary"}>
-              Create Insurance
-          </DropdownToggle>
-            <DropdownMenu>
-              <DropdownItem onClick={()=> hdfc()}>HDFC</DropdownItem>
-              <DropdownItem onClick={()=> icici()}>ICICI</DropdownItem>
-            </DropdownMenu>
-          </>
+          return (
+            <>
+              <DropdownToggle caret size="sm" color={"primary"}>
+                Create Insurance
+              </DropdownToggle>
+              <DropdownMenu>
+                <DropdownItem onClick={() => hdfc()}>HDFC</DropdownItem>
+                <DropdownItem onClick={() => icici()}>ICICI</DropdownItem>
+              </DropdownMenu>
+            </>
+          );
         }
         case "INVOICE_CREATED": {
-          return <>Invoice Generator </>
+          return <>Invoice Generator </>;
         }
         case "ERP": {
-          return <>Create ERP </>
+          return <>Create ERP </>;
         }
       }
     }
-  }
- const icici =()=>{
-   debugger
-   alert("icici");
- }
+  };
+  const icici = () => {
+    debugger;
+    alert("icici");
+  };
 
- const hdfc =()=>{
-  debugger
-  alert("hdfc");
-}
+  const hdfc = () => {
+    debugger;
+    alert("hdfc");
+  };
 
   const getFunction = () => {
-    if (selected || selected===0) {
-      debugger
+    if (selected || selected === 0) {
+      debugger;
       switch (deliveryOrders[selected].status) {
         case "PENDING": {
-          return createDO()
+          return createDO();
         }
         case "DO_CREATED": {
-          return <>Create Insurance</>
+          return <>Create Insurance</>;
         }
         case "INVOICE_CREATED": {
-          return inovoice()
+          return inovoice();
         }
         case "ERP": {
-          return handleFileInErp()
+          return handleFileInErp();
         }
       }
     }
-  }
+  };
 
   // const setHidden = () => {
   //   console.log(document.body.style.overflow);
@@ -303,24 +366,42 @@ const DeliveryOrders: React.FC = () => {
   //   }
   // };
 
+  const printPage = useReactToPrint({
+    content: () => deliveryOrderTableRef.current,
+    copyStyles: true,
+  });
+
   return (
     <>
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
         {showDO && selected !== undefined && (
-          <Modal isOpen={showDO} toggle={getFunction} backdrop="static" keyboard={false} size="lg">
-            <ModalHeader className="p-4" tag="h3" toggle={getFunction}>
+          <Modal
+            isOpen={showDO}
+            toggle={() => setShowDO(!showDO)}
+            backdrop="static"
+            keyboard={false}
+            size="lg"
+          >
+            <ModalHeader
+              className="p-4"
+              tag="h3"
+              toggle={() => setShowDO(!showDO)}
+            >
               Delivery Order
             </ModalHeader>
             <ModalBody className="px-4 py-0">
-              <DeliveryOrderTable deliveryOrder={deliveryOrders[selected]} />
+              <DeliveryOrderTable
+                ref={deliveryOrderTableRef}
+                deliveryOrder={deliveryOrders[selected]}
+              />
             </ModalBody>
             <ModalFooter>
               <Button color="primary" onClick={printPage}>
                 Print
               </Button>{" "}
-              <Button color="secondary" onClick={getFunction}>
+              <Button color="secondary" onClick={() => setShowDO(!showDO)}>
                 Close
               </Button>
             </ModalFooter>
@@ -335,7 +416,7 @@ const DeliveryOrders: React.FC = () => {
                   <Col xs="6">
                     <h3 className="my-3">Delivery Orders</h3>
                   </Col>
-                  {selected !== undefined && deliveryOrders[selected].status !== "DO_CREATED" && (
+                  {selected !== undefined && (
                     <Col
                       className="d-flex justify-content-end align-items-center"
                       xs="6"
@@ -348,41 +429,7 @@ const DeliveryOrders: React.FC = () => {
                       >
                         Delete
                       </Button>
-                      {/* <Button
-                        className="small-button-width my-2"
-                        color={"primary"}
-                        onClick={handleFileInErp}
-                        size="sm"
-                      >
-                        File in ERP
-                      </Button> */}
-                      <Button
-                        className="small-button-width my-2"
-                        color={"primary"}
-                        onClick={getFunction}
-                        size="sm"
-                      >
-                        {loading ? <SmallLoading /> : getActionButton()}
-                      </Button>
-
-                    </Col>
-                  )}
-                  {selected !== undefined && deliveryOrders[selected].status === "DO_CREATED" && (
-                    <Col
-                      className="d-flex justify-content-end align-items-center"
-                      xs="6"
-                    >
-                      <Button
-                        className="small-button-width my-2"
-                        color={"danger"}
-                        onClick={deleteDeliveryOrder}
-                        size="sm"
-                      >
-                        Delete
-                      </Button>
-                      <ButtonDropdown isOpen={dropdownButton} toggle={toggle}>
-                        {loading ? <SmallLoading /> : getActionButton()}
-                      </ButtonDropdown>
+                      {getActionButton()}
                     </Col>
                   )}
                 </Row>
@@ -397,12 +444,15 @@ const DeliveryOrders: React.FC = () => {
               ) : (
                 <div>
                   {deliveryOrders.length > 0 ? (
-                    <Table className="align-items-center table-flush" responsive>
+                    <Table
+                      className="align-items-center table-flush"
+                      responsive
+                    >
                       <thead className="thead-light">
                         <tr>
                           <th scope="col" className="text-center">
                             Select
-                      </th>
+                          </th>
                           <th scope="col">Name</th>
                           <th scope="col">Model Name</th>
                           <th scope="col">Color</th>
@@ -438,7 +488,6 @@ const DeliveryOrders: React.FC = () => {
                   )}
                 </div>
               )}
-
             </Card>
           </div>
         </Row>

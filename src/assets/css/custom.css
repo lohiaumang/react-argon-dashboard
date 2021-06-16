@@ -130,3 +130,8 @@ body {
 .delivery-order-table td {
   padding: 0.5em;
 }
+
+@page {
+  size: auto;
+  margin: 2em;
+}
