@@ -1,19 +1,13 @@
 /*!
-
 =========================================================
 * Argon Dashboard React - v1.0.0
 =========================================================
-
 * Product Page: https://www.creative-tim.com/product/argon-dashboard-react
 * Copyright 2019 Creative Tim (https://www.creative-tim.com)
 * Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
 * Coded by Creative Tim
-
 =========================================================
-
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
 */
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
@@ -59,6 +53,7 @@ import Loading from "../../components/Share/Loading";
 import { UserContext } from "../../Context";
 import firebase from "firebase/app";
 import "firebase/firestore";
+import { rejects } from "assert";
 
 const DeliveryOrders: React.FC = () => {
   const user: any = useContext(UserContext);
@@ -96,10 +91,28 @@ const DeliveryOrders: React.FC = () => {
     if (selected !== undefined) {
       switch (deliveryOrders[selected].status) {
         case "PENDING": {
-          return <>Create DO</>;
+          return <>
+          <Button
+          className="small-button-width my-2"
+          color={"primary"}
+          onClick={createDO}
+          size="sm"
+        >
+          {loading ? <SmallLoading /> : "Create DO"}
+        </Button>
+        </>;
         }
         case "DO_CREATED": {
-          return <>Create Invoice </>;
+          return <>
+          <Button
+          className="small-button-width my-2"
+          color={"primary"}
+          onClick={createInvoice}
+          size="sm"
+        >
+          {loading ? <SmallLoading /> : "Create Invoice"}
+        </Button>
+         </>;
         }
         case "INVOICE_CREATED": {
           return (
@@ -121,28 +134,16 @@ const DeliveryOrders: React.FC = () => {
           );
         }
         case "INSURANCE_CREATED": {
-          return <>Create Registration </>;
-        }
-      }
-    }
-  };
-
-  // const getFunction = () => {
-  // TODO: Simplify this
-  const getActionFunction = () => {
-    if (selected !== undefined) {
-      switch (deliveryOrders[selected].status) {
-        case "PENDING": {
-          return createDO();
-        }
-        case "DO_CREATED": {
-          return createInvoice();
-        }
-        case "INVOICE_CREATED": {
-          return <>Create Insurance</>;
-        }
-        case "INSURANCE_CREATED": {
-          return createRegistration();
+          return <>
+          <Button
+          className="small-button-width my-2"
+          color={"primary"}
+          onClick={createRegistration}
+          size="sm"
+        >
+          {loading ? <SmallLoading /> : "Create Registration"}
+        </Button>
+           </>;
         }
       }
     }
@@ -175,12 +176,16 @@ const DeliveryOrders: React.FC = () => {
 
   // TODO: Make fetching data if it does not exist common
   const fetchDeliveryOrder = () => {
+   if (selected !== undefined) {
+      const order = deliveryOrders[selected];
+      let customerInfo: any, additionalInfo: any, vehicleInfo: any;
     if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
-        return new Promise((resolve, reject) => {
+        return new Promise<boolean>((resolve, reject) => {
           resolve(true);
-        })
-      } else {
-        return new Promise((resolve, reject) => {
+        });
+      }
+       else {
+        return new Promise<boolean>((resolve, reject) => {
           db.collection("customers")
           .doc(order.customerId)
           .get()
@@ -217,190 +222,62 @@ const DeliveryOrders: React.FC = () => {
           }).catch(error => reject(error));
         }
       }
+    }
   } // -> should return true or false promise
 
   const createDO = () => {
     // Type definition for status
-    fetchDeliveryOrder.then((status) => {
+    fetchDeliveryOrder.then((status:boolean) => {
       if(status) {
         setShowDO(!showDO);
         setLoading(false);
       }
-    }).catch(err => console.log(err));
+    }).catch((err: any) => console.log(err));
   };
 
   const createInvoice = () => {
-    fetchDeliveryOrder.then((status) => {
+    setLoading(true);
+    if (selected !== undefined) {
+    fetchDeliveryOrder.then((status:boolean) => {
       if(status) {
         window.api.send("toMain", {
           type: "CREATE_INVOICE",
-          data: deliveryOrder[selected],
-        });
-      }
-    }).catch(err => console.log(err));
-
-    // if (selected !== undefined) {
-    //   const order = deliveryOrders[selected];
-    //   let customerInfo: any, additionalInfo: any, vehicleInfo: any;
-
-    //   fetchDeliveryOrder().then((status: boolean) => {
-    //     if(status) { // true or false
-
-    //     }
-    //   })
-
-    //   if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
-    //     window.api.send("toMain", {
-    //       type: "FILE_IN_ERP",
-    //       data: order,
-    //     });
-    //   } else {
-    //     db.collection("customers")
-    //       .doc(order.customerId)
-    //       .get()
-    //       .then((doc) => {
-    //         if (doc.exists) {
-    //           customerInfo = doc.data();
-    //           db.collection("vehicles")
-    //             .doc(order.vehicleId)
-    //             .get()
-    //             .then((doc) => {
-    //               if (doc.exists) {
-    //                 vehicleInfo = doc.data();
-    //                 db.collection("additionals")
-    //                   .doc(order.additionalId)
-    //                   .get()
-    //                   .then((doc) => {
-    //                     if (doc.exists) {
-    //                       additionalInfo = doc.data();
-    //                       const fullDetails = {
-    //                         ...deliveryOrders[selected],
-    //                         customerInfo: customerInfo,
-    //                         vehicleInfo: vehicleInfo,
-    //                         additionalInfo: additionalInfo,
-    //                       };
-    //                       const tempOrders = deliveryOrders;
-    //                       tempOrders[selected] = fullDetails;
-    //                       setDeliveryOrders(tempOrders);
-    //                       window.api.send("toMain", {
-    //                         type: "FILE_IN_ERP",
-    //                         data: fullDetails,
-    //                       });
-    //                     }
-    //                   });
-    //               }
-    //             });
-    //         }
-    //       });
-    //   }
-    // }
-  };
-
-  const createInsurance = () => {
-    setLoading(true);
-    fetchDeliveryOrder.then((status) => {
-      if(status) {
-        window.api.send("toMain", {
-          type: "CREATE_INSURANCE",
-          data: deliveryOrder[selected],
+          data: deliveryOrders[selected],
         });
         setLoading(false);
       }
-    }).catch(err => console.log(err));
+    }).catch((err: any) => console.log(err));
   }
+};
+
+  const createInsurance = () => {
+    setLoading(true);
+    if (selected !== undefined) {
+    fetchDeliveryOrder.then((status:boolean) => {
+      if(status) {
+        window.api.send("toMain", {
+          type: "CREATE_INSURANCE",
+          data: deliveryOrders[selected],
+        });
+        setLoading(false);
+      }
+    }).catch((err: any) => console.log(err));
+  }
+  };
 
   const createRegistration = () => {
-    fetchDeliveryOrder.then((status) => {
+    setLoading(true);
+    if (selected !== undefined) {
+    fetchDeliveryOrder.then((status:boolean) => {
       if(status) {
         window.api.send("toMain", {
           type: "CREATE_REGISTRATION",
-          data: deliveryOrder[selected],
+          data: deliveryOrders[selected],
         });
+        setLoading(false);
       }
-    }).catch(err => console.log(err));
+    }).catch((err: any) => console.log(err));
   }
-
-  // const createInvoice = () => {
-  //   setLoading(true);
-  //   if (selected !== undefined) {
-  //     const order = deliveryOrders[selected];
-  //     let customerInfo: any, additionalInfo: any, vehicleInfo: any;
-  //     if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
-  //       setShowDO(!showDO);
-  //       setLoading(false);
-  //     }
-  //   }
-  // };
-
-  // const createRegistration = () => {
-  //   setLoading(true);
-  //   if (selected !== undefined) {
-  //     const order = deliveryOrders[selected];
-  //     let customerInfo: any, additionalInfo: any, vehicleInfo: any;
-  //     if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
-  //       setShowDO(!showDO);
-  //       setLoading(false);
-  //     }
-  //   }
-  // };
-
-  const getActionButton = () => {
-    if (selected || selected === 0) {
-      debugger;
-      switch (deliveryOrders[selected].status) {
-        case "PENDING": {
-          return <>Create DO</>;
-        }
-        case "DO_CREATED": {
-          return (
-            <>
-              <DropdownToggle caret size="sm" color={"primary"}>
-                Create Insurance
-              </DropdownToggle>
-              <DropdownMenu>
-                <DropdownItem onClick={() => hdfc()}>HDFC</DropdownItem>
-                <DropdownItem onClick={() => icici()}>ICICI</DropdownItem>
-              </DropdownMenu>
-            </>
-          );
-        }
-        case "INVOICE_CREATED": {
-          return <>Invoice Generator </>;
-        }
-        case "ERP": {
-          return <>Create ERP </>;
-        }
-      }
-    }
-  };
-  const icici = () => {
-    debugger;
-    alert("icici");
-  };
-
-  const hdfc = () => {
-    debugger;
-    alert("hdfc");
-  };
-
-  const getFunction = () => {
-    if (selected || selected === 0) {
-      debugger;
-      switch (deliveryOrders[selected].status) {
-        case "PENDING": {
-          return createDO();
-        }
-        case "DO_CREATED": {
-          return <>Create Insurance</>;
-        }
-        case "INVOICE_CREATED": {
-          return inovoice();
-        }
-        case "ERP": {
-          return handleFileInErp();
-        }
-      }
-    }
   };
 
   // const setHidden = () => {
