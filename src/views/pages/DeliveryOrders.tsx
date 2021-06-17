@@ -92,27 +92,27 @@ const DeliveryOrders: React.FC = () => {
       switch (deliveryOrders[selected].status) {
         case "PENDING": {
           return <>
-          <Button
-          className="small-button-width my-2"
-          color={"primary"}
-          onClick={createDO}
-          size="sm"
-        >
-          {loading ? <SmallLoading /> : "Create DO"}
-        </Button>
-        </>;
+            <Button
+              className="small-button-width my-2"
+              color={"primary"}
+              onClick={() => { createDO() }}
+              size="sm"
+            >
+              {loading ? <SmallLoading /> : "Create DO"}
+            </Button>
+          </>;
         }
         case "DO_CREATED": {
           return <>
-          <Button
-          className="small-button-width my-2"
-          color={"primary"}
-          onClick={createInvoice}
-          size="sm"
-        >
-          {loading ? <SmallLoading /> : "Create Invoice"}
-        </Button>
-         </>;
+            <Button
+              className="small-button-width my-2"
+              color={"primary"}
+              onClick={() => { createInvoice() }}
+              size="sm"
+            >
+              {loading ? <SmallLoading /> : "Create Invoice"}
+            </Button>
+          </>;
         }
         case "INVOICE_CREATED": {
           return (
@@ -125,8 +125,8 @@ const DeliveryOrders: React.FC = () => {
                     Create Insurance
                   </DropdownToggle>
                   <DropdownMenu>
-                    <DropdownItem onClick={createInsurance}>HDFC</DropdownItem>
-                    <DropdownItem onClick={createInsurance}>ICICI</DropdownItem>
+                    <DropdownItem onClick={() => {createInsurance() }}>HDFC</DropdownItem>
+                    <DropdownItem onClick={() => {createInsurance() }}>ICICI</DropdownItem>
                   </DropdownMenu>
                 </>
               )}
@@ -135,15 +135,15 @@ const DeliveryOrders: React.FC = () => {
         }
         case "INSURANCE_CREATED": {
           return <>
-          <Button
-          className="small-button-width my-2"
-          color={"primary"}
-          onClick={createRegistration}
-          size="sm"
-        >
-          {loading ? <SmallLoading /> : "Create Registration"}
-        </Button>
-           </>;
+            <Button
+              className="small-button-width my-2"
+              color={"primary"}
+              onClick={() => {createRegistration() }}
+              size="sm"
+            >
+              {loading ? <SmallLoading /> : "Create Registration"}
+            </Button>
+          </>;
         }
       }
     }
@@ -176,109 +176,158 @@ const DeliveryOrders: React.FC = () => {
 
   // TODO: Make fetching data if it does not exist common
   const fetchDeliveryOrder = () => {
-   if (selected !== undefined) {
+    debugger
+    if (selected !== undefined) {
       const order = deliveryOrders[selected];
       let customerInfo: any, additionalInfo: any, vehicleInfo: any;
-    if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
-        return new Promise<boolean>((resolve, reject) => {
+      if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
+        return new Promise<boolean>((resolve) => {
           resolve(true);
         });
       }
-       else {
+      else {
         return new Promise<boolean>((resolve, reject) => {
           db.collection("customers")
-          .doc(order.customerId)
-          .get()
-          .then((doc) => {
-            if (doc.exists) {
-              customerInfo = doc.data();
-              db.collection("vehicles")
-                .doc(order.vehicleId)
-                .get()
-                .then((doc) => {
-                  if (doc.exists) {
-                    vehicleInfo = doc.data();
-                    db.collection("additionals")
-                      .doc(order.additionalId)
-                      .get()
-                      .then((doc) => {
-                        if (doc.exists) {
-                          additionalInfo = doc.data();
-                          const fullDetails = {
-                            ...deliveryOrders[selected],
-                            customerInfo,
-                            vehicleInfo,
-                            additionalInfo,
-                          };
-                          const tempOrders = deliveryOrders;
-                          tempOrders[selected] = fullDetails;
-                          setDeliveryOrders(tempOrders);
-                          resolve(true);
-                        }
-                      }).catch(error => reject(error));
-                  }
-                }).catch(error => reject(error));
-            }
-          }).catch(error => reject(error));
-        }
+            .doc(order.customerId)
+            .get()
+            .then((doc) => {
+              if (doc.exists) {
+                customerInfo = doc.data();
+                db.collection("vehicles")
+                  .doc(order.vehicleId)
+                  .get()
+                  .then((doc) => {
+                    if (doc.exists) {
+                      vehicleInfo = doc.data();
+                      db.collection("additionals")
+                        .doc(order.additionalId)
+                        .get()
+                        .then((doc) => {
+                          if (doc.exists) {
+                            additionalInfo = doc.data();
+                            const fullDetails = {
+                              ...deliveryOrders[selected],
+                              customerInfo,
+                              vehicleInfo,
+                              additionalInfo,
+                            };
+                            const tempOrders = deliveryOrders;
+                            tempOrders[selected] = fullDetails;
+                            setDeliveryOrders(tempOrders);
+                            resolve(true);
+                          }
+                        }).catch(error => reject(error));
+                    }
+                  }).catch(error => reject(error));
+              }
+            }).catch(error => reject(error));
+        });
       }
     }
   } // -> should return true or false promise
 
-  const createDO = () => {
-    // Type definition for status
-    fetchDeliveryOrder.then((status:boolean) => {
-      if(status) {
+  const createDO = async () => {
+    try {
+      setLoading(true);
+      const status: any = await fetchDeliveryOrder();
+      if (status) {
         setShowDO(!showDO);
         setLoading(false);
       }
-    }).catch((err: any) => console.log(err));
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const createInvoice = () => {
-    setLoading(true);
-    if (selected !== undefined) {
-    fetchDeliveryOrder.then((status:boolean) => {
-      if(status) {
-        window.api.send("toMain", {
-          type: "CREATE_INVOICE",
-          data: deliveryOrders[selected],
-        });
-        setLoading(false);
-      }
-    }).catch((err: any) => console.log(err));
-  }
-};
+  const createInvoice = async () => {
+    debugger
+    try {
+      setLoading(true);
+      if (selected !== undefined) {
+        const status: any = await fetchDeliveryOrder();
+        if (status) {
+          window.api.send("toMain", {
+            type: "CREATE_INVOICE",
+            data: deliveryOrders[selected],
+          });
+          setLoading(false);
+        }
 
-  const createInsurance = () => {
-    setLoading(true);
-    if (selected !== undefined) {
-    fetchDeliveryOrder.then((status:boolean) => {
-      if(status) {
-        window.api.send("toMain", {
-          type: "CREATE_INSURANCE",
-          data: deliveryOrders[selected],
-        });
-        setLoading(false);
       }
-    }).catch((err: any) => console.log(err));
-  }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const createRegistration = () => {
-    setLoading(true);
-    if (selected !== undefined) {
-    fetchDeliveryOrder.then((status:boolean) => {
-      if(status) {
-        window.api.send("toMain", {
-          type: "CREATE_REGISTRATION",
-          data: deliveryOrders[selected],
-        });
-        setLoading(false);
+  const createInsurance = async () => {
+    debugger
+    try {
+      setLoading(true);
+      if (selected !== undefined) {
+        const status: any = await fetchDeliveryOrder();
+        if (status) {
+          window.api.send("toMain", {
+            type: "CREATE_INSURANCE",
+            data: deliveryOrders[selected],
+          });
+          setLoading(false);
+        }
+
       }
-    }).catch((err: any) => console.log(err));
-  }
+    } catch (err) {
+      console.log(err);
+    }
   };
+
+  const createRegistration = async () => {
+    debugger
+    try {
+      setLoading(true);
+      if (selected !== undefined) {
+        const status: any = await fetchDeliveryOrder();
+        if (status) {
+          window.api.send("toMain", {
+            type: "CREATE_REGISTRATION",
+            data: deliveryOrders[selected],
+          });
+          setLoading(false);
+        }
+
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //   const createInsurance = () => {
+  //     setLoading(true);
+  //     if (selected !== undefined) {
+  //     fetchDeliveryOrder.then((status:boolean) => {
+  //       if(status) {
+  //         window.api.send("toMain", {
+  //           type: "CREATE_INSURANCE",
+  //           data: deliveryOrders[selected],
+  //         });
+  //         setLoading(false);
+  //       }
+  //     }).catch((err: any) => console.log(err));
+  //   }
+  //   };
+
+  //   const createRegistration = () => {
+  //     setLoading(true);
+  //     if (selected !== undefined) {
+  //     fetchDeliveryOrder.then((status:boolean) => {
+  //       if(status) {
+  //         window.api.send("toMain", {
+  //           type: "CREATE_REGISTRATION",
+  //           data: deliveryOrders[selected],
+  //         });
+  //         setLoading(false);
+  //       }
+  //     }).catch((err: any) => console.log(err));
+  //   }
+  //   };
 
   // const setHidden = () => {
   //   console.log(document.body.style.overflow);
