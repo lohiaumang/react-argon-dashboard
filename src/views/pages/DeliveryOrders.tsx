@@ -1,21 +1,16 @@
 /*!
-
 =========================================================
 * Argon Dashboard React - v1.0.0
 =========================================================
-
 * Product Page: https://www.creative-tim.com/product/argon-dashboard-react
 * Copyright 2019 Creative Tim (https://www.creative-tim.com)
 * Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
 * Coded by Creative Tim
-
 =========================================================
-
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
 */
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { useReactToPrint } from "react-to-print";
 
 // reactstrap components
 import {
@@ -37,6 +32,7 @@ import {
   Container,
   Row,
   Input,
+  ButtonDropdown,
   UncontrolledTooltip,
   FormGroup,
   Button,
@@ -53,19 +49,29 @@ import DeliveryOrderTable, {
 } from "../../components/Tables/DeliveryOrderTable";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 import SmallLoading from "../../components/Share/SmallLoading";
+import Loading from "../../components/Share/Loading";
 import { UserContext } from "../../Context";
 import firebase from "firebase/app";
 import "firebase/firestore";
+import { rejects } from "assert";
 
 const DeliveryOrders: React.FC = () => {
   const user: any = useContext(UserContext);
+  const deliveryOrderTableRef =
+    useRef() as React.MutableRefObject<HTMLDivElement>;
   const [deliveryOrders, setDeliveryOrders] = useState<DeliveryOrder[]>([]);
   const [selected, setSelected] = useState<number>();
   const [showDO, setShowDO] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingPage, setLoadingPage] = useState<boolean>(true);
+  const [dropdownButton, setDropdownButton] = useState(false);
   const db = firebase.firestore();
+
+  const toggle = () => setDropdownButton((prevState) => !prevState);
+
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
+      setLoadingPage(true);
       const dealerId = user.createdBy || user.uid || "";
       db.collection("deliveryOrders")
         .where("dealerId", "==", dealerId)
@@ -76,58 +82,69 @@ const DeliveryOrders: React.FC = () => {
             id: doc.id,
           }));
           setDeliveryOrders(dOs);
+          setLoadingPage(false);
         });
     }
   }, []);
 
-  const handleFileInErp = () => {
+  const getActionButton = () => {
     if (selected !== undefined) {
-      const order = deliveryOrders[selected];
-      let customerInfo: any, additionalInfo: any, vehicleInfo: any;
-
-      if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
-        window.api.send("toMain", {
-          type: "FILE_IN_ERP",
-          data: order,
-        });
-      } else {
-        db.collection("customers")
-          .doc(order.customerId)
-          .get()
-          .then((doc) => {
-            if (doc.exists) {
-              customerInfo = doc.data();
-              db.collection("vehicles")
-                .doc(order.vehicleId)
-                .get()
-                .then((doc) => {
-                  if (doc.exists) {
-                    vehicleInfo = doc.data();
-                    db.collection("additionals")
-                      .doc(order.additionalId)
-                      .get()
-                      .then((doc) => {
-                        if (doc.exists) {
-                          additionalInfo = doc.data();
-                          const fullDetails = {
-                            ...deliveryOrders[selected],
-                            customerInfo: customerInfo,
-                            vehicleInfo: vehicleInfo,
-                            additionalInfo: additionalInfo,
-                          };
-                          const tempOrders = deliveryOrders;
-                          tempOrders[selected] = fullDetails;
-                          setDeliveryOrders(tempOrders);
-                          window.api.send("toMain", {
-                            type: "FILE_IN_ERP",
-                            data: fullDetails,
-                          });
-                        }
-                      });
-                  }
-                });
-            }
-          });
+      switch (deliveryOrders[selected].status) {
+        case "PENDING": {
+          return <>
+            <Button
+              className="small-button-width my-2"
+              color={"primary"}
+              onClick={() => { createDO() }}
+              size="sm"
+            >
+              {loading ? <SmallLoading /> : "Create DO"}
+            </Button>
+          </>;
+        }
+        case "DO_CREATED": {
+          return <>
+            <Button
+              className="small-button-width my-2"
+              color={"primary"}
+              onClick={() => { createInvoice() }}
+              size="sm"
+            >
+              {loading ? <SmallLoading /> : "Create Invoice"}
+            </Button>
+          </>;
+        }
+        case "INVOICE_CREATED": {
+          return (
+            <ButtonDropdown isOpen={dropdownButton} toggle={toggle}>
+              {loading ? (
+                <SmallLoading />
+              ) : (
+                <>
+                  <DropdownToggle caret size="sm" color={"primary"}>
+                    Create Insurance
+                  </DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem onClick={() => { createInsurance() }}>HDFC</DropdownItem>
+                    <DropdownItem onClick={() => { createInsurance() }}>ICICI</DropdownItem>
+                  </DropdownMenu>
+                </>
+              )}
+            </ButtonDropdown>
+          );
+        }
+        case "INSURANCE_CREATED": {
+          return <>
+            <Button
+              className="small-button-width my-2"
+              color={"primary"}
+              onClick={() => { createRegistration() }}
+              size="sm"
+            >
+              {loading ? <SmallLoading /> : "Create Registration"}
+            </Button>
+          </>;
+        }
       }
     }
   };
@@ -157,76 +174,206 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-  const createDO = () => {
-    debugger;
-    setLoading(true);
+  // TODO: Make fetching data if it does not exist common
+  const fetchDeliveryOrder = () => {
+    debugger
     if (selected !== undefined) {
       const order = deliveryOrders[selected];
       let customerInfo: any, additionalInfo: any, vehicleInfo: any;
-
       if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
-        setShowDO(!showDO);
-        setLoading(false);
-      } else {
-        db.collection("customers")
-          .doc(order.customerId)
-          .get()
-          .then((doc) => {
-            if (doc.exists) {
-              customerInfo = doc.data();
-              db.collection("vehicles")
-                .doc(order.vehicleId)
-                .get()
-                .then((doc) => {
-                  if (doc.exists) {
-                    vehicleInfo = doc.data();
-                    db.collection("additionals")
-                      .doc(order.additionalId)
-                      .get()
-                      .then((doc) => {
-                        if (doc.exists) {
-                          additionalInfo = doc.data();
-                          const fullDetails = {
-                            ...deliveryOrders[selected],
-                            customerInfo: customerInfo,
-                            vehicleInfo: vehicleInfo,
-                            additionalInfo: additionalInfo,
-                          };
-                          const tempOrders = deliveryOrders;
-                          tempOrders[selected] = fullDetails;
-                          setDeliveryOrders(tempOrders);
-                          setShowDO(!showDO);
-                          setLoading(false);
-                        }
-                      });
-                  }
-                });
-            }
-          });
+        return new Promise<boolean>((resolve) => {
+          resolve(true);
+        });
+      }
+      else {
+        return new Promise<boolean>((resolve, reject) => {
+          db.collection("customers")
+            .doc(order.customerId)
+            .get()
+            .then((doc) => {
+              if (doc.exists) {
+                customerInfo = doc.data();
+                db.collection("vehicles")
+                  .doc(order.vehicleId)
+                  .get()
+                  .then((doc) => {
+                    if (doc.exists) {
+                      vehicleInfo = doc.data();
+                      db.collection("additionals")
+                        .doc(order.additionalId)
+                        .get()
+                        .then((doc) => {
+                          if (doc.exists) {
+                            additionalInfo = doc.data();
+                            const fullDetails = {
+                              ...deliveryOrders[selected],
+                              customerInfo,
+                              vehicleInfo,
+                              additionalInfo,
+                            };
+                            const tempOrders = deliveryOrders;
+                            tempOrders[selected] = fullDetails;
+                            setDeliveryOrders(tempOrders);
+                            resolve(true);
+                          }
+                        }).catch(error => reject(error));
+                    }
+                  }).catch(error => reject(error));
+              }
+            }).catch(error => reject(error));
+        });
       }
     }
+  } // -> should return true or false promise
+
+  const createDO = async () => {
+    try {
+      setLoading(true);
+      const status: any = await fetchDeliveryOrder();
+      if (status) {
+        setShowDO(!showDO);
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
-  const printPage = () => {
-    window.print();
+
+  const createInvoice = async () => {
+    debugger
+    try {
+      setLoading(true);
+      if (selected !== undefined) {
+        const status: any = await fetchDeliveryOrder();
+        if (status) {
+          window.api.send("toMain", {
+            type: "CREATE_INVOICE",
+            data: deliveryOrders[selected],
+          });
+          setLoading(false);
+        }
+
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
+
+  const createInsurance = async () => {
+    debugger
+    try {
+      setLoading(true);
+      if (selected !== undefined) {
+        const status: any = await fetchDeliveryOrder();
+        if (status) {
+          window.api.send("toMain", {
+            type: "CREATE_INSURANCE",
+            data: deliveryOrders[selected],
+          });
+          setLoading(false);
+        }
+
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const createRegistration = async () => {
+    debugger
+    try {
+      setLoading(true);
+      if (selected !== undefined) {
+        const status: any = await fetchDeliveryOrder();
+        if (status) {
+          window.api.send("toMain", {
+            type: "CREATE_REGISTRATION",
+            data: deliveryOrders[selected],
+          });
+           setLoading(false);
+        }
+
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //   const createInsurance = () => {
+  //     setLoading(true);
+  //     if (selected !== undefined) {
+  //     fetchDeliveryOrder.then((status:boolean) => {
+  //       if(status) {
+  //         window.api.send("toMain", {
+  //           type: "CREATE_INSURANCE",
+  //           data: deliveryOrders[selected],
+  //         });
+  //         setLoading(false);
+  //       }
+  //     }).catch((err: any) => console.log(err));
+  //   }
+  //   };
+
+  //   const createRegistration = () => {
+  //     setLoading(true);
+  //     if (selected !== undefined) {
+  //     fetchDeliveryOrder.then((status:boolean) => {
+  //       if(status) {
+  //         window.api.send("toMain", {
+  //           type: "CREATE_REGISTRATION",
+  //           data: deliveryOrders[selected],
+  //         });
+  //         setLoading(false);
+  //       }
+  //     }).catch((err: any) => console.log(err));
+  //   }
+  //   };
+
+  // const setHidden = () => {
+  //   console.log(document.body.style.overflow);
+  //   if (document.body.style.overflow !== "hidden") {
+  //     document.body.style.overflow = "hidden";
+  //   } else {
+  //     document.body.style.overflow = "scroll";
+  //   }
+  // };
+
+  const printPage = useReactToPrint({
+    content: () => deliveryOrderTableRef.current,
+    copyStyles: true,
+  });
+
   return (
     <>
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
         {showDO && selected !== undefined && (
-          <Modal isOpen={showDO} toggle={createDO} size="lg">
-            <ModalHeader className="p-4" tag="h3" toggle={createDO}>
+          <Modal
+            isOpen={showDO}
+            toggle={() => setShowDO(!showDO)}
+            backdrop="static"
+            keyboard={false}
+            size="lg"
+          >
+            <ModalHeader
+              className="p-4"
+              tag="h3"
+              toggle={() => setShowDO(!showDO)}
+            >
               Delivery Order
             </ModalHeader>
             <ModalBody className="px-4 py-0">
-              <DeliveryOrderTable deliveryOrder={deliveryOrders[selected]} />
+              <DeliveryOrderTable
+                ref={deliveryOrderTableRef}
+                deliveryOrder={deliveryOrders[selected]}
+              />
             </ModalBody>
             <ModalFooter>
               <Button color="primary" onClick={printPage}>
                 Print
               </Button>{" "}
-              <Button color="secondary" onClick={createDO}>
+              <Button color="secondary" onClick={() => setShowDO(!showDO)}>
                 Close
               </Button>
             </ModalFooter>
@@ -254,65 +401,64 @@ const DeliveryOrders: React.FC = () => {
                       >
                         Delete
                       </Button>
-                      {/* <Button
-                        className="small-button-width my-2"
-                        color={"primary"}
-                        onClick={handleFileInErp}
-                        size="sm"
-                      >
-                        File in ERP
-                      </Button> */}
-                      <Button
-                        className="small-button-width my-2"
-                        color={"primary"}
-                        onClick={createDO}
-                        size="sm"
-                      >
-                        {loading ? <SmallLoading /> : "Create DO"}
-                      </Button>
-                      
+                      {getActionButton()}
                     </Col>
                   )}
                 </Row>
               </CardHeader>
-              {deliveryOrders.length > 0 ? (
-                <Table className="align-items-center table-flush" responsive>
-                  <thead className="thead-light">
-                    <tr>
-                      <th scope="col" className="text-center">
-                        Select
-                      </th>
-                      <th scope="col">Name</th>
-                      <th scope="col">Model Name</th>
-                      <th scope="col">Color</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {deliveryOrders.map((curElem: any, index: number) => (
-                      <tr
-                        key={curElem.id}
-                        onClick={() => toggleSelected(index)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        <td scope="row" className="text-center">
-                          <Input
-                            className="position-relative"
-                            type="checkbox"
-                            color="primary"
-                            checked={index === selected}
-                            style={{ cursor: "pointer" }}
-                            onChange={() => toggleSelected(index)}
-                          />
-                        </td>
-                        <td>{curElem.name}</td>
-                        <td>{curElem.modelName}</td>
-                        <td>{curElem.color}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
+              {loadingPage ? (
+                <>
+                  <div className="w-100 d-flex justify-content-center">
+                    <Loading />
+                  </div>
+                  <hr className="my-4" />
+                </>
               ) : (
-                <CardBody className="p-4">You are all done!</CardBody>
+                <div>
+                  {deliveryOrders.length > 0 ? (
+                    <Table
+                      className="align-items-center table-flush"
+                      responsive
+                    >
+                      <thead className="thead-light">
+                        <tr>
+                          <th scope="col" className="text-center">
+                            Select
+                          </th>
+                          <th scope="col">Name</th>
+                          <th scope="col">Model Name</th>
+                          <th scope="col">Color</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {deliveryOrders.map((curElem: any, index: number) => (
+                          <tr
+                            key={curElem.id}
+                            onClick={() => toggleSelected(index)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            <td scope="row" className="text-center">
+                              <Input
+                                className="position-relative"
+                                type="checkbox"
+                                color="primary"
+                                disabled={!!loading}
+                                checked={index === selected}
+                                style={{ cursor: "pointer" }}
+                                onChange={() => toggleSelected(index)}
+                              />
+                            </td>
+                            <td>{curElem.name}</td>
+                            <td>{curElem.modelName}</td>
+                            <td>{curElem.color}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  ) : (
+                    <CardBody className="p-4">You are all done!</CardBody>
+                  )}
+                </div>
               )}
             </Card>
           </div>

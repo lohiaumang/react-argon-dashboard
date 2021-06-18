@@ -127,14 +127,14 @@ console.log({priceConfig})
                 <ConfigTable
                   onSave={savePriceConfig}
                   title="Price Details"
-                  headers={["price", "roadTaxWithRc", "insuranceDeclaredValue","extendedWarranty4Years","extendedWarranty6Years"]}
+                  headers={["price", "roadTaxWithRc", "insuranceDeclaredValue"]}
                   config={priceConfig}
                   formatDownloadLink={require("../../assets/docs/priceConfigFormat.csv")}
                 />
                    <ConfigTable
                   onSave={saveOtherPriceConfig}
-                  title="Other Price Details"
-                  headers={["extendedWarranty4Years ", "extendedWarranty6Years ", "hondaRoadSideAssistance ","joyClub "]}
+                  title="Add on Details"
+                  headers={["extWarranty 4 Years", "extWarranty 6 Years", "RoadSideAssistance","joyClub"]}
                   config={otherPriceConfig}
                   formatDownloadLink={require("../../assets/docs/priceOtherConfigFormat.csv")}
                 />

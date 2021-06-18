@@ -94,7 +94,7 @@ module.exports = function (appWindow) {
         break;
       }
       case "CREATE_USER": {
-        debugger
+        debugger;
         const functions = firebase.app().functions("asia-south1");
         const createUserDataFirestore = functions.httpsCallable(
           "createUserdataIndia"
@@ -139,35 +139,31 @@ module.exports = function (appWindow) {
           });
         break;
       }
-      case "CREATE_USER": {
-        const functions = firebase.app().functions("asia-south1");
-        const createUserDataFirestore = functions.httpsCallable(
-          "createUserdataIndia"
-        );
-        createUserDataFirestore(data)
-          .then((resp) => {
-            console.log("User created!", JSON.stringify(resp.data));
-            const uid = resp.data.uid || "";
-            delete data.password;
-            fs.writeFileSync(
-              path.join(__dirname, "../dataStore/user-info.json"),
-              JSON.stringify({
-                ...data,
-                uid,
-              })
-            );
-            appWindow.webContents.send("fromMain", {
-              type: "CREATE_USER_SUCCESS",
-              resp,
-            });
-          })
-          .catch((err) => {
-            console.log("User creation failed!", err);
-            appWindow.webContents.send("fromMain", {
-              type: "CREATE_USER_FAILURE",
-              err,
-            });
-          });
+
+      // case "CREATE_INVOICE": {
+      //   const functions = firebase.app().functions("asia-south1");
+      //   const deleteUserDataFirestore = functions.httpsCallable(
+      //     "deleteUserDataIndia"
+      //   );
+      //   //  console.log("Step", step++, data);
+      //   deleteUserDataFirestore(data)
+      //     .then((resp) => {
+      //       appWindow.webContents.send("fromMain", {
+      //         type: "DELETE_USER_SUCCESS",
+      //         resp,
+      //       });
+      //     })
+      //     .catch((err) => {
+      //       appWindow.webContents.send("fromMain", {
+      //         type: "DELETE_USER_FAILURE",
+      //         err,
+      //       });
+      //     });
+      //   break;
+      // }
+
+      case "CREATE_INVOICE": {
+        console.log( JSON.stringify(data),"User created!");
         break;
       }
       default: {
@@ -176,7 +172,6 @@ module.exports = function (appWindow) {
     }
   });
 };
-
 
 // Uncaught Exception:
 // TypeError: Object has been destroyed
