@@ -96,9 +96,7 @@ const DeliveryOrders: React.FC = () => {
               <Button
                 className="small-button-width my-2"
                 color={"primary"}
-                onClick={() => {
-                  createDO();
-                }}
+                onClick={createDO}
                 size="sm"
               >
                 {loading ? <SmallLoading /> : "Create DO"}
@@ -112,9 +110,7 @@ const DeliveryOrders: React.FC = () => {
               <Button
                 className="small-button-width my-2"
                 color={"primary"}
-                onClick={() => {
-                  createInvoice();
-                }}
+                onClick={createInvoice}
                 size="sm"
               >
                 {loading ? <SmallLoading /> : "Create Invoice"}
@@ -125,28 +121,31 @@ const DeliveryOrders: React.FC = () => {
         case "INVOICE_CREATED": {
           return (
             <ButtonDropdown isOpen={dropdownButton} toggle={toggle}>
-              <>
-                <DropdownToggle caret size="sm" color={"primary"}>
-                  {loading ? <SmallLoading /> : "Create Insurance"}
-                </DropdownToggle>
-
-                <DropdownMenu>
-                  <DropdownItem
-                    onClick={() => {
-                      createInsurance();
-                    }}
-                  >
-                    HDFC
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={() => {
-                      createInsurance();
-                    }}
-                  >
-                    ICICI
-                  </DropdownItem>
-                </DropdownMenu>
-              </>
+              {loading ? (
+                <SmallLoading />
+              ) : (
+                <>
+                  <DropdownToggle caret size="sm" color={"primary"}>
+                    {loading ? <SmallLoading /> : "Create Insurance"}
+                  </DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem
+                      onClick={() => {
+                        createInsurance("HDFC");
+                      }}
+                    >
+                      HDFC
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={() => {
+                        createInsurance("ICICI");
+                      }}
+                    >
+                      ICICI
+                    </DropdownItem>
+                  </DropdownMenu>
+                </>
+              )}
             </ButtonDropdown>
           );
         }
@@ -156,9 +155,7 @@ const DeliveryOrders: React.FC = () => {
               <Button
                 className="small-button-width my-2"
                 color={"primary"}
-                onClick={() => {
-                  createRegistration();
-                }}
+                onClick={createRegistration}
                 size="sm"
               >
                 {loading ? <SmallLoading /> : "Create Registration"}
@@ -197,7 +194,6 @@ const DeliveryOrders: React.FC = () => {
 
   // TODO: Make fetching data if it does not exist common
   const fetchDeliveryOrder = () => {
-    debugger;
     if (selected !== undefined) {
       const order = deliveryOrders[selected];
       let customerInfo: any, additionalInfo: any, vehicleInfo: any;
@@ -263,7 +259,6 @@ const DeliveryOrders: React.FC = () => {
   };
 
   const createInvoice = async () => {
-    debugger;
     try {
       setLoading(true);
       if (selected !== undefined) {
@@ -281,8 +276,7 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-  const createInsurance = async () => {
-    debugger;
+  const createInsurance = async (insuranceCompany: string) => {
     try {
       setLoading(true);
       if (selected !== undefined) {
@@ -290,7 +284,10 @@ const DeliveryOrders: React.FC = () => {
         if (status) {
           window.api.send("toMain", {
             type: "CREATE_INSURANCE",
-            data: deliveryOrders[selected],
+            data: {
+              ...deliveryOrders[selected],
+              insuranceCompany,
+            },
           });
           setLoading(false);
         }
@@ -301,7 +298,6 @@ const DeliveryOrders: React.FC = () => {
   };
 
   const createRegistration = async () => {
-    debugger;
     try {
       setLoading(true);
       if (selected !== undefined) {
@@ -319,44 +315,6 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-  //   const createInsurance = () => {
-  //     setLoading(true);
-  //     if (selected !== undefined) {
-  //     fetchDeliveryOrder.then((status:boolean) => {
-  //       if(status) {
-  //         window.api.send("toMain", {
-  //           type: "CREATE_INSURANCE",
-  //           data: deliveryOrders[selected],
-  //         });
-  //         setLoading(false);
-  //       }
-  //     }).catch((err: any) => console.log(err));
-  //   }
-  //   };
-
-  //   const createRegistration = () => {
-  //     setLoading(true);
-  //     if (selected !== undefined) {
-  //     fetchDeliveryOrder.then((status:boolean) => {
-  //       if(status) {
-  //         window.api.send("toMain", {
-  //           type: "CREATE_REGISTRATION",
-  //           data: deliveryOrders[selected],
-  //         });
-  //         setLoading(false);
-  //       }
-  //     }).catch((err: any) => console.log(err));
-  //   }
-  //   };
-
-  // const setHidden = () => {
-  //   console.log(document.body.style.overflow);
-  //   if (document.body.style.overflow !== "hidden") {
-  //     document.body.style.overflow = "hidden";
-  //   } else {
-  //     document.body.style.overflow = "scroll";
-  //   }
-  // };
 
   const printPage = useReactToPrint({
     content: () => deliveryOrderTableRef.current,

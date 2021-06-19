@@ -2,7 +2,7 @@ require("dotenv").config({ path: __dirname + "/.env" });
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
 const isDev = require("electron-is-dev");
-const mainJS = require("../electron-scripts/mainWindow.js");
+const mainJS = require("./mainWindow");
 
 function createWindow() {
   // Create the browser window.
