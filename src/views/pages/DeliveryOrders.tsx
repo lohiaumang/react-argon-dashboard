@@ -125,31 +125,28 @@ const DeliveryOrders: React.FC = () => {
         case "INVOICE_CREATED": {
           return (
             <ButtonDropdown isOpen={dropdownButton} toggle={toggle}>
-              {loading ? (
-                <SmallLoading />
-              ) : (
-                <>
-                  <DropdownToggle caret size="sm" color={"primary"}>
-                    Create Insurance
-                  </DropdownToggle>
-                  <DropdownMenu>
-                    <DropdownItem
-                      onClick={() => {
-                        createInsurance();
-                      }}
-                    >
-                      HDFC
-                    </DropdownItem>
-                    <DropdownItem
-                      onClick={() => {
-                        createInsurance();
-                      }}
-                    >
-                      ICICI
-                    </DropdownItem>
-                  </DropdownMenu>
-                </>
-              )}
+              <>
+                <DropdownToggle caret size="sm" color={"primary"}>
+                  {loading ? <SmallLoading /> : "Create Insurance"}
+                </DropdownToggle>
+
+                <DropdownMenu>
+                  <DropdownItem
+                    onClick={() => {
+                      createInsurance();
+                    }}
+                  >
+                    HDFC
+                  </DropdownItem>
+                  <DropdownItem
+                    onClick={() => {
+                      createInsurance();
+                    }}
+                  >
+                    ICICI
+                  </DropdownItem>
+                </DropdownMenu>
+              </>
             </ButtonDropdown>
           );
         }
