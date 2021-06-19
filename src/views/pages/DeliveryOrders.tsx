@@ -96,9 +96,7 @@ const DeliveryOrders: React.FC = () => {
               <Button
                 className="small-button-width my-2"
                 color={"primary"}
-                onClick={() => {
-                  createDO();
-                }}
+                onClick={createDO}
                 size="sm"
               >
                 {loading ? <SmallLoading /> : "Create DO"}
@@ -112,9 +110,7 @@ const DeliveryOrders: React.FC = () => {
               <Button
                 className="small-button-width my-2"
                 color={"primary"}
-                onClick={() => {
-                  createInvoice();
-                }}
+                onClick={createInvoice}
                 size="sm"
               >
                 {loading ? <SmallLoading /> : "Create Invoice"}
@@ -135,14 +131,14 @@ const DeliveryOrders: React.FC = () => {
                   <DropdownMenu>
                     <DropdownItem
                       onClick={() => {
-                        createInsurance();
+                        createInsurance("HDFC");
                       }}
                     >
                       HDFC
                     </DropdownItem>
                     <DropdownItem
                       onClick={() => {
-                        createInsurance();
+                        createInsurance("ICICI");
                       }}
                     >
                       ICICI
@@ -159,9 +155,7 @@ const DeliveryOrders: React.FC = () => {
               <Button
                 className="small-button-width my-2"
                 color={"primary"}
-                onClick={() => {
-                  createRegistration();
-                }}
+                onClick={createRegistration}
                 size="sm"
               >
                 {loading ? <SmallLoading /> : "Create Registration"}
@@ -284,7 +278,7 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-  const createInsurance = async () => {
+  const createInsurance = async (insuranceCompany: string) => {
     debugger;
     try {
       setLoading(true);
@@ -293,7 +287,10 @@ const DeliveryOrders: React.FC = () => {
         if (status) {
           window.api.send("toMain", {
             type: "CREATE_INSURANCE",
-            data: deliveryOrders[selected],
+            data: {
+              ...deliveryOrders[selected],
+              insuranceCompany,
+            },
           });
           setLoading(false);
         }

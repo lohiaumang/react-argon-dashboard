@@ -1,4 +1,4 @@
-module.exports = function (appWindow) {
+module.exports = function (appWindow, browser) {
   const path = require("path");
   const fs = require("fs");
   const { ipcMain: ipc } = require("electron");

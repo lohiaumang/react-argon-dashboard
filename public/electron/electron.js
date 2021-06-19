@@ -2,7 +2,9 @@ require("dotenv").config({ path: __dirname + "/.env" });
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
 const isDev = require("electron-is-dev");
-const mainJS = require("../electron-scripts/mainWindow.js");
+const mainJS = require("./mainWindow.js");
+
+// initialize puppeteer
 
 function createWindow() {
   // Create the browser window.
@@ -28,7 +30,7 @@ function createWindow() {
     win.webContents.openDevTools({ mode: "detach" });
   }
 
-  mainJS(win);
+  mainJS(win, browser);
 }
 
 // This method will be called when Electron has finished
