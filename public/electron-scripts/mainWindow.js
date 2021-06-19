@@ -163,7 +163,15 @@ module.exports = function (appWindow) {
       // }
 
       case "CREATE_INVOICE": {
-        console.log( JSON.stringify(data),"User created!");
+        console.log(JSON.stringify(data), "Invoice Data Get !");
+        break;
+      }
+      case "CREATE_INSURANCE": {
+        console.log(JSON.stringify(data), "Insurance Data Get!");
+        break;
+      }
+      case "CREATE_REGISTRATION": {
+        console.log(JSON.stringify(data), "Registration Data Get!");
         break;
       }
       default: {
