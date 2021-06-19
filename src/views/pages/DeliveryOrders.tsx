@@ -91,28 +91,36 @@ const DeliveryOrders: React.FC = () => {
     if (selected !== undefined) {
       switch (deliveryOrders[selected].status) {
         case "PENDING": {
-          return <>
-            <Button
-              className="small-button-width my-2"
-              color={"primary"}
-              onClick={() => { createDO() }}
-              size="sm"
-            >
-              {loading ? <SmallLoading /> : "Create DO"}
-            </Button>
-          </>;
+          return (
+            <>
+              <Button
+                className="small-button-width my-2"
+                color={"primary"}
+                onClick={() => {
+                  createDO();
+                }}
+                size="sm"
+              >
+                {loading ? <SmallLoading /> : "Create DO"}
+              </Button>
+            </>
+          );
         }
         case "DO_CREATED": {
-          return <>
-            <Button
-              className="small-button-width my-2"
-              color={"primary"}
-              onClick={() => { createInvoice() }}
-              size="sm"
-            >
-              {loading ? <SmallLoading /> : "Create Invoice"}
-            </Button>
-          </>;
+          return (
+            <>
+              <Button
+                className="small-button-width my-2"
+                color={"primary"}
+                onClick={() => {
+                  createInvoice();
+                }}
+                size="sm"
+              >
+                {loading ? <SmallLoading /> : "Create Invoice"}
+              </Button>
+            </>
+          );
         }
         case "INVOICE_CREATED": {
           return (
@@ -125,8 +133,20 @@ const DeliveryOrders: React.FC = () => {
                     Create Insurance
                   </DropdownToggle>
                   <DropdownMenu>
-                    <DropdownItem onClick={() => { createInsurance() }}>HDFC</DropdownItem>
-                    <DropdownItem onClick={() => { createInsurance() }}>ICICI</DropdownItem>
+                    <DropdownItem
+                      onClick={() => {
+                        createInsurance();
+                      }}
+                    >
+                      HDFC
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={() => {
+                        createInsurance();
+                      }}
+                    >
+                      ICICI
+                    </DropdownItem>
                   </DropdownMenu>
                 </>
               )}
@@ -134,16 +154,20 @@ const DeliveryOrders: React.FC = () => {
           );
         }
         case "INSURANCE_CREATED": {
-          return <>
-            <Button
-              className="small-button-width my-2"
-              color={"primary"}
-              onClick={() => { createRegistration() }}
-              size="sm"
-            >
-              {loading ? <SmallLoading /> : "Create Registration"}
-            </Button>
-          </>;
+          return (
+            <>
+              <Button
+                className="small-button-width my-2"
+                color={"primary"}
+                onClick={() => {
+                  createRegistration();
+                }}
+                size="sm"
+              >
+                {loading ? <SmallLoading /> : "Create Registration"}
+              </Button>
+            </>
+          );
         }
       }
     }
@@ -176,7 +200,7 @@ const DeliveryOrders: React.FC = () => {
 
   // TODO: Make fetching data if it does not exist common
   const fetchDeliveryOrder = () => {
-    debugger
+    debugger;
     if (selected !== undefined) {
       const order = deliveryOrders[selected];
       let customerInfo: any, additionalInfo: any, vehicleInfo: any;
@@ -184,8 +208,7 @@ const DeliveryOrders: React.FC = () => {
         return new Promise<boolean>((resolve) => {
           resolve(true);
         });
-      }
-      else {
+      } else {
         return new Promise<boolean>((resolve, reject) => {
           db.collection("customers")
             .doc(order.customerId)
@@ -216,15 +239,18 @@ const DeliveryOrders: React.FC = () => {
                             setDeliveryOrders(tempOrders);
                             resolve(true);
                           }
-                        }).catch(error => reject(error));
+                        })
+                        .catch((error) => reject(error));
                     }
-                  }).catch(error => reject(error));
+                  })
+                  .catch((error) => reject(error));
               }
-            }).catch(error => reject(error));
+            })
+            .catch((error) => reject(error));
         });
       }
     }
-  } // -> should return true or false promise
+  }; // -> should return true or false promise
 
   const createDO = async () => {
     try {
@@ -240,7 +266,7 @@ const DeliveryOrders: React.FC = () => {
   };
 
   const createInvoice = async () => {
-    debugger
+    debugger;
     try {
       setLoading(true);
       if (selected !== undefined) {
@@ -252,7 +278,6 @@ const DeliveryOrders: React.FC = () => {
           });
           setLoading(false);
         }
-
       }
     } catch (err) {
       console.log(err);
@@ -260,7 +285,7 @@ const DeliveryOrders: React.FC = () => {
   };
 
   const createInsurance = async () => {
-    debugger
+    debugger;
     try {
       setLoading(true);
       if (selected !== undefined) {
@@ -272,7 +297,6 @@ const DeliveryOrders: React.FC = () => {
           });
           setLoading(false);
         }
-
       }
     } catch (err) {
       console.log(err);
@@ -280,7 +304,7 @@ const DeliveryOrders: React.FC = () => {
   };
 
   const createRegistration = async () => {
-    debugger
+    debugger;
     try {
       setLoading(true);
       if (selected !== undefined) {
@@ -290,9 +314,8 @@ const DeliveryOrders: React.FC = () => {
             type: "CREATE_REGISTRATION",
             data: deliveryOrders[selected],
           });
-           setLoading(false);
+          setLoading(false);
         }
-
       }
     } catch (err) {
       console.log(err);
