@@ -191,7 +191,7 @@ module.exports = function (appWindow, browser, page) {
         vahanWindow.webContents.send("start-vahan");
         page = pie.getPage(browser, vahanWindow);
 
-        vahan(page, data, win);
+        vahan(page, data, appWindow);
 
         vahanWindow.webContents.once("close", function () {
           appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
@@ -217,7 +217,7 @@ module.exports = function (appWindow, browser, page) {
           title: "autoAuto ERP",
           height: 750,
           width: 700,
-          parent: win,
+          parent: appWindow,
           // TODO: Might want to change this to false
           frame: true,
         });
@@ -240,7 +240,7 @@ module.exports = function (appWindow, browser, page) {
           appWindow.reload();
         });
 
-        erp(page, { data }, win);
+        erp(page, data, appWindow);
 
         break;
       }

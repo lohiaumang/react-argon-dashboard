@@ -6,7 +6,7 @@ const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
 const mainJS = require("./mainWindow");
 
-let browser, win, page;
+let win, browser, page;
 
 async function main() {
   await pie.initialize(app);
