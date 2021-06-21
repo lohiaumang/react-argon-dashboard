@@ -6,7 +6,7 @@ const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
 const mainJS = require("./mainWindow");
 
-let win, browser, page;
+let win, browser;
 
 async function main() {
   await pie.initialize(app);
@@ -39,7 +39,7 @@ function createWindow() {
     win.webContents.openDevTools({ mode: "detach" });
   }
 
-  mainJS(win, browser, page);
+  mainJS(win, browser);
 }
 
 // This method will be called when Electron has finished

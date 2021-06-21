@@ -1,4 +1,4 @@
-module.exports = function (appWindow, browser, page) {
+module.exports = function (appWindow, browser) {
   const path = require("path");
   const fs = require("fs");
   const { ipcMain: ipc, BrowserWindow } = require("electron");
@@ -9,6 +9,7 @@ module.exports = function (appWindow, browser, page) {
   require("firebase/auth");
   require("firebase/functions");
   require("firebase/firestore");
+  let page;
 
   const firebaseConfig = {
     apiKey: "AIzaSyC-Tb0Xfay1bTSZNfAfM3EeBJjPqwvhKBM",
@@ -23,7 +24,7 @@ module.exports = function (appWindow, browser, page) {
 
   firebase.initializeApp(firebaseConfig);
 
-  ipc.on("toMain", (event, args) => {
+  ipc.on("toMain", async (event, args) => {
     const { type = "", data = {} } = args;
 
     switch (type) {
@@ -189,7 +190,7 @@ module.exports = function (appWindow, browser, page) {
           "https://vahan.parivahan.gov.in/vahan/vahan/ui/login/login.xhtml"
         );
         vahanWindow.webContents.send("start-vahan");
-        page = pie.getPage(browser, vahanWindow);
+        page = await pie.getPage(browser, vahanWindow);
 
         vahan(page, data, appWindow);
 
@@ -226,7 +227,7 @@ module.exports = function (appWindow, browser, page) {
           "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/?SWECmd=Login&SWECM=S&SRN=&SWEHo=hirise.honda2wheelersindia.com"
         );
 
-        page = pie.getPage(browser, erpWindow);
+        page = await pie.getPage(browser, erpWindow);
         // const modelData = JSON.parse(
         //   fs.readFileSync(path.join(__dirname, "model-data.json"))
         // );
