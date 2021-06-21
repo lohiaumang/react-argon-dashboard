@@ -1,4 +1,4 @@
-module.exports = function vahan(page, { data }, win) {
+module.exports = function vahan(page, data, win) {
   const path = require("path");
   const fetch = require("node-fetch");
   const _ = require("get-safe");
