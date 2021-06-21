@@ -1,4 +1,4 @@
-module.exports = function (appWindow, browser, win, page) {
+module.exports = function (appWindow, browser, page) {
   const path = require("path");
   const fs = require("fs");
   const { ipcMain: ipc, BrowserWindow } = require("electron");
@@ -191,11 +191,11 @@ module.exports = function (appWindow, browser, win, page) {
         vahanWindow.webContents.send("start-vahan");
         page = pie.getPage(browser, vahanWindow);
 
-        vahan(page, { data }, win);
+        vahan(appWindow, data, page);
 
         vahanWindow.webContents.once("close", function () {
-          win.webContents.send("remove-overlay");
-          win.reload();
+          appWindow.webContents.send("toMain");
+          appWindow.reload();
         });
 
         vahanWindow.webContents.on("new-window", function (event, url) {
@@ -217,7 +217,7 @@ module.exports = function (appWindow, browser, win, page) {
           title: "autoAuto ERP",
           height: 750,
           width: 700,
-          parent: win,
+          parent: appWindow,
           // TODO: Might want to change this to false
           frame: true,
         });
@@ -236,11 +236,11 @@ module.exports = function (appWindow, browser, win, page) {
 
         erpWindow.webContents.once("close", function () {
           // erpWindow.close();
-          win.webContents.send("remove-overlay");
-          win.reload();
+          appWindow.webContents.send("toMain");
+          appWindow.reload();
         });
 
-        erp(page, { data }, win);
+        erp(appWindow, data, page);
 
         break;
       }
