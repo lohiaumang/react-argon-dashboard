@@ -315,7 +315,6 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-
   const printPage = useReactToPrint({
     content: () => deliveryOrderTableRef.current,
     copyStyles: true,

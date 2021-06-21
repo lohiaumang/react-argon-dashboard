@@ -1,7 +1,10 @@
-module.exports = function (appWindow, browser) {
+module.exports = function (appWindow, browser, win, page) {
   const path = require("path");
   const fs = require("fs");
-  const { ipcMain: ipc } = require("electron");
+  const { ipcMain: ipc, BrowserWindow } = require("electron");
+  const pie = require("puppeteer-in-electron");
+  const erp = require("./puppeteer-scripts/erp");
+  const vahan = require("./puppeteer-scripts/vahan");
   var firebase = require("firebase/app");
   require("firebase/auth");
   require("firebase/functions");
@@ -163,7 +166,43 @@ module.exports = function (appWindow, browser) {
       // }
 
       case "CREATE_INVOICE": {
-        console.log(JSON.stringify(data), "Invoice Data Get !");
+        // data = {
+        //   ...data,
+        //   ...args[0],
+        // };
+
+        // const dealerData = JSON.parse(fs.readFileSync(path.join(__dirname, 'dealer-data.json')));
+
+        vahanWindow = new BrowserWindow({
+          title: "autoAuto Vahan",
+          height: 786,
+          width: 1440,
+          // TODO: Might want to change this to false
+          frame: true,
+          webPreferences: {
+            preload: path.join(__dirname, "./js/vahan.js"),
+            backgroundThrottling: false,
+          },
+        });
+
+        vahanWindow.loadURL(
+          "https://vahan.parivahan.gov.in/vahan/vahan/ui/login/login.xhtml"
+        );
+        vahanWindow.webContents.send("start-vahan");
+        page = pie.getPage(browser, vahanWindow);
+
+        vahan(page, { data }, win);
+
+        vahanWindow.webContents.once("close", function () {
+          win.webContents.send("remove-overlay");
+          win.reload();
+        });
+
+        vahanWindow.webContents.on("new-window", function (event, url) {
+          event.preventDefault();
+          vahanWindow.webContents.send("navigate-to-url", [url]);
+        });
+
         break;
       }
       case "CREATE_INSURANCE": {
@@ -171,7 +210,38 @@ module.exports = function (appWindow, browser) {
         break;
       }
       case "CREATE_REGISTRATION": {
-        console.log(JSON.stringify(data), "Registration Data Get!");
+        // Create ERP sale entry
+
+        // data = args[0];
+        erpWindow = new BrowserWindow({
+          title: "autoAuto ERP",
+          height: 750,
+          width: 700,
+          parent: win,
+          // TODO: Might want to change this to false
+          frame: true,
+        });
+
+        erpWindow.loadURL(
+          "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/?SWECmd=Login&SWECM=S&SRN=&SWEHo=hirise.honda2wheelersindia.com"
+        );
+
+        page = pie.getPage(browser, erpWindow);
+        // const modelData = JSON.parse(
+        //   fs.readFileSync(path.join(__dirname, "model-data.json"))
+        // );
+        // const dealerData = JSON.parse(
+        //   fs.readFileSync(path.join(__dirname, "dealer-data.json"))
+        // );
+
+        erpWindow.webContents.once("close", function () {
+          // erpWindow.close();
+          win.webContents.send("remove-overlay");
+          win.reload();
+        });
+
+        erp(page, { data }, win);
+
         break;
       }
       default: {
