@@ -1,4 +1,4 @@
-module.exports = function (appWindow, browser, win, page) {
+module.exports = function (appWindow, browser, page) {
   const path = require("path");
   const fs = require("fs");
   const { ipcMain: ipc, BrowserWindow } = require("electron");
@@ -191,11 +191,11 @@ module.exports = function (appWindow, browser, win, page) {
         vahanWindow.webContents.send("start-vahan");
         page = pie.getPage(browser, vahanWindow);
 
-        vahan(page, { data }, win);
+        vahan(page, data, win);
 
         vahanWindow.webContents.once("close", function () {
-          win.webContents.send("remove-overlay");
-          win.reload();
+          appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
+          appWindow.reload();
         });
 
         vahanWindow.webContents.on("new-window", function (event, url) {
@@ -236,8 +236,8 @@ module.exports = function (appWindow, browser, win, page) {
 
         erpWindow.webContents.once("close", function () {
           // erpWindow.close();
-          win.webContents.send("remove-overlay");
-          win.reload();
+          appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
+          appWindow.reload();
         });
 
         erp(page, { data }, win);

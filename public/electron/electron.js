@@ -8,10 +8,11 @@ const mainJS = require("./mainWindow");
 
 let browser, win, page;
 
-function main() {
-  pie.initialize(app);
-  browser = pie.connect(app, puppeteer);
+async function main() {
+  await pie.initialize(app);
+  browser = await pie.connect(app, puppeteer);
 }
+
 main();
 
 function createWindow() {
