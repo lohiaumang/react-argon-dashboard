@@ -1,14 +1,14 @@
-module.exports = function(page, data, insuranceCompany, mainWindow) {
-  const hdfcAutomation = require("./puppeteer-scripts/hdfc-ergo");
-  const iciciAutomation = require("./puppeteer-scripts/icici-lombard");
+module.exports = function (page, data, insuranceCompany, mainWindow) {
+  const hdfcAutomation = require("./electron/puppeteer-scripts/hdfc-ergo");
+  const iciciAutomation = require("./electron/puppeteer-scripts/hdfc-ergo");
 
-  switch(insuranceCompany) {
-    case "HDFC Ergo": {
+  switch (insuranceCompany) {
+    case "HDFC": {
       hdfcAutomation(page, data, mainWindow);
-      
+
       break;
     }
-    case "ICICI Lombard": {
+    case "ICICI": {
       iciciAutomation(page, data, mainWindow);
 
       break;
@@ -17,4 +17,4 @@ module.exports = function(page, data, insuranceCompany, mainWindow) {
       console.log("Automation file not found!");
     }
   }
-}
+};

@@ -5,6 +5,8 @@ module.exports = function (appWindow, browser) {
   const pie = require("puppeteer-in-electron");
   const erp = require("./puppeteer-scripts/erp");
   const vahan = require("./puppeteer-scripts/vahan");
+  const insurance = require("../insurance");
+  const insuranceLinks = require("../insurance-links");
   var firebase = require("firebase/app");
   require("firebase/auth");
   require("firebase/functions");
@@ -144,75 +146,8 @@ module.exports = function (appWindow, browser) {
         break;
       }
 
-      // case "CREATE_INVOICE": {
-      //   const functions = firebase.app().functions("asia-south1");
-      //   const deleteUserDataFirestore = functions.httpsCallable(
-      //     "deleteUserDataIndia"
-      //   );
-      //   //  console.log("Step", step++, data);
-      //   deleteUserDataFirestore(data)
-      //     .then((resp) => {
-      //       appWindow.webContents.send("fromMain", {
-      //         type: "DELETE_USER_SUCCESS",
-      //         resp,
-      //       });
-      //     })
-      //     .catch((err) => {
-      //       appWindow.webContents.send("fromMain", {
-      //         type: "DELETE_USER_FAILURE",
-      //         err,
-      //       });
-      //     });
-      //   break;
-      // }
-
+      // Create ERP sale entry
       case "CREATE_INVOICE": {
-        // data = {
-        //   ...data,
-        //   ...args[0],
-        // };
-
-        // const dealerData = JSON.parse(fs.readFileSync(path.join(__dirname, 'dealer-data.json')));
-
-        vahanWindow = new BrowserWindow({
-          title: "autoAuto Vahan",
-          height: 786,
-          width: 1440,
-          // TODO: Might want to change this to false
-          frame: true,
-          webPreferences: {
-            preload: path.join(__dirname, "./js/vahan.js"),
-            backgroundThrottling: false,
-          },
-        });
-
-        vahanWindow.loadURL(
-          "https://vahan.parivahan.gov.in/vahan/vahan/ui/login/login.xhtml"
-        );
-        vahanWindow.webContents.send("start-vahan");
-        page = await pie.getPage(browser, vahanWindow);
-
-        vahan(page, data, appWindow);
-
-        vahanWindow.webContents.once("close", function () {
-          appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
-          appWindow.reload();
-        });
-
-        vahanWindow.webContents.on("new-window", function (event, url) {
-          event.preventDefault();
-          vahanWindow.webContents.send("navigate-to-url", [url]);
-        });
-
-        break;
-      }
-      case "CREATE_INSURANCE": {
-        console.log(JSON.stringify(data), "Insurance Data Get!");
-        break;
-      }
-      case "CREATE_REGISTRATION": {
-        // Create ERP sale entry
-
         // data = args[0];
         erpWindow = new BrowserWindow({
           title: "autoAuto ERP",
@@ -243,6 +178,132 @@ module.exports = function (appWindow, browser) {
 
         erp(page, data, appWindow);
 
+        break;
+      }
+
+      // Code to create insurance proposal
+      case "CREATE_INSURANCE": {
+        // data = args[0];
+        const insuranceCompany = data.insuranceCompany;
+        insuranceWindow = new BrowserWindow({
+          title: "autoAuto Insurance",
+          height: 750,
+          width: 700,
+          parent: appWindow,
+          // TODO: Might want to change this to false
+          frame: true,
+          webPreferences: {
+            preload: path.join(
+              __dirname,
+              insuranceLinks[insuranceCompany].preloadScript
+            ),
+          },
+        });
+
+        // insuranceWindow.webContents.openDevTools();
+        insuranceWindow.loadURL(insuranceLinks[insuranceCompany].loginPageUrl);
+
+        insuranceWindow.webContents.on("dom-ready", function (event) {
+          const currUrl = insuranceWindow.webContents.getURL();
+          const isLoginPage =
+            currUrl.includes(
+              "https://ipartner.icicilombard.com/WebPages/Login.aspx"
+            ) || currUrl.includes("https://pie.hdfcergo.com//Login/");
+          if (isLoginPage) {
+            insuranceWindow.webContents.send("prompt-for-login");
+            appWindow.webContents.send("update-progress-bar", [
+              "10%",
+              "insurance",
+            ]);
+          }
+        });
+
+        insuranceWindow.webContents.send("prompt-for-login");
+        page = await pie.getPage(browser, insuranceWindow);
+        // const modelData = JSON.parse(fs.readFileSync(path.join(__dirname, 'model-data.json')));
+        // const dealerData = JSON.parse(fs.readFileSync(path.join(__dirname, 'dealer-data.json')));
+
+        insurance(page, data, insuranceCompany, appWindow);
+
+        insuranceWindow.webContents.on("did-navigate", function (event, url) {
+          if (
+            url.includes(
+              "https://ipartner.icicilombard.com/WebPages/Portfolio/UserPolicies.aspx"
+            )
+          ) {
+            page.waitForFunction(
+              'document.querySelector("#ctl00_ContentPlaceHolder1_GridID0_ctl02_ctl00").textContent !== ""'
+            );
+            data["Policy No"] = page.$eval(
+              "#ctl00_ContentPlaceHolder1_GridID0_ctl02_ctl00",
+              (el) => el.textContent
+            );
+          } else if (
+            url.includes("https://pie.hdfcergo.com/en-US/Dashboard/Details")
+          ) {
+            page.waitForFunction(
+              `document.querySelector("td[data-title='Prop./Pol. No']").textContent !== ""`
+            );
+            data["Policy No"] = page.$eval(
+              "td[data-title='Prop./Pol. No']",
+              (el) => el.textContent
+            );
+          }
+        });
+
+        insuranceWindow.webContents.once("close", function () {
+          // insuranceWindow.close();
+          appWindow.webContents.send("remove-overlay");
+          appWindow.reload();
+        });
+
+        ipc.once("close-insurance-window", function () {
+          insuranceWindow.destroy();
+          appWindow.webContents.send("remove-overlay");
+        });
+        // console.log(JSON.stringify(data), "Insurance Data Get!");
+        break;
+      }
+
+
+      // Code to create vahan application
+      case "CREATE_REGISTRATION": {
+        // data = {
+        //   ...data,
+        //   ...args[0],
+        // };
+
+        // const dealerData = JSON.parse(fs.readFileSync(path.join(__dirname, 'dealer-data.json')));
+
+        vahanWindow = new BrowserWindow({
+          title: "autoAuto Vahan",
+          height: 786,
+          width: 1440,
+          // TODO: Might want to change this to false
+          frame: true,
+          // webPreferences: {
+          //   preload: path.join(__dirname, "./js/vahan.js"),
+          //   backgroundThrottling: false,
+          // },
+        });
+
+        vahanWindow.loadURL(
+          "https://vahan.parivahan.gov.in/vahan/vahan/ui/login/login.xhtml"
+        );
+        vahanWindow.webContents.send("start-vahan");
+        page = await pie.getPage(browser, vahanWindow);
+
+        vahan(page, data, appWindow);
+
+        vahanWindow.webContents.once("close", function () {
+          appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
+          appWindow.reload();
+        });
+
+        vahanWindow.webContents.on("new-window", function (event, url) {
+          event.preventDefault();
+          vahanWindow.webContents.send("navigate-to-url", [url]);
+        });
         break;
       }
       default: {
