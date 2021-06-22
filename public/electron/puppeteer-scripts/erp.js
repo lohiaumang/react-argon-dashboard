@@ -1,8 +1,4 @@
-module.exports = function erp(
-  page,
-  { data, modelData, dealerData },
-  mainWindow
-) {
+module.exports = function erp(page, data, modelData, dealerData, mainWindow) {
   const path = require("path");
   const fetch = require("node-fetch");
   const _ = require("get-safe");

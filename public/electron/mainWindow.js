@@ -265,7 +265,6 @@ module.exports = function (appWindow, browser) {
         break;
       }
 
-
       // Code to create vahan application
       case "CREATE_REGISTRATION": {
         // data = {

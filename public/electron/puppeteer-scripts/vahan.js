@@ -4,6 +4,7 @@ module.exports = function vahan(page, data, win) {
   const _ = require("get-safe");
   // Imports the Google Cloud client library
   const vision = require("@google-cloud/vision");
+  console.log(data);
 
   const timeout = 10000000;
   page.setDefaultTimeout(timeout);
