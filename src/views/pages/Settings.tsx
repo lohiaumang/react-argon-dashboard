@@ -49,8 +49,10 @@ const Settings: React.FC = () => {
   const [insuranceConfig, setInsuranceConfig] = useState<any>({});
   const [priceConfig, setPriceConfig] = useState<any>({});
   const [otherPriceConfig, setOtherPriceConfig] = useState<any>({});
+  const [userNamePassword, setUserNamePassword] = useState<any>({});
   const db = firebase.firestore();
-console.log({priceConfig})
+  const currentUser = firebase.auth().currentUser;
+
   useEffect(() => {
     const insuranceConfigRef = db.collection("insuranceConfig").doc("config");
 
@@ -71,25 +73,48 @@ console.log({priceConfig})
       .then((doc) => {
         if (doc.exists) {
           setPriceConfig(doc.data());
-          console.log(doc.data())
+          console.log(doc.data());
         } else {
           console.log("No price config set yet!");
         }
       })
       .catch((err) => console.log(err));
 
-      const otherPriceConfigRef = db.collection("priceConfig").doc("joyHondaConfig");
-      otherPriceConfigRef
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            setOtherPriceConfig(doc.data());
-            console.log(doc.data())
-          } else {
-            console.log("No price config set yet!");
-          }
-        })
-        .catch((err) => console.log(err));
+    const otherPriceConfigRef = db
+      .collection("priceConfig")
+      .doc("joyHondaConfig");
+    otherPriceConfigRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          setOtherPriceConfig(doc.data());
+          console.log(doc.data());
+        } else {
+          console.log("No price config set yet!");
+        }
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  //get userid and password
+  const getSetUserIDPassword = () => {
+    window.api.receive("fromMain", (data: any) => {
+      switch (data.type) {
+        case "GET_USERID_PASSWORD": {
+          setUserNamePassword(data.userData.userIdPassword);
+          break;
+        }
+      }
+    });
+    window.api.send("toMain", {
+      type: "GET_USERID_PASSWORD",
+    });
+  };
+
+  useEffect(() => {
+    if (currentUser && currentUser.uid) {
+      getSetUserIDPassword();
+    }
   }, []);
 
   const saveInsuranceConfig = (config: Config) => {
@@ -100,6 +125,23 @@ console.log({priceConfig})
   };
   const saveOtherPriceConfig = (config: Config) => {
     db.collection("priceConfig").doc("joyHondaConfig").set(config);
+  };
+
+  //set userid and password
+  const saveUserIDPassword = (config: Config) => {
+    try {
+      if (config) {
+        window.api.send("toMain", {
+          type: "USERID_PASSWORD",
+          data: {
+            config,
+          },
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    // db.collection("priceConfig").doc("joyHondaConfig").set(config);
   };
   return (
     <>
@@ -131,11 +173,23 @@ console.log({priceConfig})
                   config={priceConfig}
                   formatDownloadLink={require("../../assets/docs/priceConfigFormat.csv")}
                 />
-                   <ConfigTable
+                <ConfigTable
                   onSave={saveOtherPriceConfig}
                   title="Add on Details"
-                  headers={["extWarranty 4 Years", "extWarranty 6 Years", "RoadSideAssistance","joyClub"]}
+                  headers={[
+                    "extWarranty 4 Years",
+                    "extWarranty 6 Years",
+                    "RoadSideAssistance",
+                    "joyClub",
+                  ]}
                   config={otherPriceConfig}
+                  formatDownloadLink={require("../../assets/docs/priceOtherConfigFormat.csv")}
+                />
+                <ConfigTable
+                  onSave={saveUserIDPassword}
+                  title="UserId And Password"
+                  headers={["User Name", "Password"]}
+                  config={userNamePassword}
                   formatDownloadLink={require("../../assets/docs/priceOtherConfigFormat.csv")}
                 />
               </CardBody>

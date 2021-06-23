@@ -100,7 +100,6 @@ module.exports = function (appWindow, browser) {
         break;
       }
       case "CREATE_USER": {
-        debugger;
         const functions = firebase.app().functions("asia-south1");
         const createUserDataFirestore = functions.httpsCallable(
           "createUserdataIndia"
@@ -145,6 +144,42 @@ module.exports = function (appWindow, browser) {
           });
         break;
       }
+      //Creeate userid and password for automation
+      case "USERID_PASSWORD": {
+        const userIdPassword = data.config;
+        fs.writeFileSync(
+          path.join(__dirname, "../dataStore/user-password.json"),
+          JSON.stringify({
+            userIdPassword,
+          })
+        );
+        break;
+      }
+      //get useid and password
+      case "GET_USERID_PASSWORD": {
+        let userData;
+        try {
+          userData =
+            JSON.parse(
+              fs.readFileSync(
+                path.join(__dirname, "../dataStore/user-password.json")
+              )
+            ) || null;
+        } catch (err) {
+          userData = null;
+        }
+        if (userData) {
+          appWindow.webContents.send("fromMain", {
+            type: "GET_USERID_PASSWORD",
+            userData,
+          });
+        } else {
+          appWindow.webContents.send("fromMain", {
+            type: "GET_USERID_PASSWORD_FAILURE",
+          });
+        }
+        break;
+      }
 
       // Create ERP sale entry
       case "CREATE_INVOICE": {
@@ -185,6 +220,7 @@ module.exports = function (appWindow, browser) {
       case "CREATE_INSURANCE": {
         // data = args[0];
         const insuranceCompany = data.insuranceCompany;
+        console.log(JSON.stringify(data), "Insurance Data Get!");
         insuranceWindow = new BrowserWindow({
           title: "autoAuto Insurance",
           height: 750,
@@ -261,7 +297,7 @@ module.exports = function (appWindow, browser) {
           insuranceWindow.destroy();
           appWindow.webContents.send("remove-overlay");
         });
-        // console.log(JSON.stringify(data), "Insurance Data Get!");
+        //console.log(JSON.stringify(data), "Insurance Data Get!");
         break;
       }
 

@@ -67,6 +67,7 @@ const DeliveryOrders: React.FC = () => {
   const [dropdownButton, setDropdownButton] = useState(false);
   const db = firebase.firestore();
   const fs = require("fs");
+  let uaerIDPassword: any;
 
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
@@ -246,6 +247,25 @@ const DeliveryOrders: React.FC = () => {
     }
   }; // -> should return true or false promise
 
+  //get userid and password
+  const getSetUserIDPassword = () => {
+    debugger;
+
+    window.api.receive("fromMain", (data: any) => {
+      switch (data.type) {
+        case "GET_USERID_PASSWORD": {
+          uaerIDPassword = data.userData.userIdPassword;
+          break;
+        }
+      }
+      console.log(JSON.stringify(uaerIDPassword), "Insurance Data Get!");
+    });
+    window.api.send("toMain", {
+      type: "GET_USERID_PASSWORD",
+    });
+  };
+
+  //create DO
   const createDO = async () => {
     try {
       setLoading(true);
@@ -259,6 +279,7 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
+  //create invoice
   const createInvoice = async () => {
     try {
       setLoading(true);
@@ -277,17 +298,21 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
+
+  //create insurance
   const createInsurance = async (insuranceCompany: string) => {
     try {
       setLoading(true);
       if (selected !== undefined) {
         const status: any = await fetchDeliveryOrder();
+        getSetUserIDPassword();
         if (status) {
           window.api.send("toMain", {
             type: "CREATE_INSURANCE",
             data: {
               ...deliveryOrders[selected],
               insuranceCompany,
+              uaerIDPassword,
             },
           });
           setLoading(false);
@@ -298,6 +323,7 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
+  //create erp data
   const createRegistration = async () => {
     try {
       setLoading(true);
@@ -316,6 +342,7 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
+  //print DO
   const printPage = useReactToPrint({
     content: () => deliveryOrderTableRef.current,
     copyStyles: true,
