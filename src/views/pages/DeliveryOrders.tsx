@@ -67,7 +67,7 @@ const DeliveryOrders: React.FC = () => {
   const [dropdownButton, setDropdownButton] = useState(false);
   const db = firebase.firestore();
   const fs = require("fs");
-  let uaerIDPassword: any;
+  let userIDPassword: any;
 
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
@@ -249,16 +249,14 @@ const DeliveryOrders: React.FC = () => {
 
   //get userid and password
   const getSetUserIDPassword = () => {
-    debugger;
-
     window.api.receive("fromMain", (data: any) => {
       switch (data.type) {
         case "GET_USERID_PASSWORD": {
-          uaerIDPassword = data.userData.userIdPassword;
+          userIDPassword = data.userData.userIdPassword;
           break;
         }
       }
-      console.log(JSON.stringify(uaerIDPassword), "Insurance Data Get!");
+      console.log(JSON.stringify(userIDPassword), "Insurance Data Get!");
     });
     window.api.send("toMain", {
       type: "GET_USERID_PASSWORD",
@@ -298,9 +296,10 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-
   //create insurance
   const createInsurance = async (insuranceCompany: string) => {
+    //console.log(data, "UserId Password!");
+    //console.log(JSON.stringify(data), "UserId Password!");
     try {
       setLoading(true);
       if (selected !== undefined) {
@@ -312,9 +311,9 @@ const DeliveryOrders: React.FC = () => {
             data: {
               ...deliveryOrders[selected],
               insuranceCompany,
-              uaerIDPassword,
             },
           });
+          //console.log(JSON.stringify(uaerIDPassword), "Insurance Data Get!");
           setLoading(false);
         }
       }
