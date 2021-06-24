@@ -27,7 +27,7 @@ module.exports = function (appWindow, browser) {
   firebase.initializeApp(firebaseConfig);
 
   ipc.on("toMain", async (event, args) => {
-    const { type = "", data = {} } = args;
+    let { type = "", data = {} } = args;
 
     switch (type) {
       case "CREATE_DEALER": {
@@ -145,24 +145,24 @@ module.exports = function (appWindow, browser) {
         break;
       }
       //Creeate userid and password for automation
-      case "USERID_PASSWORD": {
-        const userIdPassword = data.config;
+      case "SET_CREDENTIALS": {
+        const credentials = data.config;
         fs.writeFileSync(
-          path.join(__dirname, "../dataStore/user-password.json"),
+          path.join(__dirname, "../dataStore/credentials.json"),
           JSON.stringify({
-            userIdPassword,
+            credentials,
           })
         );
         break;
       }
       //get useid and password
-      case "GET_USERID_PASSWORD": {
+      case "GET_CREDENTIALS": {
         let userData;
         try {
           userData =
             JSON.parse(
               fs.readFileSync(
-                path.join(__dirname, "../dataStore/user-password.json")
+                path.join(__dirname, "../dataStore/credentials.json")
               )
             ) || null;
         } catch (err) {
@@ -170,12 +170,12 @@ module.exports = function (appWindow, browser) {
         }
         if (userData) {
           appWindow.webContents.send("fromMain", {
-            type: "GET_USERID_PASSWORD",
+            type: "GET_CREDENTIALS_SUCCESS",
             userData,
           });
         } else {
           appWindow.webContents.send("fromMain", {
-            type: "GET_USERID_PASSWORD_FAILURE",
+            type: "GET_CREDENTIALS_FAILURE",
           });
         }
         break;
@@ -185,15 +185,15 @@ module.exports = function (appWindow, browser) {
       case "CREATE_INVOICE": {
         // data = args[0];
         erpWindow = new BrowserWindow({
-          title: "autoAuto ERP",
+          title: "AutoAuto ERP",
           height: 750,
           width: 700,
-          parent: appWindow,
+          // parent: appWindow,
           // TODO: Might want to change this to false
           frame: true,
         });
 
-        erpWindow.loadURL(
+        await erpWindow.loadURL(
           "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/?SWECmd=Login&SWECM=S&SRN=&SWEHo=hirise.honda2wheelersindia.com"
         );
 
@@ -205,11 +205,25 @@ module.exports = function (appWindow, browser) {
         //   fs.readFileSync(path.join(__dirname, "dealer-data.json"))
         // );
 
-        erpWindow.webContents.once("close", function () {
-          // erpWindow.close();
-          appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
-          appWindow.reload();
-        });
+        // erpWindow.webContents.once("close", function () {
+        //   // erpWindow.close();
+        //   appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
+        //   appWindow.reload();
+        // });
+
+        credentials =
+          JSON.parse(
+            fs.readFileSync(
+              path.join(__dirname, "../dataStore/credentials.json")
+            )
+          ) || null;
+
+        if (credentials) {
+          data = {
+            ...data,
+            credential: credentials["ERP"],
+          };
+        }
 
         erp(page, data, appWindow);
 

@@ -57,7 +57,6 @@ const Auth: React.FC<Props> = (props) => {
   const createRoutes = (layoutRoutes: RouteType) => {
     return routes.map((prop, key) => {
       if (prop.layout === "/auth") {
-        // debugger;
         return (
           <Route
             path={prop.layout + prop.path}
