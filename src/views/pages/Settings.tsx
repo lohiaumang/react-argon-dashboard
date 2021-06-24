@@ -119,9 +119,11 @@ const Settings: React.FC = () => {
   const saveInsuranceConfig = (config: Config) => {
     db.collection("insuranceConfig").doc("config").set(config);
   };
+
   const savePriceConfig = (config: Config) => {
     db.collection("priceConfig").doc("config").set(config);
   };
+
   const saveOtherPriceConfig = (config: Config) => {
     db.collection("priceConfig").doc("joyHondaConfig").set(config);
   };
@@ -140,8 +142,8 @@ const Settings: React.FC = () => {
     } catch (err) {
       console.log(err);
     }
-    // db.collection("priceConfig").doc("joyHondaConfig").set(config);
   };
+
   return (
     <>
       <Header />
