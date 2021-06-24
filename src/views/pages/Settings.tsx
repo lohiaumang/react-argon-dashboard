@@ -49,7 +49,7 @@ const Settings: React.FC = () => {
   const [insuranceConfig, setInsuranceConfig] = useState<any>({});
   const [priceConfig, setPriceConfig] = useState<any>({});
   const [otherPriceConfig, setOtherPriceConfig] = useState<any>({});
-  const [userNamePassword, setUserNamePassword] = useState<any>({});
+  const [credentialConfig, setCredentialConfig] = useState<any>({});
   const db = firebase.firestore();
   const currentUser = firebase.auth().currentUser;
 
@@ -94,28 +94,27 @@ const Settings: React.FC = () => {
         }
       })
       .catch((err) => console.log(err));
+
+    getCredentials();
   }, []);
 
   //get userid and password
-  const getSetUserIDPassword = () => {
+  const getCredentials = () => {
     window.api.receive("fromMain", (data: any) => {
       switch (data.type) {
-        case "GET_USERID_PASSWORD": {
-          setUserNamePassword(data.userData.userIdPassword);
-          break;
+        case "GET_CREDENTIALS_SUCCESS": {
+          setCredentialConfig(data.userData.credentials);
+          return;
+        }
+        case "GET_CREDENTIALS_FAILURE": {
+          return;
         }
       }
     });
     window.api.send("toMain", {
-      type: "GET_USERID_PASSWORD",
+      type: "GET_CREDENTIALS",
     });
   };
-
-  useEffect(() => {
-    if (currentUser && currentUser.uid) {
-      getSetUserIDPassword();
-    }
-  }, []);
 
   const saveInsuranceConfig = (config: Config) => {
     db.collection("insuranceConfig").doc("config").set(config);
@@ -128,11 +127,11 @@ const Settings: React.FC = () => {
   };
 
   //set userid and password
-  const saveUserIDPassword = (config: Config) => {
+  const saveCredentialsConfig = (config: Config) => {
     try {
       if (config) {
         window.api.send("toMain", {
-          type: "USERID_PASSWORD",
+          type: "SET_CREDENTIALS",
           data: {
             config,
           },
@@ -162,21 +161,32 @@ const Settings: React.FC = () => {
                 <ConfigTable
                   onSave={saveInsuranceConfig}
                   title="Insurance Details"
-                  headers={["hdfcModelName", "iciciModelName", "userRate"]}
+                  headers={[
+                    "modelName",
+                    "hdfcModelName",
+                    "iciciModelName",
+                    "userRate",
+                  ]}
                   config={insuranceConfig}
                   formatDownloadLink={require("../../assets/docs/insuranceConfigFormat.csv")}
                 />
                 <ConfigTable
                   onSave={savePriceConfig}
                   title="Price Details"
-                  headers={["price", "roadTaxWithRc", "insuranceDeclaredValue"]}
+                  headers={[
+                    "modelName",
+                    "price",
+                    "roadTaxWithRc",
+                    "insuranceDeclaredValue",
+                  ]}
                   config={priceConfig}
                   formatDownloadLink={require("../../assets/docs/priceConfigFormat.csv")}
                 />
                 <ConfigTable
                   onSave={saveOtherPriceConfig}
-                  title="Add on Details"
+                  title="Other Details"
                   headers={[
+                    "modelName",
                     "extWarranty 4 Years",
                     "extWarranty 6 Years",
                     "RoadSideAssistance",
@@ -186,11 +196,11 @@ const Settings: React.FC = () => {
                   formatDownloadLink={require("../../assets/docs/priceOtherConfigFormat.csv")}
                 />
                 <ConfigTable
-                  onSave={saveUserIDPassword}
-                  title="UserId And Password"
-                  headers={["User Name", "Password"]}
-                  config={userNamePassword}
-                  formatDownloadLink={require("../../assets/docs/priceOtherConfigFormat.csv")}
+                  onSave={saveCredentialsConfig}
+                  title="Credential Details"
+                  headers={["name", "username", "password", "otp"]}
+                  config={credentialConfig}
+                  formatDownloadLink={require("../../assets/docs/credentialConfigFormat.csv")}
                 />
               </CardBody>
             </Card>

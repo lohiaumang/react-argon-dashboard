@@ -16,7 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useState, useEffect,useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 // reactstrap components
 import {
@@ -150,7 +150,6 @@ const UserManagement: React.FC = () => {
               break;
             }
             case "DELETE_USER_FAILURE": {
-              debugger;
               setDeleteLoading(false);
               setDeleteSuccess({
                 code: "FIREBASE_ERROR",
@@ -196,7 +195,6 @@ const UserManagement: React.FC = () => {
               break;
             }
             case "CREATE_USER_FAILURE": {
-              debugger;
               setLoading(false);
               setSignUpError({
                 code: "FIREBASE_ERROR",
@@ -425,7 +423,7 @@ const UserManagement: React.FC = () => {
           <Alert color="primary">{signUpSuccess.message}</Alert>
         </div>
       )}
-       {deleteSuccess && (
+      {deleteSuccess && (
         <div className="position-fixed bottom-0 right-0 w-100 d-flex justify-content-center">
           <Alert color="primary">{deleteSuccess.message}</Alert>
         </div>

@@ -131,14 +131,16 @@ const ConfigTable: React.FC<TableProps> = (props) => {
 
         try {
           results.data.forEach((entry: any) => {
-            if (Object.keys(entry).length !== headers.length + 1) {
+            if (Object.keys(entry).length !== headers.length) {
               throw "Incorrect format";
             }
             tempCurrConfig[entry["MODEL NAME"]] = {};
-            headers.forEach((header) => {
-              tempCurrConfig[entry["MODEL NAME"]][header] =
-                entry[camelCaseToReadable(header).toUpperCase()];
-            });
+            headers.forEach(
+              (header: string, index: number) =>
+                !!index &&
+                (tempCurrConfig[entry["MODEL NAME"]][header] =
+                  entry[camelCaseToReadable(header).toUpperCase()])
+            );
           });
         } catch (err) {
           error = err;
@@ -221,12 +223,9 @@ const ConfigTable: React.FC<TableProps> = (props) => {
         ) : (
           currConfig && (
             <>
-              <Table className="align-items-center table-flush table table-responsive" >
+              <Table className="align-items-center table-flush table">
                 <thead className="thead-light">
                   <tr>
-                    <th key="modelName" scope="col">
-                      Model Name
-                    </th>
                     {headers.map((header) => (
                       <th key={header} scope="col">
                         {camelCaseToReadable(header)}
@@ -240,18 +239,21 @@ const ConfigTable: React.FC<TableProps> = (props) => {
                     <tr key={key}>
                       <th scope="row">{key}</th>
                       {currConfig[key] &&
-                        headers.map((header: string) => (
-                          <td key={`input-${header}`}>
-                            <Input
-                              required
-                              disabled={disabled}
-                              value={currConfig[key][header] || ""}
-                              onChange={(ev) => {
-                                handleChange(key, header, ev.target.value!);
-                              }}
-                            />
-                          </td>
-                        ))}
+                        headers.map(
+                          (header: string, index: number) =>
+                            !!index && (
+                              <td key={`input-${header}`}>
+                                <Input
+                                  required
+                                  disabled={disabled}
+                                  value={currConfig[key][header] || ""}
+                                  onChange={(ev) => {
+                                    handleChange(key, header, ev.target.value!);
+                                  }}
+                                />
+                              </td>
+                            )
+                        )}
                       <td>
                         <Button
                           size="sm"

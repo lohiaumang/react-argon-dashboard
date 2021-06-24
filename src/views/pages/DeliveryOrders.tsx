@@ -55,6 +55,24 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import { rejects } from "assert";
 
+
+declare global {
+  interface Window {
+    api: any;
+  }
+}
+
+interface UserInfo {
+  name: string;
+  phoneNumber: string;
+  email: string;
+  gst: string;
+  pan: string;
+  address: string;
+  temporaryCertificate: string;
+  uid: string;
+}
+
 const DeliveryOrders: React.FC = () => {
   const user: any = useContext(UserContext);
   const deliveryOrderTableRef =
@@ -67,7 +85,19 @@ const DeliveryOrders: React.FC = () => {
   const [dropdownButton, setDropdownButton] = useState(false);
   const db = firebase.firestore();
   const fs = require("fs");
-  let userIDPassword: any;
+  const currentUser = firebase.auth().currentUser;
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    name: "",
+    phoneNumber: "",
+    email: "",
+    gst: "",
+    pan: "",
+    address: "",
+    temporaryCertificate: "",
+    uid: "",
+  });
+  let credentials: any;
+  console.log(JSON.stringify({userInfo}), "Insurance Data Get!");
 
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
@@ -225,6 +255,7 @@ const DeliveryOrders: React.FC = () => {
                             additionalInfo = doc.data();
                             const fullDetails = {
                               ...deliveryOrders[selected],
+                              ...userInfo,
                               customerInfo,
                               vehicleInfo,
                               additionalInfo,
@@ -248,20 +279,100 @@ const DeliveryOrders: React.FC = () => {
   }; // -> should return true or false promise
 
   //get userid and password
-  const getSetUserIDPassword = () => {
-    window.api.receive("fromMain", (data: any) => {
+  const getCredentials = async () => {
+    window.api.send("toMain", {
+      type: "GET_CREDENTIALS",
+    });
+
+    await window.api.receive("fromMain", (data: any) => {
       switch (data.type) {
-        case "GET_USERID_PASSWORD": {
-          userIDPassword = data.userData.userIdPassword;
-          break;
+        case "GET_CREDENTIALS_SUCCESS": {
+          credentials = data.userData.credentials;
+          return;
+        }
+        case "GET_CREDENTIALS_FAILURE": {
+          return;
         }
       }
-      console.log(JSON.stringify(userIDPassword), "Insurance Data Get!");
-    });
-    window.api.send("toMain", {
-      type: "GET_USERID_PASSWORD",
     });
   };
+
+  // const getSetUserData = async () => {
+  //   debugger;
+  //   window.api.send("toMain", {
+  //     type: "GET_DEALER",
+  //   });
+
+  //   await window.api.receive("fromMain", (data: any) => {
+  //     switch (data.type) {
+  //       case "GET_DEALER_SUCCESS": {
+  //         delearName = data.userData.delearName;
+  //         return;
+  //       }
+  //       case "GET_DEALER_FAILURE": {
+  //         return;
+  //       }
+  //     }
+  //   });
+  // };
+  // if (currentUser) {
+  //   getSetUserData();
+  // }
+
+  const getSetUserData = (uid: string) => {
+    if (uid && window && window.api) {
+      window.api.receive("fromMain", (data: any) => {
+        switch (data.type) {
+          case "GET_DEALER_SUCCESS": {
+            setUserInfo(data.userData);
+            break;
+          }
+          case "GET_DEALER_FAILURE": {
+            firebase
+              .firestore()
+              .collection("users")
+              .doc(uid)
+              .onSnapshot((doc) => {
+                if (doc.exists) {
+                  const info = doc.data();
+                  if (info) {
+                    // SET_USER
+                    const data = {
+                      name: info.name,
+                      phoneNumber: info.phoneNumber.slice(3),
+                      email: info.email,
+                      gst: info.gst,
+                      pan: info.pan,
+                      address: info.address,
+                      temporaryCertificate: info.temporaryCertificate,
+                      uid: info.uid,
+                    };
+                    window.api.send("toMain", {
+                      type: "SET_DEALER",
+                      data: data,
+                    });
+
+                    setUserInfo(data);
+                  }
+                }
+              });
+            break;
+          }
+        }
+      });
+      window.api.send("toMain", {
+        type: "GET_DEALER",
+        data: {
+          uid,
+        },
+      });
+    }
+  };
+
+  if (!userInfo.uid && currentUser && currentUser.uid) {
+    getSetUserData(currentUser.uid);
+  }
+
 
   //create DO
   const createDO = async () => {
@@ -303,14 +414,15 @@ const DeliveryOrders: React.FC = () => {
     try {
       setLoading(true);
       if (selected !== undefined) {
+        await getCredentials();
         const status: any = await fetchDeliveryOrder();
-        getSetUserIDPassword();
         if (status) {
           window.api.send("toMain", {
             type: "CREATE_INSURANCE",
             data: {
               ...deliveryOrders[selected],
               insuranceCompany,
+              credentials,
             },
           });
           //console.log(JSON.stringify(uaerIDPassword), "Insurance Data Get!");
