@@ -46,6 +46,7 @@ import {
 import Header from "../../components/Headers/Header";
 import DeliveryOrderTable, {
   DeliveryOrder,
+  UserInfo,
 } from "../../components/Tables/DeliveryOrderTable";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 import SmallLoading from "../../components/Share/SmallLoading";
@@ -55,22 +56,10 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import { rejects } from "assert";
 
-
 declare global {
   interface Window {
     api: any;
   }
-}
-
-interface UserInfo {
-  name: string;
-  phoneNumber: string;
-  email: string;
-  gst: string;
-  pan: string;
-  address: string;
-  temporaryCertificate: string;
-  uid: string;
 }
 
 const DeliveryOrders: React.FC = () => {
@@ -97,7 +86,7 @@ const DeliveryOrders: React.FC = () => {
     uid: "",
   });
   let credentials: any;
-  console.log(JSON.stringify({userInfo}), "Insurance Data Get!");
+  console.log(JSON.stringify({ userInfo }), "Insurance Data Get!");
 
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
@@ -255,7 +244,7 @@ const DeliveryOrders: React.FC = () => {
                             additionalInfo = doc.data();
                             const fullDetails = {
                               ...deliveryOrders[selected],
-                              ...userInfo,
+                              userInfo,
                               customerInfo,
                               vehicleInfo,
                               additionalInfo,
@@ -372,7 +361,6 @@ const DeliveryOrders: React.FC = () => {
   if (!userInfo.uid && currentUser && currentUser.uid) {
     getSetUserData(currentUser.uid);
   }
-
 
   //create DO
   const createDO = async () => {
