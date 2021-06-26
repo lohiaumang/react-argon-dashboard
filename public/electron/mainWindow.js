@@ -60,49 +60,18 @@ module.exports = function (appWindow, browser) {
         break;
       }
       case "GET_DEALER": {
-        let userData, getData;
-        try {
-          userData =
-            JSON.parse(
-              fs.readFileSync(
-                path.join(__dirname, "../dataStore/user-info.json")
-              )
-            ) || null;
-        } catch (err) {
-          userData = null;
-        }
+        let userData;
         if (!userData) {
-          console.log("step 1");
-          firebase
-            .firestore()
-            .collection("users")
-            .doc(data.uid)
-            .onSnapshot((doc) => {
-              if (doc.exists) {
-                const info = doc.data();
-                if (info) {
-                  // SET_USER
-                  const data = {
-                    name: info.name,
-                    phoneNumber: info.phoneNumber.slice(3),
-                    email: info.email,
-                    gst: info.gst,
-                    pan: info.pan,
-                    address: info.address,
-                    temporaryCertificate: info.temporaryCertificate,
-                    uid: info.uid,
-                  };
-                  console.log("step 2");
-                  // window.api.send("toMain", {
-                  //   type: "SET_DEALER",
-                  //   data: data,
-                  // });
-
-                  getData = data;
-                  console.log(getData, "step 3");
-                }
-              }
-            });
+          try {
+            userData =
+              JSON.parse(
+                fs.readFileSync(
+                  path.join(__dirname, "../dataStore/user-info.json")
+                )
+              ) || null;
+          } catch (err) {
+            userData = null;
+          }
         }
 
         if (userData && userData.uid === data.uid) {
@@ -111,42 +80,9 @@ module.exports = function (appWindow, browser) {
             userData,
           });
         } else {
-          // console.log("step 1");
-          // firebase
-          //   .firestore()
-          //   .collection("users")
-          //   .doc(data.uid)
-          //   .onSnapshot((doc) => {
-          //     if (doc.exists) {
-          //       const info = doc.data();
-          //       if (info) {
-          //         // SET_USER
-          //         const data = {
-          //           name: info.name,
-          //           phoneNumber: info.phoneNumber.slice(3),
-          //           email: info.email,
-          //           gst: info.gst,
-          //           pan: info.pan,
-          //           address: info.address,
-          //           temporaryCertificate: info.temporaryCertificate,
-          //           uid: info.uid,
-          //         };
-          //         console.log("step 2");
-          //         // window.api.send("toMain", {
-          //         //   type: "SET_DEALER",
-          //         //   data: data,
-          //         // });
-
-          //         getData = data;
-          //         console.log(getData, "step 3");
-          //       }
-          //     }
-          //   });
           appWindow.webContents.send("fromMain", {
             type: "GET_DEALER_FAILURE",
-            getData,
           });
-          console.log(getData, "step 4");
         }
         break;
       }

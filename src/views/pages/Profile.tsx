@@ -76,16 +76,14 @@ const Profile: React.FC = () => {
   });
   const [password, setPassword] = useState<string>();
   const [confirmPassword, setConfirmPassword] = useState<string>();
-  const [passwordUpdateError, setPasswordUpdateError] =
-    useState<{
-      code: string;
-      message: string;
-    }>();
-  const [userInfoUpdateError, setUserInfoUpdateError] =
-    useState<{
-      code: string;
-      message: string;
-    }>();
+  const [passwordUpdateError, setPasswordUpdateError] = useState<{
+    code: string;
+    message: string;
+  }>();
+  const [userInfoUpdateError, setUserInfoUpdateError] = useState<{
+    code: string;
+    message: string;
+  }>();
   const [success, setSuccess] = useState<{ message: string }>();
   const [userInfoLoading, setUserInfoLoading] = useState<boolean>(false);
   const [passwordLoading, setPasswordLoading] = useState<boolean>(false);

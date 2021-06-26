@@ -317,34 +317,34 @@ const DeliveryOrders: React.FC = () => {
             break;
           }
           case "GET_DEALER_FAILURE": {
-            // firebase
-            //   .firestore()
-            //   .collection("users")
-            //   .doc(uid)
-            //   .onSnapshot((doc) => {
-            //     if (doc.exists) {
-            //       const info = doc.data();
-            //       if (info) {
-            //         // SET_USER
-            //         const data = {
-            //           name: info.name,
-            //           phoneNumber: info.phoneNumber.slice(3),
-            //           email: info.email,
-            //           gst: info.gst,
-            //           pan: info.pan,
-            //           address: info.address,
-            //           temporaryCertificate: info.temporaryCertificate,
-            //           uid: info.uid,
-            //         };
-            //         window.api.send("toMain", {
-            //           type: "SET_DEALER",
-            //           data: data,
-            //         });
+            firebase
+              .firestore()
+              .collection("users")
+              .doc(uid)
+              .onSnapshot((doc) => {
+                if (doc.exists) {
+                  const info = doc.data();
+                  if (info) {
+                    // SET_USER
+                    const data = {
+                      name: info.name,
+                      phoneNumber: info.phoneNumber.slice(3),
+                      email: info.email,
+                      gst: info.gst,
+                      pan: info.pan,
+                      address: info.address,
+                      temporaryCertificate: info.temporaryCertificate,
+                      uid: info.uid,
+                    };
+                    window.api.send("toMain", {
+                      type: "SET_DEALER",
+                      data: data,
+                    });
 
-            //         setUserInfo(data);
-            //       }
-            //     }
-            //   });
+                    setUserInfo(data);
+                  }
+                }
+              });
             break;
           }
         }
@@ -358,10 +358,10 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-  if (!userInfo.uid && currentUser && currentUser.uid) {
+  if (currentUser && currentUser.uid) {
     getSetUserData(currentUser.uid);
   }
-  console.log(currentUser);
+
 
   //create DO
   const createDO = async () => {
