@@ -1,3 +1,5 @@
+const { localeData } = require("moment");
+
 module.exports = function (appWindow, browser) {
   const path = require("path");
   const fs = require("fs");
@@ -61,27 +63,49 @@ module.exports = function (appWindow, browser) {
       }
       case "GET_DEALER": {
         let userData;
-        if (!userData) {
-          try {
-            userData =
-              JSON.parse(
-                fs.readFileSync(
-                  path.join(__dirname, "../dataStore/user-info.json")
-                )
-              ) || null;
-          } catch (err) {
-            userData = null;
-          }
+        try {
+          userData =
+            JSON.parse(
+              fs.readFileSync(
+                path.join(__dirname, "../dataStore/user-info.json")
+              )
+            ) || null;
+        } catch (err) {
+          userData = null;
         }
-
+        if (userData == null) {
+          firebase
+            .firestore()
+            .collection("users")
+            .doc(data.uid)
+            .onSnapshot((doc) => {
+              if (doc.exists) {
+                const info = doc.data();
+                if (info) {
+                  // SET_USER
+                  let data = {
+                    name: info.name,
+                    phoneNumber: info.phoneNumber.slice(3),
+                    email: info.email,
+                    gst: info.gst,
+                    pan: info.pan,
+                    address: info.address,
+                    temporaryCertificate: info.temporaryCertificate,
+                    uid: info.uid,
+                  };
+                  userData = data;
+                  appWindow.webContents.send("fromMain", {
+                    type: "GET_DEALER_FAILURE",
+                    userData,
+                  });
+                }
+              }
+            });
+        }
         if (userData && userData.uid === data.uid) {
           appWindow.webContents.send("fromMain", {
             type: "GET_DEALER_SUCCESS",
             userData,
-          });
-        } else {
-          appWindow.webContents.send("fromMain", {
-            type: "GET_DEALER_FAILURE",
           });
         }
         break;

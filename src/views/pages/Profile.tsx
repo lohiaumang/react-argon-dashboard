@@ -114,34 +114,11 @@ const Profile: React.FC = () => {
             break;
           }
           case "GET_DEALER_FAILURE": {
-            firebase
-              .firestore()
-              .collection("users")
-              .doc(uid)
-              .onSnapshot((doc) => {
-                if (doc.exists) {
-                  const info = doc.data();
-                  if (info) {
-                    // SET_USER
-                    const data = {
-                      name: info.name,
-                      phoneNumber: info.phoneNumber.slice(3),
-                      email: info.email,
-                      gst: info.gst,
-                      pan: info.pan,
-                      address: info.address,
-                      temporaryCertificate: info.temporaryCertificate,
-                      uid: info.uid,
-                    };
-                    window.api.send("toMain", {
-                      type: "SET_DEALER",
-                      data: data,
-                    });
-
-                    setUserInfo(data);
-                  }
-                }
-              });
+            setUserInfo(data.userData);
+            window.api.send("toMain", {
+              type: "SET_DEALER",
+              data: data.userData,
+            });
             break;
           }
         }
