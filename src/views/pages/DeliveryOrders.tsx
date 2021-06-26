@@ -362,7 +362,6 @@ const DeliveryOrders: React.FC = () => {
     getSetUserData(currentUser.uid);
   }
 
-
   //create DO
   const createDO = async () => {
     try {
