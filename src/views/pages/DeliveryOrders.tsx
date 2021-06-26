@@ -86,8 +86,6 @@ const DeliveryOrders: React.FC = () => {
     uid: "",
   });
   let credentials: any;
-  console.log(JSON.stringify({ userInfo }), "Insurance Data Get!");
-
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
   useEffect(() => {

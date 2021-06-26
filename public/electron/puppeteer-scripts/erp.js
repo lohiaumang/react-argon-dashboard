@@ -1,5 +1,6 @@
 module.exports = async function erp(page, data, mainWindow) {
-  console.log(typeof page, Object.keys(data), typeof mainWindow);
+  //console.log(typeof page, Object.keys(data), typeof mainWindow);
+  console.log(typeof page, Object(data.adi), typeof mainWindow);
   // const path = require("path");
   // const fetch = require("node-fetch");
   // const _ = require("get-safe");
