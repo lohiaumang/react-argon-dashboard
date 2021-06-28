@@ -213,8 +213,8 @@ module.exports = function (appWindow, browser) {
         // data = args[0];
         erpWindow = new BrowserWindow({
           title: "AutoAuto ERP",
-          height: 750,
-          width: 700,
+          height: 950,
+          width: 1200,
           // parent: appWindow,
           // TODO: Might want to change this to false
           frame: true,
@@ -237,7 +237,6 @@ module.exports = function (appWindow, browser) {
         //   appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
         //   appWindow.reload();
         // });
-
         credentials =
           JSON.parse(
             fs.readFileSync(

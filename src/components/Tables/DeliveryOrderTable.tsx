@@ -377,7 +377,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                   <th>
                     <strong>Total</strong>
                   </th>
-                  <td>-</td>
+                  <td>{total}</td>
                 </tr>
               </tbody>
             </Table>

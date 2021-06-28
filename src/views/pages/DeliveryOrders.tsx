@@ -140,9 +140,6 @@ const DeliveryOrders: React.FC = () => {
         case "INVOICE_CREATED": {
           return (
             <ButtonDropdown isOpen={dropdownButton} toggle={toggle}>
-              {loading ? (
-                <SmallLoading />
-              ) : (
                 <>
                   <DropdownToggle caret size="sm" color={"primary"}>
                     {loading ? <SmallLoading /> : "Create Insurance"}
@@ -164,7 +161,7 @@ const DeliveryOrders: React.FC = () => {
                     </DropdownItem>
                   </DropdownMenu>
                 </>
-              )}
+              
             </ButtonDropdown>
           );
         }
