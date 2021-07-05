@@ -62,15 +62,9 @@ module.exports = function erp(
       "div > .siebui-applet-header > .siebui-btn-grp-applet > #s_1_1_20_0_Ctrl > span"
     );
 
-    // await typeText(page, 'tbody  input[name="s_1_2_64_0"]', 'Phone');
-    // await typeText(page, 'tbody  input[name="s_1_2_51_0"]', 'First Time Buyer');
-    // await typeText(page, 'tbody  input[name="s_1_2_54_0"]', 'Friend');
-    // await typeText(page, 'tbody  input[name="s_1_2_50_0"]', 'Individual');
-    // await typeText(page, 'tbody  input[name="s_1_2_52_0"]', 'Individual');
-    // await typeText(page, 'tbody  input[name="s_1_2_59_0"]', 'Cash');
+ 
 
-    // await typeText(page, 'input[aria-label="Enquiry Type"]', "Phone");
-    // await click(page, "#ui-id-437");
+    //Enquiry Type
     await click(page, 'input[aria-label="Enquiry Type"] + span');
     await page.waitForSelector(
       "ul[role='combobox']:not([style*='display: none'])",
@@ -93,28 +87,75 @@ module.exports = function erp(
     );
     await click(page, `#${enquiryButton.id}`);
 
-    // await click(page, 'input[aria-label="Enquiry Source"] + span');
-    // await page.waitForSelector("ul[role='combobox'] > li > div", {
-    //   visible: true,
-    // });
+    //Customer Type
+    await click(page, 'input[aria-label="Customer Type"] + span');
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      {
+        visible: true,
+      }
+    );
+    let customerType = await page.$$eval(
+      "ul[role='combobox']:not([style*='display: none']) > li > div",
+      (listItems) =>
+        listItems.map((item) => {
+          return {
+            name: item.textContent,
+            id: item.id,
+          };
+        })
+    );
+    const customerTypeButton = customerType.find(
+      (item) => item.name === "First Time Buyer"
+    );
+    await click(page, `#${customerTypeButton.id}`);
 
-    // let enquirySourceItems = await page.$$eval(
-    //   "ul[role='combobox'] > li > div",
-    //   (listItems) =>
-    //     listItems.map((item) => {
-    //       console.log(item.textContent, item.id);
-    //       return {
-    //         name: item.textContent,
-    //         id: item.id,
-    //       };
-    //     })
-    // );
+    //Enquiry Source
+    await click(page, 'input[aria-label="Enquiry Source"] + span');
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      {
+        visible: true,
+      }
+    );
+    let enquirySourceItems = await page.$$eval(
+      "ul[role='combobox']:not([style*='display: none']) > li > div",
+      (listItems) =>
+        listItems.map((item) => {
+          return {
+            name: item.textContent,
+            id: item.id,
+          };
+        })
+    );
+    const enquirySourceButton = enquirySourceItems.find(
+      (item) => item.name === "Friend"
+    );
+    await click(page, `#${enquirySourceButton.id}`);
 
-    // const enquirySourceButton = enquirySourceItems.find(
-    //   (item) => item.name === "Friend"
-    // );
+    //Customer Category
 
-    // await click(page, `#${enquirySourceButton.id}`);
+    await click(page, 'input[aria-label="Customer Category"] + span');
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      {
+        visible: true,
+      }
+    );
+    let customerCategoryItems = await page.$$eval(
+      "ul[role='combobox']:not([style*='display: none']) > li > div",
+      (listItems) =>
+        listItems.map((item) => ({
+          name: item.textContent,
+          id: item.id,
+        }))
+    );
+    const customerCategoryButton = customerCategoryItems.find(
+      (item) => item.name === "Individual"
+    );
+    await click(page, `#${customerCategoryButton.id}`);
+
+    //Enquiry Category
 
     await click(page, 'input[aria-label="Enquiry Category"] + span');
     await page.waitForSelector(
@@ -136,22 +177,135 @@ module.exports = function erp(
     );
     await click(page, `#${enquiryCategoryButton.id}`);
 
-    // await typeText(
-    //   page,
-    //   'input[aria-label="Customer Type"]',
-    //   "First Time Buyer"
-    // );
-    // await typeText(page, 'input[aria-label="Enquiry Source"]', "Friend");
-    // await typeText(page, 'input[aria-label="Customer Category"]', "Individual");
-    // await typeText(page, 'input[aria-label="Enquiry Category"]', "Individual");
-    // await typeText(page, 'input[aria-label="Assigned To (DSE)"]', "Cash");
+    //Purchase Type
 
-    //get saler name
-    await click(page, '#s_5_l > tbody > tr > td[title="RAO"]');
+    await click(page, 'input[aria-label="Purchase Type"] + span');
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      {
+        visible: true,
+      }
+    );
+    let purchaseType = await page.$$eval(
+      "ul[role='combobox']:not([style*='display: none']) > li > div",
+      (listItems) =>
+        listItems.map((item) => ({
+          name: item.textContent,
+          id: item.id,
+        }))
+    );
+    const purchaseTypeButton = purchaseType.find(
+      (item) => item.name === "Cash"
+    );
+    await click(page, `#${purchaseTypeButton.id}`);
+
+    //Assigned To (DSE)
+
+    await click(page, 'input[aria-label="Assigned To (DSE)"] + span');
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      {
+        visible: true,
+      }
+    );
     await click(
       page,
-      ".siebui-popup-btm > .siebui-popup-button > #s_5_1_70_0_Ctrl"
+      ".AppletStylePopup > .siebui-popup-btm > .siebui-popup-button > #s_3_1_70_0_Ctrl > span"
     );
+    // await click(page,".siebui-popup-btm > .siebui-popup-button > #s_5_1_70_0_Ctrl");
+    //  let assigned = await page.$$eval(
+    //    "ul[role='combobox']:not([style*='display: none']) > li > div",
+    //    (listItems) =>
+    //      listItems.map((item) => ({
+    //        name: item.textContent,
+    //        id: item.id,
+    //      }))
+    //  );
+    //  const assignedButton = assigned.find(
+    //    (item) => item.name === "Assigned To (DSE)"
+    //  );
+    //  await click(page, `#${assignedButton.id}`);
+
+    //Model Category
+
+    await click(
+      page,
+      'input[aria-label="Model Category<Font size= 3 color=Red><b>*</b></Font>"] + span'
+    );
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      {
+        visible: true,
+      }
+    );
+    let modelCategory = await page.$$eval(
+      "ul[role='combobox']:not([style*='display: none']) > li > div",
+      (listItems) =>
+        listItems.map((item) => ({
+          name: item.textContent,
+          id: item.id,
+        }))
+    );
+    const modelCategoryButton = modelCategory.find(
+      (item) => item.name === "SC"
+    );
+    await click(page, `#${modelCategoryButton.id}`);
+
+    //Model Name
+
+    await click(
+      page,
+      'input[aria-label="Model Name<Font size= 3 color=Red><b>*</b></Font>"] + span'
+    );
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      {
+        visible: true,
+      }
+    );
+    let modelName = await page.$$eval(
+      "ul[role='combobox']:not([style*='display: none']) > li > div",
+      (listItems) =>
+        listItems.map((item) => ({
+          name: item.textContent,
+          id: item.id,
+        }))
+    );
+    const modelNameButton = modelName.find((item) => item.name === "DIO");
+    await click(page, `#${modelNameButton.id}`);
+
+    //Model Variant
+
+    await click(
+      page,
+      'input[aria-label="Model Variant<Font size= 3 color=Red><b>*</b></Font>"] + span'
+    );
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      {
+        visible: true,
+      }
+    );
+    let modelVariant = await page.$$eval(
+      "ul[role='combobox']:not([style*='display: none']) > li > div",
+      (listItems) =>
+        listItems.map((item) => ({
+          name: item.textContent,
+          id: item.id,
+        }))
+    );
+    const modelVariantButton = modelVariant.find(
+      (item) => item.name === "DIO DLX-BSVI"
+    );
+    await click(page, `#${modelVariantButton.id}`);
+
+
+    //get saler name
+    // await click(page, '#s_5_l > tbody > tr > td[title="RAO"]');
+    // await click(
+    //   page,
+    //   ".siebui-popup-btm > .siebui-popup-button > #s_5_1_70_0_Ctrl"
+    // );
   }
 
   automate();
