@@ -60,6 +60,8 @@ module.exports = function erp(page,{ data, modelData, dealerData },mainWindow) {
     // await typeText(page, 'tbody  input[name="s_1_2_52_0"]', 'Individual');
     // await typeText(page, 'tbody  input[name="s_1_2_59_0"]', 'Cash');
 
+ 
+
     await typeText(page, 'table > tbody > tr > td > .mceField > input[name="s_1_2_64_0"]','Phone')
     await typeText(page, 'table > tbody > tr > td > .mceField > input[name="s_1_2_51_0"]','First Time Buyer')
     await typeText(page, 'table > tbody > tr > td > .mceField > input[name="s_1_2_54_0"]','Friend')
