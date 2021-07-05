@@ -17,7 +17,6 @@ module.exports = {
     }
   },
 
-  
   getText: async function (page, selector) {
     try {
       await page.waitForSelector(selector);
@@ -26,6 +25,7 @@ module.exports = {
       throw new Error("Could not get text from selector" + { selector });
     }
   },
+
   getCount: async function (page, selector) {
     try {
       await page.waitForSelector(selector);
@@ -48,6 +48,7 @@ module.exports = {
       throw new Error("Could not found the element waitForText");
     }
   },
+
   shouldNotExist: async function (page, selector) {
     try {
       await page.waitForSelector(selector, { hiddern: true });
