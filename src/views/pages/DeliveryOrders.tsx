@@ -272,6 +272,8 @@ const DeliveryOrders: React.FC = () => {
       switch (data.type) {
         case "GET_CREDENTIALS_SUCCESS": {
           credentials = data.userData.credentials;
+        //  const credential = credentials["ERP"];
+        //   console.log( credential);
           return;
         }
         case "GET_CREDENTIALS_FAILURE": {

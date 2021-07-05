@@ -199,6 +199,7 @@ module.exports = function (appWindow, browser) {
           appWindow.webContents.send("fromMain", {
             type: "GET_CREDENTIALS_SUCCESS",
             userData,
+          
           });
         } else {
           appWindow.webContents.send("fromMain", {
