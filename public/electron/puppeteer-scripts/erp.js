@@ -62,8 +62,6 @@ module.exports = function erp(
       "div > .siebui-applet-header > .siebui-btn-grp-applet > #s_1_1_20_0_Ctrl > span"
     );
 
- 
-
     //Enquiry Type
     await click(page, 'input[aria-label="Enquiry Type"] + span');
     await page.waitForSelector(
@@ -178,7 +176,7 @@ module.exports = function erp(
     await click(page, `#${enquiryCategoryButton.id}`);
 
     //Purchase Type
-
+    let purchaseTypeButton;
     await click(page, 'input[aria-label="Purchase Type"] + span');
     await page.waitForSelector(
       "ul[role='combobox']:not([style*='display: none'])",
@@ -194,25 +192,23 @@ module.exports = function erp(
           id: item.id,
         }))
     );
-    const purchaseTypeButton = purchaseType.find(
-      (item) => item.name === "Cash"
-    );
+    purchaseTypeButton = purchaseType.find((item) => item.name === "Finance");
     await click(page, `#${purchaseTypeButton.id}`);
 
     //Assigned To (DSE)
 
-    await click(page, 'input[aria-label="Assigned To (DSE)"] + span');
-    await page.waitForSelector(
-      "ul[role='combobox']:not([style*='display: none'])",
-      {
-        visible: true,
-      }
-    );
-    await click(
-      page,
-      ".AppletStylePopup > .siebui-popup-btm > .siebui-popup-button > #s_3_1_70_0_Ctrl > span"
-    );
-    // await click(page,".siebui-popup-btm > .siebui-popup-button > #s_5_1_70_0_Ctrl");
+    //await click(page,'tbody #s_1_2_32_0_icon')
+    //await typeText(page,'tbody > .AppletButtons > .siebui-popup-filter > .siebui-popup-button > .siebui-ctrl-input', 'RAO')
+    //await click(page,'tbody button[name="s_3_1_5_0"]')
+
+    // await click(page, 'input[aria-label="Assigned To (DSE)"] + span');
+    // await click(page, 'input[aria-label="Find"] + span');
+    // await page.waitForSelector(
+    //   "ul[role='combobox']:not([style*='display: none'])",
+    //   {
+    //     visible: true,
+    //   }
+    // );
     //  let assigned = await page.$$eval(
     //    "ul[role='combobox']:not([style*='display: none']) > li > div",
     //    (listItems) =>
@@ -222,9 +218,36 @@ module.exports = function erp(
     //      }))
     //  );
     //  const assignedButton = assigned.find(
-    //    (item) => item.name === "Assigned To (DSE)"
+    //    (item) => item.name === "User ID"
     //  );
     //  await click(page, `#${assignedButton.id}`);
+    //  await typeText(page,'tbody > .AppletButtons > .siebui-popup-filter > .siebui-popup-button > .siebui-ctrl-input', 'AS010002NA033')
+    //  await click(page,'tbody button[name="s_3_1_5_0"]')
+
+    //Financier Category
+
+    if (purchaseTypeButton.name === "Finance") {
+      await click(page, 'input[aria-label="Financier"] + span');
+      await page.waitForSelector(
+        "td[role='gridcell']:not([style*='display: none'])",
+        {
+          visible: true,
+        }
+      );
+      let finance = await page.$$eval(
+        "td[role='gridcell']:not([style*='display: none']) > td ",
+        (listItems) =>
+          listItems.map((item) => ({
+            name: item.textContent,
+            id: item.id,
+          }))
+      );
+      const financeButton = finance.find(
+        (item) => item.name === "ESSKAY FINCORP LTD"
+      );
+      console.log(finance);
+      await click(page, `#${financeButton.id}`);
+    }
 
     //Model Category
 
@@ -298,7 +321,6 @@ module.exports = function erp(
       (item) => item.name === "DIO DLX-BSVI"
     );
     await click(page, `#${modelVariantButton.id}`);
-
 
     //get saler name
     // await click(page, '#s_5_l > tbody > tr > td[title="RAO"]');
