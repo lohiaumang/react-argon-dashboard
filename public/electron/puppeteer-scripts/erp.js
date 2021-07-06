@@ -209,18 +209,23 @@ module.exports = function erp(
         visible: true,
       }
     );
-    await click(page,'table > tbody > tr > td > .siebui-popup-button > button[aria-label="Pick Assigned To:Query"]');
-    await typeText(page,'table > tbody > tr > td[role="gridcell"] > .s_3_2_79_0',"DEVI")
-    await typeText(page,'table > tbody > tr > td[role="gridcell"] > .s_3_2_80_0',"PINKY")
-    await click(page,'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]');
-    await click(page,'.siebui-popup-btm > .siebui-popup-button > button[aria-label="Pick Assigned To:OK"]');
+    await click(
+      page,
+      'table > tbody > tr > td > .siebui-popup-button > button[aria-label="Pick Assigned To:Query"]'
+    );
+    await page.focus("input[name='Last_Name']");
+    await typeText(page, "input[name='Last_Name']", "DEVI");
+    await page.$eval("input[name='Last_Name']", (e) => e.blur());
+    await typeText(page, "input[name='First_Name']", "PINKY");
+    await click(
+      page,
+      'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]'
+    );
+    await click(
+      page,
+      '.siebui-popup-btm > .siebui-popup-button > button[data-display="OK"]'
+    );
 
-
-
-    
-
-
-   
     //  let assigned = await page.$$eval(
     //    "ul[role='combobox']:not([style*='display: none']) > li > div",
     //    (listItems) =>
