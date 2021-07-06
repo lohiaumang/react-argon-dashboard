@@ -12,7 +12,7 @@ module.exports = function erp(
   page.setDefaultNavigationTimeout(timeout);
 
   async function automate() {
-    await typeText(page, "#s_swepi_1", "AS010002SA003", { visible: true });
+    await typeText(page, "#s_swepi_1", "AS010002SA003");
     await typeText(page, "#s_swepi_2", "Hirise_3956");
     const captcha = await page.$eval("#captchaCode", (el) =>
       el.textContent.replace(/\s+/g, "")
@@ -201,14 +201,26 @@ module.exports = function erp(
     //await typeText(page,'tbody > .AppletButtons > .siebui-popup-filter > .siebui-popup-button > .siebui-ctrl-input', 'RAO')
     //await click(page,'tbody button[name="s_3_1_5_0"]')
 
-    // await click(page, 'input[aria-label="Assigned To (DSE)"] + span');
-    // await click(page, 'input[aria-label="Find"] + span');
-    // await page.waitForSelector(
-    //   "ul[role='combobox']:not([style*='display: none'])",
-    //   {
-    //     visible: true,
-    //   }
-    // );
+    await click(page, 'input[aria-label="Assigned To (DSE)"] + span');
+    await click(page, 'input[aria-label="Find"] + span');
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      {
+        visible: true,
+      }
+    );
+    await click(page,'table > tbody > tr > td > .siebui-popup-button > button[aria-label="Pick Assigned To:Query"]');
+    await typeText(page,'table > tbody > tr > td[role="gridcell"] > .s_3_2_79_0',"DEVI")
+    await typeText(page,'table > tbody > tr > td[role="gridcell"] > .s_3_2_80_0',"PINKY")
+    await click(page,'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]');
+    await click(page,'.siebui-popup-btm > .siebui-popup-button > button[aria-label="Pick Assigned To:OK"]');
+
+
+
+    
+
+
+   
     //  let assigned = await page.$$eval(
     //    "ul[role='combobox']:not([style*='display: none']) > li > div",
     //    (listItems) =>
@@ -218,36 +230,17 @@ module.exports = function erp(
     //      }))
     //  );
     //  const assignedButton = assigned.find(
-    //    (item) => item.name === "User ID"
+    //    (item) => item.name === "Last Name"
     //  );
     //  await click(page, `#${assignedButton.id}`);
-    //  await typeText(page,'tbody > .AppletButtons > .siebui-popup-filter > .siebui-popup-button > .siebui-ctrl-input', 'AS010002NA033')
+    //  await typeText(page,'tbody > .AppletButtons > .siebui-popup-filter > .siebui-popup-button > .siebui-ctrl-input', 'DE')
     //  await click(page,'tbody button[name="s_3_1_5_0"]')
 
     //Financier Category
 
-    if (purchaseTypeButton.name === "Finance") {
-      await click(page, 'input[aria-label="Financier"] + span');
-      await page.waitForSelector(
-        "td[role='gridcell']:not([style*='display: none'])",
-        {
-          visible: true,
-        }
-      );
-      let finance = await page.$$eval(
-        "td[role='gridcell']:not([style*='display: none']) > td ",
-        (listItems) =>
-          listItems.map((item) => ({
-            name: item.textContent,
-            id: item.id,
-          }))
-      );
-      const financeButton = finance.find(
-        (item) => item.name === "ESSKAY FINCORP LTD"
-      );
-      console.log(finance);
-      await click(page, `#${financeButton.id}`);
-    }
+    // if (purchaseTypeButton.name === "Finance") {
+    //   await typeText(page,'input[aria-label="Financier"]','HDFC BANK')
+    // }
 
     //Model Category
 
