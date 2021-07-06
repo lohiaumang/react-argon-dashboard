@@ -197,10 +197,6 @@ module.exports = function erp(
 
     //Assigned To (DSE)
 
-    //await click(page,'tbody #s_1_2_32_0_icon')
-    //await typeText(page,'tbody > .AppletButtons > .siebui-popup-filter > .siebui-popup-button > .siebui-ctrl-input', 'RAO')
-    //await click(page,'tbody button[name="s_3_1_5_0"]')
-
     await click(page, 'input[aria-label="Assigned To (DSE)"] + span');
     await click(page, 'input[aria-label="Find"] + span');
     await page.waitForSelector(
@@ -209,43 +205,25 @@ module.exports = function erp(
         visible: true,
       }
     );
-    await click(
-      page,
-      'table > tbody > tr > td > .siebui-popup-button > button[aria-label="Pick Assigned To:Query"]'
-    );
-    await page.focus("input[name='Last_Name']");
+    await click( page,'table > tbody > tr > td > .siebui-popup-button > button[aria-label="Pick Assigned To:Query"]');
     await typeText(page, "input[name='Last_Name']", "DEVI");
-    await page.$eval("input[name='Last_Name']", (e) => e.blur());
-    await typeText(page, "input[name='First_Name']", "PINKY");
-    await click(
-      page,
-      'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]'
-    );
-    await click(
-      page,
-      '.siebui-popup-btm > .siebui-popup-button > button[data-display="OK"]'
-    );
-
-    //  let assigned = await page.$$eval(
-    //    "ul[role='combobox']:not([style*='display: none']) > li > div",
-    //    (listItems) =>
-    //      listItems.map((item) => ({
-    //        name: item.textContent,
-    //        id: item.id,
-    //      }))
-    //  );
-    //  const assignedButton = assigned.find(
-    //    (item) => item.name === "Last Name"
-    //  );
-    //  await click(page, `#${assignedButton.id}`);
-    //  await typeText(page,'tbody > .AppletButtons > .siebui-popup-filter > .siebui-popup-button > .siebui-ctrl-input', 'DE')
-    //  await click(page,'tbody button[name="s_3_1_5_0"]')
+    await click(page, '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] ');
+    await typeText(page,'#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] > input[name="First_Name"]',"PINKY");
+    await click( page,'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]');
+    await click(page,'.siebui-popup-btm > .siebui-popup-button > button[data-display="OK"]');
+    console.log("stape 1")
+   
 
     //Financier Category
 
-    // if (purchaseTypeButton.name === "Finance") {
-    //   await typeText(page,'input[aria-label="Financier"]','HDFC BANK')
-    // }
+    if (purchaseTypeButton.name === "Finance") {
+      console.log("stape 1")
+
+      await click(page,'input[aria-label="Financier"] + span');
+      console.log("stape 2")
+      await typeText(page,'input[aria-label="Financier"]','HDFC BANK')
+      console.log("stape 3")
+    }
 
     //Model Category
 
