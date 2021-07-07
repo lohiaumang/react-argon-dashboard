@@ -333,11 +333,14 @@ const DeliveryOrders: React.FC = () => {
     try {
       setLoading(true);
       if (selected !== undefined) {
+        await getCredentials();
         const status: any = await fetchDeliveryOrder();
         if (status) {
           window.api.send("toMain", {
             type: "CREATE_INVOICE",
-            data: deliveryOrders[selected],
+            data: {...deliveryOrders[selected],
+                      credentials
+            },
           });
           setLoading(false);
         }

@@ -238,19 +238,19 @@ module.exports = function (appWindow, browser) {
         //   appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
         //   appWindow.reload();
         // });
-        credentials =
-          JSON.parse(
-            fs.readFileSync(
-              path.join(__dirname, "../dataStore/credentials.json")
-            )
-          ) || null;
+        // credentials =
+        //   JSON.parse(
+        //     fs.readFileSync(
+        //       path.join(__dirname, "../dataStore/credentials.json")
+        //     )
+        //   ) || null;
 
-        if (credentials) {
-          data = {
-            ...data,
-            credential: credentials["ERP"],
-          };
-        }
+        // if (credentials) {
+        //   data = {
+        //     ...data,
+        //     credential: credentials["ERP"],
+        //   };
+        // }
 
         erp(page, data, appWindow);
 
