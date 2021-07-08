@@ -425,32 +425,59 @@ module.exports = function erp(page, data, mainWindow) {
       page,
       'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]'
     );
-    await click(
-      page,
-      '.siebui-popup-btm > .siebui-popup-button > button[data-display="OK"]'
-    );
-
-    await page.waitForSelector(".siebui-applet-header #s_at_m_1", {
+    await click(page, "button[data-display='OK']");
+    await page.waitForSelector("button[title='Enquiries Menu']", {
       visible: true,
     });
-    await page.$eval(
-      ".siebui-applet-header #s_at_m_1:not([style*='display: none'])",
-      (el) => el.click()
+    await page.$eval("button[title='Enquiries Menu']", (el) => el.click());
+    await page.waitForSelector(
+      ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
+      { visible: true }
+    );
+    const menuOptions = await page.$$eval(
+      ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
+      (options) =>
+        options.map((option) => {
+          return {
+            name: option.textContent,
+            id: option.id,
+          };
+        })
+    );
+    const saveRecordButton = menuOptions.find((option) =>
+      option.name.includes("Save Record")
+    );
+    await page.$eval(`#${saveRecordButton.id}`, (el) => el.click());
+    await page.waitForSelector("td[role='gridcell'] > a", { visible: true });
+    await page.$eval("td[role='gridcell'] > a", (el) => el.click());
+    await page.waitForResponse(
+      "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
+    );
+    await page.waitForSelector("div[title='Third Level View Bar']", {
+      visible: true,
+    });
+    const allTabs = await page.$$eval(
+      "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
+      (tabs) =>
+        tabs.map((tab) => {
+          return {
+            name: tab.textContent,
+            id: tab.id,
+          };
+        })
+    );
+    const expressBookingButton = allTabs.find((item) =>
+      item.name.includes("Express Booking")
+    );
+    await page.$eval(`#${expressBookingButton.id}`, (el) => el.click());
+    await click(
+      page,
+      '.siebui-applet-buttons > .siebui-btn-grp-search > button[name="s_3_1_3_0"]'
     );
     await click(
       page,
-      '#s_at_m_1-menu > li[data-caption="Save Record                [Ctrl+S]"] > .ui-menu-item-wrapper'
-    ); //todo
-    await click(page, "#s_1_l > tbody > tr > td > .drilldown");
-    await click(
-      page,
-      '#s_vctrl_div_tabScreen > ul[role="tablist"] li[aria-labelledby="ui-id-543"] > a[data-tabindex="tabScreen3"]'
+      '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown'
     );
-    // await page.waitForSelector('#s_vctrl_div_tabScreen > ul[role="tablist"] li[aria-labelledby="ui-id-543"] > a[data-tabindex="tabScreen3"]');
-    // await page.$eval('#s_vctrl_div_tabScreen > ul[role="tablist"] li[aria-labelledby="ui-id-543"] > a[data-tabindex="tabScreen3"]', el => el.click());
-    //  await click(page,'.siebui-applet-buttons > .siebui-btn-grp-search > button[name="s_3_1_3_0"]');
-    //  await click(page,'#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown');
-    //   console.log("step 1")
   }
 
   automate();

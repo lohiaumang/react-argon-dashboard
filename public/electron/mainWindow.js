@@ -247,7 +247,6 @@ module.exports = function (appWindow, browser) {
         // });
         // TODOTODO
         const { credentials } = getCredentials();
-        console.log("Credentials", credentials, credentials["ERP"]);
 
         if (credentials) {
           data = {
