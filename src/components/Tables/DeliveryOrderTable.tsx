@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Table, Row, Col } from "reactstrap";
 
+export interface UserInfo {
+  name: string;
+  phoneNumber: string;
+  email: string;
+  gst: string;
+  pan: string;
+  address: string;
+  temporaryCertificate: string;
+  uid: string;
+}
+
 export interface DeliveryOrder {
   active: boolean;
   status: string;
@@ -61,6 +72,7 @@ export interface DeliveryOrder {
     financier?: string;
     downPayment?: string;
   };
+  userInfo: UserInfo;
 }
 
 type Props = {
@@ -74,7 +86,8 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
       props.deliveryOrder &&
       props.deliveryOrder.customerInfo &&
       props.deliveryOrder.vehicleInfo &&
-      props.deliveryOrder.additionalInfo
+      props.deliveryOrder.additionalInfo &&
+      props.deliveryOrder.userInfo
     ) {
       const price = parseInt(props.deliveryOrder.additionalInfo.price);
       const insurance = parseInt(props.deliveryOrder.additionalInfo.insurance);
@@ -95,7 +108,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
             <Row className="row-header">
               <Col>
                 <h4 className="m-0" style={{ color: "white" }}>
-                  Vinayak Honda
+                  {props.deliveryOrder.userInfo.name}
                 </h4>
               </Col>
               <Col className="text-right">
@@ -364,7 +377,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                   <th>
                     <strong>Total</strong>
                   </th>
-                  <td>-</td>
+                  <td>{total}</td>
                 </tr>
               </tbody>
             </Table>

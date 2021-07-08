@@ -1,1 +1,10 @@
-{"name":"Rahul","phoneNumber":"+919999955555","email":"rahul@brikolite.com","gst":"18AABCU9603R1ZM","pan":"AABCU9603R","address":"Home","temporaryCertificate":"Registration","termsAndCondition":true,"role":"dealer","uid":"cdNE5VTsQwfHRqEnLiBELBFJFzI2"}
+{
+  "name": "Vnayak honda",
+  "phoneNumber": "9999955555",
+  "email": "rahul@brikolite.com",
+  "gst": "18AABCU9603R1ZM",
+  "pan": "AABCU9603R",
+  "address": "Home",
+  "temporaryCertificate": "Registration",
+  "uid": "cdNE5VTsQwfHRqEnLiBELBFJFzI2"
+}

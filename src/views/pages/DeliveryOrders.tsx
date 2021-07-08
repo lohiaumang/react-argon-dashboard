@@ -46,6 +46,7 @@ import {
 import Header from "../../components/Headers/Header";
 import DeliveryOrderTable, {
   DeliveryOrder,
+  UserInfo,
 } from "../../components/Tables/DeliveryOrderTable";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 import SmallLoading from "../../components/Share/SmallLoading";
@@ -54,6 +55,12 @@ import { UserContext } from "../../Context";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import { rejects } from "assert";
+
+declare global {
+  interface Window {
+    api: any;
+  }
+}
 
 const DeliveryOrders: React.FC = () => {
   const user: any = useContext(UserContext);
@@ -67,8 +74,18 @@ const DeliveryOrders: React.FC = () => {
   const [dropdownButton, setDropdownButton] = useState(false);
   const db = firebase.firestore();
   const fs = require("fs");
-  let uaerIDPassword: any;
-
+  const currentUser = firebase.auth().currentUser;
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    name: "",
+    phoneNumber: "",
+    email: "",
+    gst: "",
+    pan: "",
+    address: "",
+    temporaryCertificate: "",
+    uid: "",
+  });
+  let credentials: any;
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
   useEffect(() => {
@@ -123,31 +140,27 @@ const DeliveryOrders: React.FC = () => {
         case "INVOICE_CREATED": {
           return (
             <ButtonDropdown isOpen={dropdownButton} toggle={toggle}>
-              {loading ? (
-                <SmallLoading />
-              ) : (
-                <>
-                  <DropdownToggle caret size="sm" color={"primary"}>
-                    {loading ? <SmallLoading /> : "Create Insurance"}
-                  </DropdownToggle>
-                  <DropdownMenu>
-                    <DropdownItem
-                      onClick={() => {
-                        createInsurance("HDFC");
-                      }}
-                    >
-                      HDFC
-                    </DropdownItem>
-                    <DropdownItem
-                      onClick={() => {
-                        createInsurance("ICICI");
-                      }}
-                    >
-                      ICICI
-                    </DropdownItem>
-                  </DropdownMenu>
-                </>
-              )}
+              <>
+                <DropdownToggle caret size="sm" color={"primary"}>
+                  {loading ? <SmallLoading /> : "Create Insurance"}
+                </DropdownToggle>
+                <DropdownMenu>
+                  <DropdownItem
+                    onClick={() => {
+                      createInsurance("HDFC");
+                    }}
+                  >
+                    HDFC
+                  </DropdownItem>
+                  <DropdownItem
+                    onClick={() => {
+                      createInsurance("ICICI");
+                    }}
+                  >
+                    ICICI
+                  </DropdownItem>
+                </DropdownMenu>
+              </>
             </ButtonDropdown>
           );
         }
@@ -225,6 +238,7 @@ const DeliveryOrders: React.FC = () => {
                             additionalInfo = doc.data();
                             const fullDetails = {
                               ...deliveryOrders[selected],
+                              userInfo,
                               customerInfo,
                               vehicleInfo,
                               additionalInfo,
@@ -248,22 +262,56 @@ const DeliveryOrders: React.FC = () => {
   }; // -> should return true or false promise
 
   //get userid and password
-  const getSetUserIDPassword = () => {
-    debugger;
+  const getCredentials = async () => {
+    window.api.send("toMain", {
+      type: "GET_CREDENTIALS",
+    });
 
-    window.api.receive("fromMain", (data: any) => {
+    await window.api.receive("fromMain", (data: any) => {
       switch (data.type) {
-        case "GET_USERID_PASSWORD": {
-          uaerIDPassword = data.userData.userIdPassword;
-          break;
+        case "GET_CREDENTIALS_SUCCESS": {
+          credentials = data.userData.credentials;
+          //  const credential = credentials["ERP"];
+          //   console.log( credential);
+          return;
+        }
+        case "GET_CREDENTIALS_FAILURE": {
+          return;
         }
       }
-      console.log(JSON.stringify(uaerIDPassword), "Insurance Data Get!");
-    });
-    window.api.send("toMain", {
-      type: "GET_USERID_PASSWORD",
     });
   };
+
+  const getSetUserData = (uid: string) => {
+    if (uid && window && window.api) {
+      window.api.receive("fromMain", (data: any) => {
+        switch (data.type) {
+          case "GET_DEALER_SUCCESS": {
+            setUserInfo(data.userData);
+            break;
+          }
+          case "GET_DEALER_FAILURE": {
+            setUserInfo(data.userData);
+            window.api.send("toMain", {
+              type: "SET_DEALER",
+              data: data.userData,
+            });
+            break;
+          }
+        }
+      });
+      window.api.send("toMain", {
+        type: "GET_DEALER",
+        data: {
+          uid,
+        },
+      });
+    }
+  };
+
+  if (!userInfo.uid && currentUser && currentUser.uid) {
+    getSetUserData(currentUser.uid);
+  }
 
   //create DO
   const createDO = async () => {
@@ -284,11 +332,14 @@ const DeliveryOrders: React.FC = () => {
     try {
       setLoading(true);
       if (selected !== undefined) {
+        await getCredentials();
         const status: any = await fetchDeliveryOrder();
         if (status) {
           window.api.send("toMain", {
             type: "CREATE_INVOICE",
-            data: deliveryOrders[selected],
+            data: {...deliveryOrders[selected],
+                      credentials
+            },
           });
           setLoading(false);
         }
@@ -298,23 +349,25 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-
   //create insurance
   const createInsurance = async (insuranceCompany: string) => {
+    //console.log(data, "UserId Password!");
+    //console.log(JSON.stringify(data), "UserId Password!");
     try {
       setLoading(true);
       if (selected !== undefined) {
+        await getCredentials();
         const status: any = await fetchDeliveryOrder();
-        getSetUserIDPassword();
         if (status) {
           window.api.send("toMain", {
             type: "CREATE_INSURANCE",
             data: {
               ...deliveryOrders[selected],
               insuranceCompany,
-              uaerIDPassword,
+              credentials,
             },
           });
+          //console.log(JSON.stringify(uaerIDPassword), "Insurance Data Get!");
           setLoading(false);
         }
       }

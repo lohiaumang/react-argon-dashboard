@@ -1,3 +1,5 @@
+const { localeData } = require("moment");
+
 module.exports = function (appWindow, browser) {
   const path = require("path");
   const fs = require("fs");
@@ -27,7 +29,24 @@ module.exports = function (appWindow, browser) {
   firebase.initializeApp(firebaseConfig);
 
   ipc.on("toMain", async (event, args) => {
-    const { type = "", data = {} } = args;
+    let { type = "", data = {} } = args;
+
+    const getCredentials = () => {
+      let credentials;
+
+      try {
+        credentials =
+          JSON.parse(
+            fs.readFileSync(
+              path.join(__dirname, "../dataStore/credentials.json")
+            )
+          ) || null;
+      } catch (err) {
+        credentials = null;
+      }
+
+      return credentials;
+    };
 
     switch (type) {
       case "CREATE_DEALER": {
@@ -71,14 +90,39 @@ module.exports = function (appWindow, browser) {
         } catch (err) {
           userData = null;
         }
+        if (userData == null) {
+          firebase
+            .firestore()
+            .collection("users")
+            .doc(data.uid)
+            .onSnapshot((doc) => {
+              if (doc.exists) {
+                const info = doc.data();
+                if (info) {
+                  // SET_USER
+                  let data = {
+                    name: info.name,
+                    phoneNumber: info.phoneNumber.slice(3),
+                    email: info.email,
+                    gst: info.gst,
+                    pan: info.pan,
+                    address: info.address,
+                    temporaryCertificate: info.temporaryCertificate,
+                    uid: info.uid,
+                  };
+                  userData = data;
+                  appWindow.webContents.send("fromMain", {
+                    type: "GET_DEALER_FAILURE",
+                    userData,
+                  });
+                }
+              }
+            });
+        }
         if (userData && userData.uid === data.uid) {
           appWindow.webContents.send("fromMain", {
             type: "GET_DEALER_SUCCESS",
             userData,
-          });
-        } else {
-          appWindow.webContents.send("fromMain", {
-            type: "GET_DEALER_FAILURE",
           });
         }
         break;
@@ -145,37 +189,28 @@ module.exports = function (appWindow, browser) {
         break;
       }
       //Creeate userid and password for automation
-      case "USERID_PASSWORD": {
-        const userIdPassword = data.config;
+      case "SET_CREDENTIALS": {
+        const credentials = data.config;
         fs.writeFileSync(
-          path.join(__dirname, "../dataStore/user-password.json"),
+          path.join(__dirname, "../dataStore/credentials.json"),
           JSON.stringify({
-            userIdPassword,
+            credentials,
           })
         );
         break;
       }
       //get useid and password
-      case "GET_USERID_PASSWORD": {
-        let userData;
-        try {
-          userData =
-            JSON.parse(
-              fs.readFileSync(
-                path.join(__dirname, "../dataStore/user-password.json")
-              )
-            ) || null;
-        } catch (err) {
-          userData = null;
-        }
+      case "GET_CREDENTIALS": {
+        const userData = getCredentials();
+
         if (userData) {
           appWindow.webContents.send("fromMain", {
-            type: "GET_USERID_PASSWORD",
+            type: "GET_CREDENTIALS_SUCCESS",
             userData,
           });
         } else {
           appWindow.webContents.send("fromMain", {
-            type: "GET_USERID_PASSWORD_FAILURE",
+            type: "GET_CREDENTIALS_FAILURE",
           });
         }
         break;
@@ -185,15 +220,15 @@ module.exports = function (appWindow, browser) {
       case "CREATE_INVOICE": {
         // data = args[0];
         erpWindow = new BrowserWindow({
-          title: "autoAuto ERP",
-          height: 750,
-          width: 700,
-          parent: appWindow,
+          title: "AutoAuto ERP",
+          height: 950,
+          width: 1200,
+          // parent: appWindow,
           // TODO: Might want to change this to false
           frame: true,
         });
 
-        erpWindow.loadURL(
+        await erpWindow.loadURL(
           "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/?SWECmd=Login&SWECM=S&SRN=&SWEHo=hirise.honda2wheelersindia.com"
         );
 
@@ -205,11 +240,20 @@ module.exports = function (appWindow, browser) {
         //   fs.readFileSync(path.join(__dirname, "dealer-data.json"))
         // );
 
-        erpWindow.webContents.once("close", function () {
-          // erpWindow.close();
-          appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
-          appWindow.reload();
-        });
+        // erpWindow.webContents.once("close", function () {
+        //   // erpWindow.close();
+        //   appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
+        //   appWindow.reload();
+        // });
+        // TODOTODO
+        const { credentials } = getCredentials();
+
+        if (credentials) {
+          data = {
+            ...data,
+            credentials: credentials["ERP"],
+          };
+        }
 
         erp(page, data, appWindow);
 
@@ -220,83 +264,110 @@ module.exports = function (appWindow, browser) {
       case "CREATE_INSURANCE": {
         // data = args[0];
         const insuranceCompany = data.insuranceCompany;
-        console.log(JSON.stringify(data), "Insurance Data Get!");
+        // console.log(
+        //   // JSON.stringify(data),
+        //   insuranceCompany,
+        //   insuranceLinks[insuranceCompany].loginPageUrl,
+        //   insuranceLinks[insuranceCompany].preloadScript,
+        //   "Insurance Data Get!"
+        // );
         insuranceWindow = new BrowserWindow({
           title: "autoAuto Insurance",
           height: 750,
           width: 700,
-          parent: appWindow,
           // TODO: Might want to change this to false
           frame: true,
-          webPreferences: {
-            preload: path.join(
-              __dirname,
-              insuranceLinks[insuranceCompany].preloadScript
-            ),
-          },
         });
 
         // insuranceWindow.webContents.openDevTools();
-        insuranceWindow.loadURL(insuranceLinks[insuranceCompany].loginPageUrl);
 
-        insuranceWindow.webContents.on("dom-ready", function (event) {
-          const currUrl = insuranceWindow.webContents.getURL();
-          const isLoginPage =
-            currUrl.includes(
-              "https://ipartner.icicilombard.com/WebPages/Login.aspx"
-            ) || currUrl.includes("https://pie.hdfcergo.com//Login/");
-          if (isLoginPage) {
-            insuranceWindow.webContents.send("prompt-for-login");
-            appWindow.webContents.send("update-progress-bar", [
-              "10%",
-              "insurance",
-            ]);
-          }
-        });
+        // insuranceWindow.webContents.openDevTools();
+        await insuranceWindow.loadURL(
+          insuranceLinks[insuranceCompany].loginPageUrl
+        );
 
-        insuranceWindow.webContents.send("prompt-for-login");
-        page = await pie.getPage(browser, insuranceWindow);
+        // insuranceWindow.webContents.on("dom-ready", function (event) {
+        //   const currUrl = insuranceWindow.webContents.getURL();
+        //   const isLoginPage =
+        //     currUrl.includes(
+        //       "https://ipartner.icicilombard.com/WebPages/Login.aspx"
+        //     ) || currUrl.includes("https://pie.hdfcergo.com//Login/");
+        //   if (isLoginPage) {
+        //     insuranceWindow.webContents.send("prompt-for-login");
+        //     // appWindow.webContents.send("update-progress-bar", [
+        //     //   "10%",
+        //     //   "insurance",
+        //     // ]);
+        //   }
+        // });
+
+        // insuranceWindow.webContents.send("prompt-for-login", [
+        //   insuranceLinks[insuranceCompany].loginPageUrl,
+        // ]);
         // const modelData = JSON.parse(fs.readFileSync(path.join(__dirname, 'model-data.json')));
         // const dealerData = JSON.parse(fs.readFileSync(path.join(__dirname, 'dealer-data.json')));
 
-        insurance(page, data, insuranceCompany, appWindow);
+        const doc = await firebase
+          .firestore()
+          .collection("insuranceConfig")
+          .doc("config")
+          .get();
 
-        insuranceWindow.webContents.on("did-navigate", function (event, url) {
-          if (
-            url.includes(
-              "https://ipartner.icicilombard.com/WebPages/Portfolio/UserPolicies.aspx"
-            )
-          ) {
-            page.waitForFunction(
-              'document.querySelector("#ctl00_ContentPlaceHolder1_GridID0_ctl02_ctl00").textContent !== ""'
-            );
-            data["Policy No"] = page.$eval(
-              "#ctl00_ContentPlaceHolder1_GridID0_ctl02_ctl00",
-              (el) => el.textContent
-            );
-          } else if (
-            url.includes("https://pie.hdfcergo.com/en-US/Dashboard/Details")
-          ) {
-            page.waitForFunction(
-              `document.querySelector("td[data-title='Prop./Pol. No']").textContent !== ""`
-            );
-            data["Policy No"] = page.$eval(
-              "td[data-title='Prop./Pol. No']",
-              (el) => el.textContent
-            );
+        if (doc.exists) {
+          const modelNames = doc.data();
+          const modelName =
+            modelNames[data.vehicleInfo.modelName][
+              `${insuranceCompany.toLowerCase()}ModelName`
+            ];
+          const { credentials } = getCredentials();
+          if (credentials) {
+            data = {
+              ...data,
+              credentials: credentials[insuranceCompany],
+              modelName,
+            };
           }
-        });
 
-        insuranceWindow.webContents.once("close", function () {
-          // insuranceWindow.close();
-          appWindow.webContents.send("remove-overlay");
-          appWindow.reload();
-        });
+          page = await pie.getPage(browser, insuranceWindow);
+          insurance(page, data, insuranceCompany, appWindow);
+        }
 
-        ipc.once("close-insurance-window", function () {
-          insuranceWindow.destroy();
-          appWindow.webContents.send("remove-overlay");
-        });
+        // insuranceWindow.webContents.on("did-navigate", function (event, url) {
+        //   if (
+        //     url.includes(
+        //       "https://ipartner.icicilombard.com/WebPages/Portfolio/UserPolicies.aspx"
+        //     )
+        //   ) {
+        //     page.waitForFunction(
+        //       'document.querySelector("#ctl00_ContentPlaceHolder1_GridID0_ctl02_ctl00").textContent !== ""'
+        //     );
+        //     data["Policy No"] = page.$eval(
+        //       "#ctl00_ContentPlaceHolder1_GridID0_ctl02_ctl00",
+        //       (el) => el.textContent
+        //     );
+        //   } else if (
+        //     url.includes("https://pie.hdfcergo.com/en-US/Dashboard/Details")
+        //   ) {
+        //     page.waitForFunction(
+        //       `document.querySelector("td[data-title='Prop./Pol. No']").textContent !== ""`
+        //     );
+        //     data["Policy No"] = page.$eval(
+        //       "td[data-title='Prop./Pol. No']",
+        //       (el) => el.textContent
+        //     );
+        //   }
+        // });
+
+        // insuranceWindow.webContents.once("close", function () {
+        //   // insuranceWindow.close();
+        //   appWindow.webContents.send("remove-overlay");
+        //   appWindow.reload();
+        // });
+
+        // ipc.once("close-insurance-window", function () {
+        //   insuranceWindow.destroy();
+        //   appWindow.webContents.send("remove-overlay");
+        // });
         //console.log(JSON.stringify(data), "Insurance Data Get!");
         break;
       }

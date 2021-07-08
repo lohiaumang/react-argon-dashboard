@@ -76,16 +76,14 @@ const Profile: React.FC = () => {
   });
   const [password, setPassword] = useState<string>();
   const [confirmPassword, setConfirmPassword] = useState<string>();
-  const [passwordUpdateError, setPasswordUpdateError] =
-    useState<{
-      code: string;
-      message: string;
-    }>();
-  const [userInfoUpdateError, setUserInfoUpdateError] =
-    useState<{
-      code: string;
-      message: string;
-    }>();
+  const [passwordUpdateError, setPasswordUpdateError] = useState<{
+    code: string;
+    message: string;
+  }>();
+  const [userInfoUpdateError, setUserInfoUpdateError] = useState<{
+    code: string;
+    message: string;
+  }>();
   const [success, setSuccess] = useState<{ message: string }>();
   const [userInfoLoading, setUserInfoLoading] = useState<boolean>(false);
   const [passwordLoading, setPasswordLoading] = useState<boolean>(false);
@@ -116,34 +114,11 @@ const Profile: React.FC = () => {
             break;
           }
           case "GET_DEALER_FAILURE": {
-            firebase
-              .firestore()
-              .collection("users")
-              .doc(uid)
-              .onSnapshot((doc) => {
-                if (doc.exists) {
-                  const info = doc.data();
-                  if (info) {
-                    // SET_USER
-                    const data = {
-                      name: info.name,
-                      phoneNumber: info.phoneNumber.slice(3),
-                      email: info.email,
-                      gst: info.gst,
-                      pan: info.pan,
-                      address: info.address,
-                      temporaryCertificate: info.temporaryCertificate,
-                      uid: info.uid,
-                    };
-                    window.api.send("toMain", {
-                      type: "SET_DEALER",
-                      data: data,
-                    });
-
-                    setUserInfo(data);
-                  }
-                }
-              });
+            setUserInfo(data.userData);
+            window.api.send("toMain", {
+              type: "SET_DEALER",
+              data: data.userData,
+            });
             break;
           }
         }
