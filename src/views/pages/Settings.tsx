@@ -95,11 +95,11 @@ const Settings: React.FC = () => {
       })
       .catch((err) => console.log(err));
 
-    getCredentials();
+    getCredentialsConfig();
   }, []);
 
   //get userid and password
-  const getCredentials = () => {
+  const getCredentialsConfig = () => {
     window.api.receive("fromMain", (data: any) => {
       switch (data.type) {
         case "GET_CREDENTIALS_SUCCESS": {

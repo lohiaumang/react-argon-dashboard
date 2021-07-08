@@ -4,16 +4,18 @@ module.exports = {
       await page.waitForSelector(selector, { visible: true });
       await page.click(selector);
     } catch (error) {
-      throw new Error("Could not click on the");
+      throw new Error(`Could not click on the selector - ${selector}`);
     }
   },
 
   typeText: async function (page, selector, text) {
     try {
-      await page.waitForSelector(selector);
+      await page.waitForSelector(selector, { visible: true });
       await page.type(selector, text);
     } catch (error) {
-      throw new Error("Could not found the element typeText");
+      throw new Error(
+        `Something went wrong, selector - ${selector}, and text - ${text}`
+      );
     }
   },
 
@@ -31,7 +33,7 @@ module.exports = {
       await page.waitForSelector(selector);
       return page.$$eval(selector, (element) => element.length);
     } catch (error) {
-      throw new Error("Could not found the element " + { selector });
+      throw new Error("Could not find the element " + { selector });
     }
   },
 
@@ -45,7 +47,7 @@ module.exports = {
           text;
       });
     } catch (error) {
-      throw new Error("Could not found the element waitForText");
+      throw new Error("Could not find the element waitForText");
     }
   },
 
@@ -53,7 +55,7 @@ module.exports = {
     try {
       await page.waitForSelector(selector, { hiddern: true });
     } catch (error) {
-      throw new Error("Could not found the element shouldNotExist");
+      throw new Error("Could not find the element shouldNotExist");
     }
   },
 };

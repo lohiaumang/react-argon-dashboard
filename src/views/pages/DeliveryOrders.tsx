@@ -140,28 +140,27 @@ const DeliveryOrders: React.FC = () => {
         case "INVOICE_CREATED": {
           return (
             <ButtonDropdown isOpen={dropdownButton} toggle={toggle}>
-                <>
-                  <DropdownToggle caret size="sm" color={"primary"}>
-                    {loading ? <SmallLoading /> : "Create Insurance"}
-                  </DropdownToggle>
-                  <DropdownMenu>
-                    <DropdownItem
-                      onClick={() => {
-                        createInsurance("HDFC");
-                      }}
-                    >
-                      HDFC
-                    </DropdownItem>
-                    <DropdownItem
-                      onClick={() => {
-                        createInsurance("ICICI");
-                      }}
-                    >
-                      ICICI
-                    </DropdownItem>
-                  </DropdownMenu>
-                </>
-              
+              <>
+                <DropdownToggle caret size="sm" color={"primary"}>
+                  {loading ? <SmallLoading /> : "Create Insurance"}
+                </DropdownToggle>
+                <DropdownMenu>
+                  <DropdownItem
+                    onClick={() => {
+                      createInsurance("HDFC");
+                    }}
+                  >
+                    HDFC
+                  </DropdownItem>
+                  <DropdownItem
+                    onClick={() => {
+                      createInsurance("ICICI");
+                    }}
+                  >
+                    ICICI
+                  </DropdownItem>
+                </DropdownMenu>
+              </>
             </ButtonDropdown>
           );
         }
@@ -272,8 +271,8 @@ const DeliveryOrders: React.FC = () => {
       switch (data.type) {
         case "GET_CREDENTIALS_SUCCESS": {
           credentials = data.userData.credentials;
-        //  const credential = credentials["ERP"];
-        //   console.log( credential);
+          //  const credential = credentials["ERP"];
+          //   console.log( credential);
           return;
         }
         case "GET_CREDENTIALS_FAILURE": {

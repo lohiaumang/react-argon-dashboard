@@ -2,7 +2,9 @@ module.exports = function erp(page, data, mainWindow) {
   //console.log(data.customerInfo.currState);
   const { click, typeText } = require("../puppeteer-scripts/helper");
 
-  const credential = data.credentials["ERP"];
+  const {
+    credentials: { username, password },
+  } = data;
 
   const navigationPromise = page.waitForNavigation();
 
@@ -11,8 +13,8 @@ module.exports = function erp(page, data, mainWindow) {
   page.setDefaultNavigationTimeout(timeout);
 
   async function automate() {
-    await typeText(page, "#s_swepi_1", credential.username);
-    await typeText(page, "#s_swepi_2", credential.password);
+    await typeText(page, "#s_swepi_1", username);
+    await typeText(page, "#s_swepi_2", password);
     const captcha = await page.$eval("#captchaCode", (el) =>
       el.textContent.replace(/\s+/g, "")
     );
@@ -22,7 +24,10 @@ module.exports = function erp(page, data, mainWindow) {
     await click(page, "#s_sctrl > #s_sctrl_tabScreen #ui-id-130");
 
     // fill data select
-     await click(page,'table > tbody > tr > .siebui-bullet-item > #s_3_2_18_0_span > .siebui-anchor-readonly > a[rowid="1"]');
+    await click(
+      page,
+      'table > tbody > tr > .siebui-bullet-item > #s_3_2_18_0_span > .siebui-anchor-readonly > a[rowid="1"]'
+    );
 
     //fill new reord
     // await typeText(
@@ -196,7 +201,7 @@ module.exports = function erp(page, data, mainWindow) {
     );
     await click(page, `#${enquiryButton.id}`);
 
-  //Customer Type
+    //Customer Type
     await click(page, 'input[aria-label="Customer Type"] + span');
     await page.waitForSelector(
       "ul[role='combobox']:not([style*='display: none'])",
@@ -242,7 +247,7 @@ module.exports = function erp(page, data, mainWindow) {
     );
     await click(page, `#${enquirySourceButton.id}`);
 
-  //Customer Category
+    //Customer Category
 
     await click(page, 'input[aria-label="Customer Category"] + span');
     await page.waitForSelector(
@@ -260,11 +265,11 @@ module.exports = function erp(page, data, mainWindow) {
         }))
     );
     const customerCategoryButton = customerCategoryItems.find(
-      (item) => item.name === data.customerInfo.type
+      (item) => item.name.toUpperCase() === data.customerInfo.type.toUpperCase()
     );
     await click(page, `#${customerCategoryButton.id}`);
 
-  //Enquiry Category
+    //Enquiry Category
 
     await click(page, 'input[aria-label="Enquiry Category"] + span');
     await page.waitForSelector(
@@ -282,7 +287,7 @@ module.exports = function erp(page, data, mainWindow) {
         }))
     );
     const enquiryCategoryButton = enquiryCategoryItems.find(
-      (item) => item.name === data.customerInfo.enquiryCategory
+      (item) => item.name.toUpperCase() === data.customerInfo.type.toUpperCase()
     );
     await click(page, `#${enquiryCategoryButton.id}`);
 
@@ -295,7 +300,7 @@ module.exports = function erp(page, data, mainWindow) {
         visible: true,
       }
     );
-    let purchaseType = await page.$$eval(
+    let purchaseTypes = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
         listItems.map((item) => ({
@@ -303,21 +308,22 @@ module.exports = function erp(page, data, mainWindow) {
           id: item.id,
         }))
     );
-    purchaseTypeButton = purchaseType.find(
-      (item) => item.name === data.additionalInfo.purchaseType
+    const purchaseType = !!data.additionalInfo.financier ? "Cash" : "Financier";
+    purchaseTypeButton = purchaseTypes.find(
+      (item) => item.name.toUpperCase() === purchaseType.toUpperCase()
     );
     await click(page, `#${purchaseTypeButton.id}`);
 
-      //Financier Category
+    //Financier Category
 
-     // if (purchaseTypeButton.name === "Finance") {
-       //   console.log("stape 1")
+    // if (purchaseTypeButton.name === "Finance") {
+    //   console.log("stape 1")
 
-       //   await click(page,'input[aria-label="Financier"]');
-       //   console.log("stape 2")
-       //   await typeText(page,'input[aria-label="Financier"]','HDFC BANK')
-       //   console.log("stape 3")
-       // }
+    //   await click(page,'input[aria-label="Financier"]');
+    //   console.log("stape 2")
+    //   await typeText(page,'input[aria-label="Financier"]','HDFC BANK')
+    //   console.log("stape 3")
+    // }
 
     //Model Category
 
@@ -364,8 +370,8 @@ module.exports = function erp(page, data, mainWindow) {
           id: item.id,
         }))
     );
-    const modelNameButton = modelName.find(
-      (item) => item.name === data.vehicleInfo.modelName
+    const modelNameButton = modelName.find((item) =>
+      data.modelName.includes(item.name)
     );
     await click(page, `#${modelNameButton.id}`);
 
@@ -390,11 +396,11 @@ module.exports = function erp(page, data, mainWindow) {
         }))
     );
     const modelVariantButton = modelVariant.find(
-      (item) => item.name === data.vehicleInfo.modelVariant
+      (item) => item.name === data.modelName
     );
     await click(page, `#${modelVariantButton.id}`);
 
-   //Assigned To (DSE)  todo
+    //Assigned To (DSE)  todo
 
     await click(page, 'input[aria-label="Assigned To (DSE)"] + span');
     await click(page, 'input[aria-label="Find"] + span');
@@ -424,19 +430,27 @@ module.exports = function erp(page, data, mainWindow) {
       '.siebui-popup-btm > .siebui-popup-button > button[data-display="OK"]'
     );
 
-    
-
-    await page.waitForSelector(".siebui-applet-header #s_at_m_1",{ visible: true });
-    await page.$eval(".siebui-applet-header #s_at_m_1:not([style*='display: none'])", el => el.click());
-    await click(page,'#s_at_m_1-menu > li[data-caption="Save Record                [Ctrl+S]"] > .ui-menu-item-wrapper'); //todo
-    await click(page,'#s_1_l > tbody > tr > td > .drilldown');
-    await click(page,'#s_vctrl_div_tabScreen > ul[role="tablist"] li[aria-labelledby="ui-id-543"] > a[data-tabindex="tabScreen3"]');
-   // await page.waitForSelector('#s_vctrl_div_tabScreen > ul[role="tablist"] li[aria-labelledby="ui-id-543"] > a[data-tabindex="tabScreen3"]');
-   // await page.$eval('#s_vctrl_div_tabScreen > ul[role="tablist"] li[aria-labelledby="ui-id-543"] > a[data-tabindex="tabScreen3"]', el => el.click());
-   await click(page,'.siebui-applet-buttons > .siebui-btn-grp-search > button[name="s_3_1_3_0"]');
-   await click(page,'#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown');
-    console.log("step 1")
-    
+    await page.waitForSelector(".siebui-applet-header #s_at_m_1", {
+      visible: true,
+    });
+    await page.$eval(
+      ".siebui-applet-header #s_at_m_1:not([style*='display: none'])",
+      (el) => el.click()
+    );
+    await click(
+      page,
+      '#s_at_m_1-menu > li[data-caption="Save Record                [Ctrl+S]"] > .ui-menu-item-wrapper'
+    ); //todo
+    await click(page, "#s_1_l > tbody > tr > td > .drilldown");
+    await click(
+      page,
+      '#s_vctrl_div_tabScreen > ul[role="tablist"] li[aria-labelledby="ui-id-543"] > a[data-tabindex="tabScreen3"]'
+    );
+    // await page.waitForSelector('#s_vctrl_div_tabScreen > ul[role="tablist"] li[aria-labelledby="ui-id-543"] > a[data-tabindex="tabScreen3"]');
+    // await page.$eval('#s_vctrl_div_tabScreen > ul[role="tablist"] li[aria-labelledby="ui-id-543"] > a[data-tabindex="tabScreen3"]', el => el.click());
+    //  await click(page,'.siebui-applet-buttons > .siebui-btn-grp-search > button[name="s_3_1_3_0"]');
+    //  await click(page,'#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown');
+    //   console.log("step 1")
   }
 
   automate();

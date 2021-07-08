@@ -1,10 +1,10 @@
 module.exports = {
-  "ICICI": {
+  ICICI: {
     loginPageUrl: "https://ipartner.icicilombard.com/WebPages/Login.aspx",
-    preloadScript: "./js/icici-lombard.js"
+    preloadScript: "./js/icici-lombard.js",
   },
-  "HDFC": {
+  HDFC: {
     loginPageUrl: "https://pie.hdfcergo.com//Login/",
-    preloadScript: "./js/hdfc-ergo.js"
-  }
-}
+    preloadScript: "./js/hdfc-ergo.js",
+  },
+};
