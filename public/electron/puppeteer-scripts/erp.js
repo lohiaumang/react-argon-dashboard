@@ -1,5 +1,5 @@
 module.exports = function erp(page, data, mainWindow) {
-  //console.log(data.customerInfo.currState);
+  //console.log(data.userInfo);
   const { click, typeText } = require("../puppeteer-scripts/helper");
 
   const {
@@ -24,140 +24,140 @@ module.exports = function erp(page, data, mainWindow) {
     await click(page, "#s_sctrl > #s_sctrl_tabScreen #ui-id-130");
 
     // fill data select
-    await click(
-      page,
-      'table > tbody > tr > .siebui-bullet-item > #s_3_2_18_0_span > .siebui-anchor-readonly > a[rowid="1"]'
-    );
+    // await click(
+    //   page,
+    //   'table > tbody > tr > .siebui-bullet-item > #s_3_2_18_0_span > .siebui-anchor-readonly > a[rowid="3"]'
+    // );
 
     //fill new reord
-    // await typeText(
-    //   page,
-    //   "table > tbody > tr > .siebui-form-data > .s_2_1_19_0",
-    //   data.customerInfo.firstName
-    // );
-    // await typeText(
-    //   page,
-    //   "table > tbody > tr > .siebui-form-data > .s_2_1_2_0",
-    //   ""
-    // );
-    // await typeText(
-    //   page,
-    //   "table > tbody > tr > .siebui-form-data > .s_2_1_18_0",
-    //   data.customerInfo.lastName
-    // );
-    // await typeText(
-    //   page,
-    //   "table > tbody > tr > .siebui-form-data > .s_2_1_0_0",
-    //   data.customerInfo.phoneNo
-    // );
+    await typeText(
+      page,
+      "table > tbody > tr > .siebui-form-data > .s_2_1_19_0",
+      data.customerInfo.firstName
+    );
+    await typeText(
+      page,
+      "table > tbody > tr > .siebui-form-data > .s_2_1_2_0",
+      ""
+    );
+    await typeText(
+      page,
+      "table > tbody > tr > .siebui-form-data > .s_2_1_18_0",
+      data.customerInfo.lastName
+    );
+    await typeText(
+      page,
+      "table > tbody > tr > .siebui-form-data > .s_2_1_0_0",
+      data.customerInfo.phoneNo
+    );
 
-    // await click(page, 'input[aria-label="Consent For Calling"] + span');
-    // await page.waitForSelector(
-    //   "ul[role='combobox']:not([style*='display: none'])",
-    //   {
-    //     visible: true,
-    //   }
-    // );
-    // let callingType = await page.$$eval(
-    //   "ul[role='combobox']:not([style*='display: none']) > li > div",
-    //   (listItems) =>
-    //     listItems.map((item) => {
-    //       return {
-    //         name: item.textContent,
-    //         id: item.id,
-    //       };
-    //     })
-    // );
-    // const collingTypeButton = callingType.find((item) => item.name === "No"); //todo
-    // await click(page, `#${collingTypeButton.id}`);
+    await click(page, 'input[aria-label="Consent For Calling"] + span');
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      {
+        visible: true,
+      }
+    );
+    let callingType = await page.$$eval(
+      "ul[role='combobox']:not([style*='display: none']) > li > div",
+      (listItems) =>
+        listItems.map((item) => {
+          return {
+            name: item.textContent,
+            id: item.id,
+          };
+        })
+    );
+    const collingTypeButton = callingType.find((item) => item.name === "No"); //todo
+    await click(page, `#${collingTypeButton.id}`);
 
-    // await click(page, 'input[aria-label="Gender"] + span');
-    // await page.waitForSelector(
-    //   "ul[role='combobox']:not([style*='display: none'])",
-    //   {
-    //     visible: true,
-    //   }
-    // );
-    // let genderType = await page.$$eval(
-    //   "ul[role='combobox']:not([style*='display: none']) > li > div",
-    //   (listItems) =>
-    //     listItems.map((item) => {
-    //       return {
-    //         name: item.textContent,
-    //         id: item.id,
-    //       };
-    //     })
-    // );
-    // const genderTypeButton = genderType.find(
-    //   (item) => item.name === data.customerInfo.gender.slice(0, 1).toUpperCase()
-    // );
-    // await click(page, `#${genderTypeButton.id}`);
+    await click(page, 'input[aria-label="Gender"] + span');
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      {
+        visible: true,
+      }
+    );
+    let genderType = await page.$$eval(
+      "ul[role='combobox']:not([style*='display: none']) > li > div",
+      (listItems) =>
+        listItems.map((item) => {
+          return {
+            name: item.textContent,
+            id: item.id,
+          };
+        })
+    );
+    const genderTypeButton = genderType.find(
+      (item) => item.name === data.customerInfo.gender.slice(0, 1).toUpperCase()
+    );
+    await click(page, `#${genderTypeButton.id}`);
 
-    // await click(page, "tbody > tr > td > #s_2_1_10_0_Ctrl > span");
-    // await typeText(
-    //   page,
-    //   "tbody > tr > td > .mceGridField > .s_3_1_80_0",
-    //   data.customerInfo.swdo
-    // );
+    await click(page, "tbody > tr > td > #s_2_1_10_0_Ctrl > span");
+    await typeText(
+      page,
+      "tbody > tr > td > .mceGridField > .s_3_1_80_0",
+      data.customerInfo.swdo
+    );
 
-    // await typeText(
-    //   page,
-    //   'tbody > tr > td > .mceGridField > input[aria-label="Date Of Birth"]',
-    //   data.customerInfo.dob
-    // );
+    await typeText(
+      page,
+      'tbody > tr > td > .mceGridField > input[aria-label="Date Of Birth"]',
+      data.customerInfo.dob
+    );
 
-    // await typeText(
-    //   page,
-    //   "tbody > tr > td > .mceGridField > .s_3_1_5_0",
-    //   data.customerInfo.currLineOne +
-    //     " " +
-    //     data.customerInfo.currLineTwo +
-    //     " " +
-    //     "PS" +
-    //     " " +
-    //     data.customerInfo.currPS
-    // );
-    // await typeText(
-    //   page,
-    //   "tbody > tr > td > .mceGridField > .s_3_1_6_0",
-    //   data.customerInfo.currDistrict + " " + data.customerInfo.currCity
-    // );
+    await typeText(
+      page,
+      "tbody > tr > td > .mceGridField > .s_3_1_5_0",
+      data.customerInfo.currLineOne +
+        " " +
+        data.customerInfo.currLineTwo +
+        " " +
+        "PS" +
+        " " +
+        data.customerInfo.currPS
+    );
+    await typeText(
+      page,
+      "tbody > tr > td > .mceGridField > .s_3_1_6_0",
+      data.customerInfo.currDistrict + " " + data.customerInfo.currCity
+    );
 
-    // await click(page, 'input[aria-label="State"] + span');
-    // await page.waitForSelector(
-    //   "ul[role='combobox']:not([style*='display: none'])",
-    //   {
-    //     visible: true,
-    //   }
-    // );
-    // let state = await page.$$eval(
-    //   "ul[role='combobox']:not([style*='display: none']) > li > div",
-    //   (listItems) =>
-    //     listItems.map((item) => {
-    //       // console.log(item.textContent, item.id);
-    //       return {
-    //         name: item.textContent,
-    //         id: item.id,
-    //       };
-    //     })
-    // );
-    // const stateButton = state.find(
-    //   (item) =>
-    //     item.name === data.customerInfo.currState.slice(0, 2).toUpperCase()
-    // );
-    // //  console.log(stateButton.name, stateButton.id);
-    // await page.waitForSelector(`#${stateButton.id}`, { visible: true });
-    // await page.$eval(`#${stateButton.id}`, (el) => el.click());
-    // await typeText(
-    //   page,
-    //   "tbody > tr > td > .mceGridField > .s_3_1_66_0",
-    //   data.customerInfo.currPostal
-    // );
-    // await typeText(
-    //   page,
-    //   "tbody > tr > td > .mceGridField > .siebui-ctrl-mailto",
-    //   data.customerInfo.email
-    // );
+    await click(page, 'input[aria-label="State"] + span');
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      {
+        visible: true,
+      }
+    );
+    let state = await page.$$eval(
+      "ul[role='combobox']:not([style*='display: none']) > li > div",
+      (listItems) =>
+        listItems.map((item) => {
+          // console.log(item.textContent, item.id);
+          return {
+            name: item.textContent,
+            id: item.id,
+          };
+        })
+    );
+    const stateButton = state.find(
+      (item) =>
+        item.name === data.customerInfo.currState.slice(0, 2).toUpperCase()
+    );
+    //  console.log(stateButton.name, stateButton.id);
+    await page.waitForSelector(`#${stateButton.id}`, { visible: true });
+    await page.$eval(`#${stateButton.id}`, (el) => el.click());
+    await typeText(
+      page,
+      "tbody > tr > td > .mceGridField > .s_3_1_66_0",
+      data.customerInfo.currPostal
+    );
+    await typeText(
+      page,
+      "tbody > tr > td > .mceGridField > .siebui-ctrl-mailto",
+      data.customerInfo.email
+    );
 
     //code work
 
@@ -170,7 +170,10 @@ module.exports = function erp(page, data, mainWindow) {
     //UnhandledPromiseRejectionWarning: Error: Evaluation failed: DOMException: Failed to execute 'querySelector' on 'Document': '#s_2_l > tbody > #↓ > #↓_s_2_l_First_Name > .drilldown' is not a valid selector.
     //await page.waitFor(8000);
 
-    //await click(page,'.ui-jqgrid-btable > tbody > .jqgrow > td[role="gridcell"] > .drilldown ');
+    await click(
+      page,
+      '.ui-jqgrid-btable > tbody > .jqgrow > td[role="gridcell"] > .drilldown '
+    );
 
     await click(
       page,
@@ -426,10 +429,8 @@ module.exports = function erp(page, data, mainWindow) {
       'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]'
     );
     await click(page, "button[data-display='OK']");
-    await page.waitForSelector("button[title='Enquiries Menu']", {
-      visible: true,
-    });
-    await page.$eval("button[title='Enquiries Menu']", (el) => el.click());
+
+    await click(page, "button[title='Enquiries Menu']");
     await page.waitForSelector(
       ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
       { visible: true }
@@ -445,39 +446,183 @@ module.exports = function erp(page, data, mainWindow) {
         })
     );
     const saveRecordButton = menuOptions.find((option) =>
-      option.name.includes("Save Record")
+      option.name.includes("[Ctrl+S]")
     );
-    await page.$eval(`#${saveRecordButton.id}`, (el) => el.click());
-    await page.waitForSelector("td[role='gridcell'] > a", { visible: true });
-    await page.$eval("td[role='gridcell'] > a", (el) => el.click());
-    await page.waitForResponse(
-      "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
-    );
-    await page.waitForSelector("div[title='Third Level View Bar']", {
-      visible: true,
-    });
-    const allTabs = await page.$$eval(
-      "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
-      (tabs) =>
-        tabs.map((tab) => {
-          return {
-            name: tab.textContent,
-            id: tab.id,
-          };
-        })
-    );
-    const expressBookingButton = allTabs.find((item) =>
-      item.name.includes("Express Booking")
-    );
-    await page.$eval(`#${expressBookingButton.id}`, (el) => el.click());
-    await click(
-      page,
-      '.siebui-applet-buttons > .siebui-btn-grp-search > button[name="s_3_1_3_0"]'
-    );
-    await click(
-      page,
-      '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown'
-    );
+    console.log("Save button id: ", saveRecordButton.id);
+    await click(page, `#${saveRecordButton.id}`);
+
+    // await page.waitForSelector("button[title='Enquiries Menu']", {
+    //   visible: true,
+    // });
+    // await page.$eval("button[title='Enquiries Menu']", (el) => el.click());
+    // await page.waitForSelector(
+    //   ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
+    //   { visible: true }
+    // );
+    // const menuOptions = await page.$$eval(
+    //   ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
+    //   (options) =>
+    //     options.map((option) => {
+    //       console.log(option.textContent, option.id);
+    //       return {
+    //         name: option.textContent,
+    //         id: option.id,
+    //       };
+    //     })
+    // );
+  
+    // const saveRecordButton = menuOptions.find((option) =>
+    //   option.name.includes("Save Record                [Ctrl+S]")
+    // );
+    // await page.$eval(`#${saveRecordButton.id}`, (el) => el.click());
+ 
+    
+
+        await page.waitForSelector("td[role='gridcell'] > a", { visible: true });
+        await page.$eval("td[role='gridcell'] > a", (el) => el.click());
+        await page.waitForResponse(
+          "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
+        );
+        await page.waitForSelector("div[title='Third Level View Bar']", {
+          visible: true,
+        });
+        const allTabs = await page.$$eval(
+          "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
+          (tabs) =>
+            tabs.map((tab) => {
+              return {
+                name: tab.textContent,
+                id: tab.id,
+              };
+            })
+        );
+        const expressBookingButton = allTabs.find((item) =>
+          item.name.includes("Express Booking")
+        );
+        await page.$eval(`#${expressBookingButton.id}`, (el) => el.click());
+        // await click(
+        //   page,
+        //   '.siebui-applet-buttons > .siebui-btn-grp-search > button[name="s_3_1_3_0"]'
+        // );
+      //   await click(
+      //     page,
+      //     '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',{visible: true}
+      //   );
+
+      await page.waitForSelector('#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown');
+      await page.$eval('#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown', (el) => el.click());
+      //await typeText('.GridBack > tbody > tr > td[valign="middle"] input[name="s_1_1_41_0"]'); //finance select todo
+      await typeText(page,'.GridBack > tbody > tr > td[valign="middle"] input[name="s_1_1_38_0"]',data.customerInfo.deliveryDate); //todo
+      await click(page,".AppletButtons.siebui-applet-buttons > button"); //get price clcik
+
+      //price select
+
+      await page.waitForResponse(
+        "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
+      );
+
+      await page.waitForSelector("div[title='Third Level View Bar']", {
+        visible: true,
+      });
+      const paymentTabs = await page.$$eval(
+        "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
+        (tabs) =>
+          tabs.map((tab) => {
+
+            return {
+              name: tab.textContent,
+              id: tab.id,
+            };
+          })
+      );
+      const paymentButton = paymentTabs.find((item) =>
+        item.name.includes("Payments")
+      );
+      await page.$eval(`#${paymentButton.id}`, (el) => el.click());
+
+       await click(page,'.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]');
+
+     await click(page, 'input[aria-labelledby="1_s_2_l_Payment_Profile_Name s_2_l_Transaction_Type s_2_l_altCombo"] + span');
+        await page.waitForSelector(
+          "ul[role='combobox']:not([style*='display: none'])",
+          {
+            visible: true,
+          }
+        );
+        let paymentType = await page.$$eval(
+          "ul[role='combobox']:not([style*='display: none']) > li > div",
+          (listItems) =>
+            listItems.map((item) => {
+               console.log(item.textContent, item.id);
+              return {
+                name: item.textContent,
+                id: item.id,
+              };
+            })
+        );
+        const paymentTypeButton = paymentType.find(
+          (item) =>
+            item.name === "Advance/Final Payment"
+        );
+          console.log(paymentTypeButton.name, paymentTypeButton.id);
+        await page.waitForSelector(`#${paymentTypeButton.id}`, { visible: true });
+        await page.$eval(`#${paymentTypeButton.id}`, (el) => el.click());
+
+      //await typeText("input[aria-labelledby='1_s_2_l_Payment_Profile_Name s_2_l_Transaction_Type s_2_l_altCombo']:not([style*='display: none']",'Advance/Final Payment');
+
+      await click(page,'#s_2_l > tbody > tr[role="row"] > td[aria-labelledby="s_2_l_altCalc"]',{visible:true});
+      await typeText(page,'input[aria-labelledby="s_2_l_Transaction_Amount s_2_l_altCalc"]',data.additionalInfo.price)
+
+      //Booking Details & Vehicle Allotment
+
+      await page.waitForSelector("div[title='Third Level View Bar']", {
+        visible: true,
+      });
+      const vehicleAllotmentTabs = await page.$$eval(
+        "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
+        (tabs) =>
+          tabs.map((tab) => {
+
+            return {
+              name: tab.textContent,
+              id: tab.id,
+            };
+          })
+      );
+      const vehicleAllotment = vehicleAllotmentTabs.find((item) =>
+        item.name.includes("Booking Details & Vehicle Allotment")
+      );
+      await page.$eval(`#${vehicleAllotment.id}`, (el) => el.click());
+
+       await click(page,'.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]');
+       await click(page,'div > button[aria-label="Line Items:Vehicle Allotment"]');
+       await click(page,'div > button[aria-label="Vehicles:New"]');
+
+       await click(page,'#s_3_l > tbody > tr[role="row"] > td[data-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',{visible:true});
+       await typeText(page,'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',"ME4JF914DMG458004") //todo not fill
+      await click(page,'div > button[aria-label="Vehicles:New"]');
+       await page.goBack()
+
+       await page.waitForSelector("div[title='Third Level View Bar']", {
+        visible: true,
+      });
+      const invoiceTabs = await page.$$eval(
+        "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
+        (tabs) =>
+          tabs.map((tab) => {
+
+            return {
+              name: tab.textContent,
+              id: tab.id,
+            };
+          })
+      );
+      const invoiceButton = invoiceTabs.find((item) =>
+        item.name.includes("Invoice")
+      );
+      await page.$eval(`#${invoiceButton.id}`, (el) => el.click());
+
+      await click(page,'div > button[aria-label="Sales Invoice:Generate Invoice"]');
   }
 
   automate();
