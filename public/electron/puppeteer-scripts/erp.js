@@ -1,14 +1,10 @@
 module.exports = function erp(page, data, mainWindow) {
-  //console.log(data.userInfo);
-  const { click, typeText } = require("../puppeteer-scripts/helper");
+  const { click, typeText } = require("./helper");
+  const { enquiryType, customerCategory } = require("../enums");
 
   const {credentials: { username, password },} = data;
 
   const navigationPromise = page.waitForNavigation();
-
-  const timeout = 10000000;
-  page.setDefaultTimeout(timeout);
-  page.setDefaultNavigationTimeout(timeout);
 
   async function automate() {
     await typeText(page, "#s_swepi_1", username);
@@ -64,10 +60,29 @@ module.exports = function erp(page, data, mainWindow) {
     await click(page, `#${genderTypeButton.id}`);
 
     await click(page, "tbody > tr > td > #s_2_1_10_0_Ctrl > span");
-    await typeText(page,"tbody > tr > td > .mceGridField > .s_3_1_80_0",data.customerInfo.swdo);
-    await typeText(page,'tbody > tr > td > .mceGridField > input[aria-label="Date Of Birth"]',data.customerInfo.dob);
-    await typeText(page,"tbody > tr > td > .mceGridField > .s_3_1_5_0",data.customerInfo.currLineOne +" " +data.customerInfo.currLineTwo +" " +"PS" +" " +data.customerInfo.currPS);
-    await typeText(page,"tbody > tr > td > .mceGridField > .s_3_1_6_0",data.customerInfo.currDistrict + " " + data.customerInfo.currCity);
+    await typeText(
+      page,
+      "tbody > tr > td > .mceGridField > .s_3_1_80_0",
+      data.customerInfo.swdo
+    );
+
+    await typeText(
+      page,
+      'tbody > tr > td > .mceGridField > input[aria-label="Date Of Birth"]',
+      data.customerInfo.dob
+    );
+
+    await typeText(
+      page,
+      "tbody > tr > td > .mceGridField > .s_3_1_5_0",
+      data.customerInfo.currLineOne
+    );
+    await typeText(
+      page,
+      "tbody > tr > td > .mceGridField > .s_3_1_6_0",
+      data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
+    );
+
     await click(page, 'input[aria-label="State"] + span');
     await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true, });
     let state = await page.$$eval(
@@ -107,7 +122,12 @@ module.exports = function erp(page, data, mainWindow) {
 
     //Enquiry Type
     await click(page, 'input[aria-label="Enquiry Type"] + span');
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true, });
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none']) > li > div",
+      {
+        visible: true,
+      }
+    );
     let enquiryListItems = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
@@ -118,8 +138,9 @@ module.exports = function erp(page, data, mainWindow) {
           };
         })
     );
+
     const enquiryButton = enquiryListItems.find(
-      (item) => item.name === data.additionalInfo.inquiryType
+      (item) => item.name === enquiryType[data.additionalInfo.inquiryType]
     );
     await click(page, `#${enquiryButton.id}`);
 
@@ -137,7 +158,9 @@ module.exports = function erp(page, data, mainWindow) {
         })
     );
     const customerTypeButton = customerType.find(
-      (item) => item.name === data.customerInfo.customerType
+      (item) =>
+        item.name.toUpperCase() ===
+        customerCategory[data.customerInfo.category].toUpperCase()
     );
     await click(page, `#${customerTypeButton.id}`);
 
@@ -154,8 +177,8 @@ module.exports = function erp(page, data, mainWindow) {
           };
         })
     );
-    const enquirySourceButton = enquirySourceItems.find(
-      (item) => item.name === data.customerInfo.enquirySource
+    const enquirySourceButton = enquirySourceItems.find((item) =>
+      item.name.toUpperCase().includes(data.customerInfo.source.toUpperCase())
     );
     await click(page, `#${enquirySourceButton.id}`);
 
@@ -277,6 +300,12 @@ module.exports = function erp(page, data, mainWindow) {
     await typeText(page,'#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] > input[name="First_Name"]',"PINKY");
     await click(page,'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]');
     await click(page, "button[data-display='OK']");
+    await page.waitForResponse(
+      "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
+    );
+    await page.waitForFunction(
+      `document.querySelector("input[aria-labelledby='Assigned_To_(DSE)_Label']").value !== ""`
+    );
     await click(page, "button[title='Enquiries Menu']");
     await page.waitForSelector(".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",{ visible: true });
     const menuOptions = await page.$$eval(
@@ -292,33 +321,8 @@ module.exports = function erp(page, data, mainWindow) {
     const saveRecordButton = menuOptions.find((option) =>
       option.name.includes("[Ctrl+S]")
     );
-    console.log("Save button id: ", saveRecordButton.id);
     await click(page, `#${saveRecordButton.id}`);
-
-    // await page.waitForSelector("button[title='Enquiries Menu']", {
-    //   visible: true,
-    // });
-    // await page.$eval("button[title='Enquiries Menu']", (el) => el.click());
-    // await page.waitForSelector(
-    //   ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
-    //   { visible: true }
-    // );
-    // const menuOptions = await page.$$eval(
-    //   ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
-    //   (options) =>
-    //     options.map((option) => {
-    //       console.log(option.textContent, option.id);
-    //       return {
-    //         name: option.textContent,
-    //         id: option.id,
-    //       };
-    //     })
-    // );
-
-    // const saveRecordButton = menuOptions.find((option) =>
-    //   option.name.includes("Save Record                [Ctrl+S]")
-    // );
-    // await page.$eval(`#${saveRecordButton.id}`, (el) => el.click());
+  
 
     await page.waitForSelector("td[role='gridcell'] > a", { visible: true });
     await page.$eval("td[role='gridcell'] > a", (el) => el.click());
@@ -346,13 +350,31 @@ module.exports = function erp(page, data, mainWindow) {
     //     page,
     //     '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',{visible: true}
     //   );
+    await page.waitForSelector('div > button[data-display="Create Booking"]');
+    await click(page, 'div > button[data-display="Create Booking"]');
 
-    //we get error not click create booking
-    await click(page,'div > button[data-display="Create Booking"]')
-    await page.waitForSelector('#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown');
-    await page.$eval('#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',(el) => el.click());
+    await page.waitForSelector(
+      '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',{visible: true}
+    );
+    await click(
+      page,
+      '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown'
+    );
+    await page.$eval('#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown', (el) => el.click());
     //await typeText('.GridBack > tbody > tr > td[valign="middle"] input[name="s_1_1_41_0"]'); //finance select todo
-    await typeText(page,'.GridBack > tbody > tr > td[valign="middle"] input[name="s_1_1_38_0"]',data.customerInfo.deliveryDate); //todo
+    let deliveryDate = new Date().toJSON().slice(0, 10);
+    deliveryDate =
+      deliveryDate.slice(8, 10) +
+      "/" +
+      deliveryDate.slice(5, 7) +
+      "/" +
+      deliveryDate.slice(0, 4);
+
+    await typeText(
+      page,
+      '.GridBack > tbody > tr > td[valign="middle"] input[name="s_1_1_38_0"]',
+      deliveryDate
+    ); //todo
     await click(page, ".AppletButtons.siebui-applet-buttons > button"); //get price clcik
 
     //price select
@@ -417,7 +439,7 @@ module.exports = function erp(page, data, mainWindow) {
     await click(page,'div > button[aria-label="Line Items:Vehicle Allotment"]');
     await click(page, 'div > button[aria-label="Vehicles:New"]');
     await click(page,'#s_3_l > tbody > tr[role="row"] > td[data-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',{ visible: true });
-    await typeText( page,'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',"ME4JF914DMG458101"); //todo not fill
+    await typeText( page,'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',"ME4JF49MCMD051004"); //todo not fill
     await click(page, 'div > button[aria-label="Vehicles:New"]');
     await page.goBack();
 
@@ -437,8 +459,15 @@ module.exports = function erp(page, data, mainWindow) {
     );
     await page.$eval(`#${invoiceButton.id}`, (el) => el.click());
 
-    await click( page,'div > button[aria-label="Sales Invoice:Generate Invoice"]');//date 10-07-2021
-    await click(page,'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="1_s_2_l_TMI_Ref_Number s_2_l_TMI_Invoice_Key_No "]');
+    await click(
+      page,
+      'div > button[aria-label="Sales Invoice:Generate Invoice"]'
+    );
+    //date 10-07-2021
+    await click(
+      page,
+      'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="1_s_2_l_TMI_Ref_Number s_2_l_TMI_Invoice_Key_No "]'
+    );
     await typeText(page, 'input[name="TMI_Invoice_Key_No"]', "7078"); //todo add key no mobile app and db
     await click(page,'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Faktur_Number "]');
     await typeText(page, 'input[name="TMI_Faktur_Number"]', "M7C1P6588237C13"); //todo add battery number mobile app and db

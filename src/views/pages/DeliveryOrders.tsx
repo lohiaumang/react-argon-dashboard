@@ -337,9 +337,7 @@ const DeliveryOrders: React.FC = () => {
         if (status) {
           window.api.send("toMain", {
             type: "CREATE_INVOICE",
-            data: {...deliveryOrders[selected],
-                      credentials
-            },
+            data: { ...deliveryOrders[selected], credentials },
           });
           setLoading(false);
         }
@@ -466,10 +464,9 @@ const DeliveryOrders: React.FC = () => {
               </CardHeader>
               {loadingPage ? (
                 <>
-                  <div className="w-100 d-flex justify-content-center">
+                  <div className="w-100 my-4 d-flex justify-content-center">
                     <Loading />
                   </div>
-                  <hr className="my-4" />
                 </>
               ) : (
                 <div>

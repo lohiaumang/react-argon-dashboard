@@ -26,7 +26,11 @@ module.exports = function (appWindow, browser) {
     measurementId: "G-G3NJR57E7H",
   };
 
-  firebase.initializeApp(firebaseConfig);
+  if (!firebase.apps.length) {
+    firebase.initializeApp({});
+  } else {
+    firebase.app(); // if already initialized, use that one
+  }
 
   ipc.on("toMain", async (event, args) => {
     let { type = "", data = {} } = args;
@@ -278,8 +282,6 @@ module.exports = function (appWindow, browser) {
           // TODO: Might want to change this to false
           frame: true,
         });
-
-        // insuranceWindow.webContents.openDevTools();
 
         // insuranceWindow.webContents.openDevTools();
         await insuranceWindow.loadURL(

@@ -92,18 +92,18 @@ module.exports = async function (page, data, mainWindow) {
         await waitForRandom();
       }
     }
-    await page.waitForSelector("div[data-ng-if='loading'] > .LoadingModel", {
-      hidden: true,
-    });
-    await page.waitFor(
-      () => !document.querySelector("div[data-ng-if='loading'] > .LoadingModel")
+    await page.waitForNavigation({ waitUntil: "domcontentloaded" });
+    await page.waitForSelector(
+      "div[data-ng-if='loading'] > .LoadingModel:not([style*='display: none'])",
+      {
+        hidden: true,
+      }
     );
-
     await page.waitForSelector("div[ng-show='1 == 1'] a.tw-link", {
       visible: true,
     });
     await page.click("div[ng-show='1 == 1'] a.tw-link");
-    //   mainWindow.webContents.send("update-progress-bar", ["20%", "insurance"]);
+    mainWindow.webContents.send("update-progress-bar", ["20%", "insurance"]);
     await page.waitForSelector(
       ".btn.btn-primary[ng-click='helpers.GoToUrl(TWURL)']",
       { visible: true }
@@ -138,6 +138,7 @@ module.exports = async function (page, data, mainWindow) {
     await page.click("input[name='RtoLocation']+ul > li > a");
 
     await waitForRandom();
+    console.log(data.createdOn);
     // let actualDate = data["Actual Deliver date"].split(/[\/ \–\-]/);
     //   if (actualDate[2].length === 2) {
     //     actualDate[2] = `20${actualDate[2]}`;
