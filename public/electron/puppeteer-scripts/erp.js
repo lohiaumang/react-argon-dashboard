@@ -1,6 +1,6 @@
 module.exports = function erp(page, data, mainWindow) {
-  //console.log(data.userInfo);
-  const { click, typeText } = require("../puppeteer-scripts/helper");
+  const { click, typeText } = require("./helper");
+  const { enquiryType, customerCategory } = require("../enums");
 
   const {
     credentials: { username, password },
@@ -109,18 +109,12 @@ module.exports = function erp(page, data, mainWindow) {
     await typeText(
       page,
       "tbody > tr > td > .mceGridField > .s_3_1_5_0",
-      data.customerInfo.currLineOne +
-        " " +
-        data.customerInfo.currLineTwo +
-        " " +
-        "PS" +
-        " " +
-        data.customerInfo.currPS
+      data.customerInfo.currLineOne
     );
     await typeText(
       page,
       "tbody > tr > td > .mceGridField > .s_3_1_6_0",
-      data.customerInfo.currDistrict + " " + data.customerInfo.currCity
+      data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
     );
 
     await click(page, 'input[aria-label="State"] + span');
@@ -184,7 +178,7 @@ module.exports = function erp(page, data, mainWindow) {
 
     await click(page, 'input[aria-label="Enquiry Type"] + span');
     await page.waitForSelector(
-      "ul[role='combobox']:not([style*='display: none'])",
+      "ul[role='combobox']:not([style*='display: none']) > li > div",
       {
         visible: true,
       }
@@ -199,8 +193,9 @@ module.exports = function erp(page, data, mainWindow) {
           };
         })
     );
+
     const enquiryButton = enquiryListItems.find(
-      (item) => item.name === data.additionalInfo.inquiryType
+      (item) => item.name === enquiryType[data.additionalInfo.inquiryType]
     );
     await click(page, `#${enquiryButton.id}`);
 
@@ -223,7 +218,9 @@ module.exports = function erp(page, data, mainWindow) {
         })
     );
     const customerTypeButton = customerType.find(
-      (item) => item.name === data.customerInfo.customerType
+      (item) =>
+        item.name.toUpperCase() ===
+        customerCategory[data.customerInfo.category].toUpperCase()
     );
     await click(page, `#${customerTypeButton.id}`);
 
@@ -245,8 +242,8 @@ module.exports = function erp(page, data, mainWindow) {
           };
         })
     );
-    const enquirySourceButton = enquirySourceItems.find(
-      (item) => item.name === data.customerInfo.enquirySource
+    const enquirySourceButton = enquirySourceItems.find((item) =>
+      item.name.toUpperCase().includes(data.customerInfo.source.toUpperCase())
     );
     await click(page, `#${enquirySourceButton.id}`);
 
@@ -429,7 +426,12 @@ module.exports = function erp(page, data, mainWindow) {
       'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]'
     );
     await click(page, "button[data-display='OK']");
-
+    await page.waitForResponse(
+      "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
+    );
+    await page.waitForFunction(
+      `document.querySelector("input[aria-labelledby='Assigned_To_(DSE)_Label']").value !== ""`
+    );
     await click(page, "button[title='Enquiries Menu']");
     await page.waitForSelector(
       ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
@@ -448,7 +450,6 @@ module.exports = function erp(page, data, mainWindow) {
     const saveRecordButton = menuOptions.find((option) =>
       option.name.includes("[Ctrl+S]")
     );
-    console.log("Save button id: ", saveRecordButton.id);
     await click(page, `#${saveRecordButton.id}`);
 
     // await page.waitForSelector("button[title='Enquiries Menu']", {
@@ -515,10 +516,18 @@ module.exports = function erp(page, data, mainWindow) {
       (el) => el.click()
     );
     //await typeText('.GridBack > tbody > tr > td[valign="middle"] input[name="s_1_1_41_0"]'); //finance select todo
+    let deliveryDate = new Date().toJSON().slice(0, 10);
+    deliveryDate =
+      deliveryDate.slice(8, 10) +
+      "/" +
+      deliveryDate.slice(5, 7) +
+      "/" +
+      deliveryDate.slice(0, 4);
+
     await typeText(
       page,
       '.GridBack > tbody > tr > td[valign="middle"] input[name="s_1_1_38_0"]',
-      data.customerInfo.deliveryDate
+      deliveryDate
     ); //todo
     await click(page, ".AppletButtons.siebui-applet-buttons > button"); //get price clcik
 
@@ -657,7 +666,7 @@ module.exports = function erp(page, data, mainWindow) {
       page,
       'div > button[aria-label="Sales Invoice:Generate Invoice"]'
     );
- //date 10-07-2021
+    //date 10-07-2021
     await click(
       page,
       'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="1_s_2_l_TMI_Ref_Number s_2_l_TMI_Invoice_Key_No "]'
