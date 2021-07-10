@@ -60,28 +60,10 @@ module.exports = function erp(page, data, mainWindow) {
     await click(page, `#${genderTypeButton.id}`);
 
     await click(page, "tbody > tr > td > #s_2_1_10_0_Ctrl > span");
-    await typeText(
-      page,
-      "tbody > tr > td > .mceGridField > .s_3_1_80_0",
-      data.customerInfo.swdo
-    );
-
-    await typeText(
-      page,
-      'tbody > tr > td > .mceGridField > input[aria-label="Date Of Birth"]',
-      data.customerInfo.dob
-    );
-
-    await typeText(
-      page,
-      "tbody > tr > td > .mceGridField > .s_3_1_5_0",
-      data.customerInfo.currLineOne
-    );
-    await typeText(
-      page,
-      "tbody > tr > td > .mceGridField > .s_3_1_6_0",
-      data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
-    );
+    await typeText(page,"tbody > tr > td > .mceGridField > .s_3_1_80_0",data.customerInfo.swdo);
+    await typeText(page,'tbody > tr > td > .mceGridField > input[aria-label="Date Of Birth"]',data.customerInfo.dob);
+    await typeText( page,"tbody > tr > td > .mceGridField > .s_3_1_5_0",data.customerInfo.currLineOne);
+    await typeText(page,"tbody > tr > td > .mceGridField > .s_3_1_6_0",data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS);
 
     await click(page, 'input[aria-label="State"] + span');
     await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true, });
@@ -353,13 +335,8 @@ module.exports = function erp(page, data, mainWindow) {
     await page.waitForSelector('div > button[data-display="Create Booking"]');
     await click(page, 'div > button[data-display="Create Booking"]');
 
-    await page.waitForSelector(
-      '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',{visible: true}
-    );
-    await click(
-      page,
-      '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown'
-    );
+    await page.waitForSelector('#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',{visible: true});
+    await click(page,'#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown');
     await page.$eval('#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown', (el) => el.click());
     //await typeText('.GridBack > tbody > tr > td[valign="middle"] input[name="s_1_1_41_0"]'); //finance select todo
     let deliveryDate = new Date().toJSON().slice(0, 10);
@@ -459,15 +436,9 @@ module.exports = function erp(page, data, mainWindow) {
     );
     await page.$eval(`#${invoiceButton.id}`, (el) => el.click());
 
-    await click(
-      page,
-      'div > button[aria-label="Sales Invoice:Generate Invoice"]'
-    );
+    await click(page,'div > button[aria-label="Sales Invoice:Generate Invoice"]');
     //date 10-07-2021
-    await click(
-      page,
-      'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="1_s_2_l_TMI_Ref_Number s_2_l_TMI_Invoice_Key_No "]'
-    );
+    await click(page,'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="1_s_2_l_TMI_Ref_Number s_2_l_TMI_Invoice_Key_No "]');
     await typeText(page, 'input[name="TMI_Invoice_Key_No"]', "7078"); //todo add key no mobile app and db
     await click(page,'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Faktur_Number "]');
     await typeText(page, 'input[name="TMI_Faktur_Number"]', "M7C1P6588237C13"); //todo add battery number mobile app and db
