@@ -8,10 +8,6 @@ module.exports = function erp(page, data, mainWindow) {
 
   const navigationPromise = page.waitForNavigation();
 
-  const timeout = 10000000;
-  page.setDefaultTimeout(timeout);
-  page.setDefaultNavigationTimeout(timeout);
-
   async function automate() {
     await typeText(page, "#s_swepi_1", username);
     await typeText(page, "#s_swepi_2", password);
@@ -507,13 +503,14 @@ module.exports = function erp(page, data, mainWindow) {
     //     page,
     //     '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',{visible: true}
     //   );
-
+    await page.waitForSelector('div > button[data-display="Create Booking"]');
+    await click(page, 'div > button[data-display="Create Booking"]');
     await page.waitForSelector(
       '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown'
     );
-    await page.$eval(
-      '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
-      (el) => el.click()
+    await click(
+      page,
+      '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown'
     );
     //await typeText('.GridBack > tbody > tr > td[valign="middle"] input[name="s_1_1_41_0"]'); //finance select todo
     let deliveryDate = new Date().toJSON().slice(0, 10);
