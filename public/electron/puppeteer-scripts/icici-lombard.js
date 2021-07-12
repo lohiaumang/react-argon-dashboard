@@ -30,10 +30,6 @@ module.exports = async function (page, data, mainWindow) {
   //     location = await _("0", PostOffice);
   //   }
   // });
-  // const {
-  //   iciciUsername,
-  //   iciciPassword
-  // } = dealerData;
   const {
     credentials: { username, password },
   } = data;
@@ -41,7 +37,6 @@ module.exports = async function (page, data, mainWindow) {
   try {
     if (username && password) {
       await page.waitForSelector("#login2_txtLoginId", { visible: true });
-      await waitForRandom();
       await page.type("#login2_txtLoginId", username);
       await page.waitForSelector("#login2_txtPassword", { visible: true });
       await page.type("#login2_txtPassword", password);
@@ -65,13 +60,12 @@ module.exports = async function (page, data, mainWindow) {
     //      actualDate[2] = `20${actualDate[2]}`;
     // }
     //  actualDate = actualDate.join("/");
-    let deliveryDate = new Date().toJSON().slice(0, 10);
-    deliveryDate =
-      deliveryDate.slice(8, 10) +
-      "/" +
-      deliveryDate.slice(5, 7) +
-      "/" +
-      deliveryDate.slice(0, 4);
+    let deliveryDate = new Date()
+    .toJSON()
+    .slice(0, 10)
+    .split("-")
+    .reverse()
+    .join("/");
      await page.type("#TxtRegistrationDate", deliveryDate);
      await page.click(".robo-card-panel");
      const manufacturer = "HONDA MOTORCYCLE".toUpperCase();
@@ -85,7 +79,7 @@ module.exports = async function (page, data, mainWindow) {
 
      await page.waitForFunction("document.querySelectorAll('#DdlModel > option').length > 1");
 
-     const model = data.modelName;
+     const model =  data.insuranceDetails.modelName.split(" ")[0];
      const modelVariants = await page.$$eval("#DdlModel > option", options => options.map(option => ({
        value: option.value,
        name: option.textContent
@@ -94,14 +88,19 @@ module.exports = async function (page, data, mainWindow) {
 
      await page.select("#DdlModel", modelVariant.value); //not get currect data
      await page.waitForFunction('!!document.querySelector("#txtPrice").value');
-    //  await page.click("#lnkbtnIDVtoExShowConv");
-    //  await page.waitForSelector("#txtRequiredIDV", { visible: true });
-    //  await page.waitForSelector("#txtExShowroom", { visible: true });
-    //  await page.$eval("#txtRequiredIDV", el => el.value = '');
-    //  await page.type("#txtRequiredIDV", data["IDV"].toString());
-    //  await page.click("#imgbtnCalculateIDVtoExShowConv");
-    //  await page.waitForFunction('!!document.querySelector("#txtExShowroom").value');
-    //  await page.click("#imgbtnSubmitIDVtoExShowConv");
+
+
+      await page.click("#lnkbtnIDVtoExShowConv");
+      await page.waitForSelector("#txtRequiredIDV", { visible: true });
+      await page.waitForSelector("#txtExShowroom", { visible: true });
+      await page.$eval("#txtRequiredIDV", el => el.value = '');
+      const idv = new Number(data.priceDetails.price) * 0.95;
+      await page.type("#txtRequiredIDV", idv.toString());
+      await page.click("#imgbtnCalculateIDVtoExShowConv");
+      await page.waitForFunction('!!document.querySelector("#txtExShowroom").value');
+      await page.click("#imgbtnSubmitIDVtoExShowConv");
+
+
      await page.waitForSelector("#pnlIDVtoExShowConv", { hidden: true });
      const state = data.customerInfo.currState.toUpperCase();
      const allStates = await page.$$eval("#ddToState > option", options => options.map(option => ({
@@ -123,13 +122,18 @@ module.exports = async function (page, data, mainWindow) {
      await page.waitForSelector("#TxtEngineNumber", { visible: true });
      await page.type("#TxtEngineNumber", data.vehicleInfo.engineNumber);
      await page.type("#TxtChassisNumber", data.vehicleInfo.frameNumber); //todo chassisNumber
-  // if (data["Hypothecation"] !== "") {
-  //     await page.click("label[for='rdbVehicleUnder_2']");
-  //     await page.waitForSelector("#txtFinancierName", { visible: true });
-  //     await page.type("#txtFinancierName", data["Hypothecation"]);
-  //     await page.waitForSelector("#txtFinancierBranch", { visible: true });
-  //     await page.type("#txtFinancierBranch", data["City"]);
-  //   }
+
+
+  if (data.additionalInfo.hasOwnProperty("financier")) {
+      await page.click("label[for='rdbVehicleUnder_2']");
+      await page.waitForSelector("#txtFinancierName", { visible: true });
+      await page.type("#txtFinancierName", data.additionalInfo.financier);
+      await page.waitForSelector("#txtFinancierBranch", { visible: true });
+      await page.type("#txtFinancierBranch", data.customerInfo.currCity);
+    }
+
+
+
      await page.click("#ctrlCustomerAddress_btnCreateNew");
      mainWindow.webContents.send("update-progress-bar", ["60%", "insurance"]);
      const titleValue = data.customerInfo.gender.slice(0, 1).toUpperCase() ? "1" : "0";

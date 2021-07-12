@@ -281,6 +281,7 @@ module.exports = function (appWindow, browser) {
           width: 700,
           // TODO: Might want to change this to false
           frame: true,
+          resizable: false,
         });
 
         // insuranceWindow.webContents.openDevTools();
@@ -309,24 +310,35 @@ module.exports = function (appWindow, browser) {
         // const modelData = JSON.parse(fs.readFileSync(path.join(__dirname, 'model-data.json')));
         // const dealerData = JSON.parse(fs.readFileSync(path.join(__dirname, 'dealer-data.json')));
 
-        const doc = await firebase
+        const insuranceConfig = await firebase
           .firestore()
           .collection("insuranceConfig")
           .doc("config")
           .get();
 
-        if (doc.exists) {
-          const modelNames = doc.data();
-          const modelName =
-            modelNames[data.vehicleInfo.modelName][
-              `${insuranceCompany.toLowerCase()}ModelName`
-            ];
+        const priceConfig = await firebase
+          .firestore()
+          .collection("priceConfig")
+          .doc("config")
+          .get();
+
+        if (insuranceConfig.exists && priceConfig.exists) {
+          const insuranceDetails = insuranceConfig.data();
+          const priceDetails = priceConfig.data();
           const { credentials } = getCredentials();
           if (credentials) {
             data = {
               ...data,
               credentials: credentials[insuranceCompany],
-              modelName,
+              insuranceDetails: {
+                modelName:
+                  insuranceDetails[data.vehicleInfo.modelName][
+                    `${insuranceCompany.toLowerCase()}ModelName`
+                  ],
+                userRate:
+                  insuranceDetails[data.vehicleInfo.modelName]["userRate"],
+              },
+              priceDetails: priceDetails[data.vehicleInfo.modelName],
             };
           }
 

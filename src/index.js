@@ -38,7 +38,11 @@ const firebaseConfig = {
   measurementId: "G-G3NJR57E7H",
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+} else {
+  firebase.app(); // if already initialized, use that one
+}
 
 ReactDOM.render(
   <BrowserRouter>

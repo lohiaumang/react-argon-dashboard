@@ -339,13 +339,12 @@ module.exports = function erp(page, data, mainWindow) {
     await click(page,'#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown');
     await page.$eval('#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown', (el) => el.click());
     //await typeText('.GridBack > tbody > tr > td[valign="middle"] input[name="s_1_1_41_0"]'); //finance select todo
-    let deliveryDate = new Date().toJSON().slice(0, 10);
-    deliveryDate =
-      deliveryDate.slice(8, 10) +
-      "/" +
-      deliveryDate.slice(5, 7) +
-      "/" +
-      deliveryDate.slice(0, 4);
+    let deliveryDate = new Date()
+      .toJSON()
+      .slice(0, 10)
+      .split("-")
+      .reverse()
+      .join("/");
 
     await typeText(
       page,
