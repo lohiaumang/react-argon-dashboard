@@ -139,12 +139,12 @@ module.exports = async function (page, data, mainWindow) {
 
     await waitForRandom();
     console.log(data.createdOn);
-    // let actualDate = data["Actual Deliver date"].split(/[\/ \–\-]/);
-    //   if (actualDate[2].length === 2) {
-    //     actualDate[2] = `20${actualDate[2]}`;
-    //   }
-    //   actualDate = actualDate.join("/");
-    //   await page.type("#Risk1", actualDate);
+     let actualDate = data.createdOn.split(/[\/ \–\-]/);
+       if (actualDate[2].length === 2) {
+         actualDate[2] = `20${actualDate[2]}`;
+       }
+       actualDate = actualDate.join("/");
+       await page.type("#Risk1", actualDate);
     //   await waitForRandom();
     //   await page.click("select[name='YearOfManufacturer']");
     //   await page.select("select[name='YearOfManufacturer']", data["Manufacturing Year"]);

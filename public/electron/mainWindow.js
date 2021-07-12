@@ -27,7 +27,7 @@ module.exports = function (appWindow, browser) {
   };
 
   if (!firebase.apps.length) {
-    firebase.initializeApp({});
+    firebase.initializeApp(firebaseConfig);
   } else {
     firebase.app(); // if already initialized, use that one
   }
