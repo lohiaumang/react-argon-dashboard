@@ -407,23 +407,33 @@ module.exports = function (appWindow, browser) {
           // },
         });
 
-        vahanWindow.loadURL(
+        await vahanWindow.loadURL(
           "https://vahan.parivahan.gov.in/vahan/vahan/ui/login/login.xhtml"
         );
-        vahanWindow.webContents.send("start-vahan");
+        //vahanWindow.webContents.send("start-vahan");
         page = await pie.getPage(browser, vahanWindow);
+
+
+        const { credentials } = getCredentials();
+
+        if (credentials) {
+          data = {
+            ...data,
+            credentials: credentials["VAHAN"],
+          };
+        }
 
         vahan(page, data, appWindow);
 
-        vahanWindow.webContents.once("close", function () {
-          appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
-          appWindow.reload();
-        });
+        // vahanWindow.webContents.once("close", function () {
+        //   appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
+        //   appWindow.reload();
+        // });
 
-        vahanWindow.webContents.on("new-window", function (event, url) {
-          event.preventDefault();
-          vahanWindow.webContents.send("navigate-to-url", [url]);
-        });
+        // vahanWindow.webContents.on("new-window", function (event, url) {
+        //   event.preventDefault();
+        //   vahanWindow.webContents.send("navigate-to-url", [url]);
+        // });
         break;
       }
       default: {
