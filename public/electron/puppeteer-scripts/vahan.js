@@ -13,11 +13,11 @@ module.exports = function vahan(page, data, win) {
   // Extract invoice date
 
   let deliveryDate = new Date()
-  .toJSON()
-  .slice(0, 10)
-  .split("-")
-  .reverse()
-  .join("/");
+    .toJSON()
+    .slice(0, 10)
+    .split("-")
+    .reverse()
+    .join("/");
   let invoiceDateArray = deliveryDate.split(" ")[0].split("/");
 
   if (invoiceDateArray[2].length < 4) {
@@ -74,11 +74,7 @@ module.exports = function vahan(page, data, win) {
 
   const automate = async function () {
     try {
-      if (
-        username &&
-        password &&
-        otp
-      ) {
+      if (username && password && otp) {
         await page.waitForSelector("#user_id", { visible: true });
         await waitForRandom();
         await page.type("#user_id", username, {
@@ -141,13 +137,15 @@ module.exports = function vahan(page, data, win) {
 
       await page.waitForSelector("#chasi_no_new_entry", { visible: true });
       await waitForRandom();
-      await page.type("#chasi_no_new_entry", data.vehicleInfo.frameNumber , {
+      await page.type("#chasi_no_new_entry", data.vehicleInfo.frameNumber, {
         delay: randomTypeDelay(),
       });
       await waitForRandom();
       await page.type(
         "#eng_no_new_entry",
-        data.vehicleInfo.engineNumber.substr(data.vehicleInfo.engineNumber.length - 5),
+        data.vehicleInfo.engineNumber.substr(
+          data.vehicleInfo.engineNumber.length - 5
+        ),
         { delay: randomTypeDelay() }
       );
       await waitForRandom();
@@ -221,9 +219,13 @@ module.exports = function vahan(page, data, win) {
       await waitForRandom();
       await page.click("#workbench_tabview\\:tf_owner_cd_11");
       await waitForRandom();
-      await page.type("#workbench_tabview\\:tf_f_name", data.customerInfo.swdo, {
-        delay: randomTypeDelay(),
-      });
+      await page.type(
+        "#workbench_tabview\\:tf_f_name",
+        data.customerInfo.swdo,
+        {
+          delay: randomTypeDelay(),
+        }
+      );
       await waitForRandom();
       await page.click("#workbench_tabview\\:ownerCatg_label");
       await page.waitForSelector("#workbench_tabview\\:ownerCatg_2", {
@@ -236,9 +238,13 @@ module.exports = function vahan(page, data, win) {
         "#workbench_tabview\\:tf_mobNo",
         (el) => (el.value = "")
       );
-      await page.type("#workbench_tabview\\:tf_mobNo", data.customerInfo.phoneNo, {
-        delay: randomTypeDelay(),
-      });
+      await page.type(
+        "#workbench_tabview\\:tf_mobNo",
+        data.customerInfo.phoneNo,
+        {
+          delay: randomTypeDelay(),
+        }
+      );
       await waitForRandom();
 
       //win.webContents.send("update-progress-bar", ["30%", "vahan"]);
@@ -248,146 +254,103 @@ module.exports = function vahan(page, data, win) {
         data.customerInfo.currLineOne.substring(0, 36),
         { delay: randomTypeDelay() }
       );
-      // Filling current address.
-      await fetch_retry(
-        `https://api.postalpincode.in/pincode/${data.customerInfo.currPostal}`,
-        {},
-        5
-      ).then(async ([{ Status, PostOffice }]) => {
-        // Fetching district and police station data
-        if (Status === "Success" && PostOffice[0]) {
-          if (data.customerInfo.currCity) {
-            await page.type(
-              "#workbench_tabview\\:tf_c_add2",
-              data.customerInfo.currCity.substring(0, 36),
-              { delay: randomTypeDelay() }
-            );
-          } else {
-            await page.type(
-              "#workbench_tabview\\:tf_c_add2",
-              _("0.Division", PostOffice).substring(0, 36),
-              { delay: randomTypeDelay() }
-            );
-          }
-          await waitForRandom();
-          await page.type(
-            "#workbench_tabview\\:tf_c_add3",
-            data.customerInfo.currLineTwo.substring(0, 36),
-            { delay: randomTypeDelay() }
-          );
-          await waitForRandom();
-          await page.click("#workbench_tabview\\:tf_c_state_label");
-          await waitForRandom();
-          await page.click(
-            `#workbench_tabview\\:tf_c_state_items > li[data-label='${_(
-              "0.State",
-              PostOffice
-            )}']`
-          );
-          await waitForRandom();
-          await page.click("#workbench_tabview\\:tf_c_district_label");
-          await waitForRandom();
-          await page.type(
-            "#workbench_tabview\\:tf_c_district_filter",
-            "Kamrup Metropolitan" /*_("0.District", PostOffice)*/,
-            { delay: randomTypeDelay() }
-          );
-          await waitForRandom();
-          await page.waitForSelector(
-            "#workbench_tabview\\:tf_c_district_items > li:not([style='display: none;'])",
-            { visible: true }
-          );
-          await waitForRandom();
-          await page.click(
-            "#workbench_tabview\\:tf_c_district_items > li:not([style='display: none;'])"
-          );
-          await waitForRandom();
-          await page.$eval(
-            "#workbench_tabview\\:tf_c_pincode",
-            (el) => (el.value = "")
-          );
-          await page.type(
-            "#workbench_tabview\\:tf_c_pincode",
-            data.customerInfo.currPostal,
-            { delay: randomTypeDelay() }
-          );
-        }
-      });
-      ///////////////
+      await page.type(
+        "#workbench_tabview\\:tf_c_add2",
+        data.customerInfo.currCity.substring(0, 36),
+        { delay: randomTypeDelay() }
+      );
+      await waitForRandom();
+      await page.type(
+        "#workbench_tabview\\:tf_c_add3",
+        data.customerInfo.currPS.substring(0, 36),
+        { delay: randomTypeDelay() }
+      );
+      await waitForRandom();
+      await page.click("#workbench_tabview\\:tf_c_state_label");
+      await waitForRandom();
+      await page.click(
+        `#workbench_tabview\\:tf_c_state_items > li[data-label='${data.customerInfo.currState}']`
+      );
+      await waitForRandom();
+      await page.click("#workbench_tabview\\:tf_c_district_label");
+      await waitForRandom();
+      await page.type(
+        "#workbench_tabview\\:tf_c_district_filter",
+        data.customerInfo.currDistrict,
+        { delay: randomTypeDelay() }
+      );
+      await waitForRandom();
+      await page.waitForSelector(
+        "#workbench_tabview\\:tf_c_district_items > li:not([style='display: none;'])",
+        { visible: true }
+      );
+      await waitForRandom();
+      await page.click(
+        "#workbench_tabview\\:tf_c_district_items > li:not([style='display: none;'])"
+      );
+      await waitForRandom();
+      await page.$eval(
+        "#workbench_tabview\\:tf_c_pincode",
+        (el) => (el.value = "")
+      );
+      await page.type(
+        "#workbench_tabview\\:tf_c_pincode",
+        data.customerInfo.currPostal,
+        { delay: randomTypeDelay() }
+      );
       await waitForRandom();
       await page.type(
         "#workbench_tabview\\:tf_p_add1",
         data.customerInfo.permLineOne.substring(0, 36),
         { delay: randomTypeDelay() }
       );
-      // Filling permanent address
-      await fetch_retry(
-        `https://api.postalpincode.in/pincode/${data.customerInfo.permPostal}`,
-        {},
-        5
-      ).then(async ([{ Status, PostOffice }]) => {
-        // Fetching district and police station data
-        if (Status === "Success" && PostOffice[0]) {
-          if (data.customerInfo.permCity) {
-            await page.type(
-              "#workbench_tabview\\:tf_p_add2",
-              data.customerInfo.permCity.substring(0, 36),
-              { delay: randomTypeDelay() }
-            );
-          } else {
-            await page.type(
-              "#workbench_tabview\\:tf_p_add2",
-              _("0.Division", PostOffice).substring(0, 36),
-              { delay: randomTypeDelay() }
-            );
-          }
-          await waitForRandom();
-          await page.type(
-            "#workbench_tabview\\:tf_p_add3",
-            data.customerInfo.permLineTwo.substring(0, 36),
-            { delay: randomTypeDelay() }
-          );
-          await waitForRandom();
-          await page.click("#workbench_tabview\\:tf_p_state");
-          await waitForRandom();
-          await page.click(
-            `#workbench_tabview\\:tf_p_state_items > li[data-label='${_(
-              "0.State",
-              PostOffice
-            )}']`
-          );
-          await waitForRandom();
-          await page.click("#workbench_tabview\\:tf_p_district");
-          await waitForRandom();
-          await page.type(
-            "#workbench_tabview\\:tf_p_district_filter",
-            "Kamrup Metropolitan" /*_("0.District", PostOffice)*/,
-            { delay: randomTypeDelay() }
-          );
-          await waitForRandom();
-          await page.waitForSelector(
-            "#workbench_tabview\\:tf_p_district_items > li:not([style='display: none;'])",
-            { visible: true }
-          );
-          await waitForRandom();
-          await page.click(
-            "#workbench_tabview\\:tf_p_district_items > li:not([style='display: none;'])"
-          );
-          await waitForRandom();
-          await page.$eval(
-            "#workbench_tabview\\:tf_p_pincode",
-            (el) => (el.value = "")
-          );
-          await page.type(
-            "#workbench_tabview\\:tf_p_pincode",
-            data.customerInfo.permPostal,
-            { delay: randomTypeDelay() }
-          );
-        }
-      });
+      await page.type(
+        "#workbench_tabview\\:tf_p_add2",
+        data.customerInfo.permCity.substring(0, 36),
+        { delay: randomTypeDelay() }
+      );
+      await waitForRandom();
+      await page.type(
+        "#workbench_tabview\\:tf_p_add3",
+        data.customerInfo.permPS.substring(0, 36),
+        { delay: randomTypeDelay() }
+      );
+      await waitForRandom();
+      await page.click("#workbench_tabview\\:tf_p_state");
+      await waitForRandom();
+      await page.click(
+        `#workbench_tabview\\:tf_p_state_items > li[data-label='${data.customerInfo.permState}']`
+      );
+      await waitForRandom();
+      await page.click("#workbench_tabview\\:tf_p_district");
+      await waitForRandom();
+      await page.type(
+        "#workbench_tabview\\:tf_p_district_filter",
+        data.customerInfo.permDistrict,
+        { delay: randomTypeDelay() }
+      );
+      await waitForRandom();
+      await page.waitForSelector(
+        "#workbench_tabview\\:tf_p_district_items > li:not([style='display: none;'])",
+        { visible: true }
+      );
+      await waitForRandom();
+      await page.click(
+        "#workbench_tabview\\:tf_p_district_items > li:not([style='display: none;'])"
+      );
+      await waitForRandom();
+      await page.$eval(
+        "#workbench_tabview\\:tf_p_pincode",
+        (el) => (el.value = "")
+      );
+      await page.type(
+        "#workbench_tabview\\:tf_p_pincode",
+        data.customerInfo.permPostal,
+        { delay: randomTypeDelay() }
+      );
       await waitForRandom();
 
-     // win.webContents.send("update-progress-bar", ["40%", "vahan"]);
+      // win.webContents.send("update-progress-bar", ["40%", "vahan"]);
 
       await page.click("#workbench_tabview\\:partial_vh_class");
       await page.waitForSelector(
@@ -414,12 +377,17 @@ module.exports = function vahan(page, data, win) {
       await waitForRandom();
       await page.click("#workbench_tabview\\:ownerBeanPartial");
       await waitForRandom();
-      await page.waitForSelector("#j_idt96", { visible: true });
+      await page.waitForSelector(
+        "#op_showPartialGenApplNo .ui-dialog-content.ui-widget-content > .center-position > button",
+        { visible: true }
+      );
       await waitForRandom();
-      await page.click("#j_idt96");
+      await page.click(
+        "#op_showPartialGenApplNo .ui-dialog-content.ui-widget-content > .center-position > button"
+      );
       await waitForRandom();
 
-     // win.webContents.send("update-progress-bar", ["50%", "vahan"]);
+      // win.webContents.send("update-progress-bar", ["50%", "vahan"]);
 
       // Enter vehicle details
       await page.waitForSelector("a[href='#workbench_tabview:veh_info_tab']", {
@@ -444,12 +412,13 @@ module.exports = function vahan(page, data, win) {
       );
       await page.click("#workbench_tabview\\:tableTaxMode\\:1\\:taxModeType_1");
       await waitForRandom();
+      await page.type("#workbench_tabview\\:sale_amt", data.priceDetails.price);
 
-     // win.webContents.send("update-progress-bar", ["70%", "vahan"]);
+      // win.webContents.send("update-progress-bar", ["70%", "vahan"]);
 
       // Enter insurance details
-      // await page.click("a[href='#workbench_tabview\\:HypothecationOwner']");
-      // await waitForRandom();
+      await page.click("a[href='#workbench_tabview\\:HypothecationOwner']");
+      await waitForRandom();
       // await page.click("#workbench_tabview\\:ins_type");
       // await waitForRandom();
       // await page.waitForSelector("#workbench_tabview\\:ins_type_4");
@@ -533,9 +502,8 @@ module.exports = function vahan(page, data, win) {
       // });
 
       // Enter hypothecation details
-      if (data.additionalInfo.financier !== "") {
+      if (data.additionalInfo.hasOwnProperty("financier")) {
         //win.webContents.send("update-progress-bar", ["80%", "vahan"]);
-
         await page.click("#workbench_tabview\\:isHypo");
         await waitForRandom();
         await page.waitForSelector("#workbench_tabview\\:hpa_hp_type", {
@@ -555,67 +523,61 @@ module.exports = function vahan(page, data, win) {
           { delay: randomTypeDelay() }
         );
         await waitForRandom();
-        await page.type("#workbench_tabview\\:hpa_fncr_add1", data.customerInfo.currCity, {
-          delay: randomTypeDelay(),
-        });
-
-        await fetch_retry(
-          `https://api.postalpincode.in/pincode/${data.customerInfo.currPostal}`,
-          {},
-          5
-        ).then(async ([{ Status, PostOffice }]) => {
-          // Fetching district and police station data
-          if (Status === "Success" && PostOffice[0]) {
-            await page.click("#workbench_tabview\\:hpa_fncr_state");
-            await waitForRandom();
-            await page.waitForSelector(
-              "#workbench_tabview\\:hpa_fncr_state_filter",
-              { visible: true }
-            );
-            await page.type(
-              "#workbench_tabview\\:hpa_fncr_state_filter",
-              _("0.State", PostOffice),
-              { delay: randomTypeDelay() }
-            );
-            await waitForRandom();
-            await page.waitForSelector(
-              "#workbench_tabview\\:hpa_fncr_state_items > li:not([style='display: none;'])",
-              { visible: true }
-            );
-            await page.click(
-              "#workbench_tabview\\:hpa_fncr_state_items > li:not([style='display: none;'])"
-            );
-            await waitForRandom();
-            await page.click("#workbench_tabview\\:hpa_fncr_district");
-            await waitForRandom();
-            await page.waitForSelector(
-              "#workbench_tabview\\:hpa_fncr_district_filter",
-              { visible: true }
-            );
-            await page.type(
-              "#workbench_tabview\\:hpa_fncr_district_filter",
-              "Kamrup Metropolitan" /*_("0.District", PostOffice)*/,
-              { delay: randomTypeDelay() }
-            );
-            await waitForRandom();
-            await page.waitForSelector(
-              "#workbench_tabview\\:hpa_fncr_district_items > li:not([style='display: none;'])",
-              { visible: true }
-            );
-            await page.click(
-              "#workbench_tabview\\:hpa_fncr_district_items > li:not([style='display: none;'])"
-            );
-            await waitForRandom();
-            await page.type(
-              "#workbench_tabview\\:hpa_fncr_pincode",
-              _("0.Pincode", PostOffice),
-              { delay: randomTypeDelay() }
-            );
+        await page.type(
+          "#workbench_tabview\\:hpa_fncr_add1",
+          data.customerInfo.currCity,
+          {
+            delay: randomTypeDelay(),
           }
-        });
-      }
+        );
 
-     // win.webContents.send("update-progress-bar", ["100%", "vahan"]);
+        await page.click("#workbench_tabview\\:hpa_fncr_state");
+        await waitForRandom();
+        await page.waitForSelector(
+          "#workbench_tabview\\:hpa_fncr_state_filter",
+          { visible: true }
+        );
+        await page.type(
+          "#workbench_tabview\\:hpa_fncr_state_filter",
+          data.customerInfo.currState,
+          { delay: randomTypeDelay() }
+        );
+        await waitForRandom();
+        await page.waitForSelector(
+          "#workbench_tabview\\:hpa_fncr_state_items > li:not([style='display: none;'])",
+          { visible: true }
+        );
+        await page.click(
+          "#workbench_tabview\\:hpa_fncr_state_items > li:not([style='display: none;'])"
+        );
+        await waitForRandom();
+        await page.click("#workbench_tabview\\:hpa_fncr_district");
+        await waitForRandom();
+        await page.waitForSelector(
+          "#workbench_tabview\\:hpa_fncr_district_filter",
+          { visible: true }
+        );
+        await page.type(
+          "#workbench_tabview\\:hpa_fncr_district_filter",
+          data.customerInfo.currDistrict,
+          { delay: randomTypeDelay() }
+        );
+        await waitForRandom();
+        await page.waitForSelector(
+          "#workbench_tabview\\:hpa_fncr_district_items > li:not([style='display: none;'])",
+          { visible: true }
+        );
+        await page.click(
+          "#workbench_tabview\\:hpa_fncr_district_items > li:not([style='display: none;'])"
+        );
+        await waitForRandom();
+        await page.type(
+          "#workbench_tabview\\:hpa_fncr_pincode",
+          data.customerInfo.currPostal,
+          { delay: randomTypeDelay() }
+        );
+      }
+      // win.webContents.send("update-progress-bar", ["100%", "vahan"]);
     } catch (err) {
       console.log(err);
     }
