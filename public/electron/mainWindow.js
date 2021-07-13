@@ -94,7 +94,8 @@ module.exports = function (appWindow, browser) {
         } catch (err) {
           userData = null;
         }
-        if (userData == null) {
+
+        if (userData === null || userData.uid !== data.uid) {
           firebase
             .firestore()
             .collection("users")
@@ -344,6 +345,7 @@ module.exports = function (appWindow, browser) {
 
           page = await pie.getPage(browser, insuranceWindow);
           insurance(page, data, insuranceCompany, appWindow);
+
         }
 
         // insuranceWindow.webContents.on("did-navigate", function (event, url) {
@@ -435,10 +437,13 @@ module.exports = function (appWindow, browser) {
         //   vahanWindow.webContents.send("navigate-to-url", [url]);
         // });
         break;
+        
       }
+     
       default: {
         console.log("default", args);
       }
     }
   });
 };
+
