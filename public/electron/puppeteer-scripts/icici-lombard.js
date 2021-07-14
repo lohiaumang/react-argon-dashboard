@@ -210,6 +210,11 @@ module.exports = async function (page, data, mainWindow) {
     //   await waitForRandom();
     //   await page.click("#btnCreateProposal");
     // mainWindow.webContents.send("update-progress-bar", ["100%", "insurance"]);
+    // appWindow.webContents.send("fromMain", {
+    //   type: "INSURANCE_CREATED",
+    //   data:data.id,
+    //  // data:"INSURANCE_CREATED",
+    // });
   } catch (err) {
     console.log(err);
   }

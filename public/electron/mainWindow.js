@@ -261,6 +261,13 @@ module.exports = function (appWindow, browser) {
         }
 
         erp(page, data, appWindow);
+        erpWindow.webContents.once("close", function () {
+          appWindow.webContents.send("fromMain", {
+            type: "INVOICE_CREATED",
+            data: data.id,
+            // data:"INSURANCE_CREATED",
+          });
+        });
 
         break;
       }
@@ -345,7 +352,6 @@ module.exports = function (appWindow, browser) {
 
           page = await pie.getPage(browser, insuranceWindow);
           insurance(page, data, insuranceCompany, appWindow);
-
         }
 
         // insuranceWindow.webContents.on("did-navigate", function (event, url) {
@@ -374,11 +380,13 @@ module.exports = function (appWindow, browser) {
         //   }
         // });
 
-        // insuranceWindow.webContents.once("close", function () {
-        //   // insuranceWindow.close();
-        //   appWindow.webContents.send("remove-overlay");
-        //   appWindow.reload();
-        // });
+        insuranceWindow.webContents.once("close", function () {
+          appWindow.webContents.send("fromMain", {
+            type: "INSURANCE_CREATED",
+            data: data.id,
+            // data:"INSURANCE_CREATED",
+          });
+        });
 
         // ipc.once("close-insurance-window", function () {
         //   insuranceWindow.destroy();
@@ -434,23 +442,24 @@ module.exports = function (appWindow, browser) {
 
         vahan(page, data, appWindow);
 
-        // vahanWindow.webContents.once("close", function () {
-        //   appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
-        //   appWindow.reload();
-        // });
-
-        vahanWindow.webContents.on("new-window", function (event, url) {
-          event.preventDefault();
-          vahanWindow.webContents.send("navigate-to-url", [url]);
+        vahanWindow.webContents.once("close", function () {
+          appWindow.webContents.send("fromMain", {
+            type: "DONE",
+            data: data.id,
+            // data:"INSURANCE_CREATED",
+          });
         });
+
+        // vahanWindow.webContents.on("new-window", function (event, url) {
+        //   event.preventDefault();
+        //   vahanWindow.webContents.send("navigate-to-url", [url]);
+        // });
         break;
-        
       }
-     
+
       default: {
         console.log("default", args);
       }
     }
   });
 };
-

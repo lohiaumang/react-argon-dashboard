@@ -103,6 +103,24 @@ const DeliveryOrders: React.FC = () => {
           setDeliveryOrders(dOs);
           setLoadingPage(false);
         });
+      window.api.receive("fromMain", (data: any) => {
+        console.log(data.type)
+        switch (data.type) {
+         
+          case "INVOICE_CREATED": {
+            updateStatus(data)
+            break;
+          }
+          case "INSURANCE_CREATED": {
+            updateStatus(data)
+            break;
+          }
+          case "DONE": {
+            updateStatus(data)
+            break;
+          }
+        }
+      });
     }
   }, []);
 
@@ -206,6 +224,21 @@ const DeliveryOrders: React.FC = () => {
       );
     }
   };
+
+//update status
+const updateStatus = (data:any) => {
+  debugger
+  console.log(data.data);
+  console.log(data.type);
+
+    db.collection("deliveryOrders").doc(data.data).set(
+      {
+        status: data.type,
+      },
+      { merge: true }
+    );
+ 
+};
 
   // TODO: Make fetching data if it does not exist common
   const fetchDeliveryOrder = () => {
