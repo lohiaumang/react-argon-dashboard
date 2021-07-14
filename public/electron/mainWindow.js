@@ -403,10 +403,10 @@ module.exports = function (appWindow, browser) {
           width: 1440,
           // TODO: Might want to change this to false
           frame: true,
-          // webPreferences: {
-          //   preload: path.join(__dirname, "./js/vahan.js"),
-          //   backgroundThrottling: false,
-          // },
+          webPreferences: {
+            preload: path.join(__dirname, "./js/vahan.js"),
+            backgroundThrottling: false,
+          },
         });
 
         await vahanWindow.loadURL(
@@ -415,13 +415,20 @@ module.exports = function (appWindow, browser) {
         //vahanWindow.webContents.send("start-vahan");
         page = await pie.getPage(browser, vahanWindow);
 
-
         const { credentials } = getCredentials();
 
-        if (credentials) {
+        const priceConfig = await firebase
+          .firestore()
+          .collection("priceConfig")
+          .doc("config")
+          .get();
+
+        if (priceConfig.exists && credentials) {
+          const priceDetails = priceConfig.data();
           data = {
             ...data,
             credentials: credentials["VAHAN"],
+            priceDetails: priceDetails[data.vehicleInfo.modelName],
           };
         }
 
@@ -432,10 +439,10 @@ module.exports = function (appWindow, browser) {
         //   appWindow.reload();
         // });
 
-        // vahanWindow.webContents.on("new-window", function (event, url) {
-        //   event.preventDefault();
-        //   vahanWindow.webContents.send("navigate-to-url", [url]);
-        // });
+        vahanWindow.webContents.on("new-window", function (event, url) {
+          event.preventDefault();
+          vahanWindow.webContents.send("navigate-to-url", [url]);
+        });
         break;
         
       }
