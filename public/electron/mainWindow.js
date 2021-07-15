@@ -58,7 +58,7 @@ module.exports = function (appWindow, browser) {
         const createUserFirestore = functions.httpsCallable("createUserIndia");
         createUserFirestore(data)
           .then((resp) => {
-            console.log("User created!", JSON.stringify(resp.data));
+            // console.log("User created!", JSON.stringify(resp.data));
             const uid = resp.data.uid || "";
             delete data.password;
             fs.writeFileSync(
@@ -156,7 +156,7 @@ module.exports = function (appWindow, browser) {
         //  console.log("Step", step++, data);
         createUserDataFirestore(data)
           .then((resp) => {
-            console.log("User created!", JSON.stringify(resp.data));
+            // console.log("User created!", JSON.stringify(resp.data));
             // console.log("Step", step++, resp.data);
             appWindow.webContents.send("fromMain", {
               type: "CREATE_USER_SUCCESS",
@@ -218,13 +218,6 @@ module.exports = function (appWindow, browser) {
             type: "GET_CREDENTIALS_FAILURE",
           });
         }
-        break;
-      }
-      case "DO_CREATED_STATUS": {
-        appWindow.webContents.send("fromMain", {
-          type: "DO_CREATED",
-          data: data
-        });
         break;
       }
 

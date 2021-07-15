@@ -106,10 +106,6 @@ const DeliveryOrders: React.FC = () => {
       window.api.receive("fromMain", (statusData: any) => {
         //console.log(statusData);
         switch (statusData.type) {
-          case "DO_CREATED": {
-            updateStatus(statusData);
-            break;
-          }
           case "INVOICE_CREATED": {
             updateStatus(statusData);
             break;
@@ -230,7 +226,6 @@ const DeliveryOrders: React.FC = () => {
 
   //update status
   const updateStatus = (data: any) => {
-    console.log(data);
     db.collection("deliveryOrders").doc(data.data).set(
       {
         status: data.type,
@@ -345,15 +340,6 @@ const DeliveryOrders: React.FC = () => {
     getSetUserData(currentUser.uid);
   }
 
-  // //create DO
-  // const doStatus = async () => {
-  //   window.api.send("fromMain", {
-  //     type: "DO_CREATED",
-  //     data:  selectedDoId,
-  //     // data:"INSURANCE_CREATED",
-  //   });
-  // };
-
   const createDO = async () => {
     try {
       setLoading(true);
@@ -417,7 +403,7 @@ const DeliveryOrders: React.FC = () => {
   };
 
   //create erp data
-  const createRegistration = async (statusData:any) => {
+  const createRegistration = async (statusData: any) => {
     try {
       setLoading(true);
       if (selected !== undefined) {
@@ -441,16 +427,16 @@ const DeliveryOrders: React.FC = () => {
   const printPage = useReactToPrint({
     content: () => deliveryOrderTableRef.current,
     copyStyles: true,
+    onAfterPrint: () => {
+      if (selected !== undefined) {
+        setShowDO(false);
+        updateStatus({
+          data: deliveryOrders[selected].id,
+          type: "DO_CREATED",
+        });
+      }
+    },
   });
-
-  const createStaus = async () => {
-    if (selected !== undefined) {
-      window.api.send("toMain", {
-        type: "DO_CREATED_STATUS",
-        data: deliveryOrders[selected].id,
-      });
-    }
-  };
 
   return (
     <>
