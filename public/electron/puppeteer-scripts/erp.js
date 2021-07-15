@@ -2,7 +2,9 @@ module.exports = function erp(page, data, mainWindow) {
   const { click, typeText } = require("./helper");
   const { enquiryType, customerCategory } = require("../enums");
 
-  const {credentials: { username, password },} = data;
+  const {
+    credentials: { username, password },
+  } = data;
 
   const navigationPromise = page.waitForNavigation();
 
@@ -24,12 +26,31 @@ module.exports = function erp(page, data, mainWindow) {
     // );
 
     //fill new reord
-    await typeText(page,"table > tbody > tr > .siebui-form-data > .s_2_1_19_0",data.customerInfo.firstName);
-    await typeText(page,"table > tbody > tr > .siebui-form-data > .s_2_1_2_0","");//todo
-    await typeText(page,"table > tbody > tr > .siebui-form-data > .s_2_1_18_0",data.customerInfo.lastName);
-    await typeText(page,"table > tbody > tr > .siebui-form-data > .s_2_1_0_0",data.customerInfo.phoneNo);
+    await typeText(
+      page,
+      "table > tbody > tr > .siebui-form-data > .s_2_1_19_0",
+      data.customerInfo.firstName
+    );
+    await typeText(
+      page,
+      "table > tbody > tr > .siebui-form-data > .s_2_1_2_0",
+      ""
+    ); //todo
+    await typeText(
+      page,
+      "table > tbody > tr > .siebui-form-data > .s_2_1_18_0",
+      data.customerInfo.lastName
+    );
+    await typeText(
+      page,
+      "table > tbody > tr > .siebui-form-data > .s_2_1_0_0",
+      data.customerInfo.phoneNo
+    );
     await click(page, 'input[aria-label="Consent For Calling"] + span');
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true,});
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      { visible: true }
+    );
     let callingType = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
@@ -43,7 +64,10 @@ module.exports = function erp(page, data, mainWindow) {
     const collingTypeButton = callingType.find((item) => item.name === "No"); //todo
     await click(page, `#${collingTypeButton.id}`);
     await click(page, 'input[aria-label="Gender"] + span');
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true,});
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      { visible: true }
+    );
     let genderType = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
@@ -60,13 +84,32 @@ module.exports = function erp(page, data, mainWindow) {
     await click(page, `#${genderTypeButton.id}`);
 
     await click(page, "tbody > tr > td > #s_2_1_10_0_Ctrl > span");
-    await typeText(page,"tbody > tr > td > .mceGridField > .s_3_1_80_0",data.customerInfo.swdo);
-    await typeText(page,'tbody > tr > td > .mceGridField > input[aria-label="Date Of Birth"]',data.customerInfo.dob);
-    await typeText( page,"tbody > tr > td > .mceGridField > .s_3_1_5_0",data.customerInfo.currLineOne);
-    await typeText(page,"tbody > tr > td > .mceGridField > .s_3_1_6_0",data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS);
+    await typeText(
+      page,
+      "tbody > tr > td > .mceGridField > .s_3_1_80_0",
+      data.customerInfo.swdo
+    );
+    await typeText(
+      page,
+      'tbody > tr > td > .mceGridField > input[aria-label="Date Of Birth"]',
+      data.customerInfo.dob
+    );
+    await typeText(
+      page,
+      "tbody > tr > td > .mceGridField > .s_3_1_5_0",
+      data.customerInfo.currLineOne
+    );
+    await typeText(
+      page,
+      "tbody > tr > td > .mceGridField > .s_3_1_6_0",
+      data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
+    );
 
     await click(page, 'input[aria-label="State"] + span');
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true, });
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      { visible: true }
+    );
     let state = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
@@ -85,8 +128,16 @@ module.exports = function erp(page, data, mainWindow) {
     //  console.log(stateButton.name, stateButton.id);
     await page.waitForSelector(`#${stateButton.id}`, { visible: true });
     await page.$eval(`#${stateButton.id}`, (el) => el.click());
-    await typeText(page,"tbody > tr > td > .mceGridField > .s_3_1_66_0",data.customerInfo.currPostal);
-    await typeText(page,"tbody > tr > td > .mceGridField > .siebui-ctrl-mailto",data.customerInfo.email);
+    await typeText(
+      page,
+      "tbody > tr > td > .mceGridField > .s_3_1_66_0",
+      data.customerInfo.currPostal
+    );
+    await typeText(
+      page,
+      "tbody > tr > td > .mceGridField > .siebui-ctrl-mailto",
+      data.customerInfo.email
+    );
 
     //code work
 
@@ -99,8 +150,14 @@ module.exports = function erp(page, data, mainWindow) {
     //UnhandledPromiseRejectionWarning: Error: Evaluation failed: DOMException: Failed to execute 'querySelector' on 'Document': '#s_2_l > tbody > #↓ > #↓_s_2_l_First_Name > .drilldown' is not a valid selector.
     //await page.waitFor(8000);
 
-    await click(page,'.ui-jqgrid-btable > tbody > .jqgrow > td[role="gridcell"] > .drilldown ');
-    await click(page,"div > .siebui-applet-header > .siebui-btn-grp-applet > #s_1_1_20_0_Ctrl > span");
+    await click(
+      page,
+      '.ui-jqgrid-btable > tbody > .jqgrow > td[role="gridcell"] > .drilldown '
+    );
+    await click(
+      page,
+      "div > .siebui-applet-header > .siebui-btn-grp-applet > #s_1_1_20_0_Ctrl > span"
+    );
 
     //Enquiry Type
     await click(page, 'input[aria-label="Enquiry Type"] + span');
@@ -128,7 +185,10 @@ module.exports = function erp(page, data, mainWindow) {
 
     //Customer Type
     await click(page, 'input[aria-label="Customer Type"] + span');
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true, });
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      { visible: true }
+    );
     let customerType = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
@@ -148,7 +208,10 @@ module.exports = function erp(page, data, mainWindow) {
 
     //Enquiry Source
     await click(page, 'input[aria-label="Enquiry Source"] + span');
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true, });
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      { visible: true }
+    );
     let enquirySourceItems = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
@@ -166,7 +229,10 @@ module.exports = function erp(page, data, mainWindow) {
 
     //Customer Category
     await click(page, 'input[aria-label="Customer Category"] + span');
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true, });
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      { visible: true }
+    );
     let customerCategoryItems = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
@@ -182,7 +248,10 @@ module.exports = function erp(page, data, mainWindow) {
 
     //Enquiry Category
     await click(page, 'input[aria-label="Enquiry Category"] + span');
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true, });
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      { visible: true }
+    );
     let enquiryCategoryItems = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
@@ -199,7 +268,10 @@ module.exports = function erp(page, data, mainWindow) {
     //Purchase Type
     let purchaseTypeButton;
     await click(page, 'input[aria-label="Purchase Type"] + span');
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true, });
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      { visible: true }
+    );
     let purchaseTypes = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
@@ -225,8 +297,14 @@ module.exports = function erp(page, data, mainWindow) {
     // }
 
     //Model Category
-    await click(page,'input[aria-label="Model Category<Font size= 3 color=Red><b>*</b></Font>"] + span');
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])", { visible: true, });
+    await click(
+      page,
+      'input[aria-label="Model Category<Font size= 3 color=Red><b>*</b></Font>"] + span'
+    );
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      { visible: true }
+    );
     let modelCategory = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
@@ -241,8 +319,14 @@ module.exports = function erp(page, data, mainWindow) {
     await click(page, `#${modelCategoryButton.id}`);
 
     //Model Name
-    await click(page,'input[aria-label="Model Name<Font size= 3 color=Red><b>*</b></Font>"] + span');
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true,});
+    await click(
+      page,
+      'input[aria-label="Model Name<Font size= 3 color=Red><b>*</b></Font>"] + span'
+    );
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      { visible: true }
+    );
     let modelName = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
@@ -257,8 +341,14 @@ module.exports = function erp(page, data, mainWindow) {
     await click(page, `#${modelNameButton.id}`);
 
     //Model Variant
-    await click(page,'input[aria-label="Model Variant<Font size= 3 color=Red><b>*</b></Font>"] + span');
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{visible: true,});
+    await click(
+      page,
+      'input[aria-label="Model Variant<Font size= 3 color=Red><b>*</b></Font>"] + span'
+    );
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      { visible: true }
+    );
     let modelVariant = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
@@ -275,12 +365,25 @@ module.exports = function erp(page, data, mainWindow) {
     //Assigned To (DSE)  todo
     await click(page, 'input[aria-label="Assigned To (DSE)"] + span');
     await click(page, 'input[aria-label="Find"] + span');
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true, });
-    await click( page,'table > tbody > tr > td > .siebui-popup-button > button[aria-label="Pick Assigned To:Query"]');
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      { visible: true }
+    );
+    await click(
+      page,
+      'table > tbody > tr > td > .siebui-popup-button > button[aria-label="Pick Assigned To:Query"]'
+    );
     await typeText(page, "input[name='Last_Name']", "DEVI");
     await click(page, '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] ');
-    await typeText(page,'#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] > input[name="First_Name"]',"PINKY");
-    await click(page,'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]');
+    await typeText(
+      page,
+      '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] > input[name="First_Name"]',
+      "PINKY"
+    );
+    await click(
+      page,
+      'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]'
+    );
     await click(page, "button[data-display='OK']");
     await page.waitForResponse(
       "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
@@ -289,7 +392,10 @@ module.exports = function erp(page, data, mainWindow) {
       `document.querySelector("input[aria-labelledby='Assigned_To_(DSE)_Label']").value !== ""`
     );
     await click(page, "button[title='Enquiries Menu']");
-    await page.waitForSelector(".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",{ visible: true });
+    await page.waitForSelector(
+      ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
+      { visible: true }
+    );
     const menuOptions = await page.$$eval(
       ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
       (options) =>
@@ -304,12 +410,15 @@ module.exports = function erp(page, data, mainWindow) {
       option.name.includes("[Ctrl+S]")
     );
     await click(page, `#${saveRecordButton.id}`);
-  
 
     await page.waitForSelector("td[role='gridcell'] > a", { visible: true });
     await page.$eval("td[role='gridcell'] > a", (el) => el.click());
-    await page.waitForResponse("https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/");
-    await page.waitForSelector("div[title='Third Level View Bar']", { visible: true,});
+    await page.waitForResponse(
+      "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
+    );
+    await page.waitForSelector("div[title='Third Level View Bar']", {
+      visible: true,
+    });
     const allTabs = await page.$$eval(
       "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
       (tabs) =>
@@ -335,9 +444,18 @@ module.exports = function erp(page, data, mainWindow) {
     await page.waitForSelector('div > button[data-display="Create Booking"]');
     await click(page, 'div > button[data-display="Create Booking"]');
 
-    await page.waitForSelector('#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',{visible: true});
-    await click(page,'#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown');
-    await page.$eval('#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown', (el) => el.click());
+    await page.waitForSelector(
+      '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
+      { visible: true }
+    );
+    await click(
+      page,
+      '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown'
+    );
+    await page.$eval(
+      '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
+      (el) => el.click()
+    );
     //await typeText('.GridBack > tbody > tr > td[valign="middle"] input[name="s_1_1_41_0"]'); //finance select todo
     let deliveryDate = new Date()
       .toJSON()
@@ -354,8 +472,12 @@ module.exports = function erp(page, data, mainWindow) {
     await click(page, ".AppletButtons.siebui-applet-buttons > button"); //get price clcik
 
     //price select
-    await page.waitForResponse("https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/" );
-    await page.waitForSelector("div[title='Third Level View Bar']", { visible: true,});
+    await page.waitForResponse(
+      "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
+    );
+    await page.waitForSelector("div[title='Third Level View Bar']", {
+      visible: true,
+    });
     const paymentTabs = await page.$$eval(
       "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
       (tabs) =>
@@ -370,9 +492,18 @@ module.exports = function erp(page, data, mainWindow) {
       item.name.includes("Payments")
     );
     await page.$eval(`#${paymentButton.id}`, (el) => el.click());
-    await click(page,'.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]');
-    await click(page,'input[aria-labelledby="1_s_2_l_Payment_Profile_Name s_2_l_Transaction_Type s_2_l_altCombo"] + span');
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true, });
+    await click(
+      page,
+      '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]'
+    );
+    await click(
+      page,
+      'input[aria-labelledby="1_s_2_l_Payment_Profile_Name s_2_l_Transaction_Type s_2_l_altCombo"] + span'
+    );
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      { visible: true }
+    );
     let paymentType = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
@@ -391,11 +522,21 @@ module.exports = function erp(page, data, mainWindow) {
     await page.waitForSelector(`#${paymentTypeButton.id}`, { visible: true });
     await page.$eval(`#${paymentTypeButton.id}`, (el) => el.click());
     //await typeText("input[aria-labelledby='1_s_2_l_Payment_Profile_Name s_2_l_Transaction_Type s_2_l_altCombo']:not([style*='display: none']",'Advance/Final Payment');
-    await click(page,'#s_2_l > tbody > tr[role="row"] > td[aria-labelledby="s_2_l_altCalc"]',{ visible: true });
-    await typeText(page,'input[aria-labelledby="s_2_l_Transaction_Amount s_2_l_altCalc"]',data.additionalInfo.price);
+    await click(
+      page,
+      '#s_2_l > tbody > tr[role="row"] > td[aria-labelledby="s_2_l_altCalc"]',
+      { visible: true }
+    );
+    await typeText(
+      page,
+      'input[aria-labelledby="s_2_l_Transaction_Amount s_2_l_altCalc"]',
+      data.additionalInfo.price
+    );
 
     //Booking Details & Vehicle Allotment
-    await page.waitForSelector("div[title='Third Level View Bar']", { visible: true,});
+    await page.waitForSelector("div[title='Third Level View Bar']", {
+      visible: true,
+    });
     const vehicleAllotmentTabs = await page.$$eval(
       "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
       (tabs) =>
@@ -411,15 +552,31 @@ module.exports = function erp(page, data, mainWindow) {
     );
     await page.$eval(`#${vehicleAllotment.id}`, (el) => el.click());
 
-    await click(page,'.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]');
-    await click(page,'div > button[aria-label="Line Items:Vehicle Allotment"]');
+    await click(
+      page,
+      '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]'
+    );
+    await click(
+      page,
+      'div > button[aria-label="Line Items:Vehicle Allotment"]'
+    );
     await click(page, 'div > button[aria-label="Vehicles:New"]');
-    await click(page,'#s_3_l > tbody > tr[role="row"] > td[data-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',{ visible: true });
-    await typeText( page,'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',"ME4JF49MCMD051004"); //todo not fill
+    await click(
+      page,
+      '#s_3_l > tbody > tr[role="row"] > td[data-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
+      { visible: true }
+    );
+    await typeText(
+      page,
+      'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
+      "ME4JF49MCMD051004"
+    ); //todo not fill
     await click(page, 'div > button[aria-label="Vehicles:New"]');
     await page.goBack();
 
-    await page.waitForSelector("div[title='Third Level View Bar']", {visible: true,});
+    await page.waitForSelector("div[title='Third Level View Bar']", {
+      visible: true,
+    });
     const invoiceTabs = await page.$$eval(
       "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
       (tabs) =>
@@ -435,16 +592,34 @@ module.exports = function erp(page, data, mainWindow) {
     );
     await page.$eval(`#${invoiceButton.id}`, (el) => el.click());
 
-    await click(page,'div > button[aria-label="Sales Invoice:Generate Invoice"]');
+    await click(
+      page,
+      'div > button[aria-label="Sales Invoice:Generate Invoice"]'
+    );
     //date 10-07-2021
-    await click(page,'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="1_s_2_l_TMI_Ref_Number s_2_l_TMI_Invoice_Key_No "]');
+    await click(
+      page,
+      'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="1_s_2_l_TMI_Ref_Number s_2_l_TMI_Invoice_Key_No "]'
+    );
     await typeText(page, 'input[name="TMI_Invoice_Key_No"]', "7078"); //todo add key no mobile app and db
-    await click(page,'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Faktur_Number "]');
+    await click(
+      page,
+      'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Faktur_Number "]'
+    );
     await typeText(page, 'input[name="TMI_Faktur_Number"]', "M7C1P6588237C13"); //todo add battery number mobile app and db
-    await click(page,'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Booklet_Number "]');
+    await click(
+      page,
+      'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Booklet_Number "]'
+    );
     await typeText(page, 'input[name="TMI_Booklet_Number"]', "0"); //todo add Booklet number mobile app and db
-    await click(page,'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Riding_Trainer_Flag s_2_l_altCombo"]');//todo add riding number mobile app and db
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true, });
+    await click(
+      page,
+      'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Riding_Trainer_Flag s_2_l_altCombo"]'
+    ); //todo add riding number mobile app and db
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      { visible: true }
+    );
     let ridingType = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
@@ -460,8 +635,14 @@ module.exports = function erp(page, data, mainWindow) {
     console.log(ridingTypeButton.name, ridingTypeButton.id);
     await page.waitForSelector(`#${ridingTypeButton.id}`, { visible: true });
     await page.$eval(`#${ridingTypeButton.id}`, (el) => el.click());
-    await click(page,'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_PDSA_Flag s_2_l_altCombo"]');//todo add pdsaGiven  mobile app and db
-    await page.waitForSelector("ul[role='combobox']:not([style*='display: none'])",{ visible: true,});
+    await click(
+      page,
+      'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_PDSA_Flag s_2_l_altCombo"]'
+    ); //todo add pdsaGiven  mobile app and db
+    await page.waitForSelector(
+      "ul[role='combobox']:not([style*='display: none'])",
+      { visible: true }
+    );
     let pdsaGiven = await page.$$eval(
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
@@ -480,7 +661,7 @@ module.exports = function erp(page, data, mainWindow) {
     await page.waitForSelector("td[role='gridcell'] > a", { visible: true });
     await page.$eval("td[role='gridcell'] > a", (el) => el.click());
     await click(page, 'div > button[data-display="Permanent Invoice"]');
-    await browser.close();
+    // await browser.close();
   }
 
   automate();

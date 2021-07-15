@@ -108,13 +108,16 @@ const DeliveryOrders: React.FC = () => {
         switch (statusData.type) {
           case "INVOICE_CREATED": {
             updateStatus(statusData);
+            setLoading(false);
             break;
           }
           case "INSURANCE_CREATED": {
+            setLoading(false);
             updateStatus(statusData);
             break;
           }
           case "DONE": {
+            setLoading(false);
             updateStatus(statusData);
             break;
           }
@@ -344,9 +347,8 @@ const DeliveryOrders: React.FC = () => {
     try {
       setLoading(true);
       const status: any = await fetchDeliveryOrder();
-      if (status) {
+      if (status === "PENDING") {
         setShowDO(!showDO);
-        setLoading(false);
       }
     } catch (err) {
       console.log(err);
@@ -360,14 +362,11 @@ const DeliveryOrders: React.FC = () => {
       if (selected !== undefined) {
         await getCredentials();
         const status: any = await fetchDeliveryOrder();
-        if (status) {
+        if (status === "DO_CREATED") {
           window.api.send("toMain", {
             type: "CREATE_INVOICE",
             data: { ...deliveryOrders[selected], credentials },
           });
-          if (statusData.type) {
-            setLoading(false);
-          }
         }
       }
     } catch (err) {
@@ -384,7 +383,7 @@ const DeliveryOrders: React.FC = () => {
       if (selected !== undefined) {
         await getCredentials();
         const status: any = await fetchDeliveryOrder();
-        if (status) {
+        if (status === "INVOICE_CREATED") {
           window.api.send("toMain", {
             type: "CREATE_INSURANCE",
             data: {
@@ -393,8 +392,6 @@ const DeliveryOrders: React.FC = () => {
               credentials,
             },
           });
-          //console.log(JSON.stringify(uaerIDPassword), "Insurance Data Get!");
-          setLoading(false);
         }
       }
     } catch (err) {
@@ -408,14 +405,11 @@ const DeliveryOrders: React.FC = () => {
       setLoading(true);
       if (selected !== undefined) {
         const status: any = await fetchDeliveryOrder();
-        if (status) {
+        if (status === "INSURANCE_CREATED") {
           window.api.send("toMain", {
             type: "CREATE_REGISTRATION",
             data: deliveryOrders[selected],
           });
-          if (statusData.type) {
-            setLoading(false);
-          }
         }
       }
     } catch (err) {
@@ -429,6 +423,7 @@ const DeliveryOrders: React.FC = () => {
     copyStyles: true,
     onAfterPrint: () => {
       if (selected !== undefined) {
+        setLoading(false);
         setShowDO(false);
         updateStatus({
           data: deliveryOrders[selected].id,
@@ -443,6 +438,7 @@ const DeliveryOrders: React.FC = () => {
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
+        {showModal && getModal("DO" || "INVOICE")}
         {showDO && selected !== undefined && (
           <Modal
             isOpen={showDO}
