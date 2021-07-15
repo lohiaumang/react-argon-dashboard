@@ -44,10 +44,14 @@ import {
 } from "reactstrap";
 // core components
 import Header from "../../components/Headers/Header";
-import DeliveryOrderTable, {
+// import DeliveryOrderTable, {
+//   DeliveryOrder,
+//   UserInfo,
+// } from "../../components/Tables/DeliveryOrderTable";
+import InvoiceTable, {
   DeliveryOrder,
   UserInfo,
-} from "../../components/Tables/DeliveryOrderTable";
+} from "../../components/Tables/InvoiceTable";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 import SmallLoading from "../../components/Share/SmallLoading";
 import Loading from "../../components/Share/Loading";
@@ -347,7 +351,7 @@ const DeliveryOrders: React.FC = () => {
     try {
       setLoading(true);
       const status: any = await fetchDeliveryOrder();
-      if (status === "PENDING") {
+      if (status) {
         setShowDO(!showDO);
       }
     } catch (err) {
@@ -356,13 +360,14 @@ const DeliveryOrders: React.FC = () => {
   };
 
   //create invoice
-  const createInvoice = async (statusData: any) => {
+  const createInvoice = async () => {
+    debugger
     try {
       setLoading(true);
       if (selected !== undefined) {
         await getCredentials();
         const status: any = await fetchDeliveryOrder();
-        if (status === "DO_CREATED") {
+        if (status) {
           window.api.send("toMain", {
             type: "CREATE_INVOICE",
             data: { ...deliveryOrders[selected], credentials },
@@ -383,7 +388,7 @@ const DeliveryOrders: React.FC = () => {
       if (selected !== undefined) {
         await getCredentials();
         const status: any = await fetchDeliveryOrder();
-        if (status === "INVOICE_CREATED") {
+        if (status) {
           window.api.send("toMain", {
             type: "CREATE_INSURANCE",
             data: {
@@ -400,12 +405,12 @@ const DeliveryOrders: React.FC = () => {
   };
 
   //create erp data
-  const createRegistration = async (statusData: any) => {
+  const createRegistration = async () => {
     try {
       setLoading(true);
       if (selected !== undefined) {
         const status: any = await fetchDeliveryOrder();
-        if (status === "INSURANCE_CREATED") {
+        if (status) {
           window.api.send("toMain", {
             type: "CREATE_REGISTRATION",
             data: deliveryOrders[selected],
@@ -438,7 +443,7 @@ const DeliveryOrders: React.FC = () => {
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
-        {showModal && getModal("DO" || "INVOICE")}
+        {/* {showModal && getModal("DO" || "INVOICE")} */}
         {showDO && selected !== undefined && (
           <Modal
             isOpen={showDO}
@@ -455,7 +460,7 @@ const DeliveryOrders: React.FC = () => {
               Delivery Order
             </ModalHeader>
             <ModalBody className="px-4 py-0">
-              <DeliveryOrderTable
+              <InvoiceTable
                 ref={deliveryOrderTableRef}
                 deliveryOrder={deliveryOrders[selected]}
               />
