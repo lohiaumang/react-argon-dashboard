@@ -220,6 +220,13 @@ module.exports = function (appWindow, browser) {
         }
         break;
       }
+      case "DO_CREATED_STATUS": {
+        appWindow.webContents.send("fromMain", {
+          type: "DO_CREATED",
+          data: data
+        });
+        break;
+      }
 
       // Create ERP sale entry
       case "CREATE_INVOICE": {

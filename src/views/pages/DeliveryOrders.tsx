@@ -103,20 +103,23 @@ const DeliveryOrders: React.FC = () => {
           setDeliveryOrders(dOs);
           setLoadingPage(false);
         });
-      window.api.receive("fromMain", (data: any) => {
-        console.log(data.type)
-        switch (data.type) {
-         
+      window.api.receive("fromMain", (statusData: any) => {
+        //console.log(statusData);
+        switch (statusData.type) {
+          case "DO_CREATED": {
+            updateStatus(statusData);
+            break;
+          }
           case "INVOICE_CREATED": {
-            updateStatus(data)
+            updateStatus(statusData);
             break;
           }
           case "INSURANCE_CREATED": {
-            updateStatus(data)
+            updateStatus(statusData);
             break;
           }
           case "DONE": {
-            updateStatus(data)
+            updateStatus(statusData);
             break;
           }
         }
@@ -207,11 +210,11 @@ const DeliveryOrders: React.FC = () => {
       setSelected(index);
     }
   };
-
+  let selectedDoId: any;
   const deleteDeliveryOrder = () => {
     if (selected !== undefined) {
       const tempOrders = deliveryOrders;
-      const selectedDoId = deliveryOrders[selected].id;
+      selectedDoId = deliveryOrders[selected].id;
       tempOrders.splice(selected, 1);
 
       setSelected(undefined);
@@ -225,20 +228,16 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-//update status
-const updateStatus = (data:any) => {
-  debugger
-  console.log(data.data);
-  console.log(data.type);
-
+  //update status
+  const updateStatus = (data: any) => {
+    console.log(data);
     db.collection("deliveryOrders").doc(data.data).set(
       {
         status: data.type,
       },
       { merge: true }
     );
- 
-};
+  };
 
   // TODO: Make fetching data if it does not exist common
   const fetchDeliveryOrder = () => {
@@ -346,7 +345,15 @@ const updateStatus = (data:any) => {
     getSetUserData(currentUser.uid);
   }
 
-  //create DO
+  // //create DO
+  // const doStatus = async () => {
+  //   window.api.send("fromMain", {
+  //     type: "DO_CREATED",
+  //     data:  selectedDoId,
+  //     // data:"INSURANCE_CREATED",
+  //   });
+  // };
+
   const createDO = async () => {
     try {
       setLoading(true);
@@ -361,7 +368,7 @@ const updateStatus = (data:any) => {
   };
 
   //create invoice
-  const createInvoice = async () => {
+  const createInvoice = async (statusData: any) => {
     try {
       setLoading(true);
       if (selected !== undefined) {
@@ -372,7 +379,9 @@ const updateStatus = (data:any) => {
             type: "CREATE_INVOICE",
             data: { ...deliveryOrders[selected], credentials },
           });
-          setLoading(false);
+          if (statusData.type) {
+            setLoading(false);
+          }
         }
       }
     } catch (err) {
@@ -408,7 +417,7 @@ const updateStatus = (data:any) => {
   };
 
   //create erp data
-  const createRegistration = async () => {
+  const createRegistration = async (statusData:any) => {
     try {
       setLoading(true);
       if (selected !== undefined) {
@@ -418,7 +427,9 @@ const updateStatus = (data:any) => {
             type: "CREATE_REGISTRATION",
             data: deliveryOrders[selected],
           });
-          setLoading(false);
+          if (statusData.type) {
+            setLoading(false);
+          }
         }
       }
     } catch (err) {
@@ -431,6 +442,15 @@ const updateStatus = (data:any) => {
     content: () => deliveryOrderTableRef.current,
     copyStyles: true,
   });
+
+  const createStaus = async () => {
+    if (selected !== undefined) {
+      window.api.send("toMain", {
+        type: "DO_CREATED_STATUS",
+        data: deliveryOrders[selected].id,
+      });
+    }
+  };
 
   return (
     <>
