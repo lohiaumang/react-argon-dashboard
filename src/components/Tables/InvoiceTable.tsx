@@ -57,7 +57,7 @@ export interface DeliveryOrder {
     frameNumber: string;
     engineNumber: string;
     modelName: string;
-    modelCategory:string;
+    modelCategory: string;
   };
   additionalInfo?: {
     hra: boolean;
@@ -72,7 +72,7 @@ export interface DeliveryOrder {
     inquiryType: string;
     financier?: string;
     downPayment?: string;
-    purchaseType:string;
+    purchaseType: string;
   };
   userInfo: UserInfo;
 }
@@ -105,11 +105,11 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
       ];
 
       let invoiceDate = new Date()
-      .toJSON()
-      .slice(0, 10)
-      .split("-")
-      .reverse()
-      .join("/");
+        .toJSON()
+        .slice(0, 10)
+        .split("-")
+        .reverse()
+        .join("/");
       //create DO
 
       // window.api.send("fromMain", {
@@ -422,7 +422,9 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                     <h5 className="m-0">Purchase Type</h5>
                   </Col>
                   <Col xs="8" className="px-1">
-                    <small>{props.deliveryOrder.additionalInfo.purchaseType.toUpperCase()}</small>
+                    <small>
+                      {props.deliveryOrder.additionalInfo.purchaseType.toUpperCase()}
+                    </small>
                   </Col>
                 </Row>
                 <Row>
@@ -430,7 +432,9 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                     <h5 className="m-0">Hypothecation</h5>
                   </Col>
                   <Col xs="8" className="px-1">
-                    <small>{props.deliveryOrder.additionalInfo.financier}</small>
+                    <small>
+                      {props.deliveryOrder.additionalInfo.financier}
+                    </small>
                   </Col>
                 </Row>
               </Col>
@@ -443,7 +447,9 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                     <h5 className="m-0">Model Code</h5>
                   </Col>
                   <Col xs="8" className="px-1">
-                    <small>{props.deliveryOrder.vehicleInfo.modelCategory}</small>
+                    <small>
+                      {props.deliveryOrder.vehicleInfo.modelCategory}
+                    </small>
                   </Col>
                 </Row>
 
@@ -471,7 +477,11 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                     <h5 className="m-0">Frame no</h5>
                   </Col>
                   <Col xs="8" className="px-1">
-                    <small><small>{props.deliveryOrder.vehicleInfo.frameNumber}</small></small>
+                    <small>
+                      <small>
+                        {props.deliveryOrder.vehicleInfo.frameNumber}
+                      </small>
+                    </small>
                   </Col>
                 </Row>
 
@@ -480,7 +490,9 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                     <h5>Engine No</h5>
                   </Col>
                   <Col xs="8" className="px-1">
-                    <small>{props.deliveryOrder.vehicleInfo.engineNumber}</small>
+                    <small>
+                      {props.deliveryOrder.vehicleInfo.engineNumber}
+                    </small>
                   </Col>
                 </Row>
               </Col>
@@ -533,17 +545,18 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                     <h5 className="m-0">Customer Temp Address:</h5>
                   </Col>
                   <Col xs="6" className="px-1">
-                  <small>
+                    <small>
                       {props.deliveryOrder.customerInfo.currLineOne}
                       {"   "}
                       {props.deliveryOrder.customerInfo.currLineTwo}
                     </small>
                     <br />
-                   
+
                     <small>
-                      {"PS"}{"  "}
+                      {"PS"}
+                      {"  "}
                       {props.deliveryOrder.customerInfo.currPS}
-                      </small>
+                    </small>
                     <br />
                     <small>
                       {props.deliveryOrder.customerInfo.currCity},{" "}
