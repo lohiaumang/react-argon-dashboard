@@ -498,27 +498,27 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
               <tbody>
                 <tr>
                   <th>CGST @ %</th>
-                  <td>Otto</td>
-                  <td>@mdo</td>
-                  <td>@mdo</td>
+                  <td>TODO</td>
+                  <td>TODO</td>
+                  <td>TODO</td>
                 </tr>
                 <tr>
                   <th>SGST @ %</th>
-                  <td>Thornton</td>
-                  <td>@fat</td>
-                  <td>@mdo</td>
+                  <td>TODO</td>
+                  <td>TODO</td>
+                  <td>TODO</td>
                 </tr>
                 <tr>
                   <th>Discount</th>
                   <td></td>
                   <td></td>
-                  <td>@mdo</td>
+                  <td>TODO</td>
                 </tr>
                 <tr>
                   <th>Amount in words</th>
                   <td></td>
                   <th>Total</th>
-                  <td>@mdo</td>
+                  <td>TODO</td>
                 </tr>
               </tbody>
             </Table>
@@ -594,39 +594,39 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
               <tbody>
                 <tr>
                   <th>Handling & Logistics Charge</th>
-                  <td>Otto</td>
-                  <td>@mdo</td>
-                  <td>@mdo</td>
+                  <td>TODO</td>
+                  <td>TODO</td>
+                  <td>TODO</td>
                 </tr>
                 <tr>
                   <th>CGST @ %</th>
-                  <td>Otto</td>
-                  <td>@mdo</td>
-                  <td>@mdo</td>
+                  <td>TODO</td>
+                  <td>TODO</td>
+                  <td>TODO</td>
                 </tr>
                 <tr>
                   <th>SGST @ %</th>
-                  <td>Thornton</td>
-                  <td>@fat</td>
-                  <td>@mdo</td>
+                  <td>TODO</td>
+                  <td>TODO</td>
+                  <td>TODO</td>
                 </tr>
                 <tr>
                   <th>Discount</th>
                   <td></td>
                   <td></td>
-                  <td>@mdo</td>
+                  <td>TODO</td>
                 </tr>
                 <tr>
                   <th>Amount in words</th>
                   <td></td>
                   <th>Total</th>
-                  <td>@mdo</td>
+                  <td>TODO</td>
                 </tr>
                 <tr>
                   <th>Amount in words</th>
                   <td></td>
                   <th>Grand Total</th>
-                  <td>@mdo</td>
+                  <td>TODO</td>
                 </tr>
               </tbody>
             </Table>
