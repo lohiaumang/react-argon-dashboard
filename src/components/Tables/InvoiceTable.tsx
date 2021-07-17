@@ -105,13 +105,14 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
       //   price + insurance + mvTax + postalCharge + extendedWarranty,
       // ];
 
-      let priceRS = converter.toWords(1920);
+      let handlingLogisticsCharge = converter.toWords(1920);
 
       let CGST = Math.round(props.deliveryOrder.additionalInfo.price * 0.14);
       let SGST = Math.round(props.deliveryOrder.additionalInfo.price * 0.14);
       let price = parseInt(props.deliveryOrder.additionalInfo.price);
       let totalPrice = Math.round(CGST + SGST + price);
-      let totalPriceInworld = converter.toWords(totalPrice);
+      let totalPriceInword = converter.toWords(totalPrice);
+      let grandTotalPriceInword = converter.toWords(totalPrice + 1920);
       //alert(totalPrice);
 
       let invoiceDate = new Date()
@@ -545,7 +546,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                 <tr>
                   <th>Amount in words</th>
                   <td>
-                    {"Rupee"} {totalPriceInworld}
+                    {"Rupee"} {totalPriceInword}
                   </td>
                   <th>Total</th>
                   <td>{totalPrice}</td>
@@ -650,7 +651,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                 <tr>
                   <th>Amount in words</th>
                   <td>
-                    {"Rupee"} {priceRS}
+                    {"Rupee"} {handlingLogisticsCharge}
                   </td>
                   <th>Total</th>
                   <td>1,920.00</td>
@@ -658,7 +659,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                 <tr>
                   <th>Amount in words</th>
                   <td>
-                    {"Rupee"} {priceRS}
+                    {"Rupee"} {grandTotalPriceInword}
                   </td>
                   <th>Grand Total</th>
                   <td>{totalPrice + 1920}</td>
