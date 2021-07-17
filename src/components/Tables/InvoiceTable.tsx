@@ -92,28 +92,14 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
       props.deliveryOrder.additionalInfo &&
       props.deliveryOrder.userInfo
     ) {
-      // const price = parseInt(props.deliveryOrder.additionalInfo.price);
-      // const insurance = parseInt(props.deliveryOrder.additionalInfo.insurance);
-      // const mvTax = parseInt(props.deliveryOrder.additionalInfo.mvTax);
-      // const postalCharge = parseInt(
-      //   props.deliveryOrder.additionalInfo.postalCharge
-      // );
-      // const extendedWarranty = parseInt(
-      //   props.deliveryOrder.additionalInfo.extendedWarranty
-      // );
-      // const total = [
-      //   price + insurance + mvTax + postalCharge + extendedWarranty,
-      // ];
-
-      let handlingLogisticsCharge = converter.toWords(1920);
-
-      let CGST = Math.round(props.deliveryOrder.additionalInfo.price * 0.14);
-      let SGST = Math.round(props.deliveryOrder.additionalInfo.price * 0.14);
-      let price = parseInt(props.deliveryOrder.additionalInfo.price);
-      let totalPrice = Math.round(CGST + SGST + price);
-      let totalPriceInword = converter.toWords(totalPrice);
-      let grandTotalPriceInword = converter.toWords(totalPrice + 1920);
-      //alert(totalPrice);
+    
+      const handlingLogisticsCharge = converter.toWords(1920);
+      const CGST = Math.round(props.deliveryOrder.additionalInfo.price * 0.14);
+      const SGST = Math.round(props.deliveryOrder.additionalInfo.price * 0.14);
+      const price = parseInt(props.deliveryOrder.additionalInfo.price);
+      const totalPrice = Math.round(CGST + SGST + price);
+      const totalPriceInword = converter.toWords(totalPrice);
+      const grandTotalPriceInword = converter.toWords(totalPrice + 1920);
 
       let invoiceDate = new Date()
         .toJSON()
@@ -121,27 +107,6 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
         .split("-")
         .reverse()
         .join("/");
-      //create DO
-
-      // window.api.send("fromMain", {
-      //   type: "DO_CREATED",
-      //   data:   props.deliveryOrder.id,
-      //   // data:"INSURANCE_CREATED",
-      // });
-
-      // window.api.once("close", function () {
-      //   debugger
-      //   window.api.send("fromMain", {
-      //     type: "DO_CREATED",
-      //     data:  props.deliveryOrder.id,
-      //     // data:"INSURANCE_CREATED",
-      //   });
-      // // });
-
-      // window.api.send("toMain", {
-      //   type: "DO_CREATED_STATUS",
-      //   data: props.deliveryOrder.id
-      // });
 
       return (
         <div className="delivery-order-table" ref={ref}>
