@@ -24,7 +24,6 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./assets/vendor/nucleo/css/nucleo.css";
 import "./assets/scss/argon-dashboard-react.scss";
 import "./assets/css/custom.css";
-import "./assets/css/inovoiceTable.css";
 
 import App from "./layouts/App";
 import firebase from "firebase/app";

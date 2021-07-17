@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Row, Col } from "reactstrap";
+const converter = require("number-to-words");
 
 export interface UserInfo {
   name: string;
@@ -65,7 +66,7 @@ export interface DeliveryOrder {
     accessories: string;
     postalCharge: string;
     ptfePolish: string;
-    price: string;
+    price: any;
     mvTax: string;
     extendedWarranty: string;
     insurance: string;
@@ -91,18 +92,27 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
       props.deliveryOrder.additionalInfo &&
       props.deliveryOrder.userInfo
     ) {
-      const price = parseInt(props.deliveryOrder.additionalInfo.price);
-      const insurance = parseInt(props.deliveryOrder.additionalInfo.insurance);
-      const mvTax = parseInt(props.deliveryOrder.additionalInfo.mvTax);
-      const postalCharge = parseInt(
-        props.deliveryOrder.additionalInfo.postalCharge
-      );
-      const extendedWarranty = parseInt(
-        props.deliveryOrder.additionalInfo.extendedWarranty
-      );
-      const total = [
-        price + insurance + mvTax + postalCharge + extendedWarranty,
-      ];
+      // const price = parseInt(props.deliveryOrder.additionalInfo.price);
+      // const insurance = parseInt(props.deliveryOrder.additionalInfo.insurance);
+      // const mvTax = parseInt(props.deliveryOrder.additionalInfo.mvTax);
+      // const postalCharge = parseInt(
+      //   props.deliveryOrder.additionalInfo.postalCharge
+      // );
+      // const extendedWarranty = parseInt(
+      //   props.deliveryOrder.additionalInfo.extendedWarranty
+      // );
+      // const total = [
+      //   price + insurance + mvTax + postalCharge + extendedWarranty,
+      // ];
+
+      let priceRS = converter.toWords(1920);
+
+      let CGST = Math.round(props.deliveryOrder.additionalInfo.price * 0.14);
+      let SGST = Math.round(props.deliveryOrder.additionalInfo.price * 0.14);
+      let price = parseInt(props.deliveryOrder.additionalInfo.price);
+      let totalPrice = Math.round(CGST + SGST + price);
+      let totalPriceInworld = converter.toWords(totalPrice);
+      //alert(totalPrice);
 
       let invoiceDate = new Date()
         .toJSON()
@@ -509,28 +519,36 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
               </thead>
               <tbody>
                 <tr>
-                  <th>CGST @ %</th>
-                  <td>TODO</td>
-                  <td>TODO</td>
-                  <td>TODO</td>
+                  <th>{props.deliveryOrder.vehicleInfo.modelName}</th>
+                  <td></td>
+                  <td>{props.deliveryOrder.additionalInfo.price}</td>
+                  <td>{props.deliveryOrder.additionalInfo.price}</td>
                 </tr>
                 <tr>
-                  <th>SGST @ %</th>
-                  <td>TODO</td>
-                  <td>TODO</td>
-                  <td>TODO</td>
+                  <th>CGST @ 14%</th>
+                  <td></td>
+                  <td></td>
+                  <td>{CGST}</td>
+                </tr>
+                <tr>
+                  <th>GST @ 14%</th>
+                  <td></td>
+                  <td></td>
+                  <td>{SGST}</td>
                 </tr>
                 <tr>
                   <th>Discount</th>
                   <td></td>
                   <td></td>
-                  <td>TODO</td>
+                  <td></td>
                 </tr>
                 <tr>
                   <th>Amount in words</th>
-                  <td></td>
+                  <td>
+                    {"Rupee"} {totalPriceInworld}
+                  </td>
                   <th>Total</th>
-                  <td>TODO</td>
+                  <td>{totalPrice}</td>
                 </tr>
               </tbody>
             </Table>
@@ -607,39 +625,43 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
               <tbody>
                 <tr>
                   <th>Handling & Logistics Charge</th>
-                  <td>TODO</td>
-                  <td>TODO</td>
-                  <td>TODO</td>
+                  <td>9967</td>
+                  <td>1627.00</td>
+                  <td>1627.00</td>
                 </tr>
                 <tr>
-                  <th>CGST @ %</th>
-                  <td>TODO</td>
-                  <td>TODO</td>
-                  <td>TODO</td>
+                  <th>CGST @ 9%</th>
+                  <td></td>
+                  <td></td>
+                  <td>146.43</td>
                 </tr>
                 <tr>
-                  <th>SGST @ %</th>
-                  <td>TODO</td>
-                  <td>TODO</td>
-                  <td>TODO</td>
+                  <th>GST @ 9%</th>
+                  <td></td>
+                  <td></td>
+                  <td>146.43</td>
                 </tr>
                 <tr>
                   <th>Discount</th>
                   <td></td>
                   <td></td>
-                  <td>TODO</td>
+                  <td></td>
                 </tr>
                 <tr>
                   <th>Amount in words</th>
-                  <td></td>
+                  <td>
+                    {"Rupee"} {priceRS}
+                  </td>
                   <th>Total</th>
-                  <td>TODO</td>
+                  <td>1,920.00</td>
                 </tr>
                 <tr>
                   <th>Amount in words</th>
-                  <td></td>
+                  <td>
+                    {"Rupee"} {priceRS}
+                  </td>
                   <th>Grand Total</th>
-                  <td>TODO</td>
+                  <td>{totalPrice + 1920}</td>
                 </tr>
               </tbody>
             </Table>
