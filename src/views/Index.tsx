@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 // node.js library that concatenates classes (strings)
 import classnames from "classnames";
 // javascipt plugin for creating charts
@@ -40,6 +40,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 
 import Header from "../components/Headers/Header";
+import MonthWiseDelevery from "../../src/components/Tables/MonthWiseDelevery";
 import { withFadeIn } from "../components/HOC/withFadeIn";
 import modelData from "../model-data";
 
@@ -68,33 +69,82 @@ import modelData from "../model-data";
 //   render() {
 //     const { activeNav, chartExample1Data } = this.state;
 const Index: React.FC = () => {
-  const [dateWiseData, setWiseData] = useState<any>([]);
+  const [dateWiseData, setDateWiseData] = useState<any>([]);
+  // const [deliveryOrders, setDeliveryOrders] = useState<any>([]);
+  const monthWiseDeliveryOrderTableRef =
+    useRef() as React.MutableRefObject<HTMLDivElement>;
   const dataCount = dateWiseData.length;
+  console.log(dateWiseData);
 
-  useEffect(() => {
-    const today = new Date();
-    const currentweek = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() - 30
-    );
-    firebase
-      .firestore()
-      .collection("deliveryOrders")
-      .where("createdOn", ">=", currentweek)
-      .where("createdOn", "<", today)
+  // useEffect(() => {
+  //   const today = new Date();
+  //   const currentweek = new Date(
+  //     today.getFullYear(),
+  //     today.getMonth(),
+  //     today.getDate() - 60
+  //   );
+  //   firebase
+  //     .firestore()
+  //     .collection("deliveryOrders")
+  //     .where("createdOn", ">=", currentweek)
+  //     .where("createdOn", "<", today)
 
-      .onSnapshot(function (querySnapshot) {
-        setWiseData(
-          querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            name: doc.data().name,
-            modelName: doc.data().modelName,
-            color: doc.data().color,
-          }))
-        );
-      });
-  }, []);
+  //     .onSnapshot(function (querySnapshot) {
+  //       setDateWiseData(
+  //         querySnapshot.docs.map((doc) => ({
+  //           id: doc.id,
+  //           name: doc.data().name,
+  //           modelName: doc.data().modelName,
+  //           color: doc.data().color,
+  //         }))
+  //       );
+  //     });
+  // }, []);
+
+  const currentUser = firebase.auth().currentUser;
+  // const pageSize = 10;
+  const getUserData = (uid: string) => {
+    useEffect(() => {
+      firebase
+        .firestore()
+        .collection("deliveryOrders")
+        .where("dealerId", "==", uid)
+        .where("active", "==", true)
+        //.where("createdOn", ">=", currentweek)
+        //.where("createdOn", "<", today)
+
+        .onSnapshot(function (querySnapshot) {
+          setDateWiseData(
+            querySnapshot.docs.map((doc) => ({
+              id: doc.id,
+              name: doc.data().name,
+              modelName: doc.data().modelName,
+              color: doc.data().color,
+              createdOn: doc.data().createdOn,
+            }))
+          );
+        });
+    }, []);
+  };
+
+  if (currentUser && currentUser.uid) {
+    getUserData(currentUser.uid);
+  }
+
+  const today = new Date();
+  const currentMonth = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - 30
+  );
+  const todayDate = new Date(today).getTime();
+  const monthDay = new Date(currentMonth).getTime();
+  const monthWiseData = dateWiseData.filter(
+    (d: { createdOn: string | number | Date }) => {
+      let time = new Date(d.createdOn).getTime();
+      return monthDay < time && time < todayDate;
+    }
+  );
 
   // monthUiseData();
   return (
@@ -188,7 +238,7 @@ const Index: React.FC = () => {
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">Month Wise Customer Details</h3>
+                    <h3 className="mb-0">Month Wise Order Details</h3>
                   </div>
                   {/* <div className="col text-right">
                     <Button
@@ -202,38 +252,10 @@ const Index: React.FC = () => {
                   </div> */}
                 </Row>
               </CardHeader>
-              <Table className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
-                  <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Model Name</th>
-                    <th scope="col">Color</th>
-                    <th scope="col">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {dateWiseData.map((curElem: any) => {
-                    return (
-                      <tr key={curElem.id}>
-                        <th scope="row">{curElem.name}</th>
-                        <td>{curElem.modelName}</td>
-                        <td>{curElem.color}</td>
-                        <td className="text-right">
-                          <Button
-                            className="small-button-width"
-                            color="danger"
-                            size="sm"
-                            //onClick={() => deleteUser(curElem.id)}
-                          >
-                            {/* {Deleteloading ? <Loading /> : "Delete"} */}
-                            Delete
-                          </Button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </Table>
+              <MonthWiseDelevery
+                ref={monthWiseDeliveryOrderTableRef}
+                monthWiseDeliveryOrder={monthWiseData}
+              />
             </Card>
           </Col>
           <Col xl="4">
