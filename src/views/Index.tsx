@@ -258,6 +258,31 @@ const Index: React.FC = () => {
               />
             </Card>
           </Col>
+          <Col className="mb-5 mb-xl-0" xl="8">
+            <Card className="shadow weektable">
+              <CardHeader className="border-0">
+                <Row className="align-items-center">
+                  <div className="col">
+                    <h3 className="mb-0">Month Wise Order Details</h3>
+                  </div>
+                  {/* <div className="col text-right">
+                    <Button
+                      color="primary"
+                      href="#pablo"
+                      onClick={(e) => e.preventDefault()}
+                      size="sm"
+                    >
+                      See all
+                    </Button>
+                  </div> */}
+                </Row>
+              </CardHeader>
+              <MonthWiseDelevery
+                ref={monthWiseDeliveryOrderTableRef}
+                monthWiseDeliveryOrder={monthWiseData}
+              />
+            </Card>
+          </Col>
           <Col xl="4">
             <Card className="shadow">
               <CardHeader className="border-0">
