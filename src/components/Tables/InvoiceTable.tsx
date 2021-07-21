@@ -391,7 +391,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr style={{fontSize : '9px'}}>
                 <th style={{fontSize : '9px'}}>{props.deliveryOrder.vehicleInfo.modelName}</th>
                 <td style={{fontSize : '9px'}}></td>
                 <td style={{fontSize : '9px'}}>{props.deliveryOrder.additionalInfo.price}</td>

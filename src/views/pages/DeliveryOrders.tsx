@@ -442,6 +442,12 @@ const DeliveryOrders: React.FC = () => {
     },
   });
 
+  //close model onclick on close button
+  const closeModel = async () => {
+    setShowModal(!showModal);
+    setLoading(false);
+  };
+
   return (
     <>
       <Header />
@@ -482,10 +488,7 @@ const DeliveryOrders: React.FC = () => {
               <Button color="primary" onClick={printPage}>
                 Print
               </Button>{" "}
-              <Button
-                color="secondary"
-                onClick={() => setShowModal(!showModal)}
-              >
+              <Button color="secondary" onClick={() => closeModel()}>
                 Close
               </Button>
             </ModalFooter>
