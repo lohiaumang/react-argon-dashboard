@@ -130,6 +130,15 @@ body {
 .delivery-order-table td {
   padding: 0.5em;
 }
+.weektable{
+  margin-top: 20px;
+}
+
+.font{
+ font-size: small;
+}
+
+ 
 
 @page {
   size: auto;

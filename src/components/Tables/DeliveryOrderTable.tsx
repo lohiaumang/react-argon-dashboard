@@ -57,6 +57,7 @@ export interface DeliveryOrder {
     frameNumber: string;
     engineNumber: string;
     modelName: string;
+    modelCategory: string;
   };
   additionalInfo?: {
     hra: boolean;
@@ -101,6 +102,27 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
       const total = [
         price + insurance + mvTax + postalCharge + extendedWarranty,
       ];
+      //create DO
+
+      // window.api.send("fromMain", {
+      //   type: "DO_CREATED",
+      //   data:   props.deliveryOrder.id,
+      //   // data:"INSURANCE_CREATED",
+      // });
+
+      // window.api.once("close", function () {
+      //   debugger
+      //   window.api.send("fromMain", {
+      //     type: "DO_CREATED",
+      //     data:  props.deliveryOrder.id,
+      //     // data:"INSURANCE_CREATED",
+      //   });
+      // // });
+
+      // window.api.send("toMain", {
+      //   type: "DO_CREATED_STATUS",
+      //   data: props.deliveryOrder.id
+      // });
 
       return (
         <div className="delivery-order-table" ref={ref}>

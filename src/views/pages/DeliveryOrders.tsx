@@ -48,6 +48,7 @@ import DeliveryOrderTable, {
   DeliveryOrder,
   UserInfo,
 } from "../../components/Tables/DeliveryOrderTable";
+import InvoiceTable from "../../components/Tables/InvoiceTable";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 import SmallLoading from "../../components/Share/SmallLoading";
 import Loading from "../../components/Share/Loading";
@@ -68,7 +69,7 @@ const DeliveryOrders: React.FC = () => {
     useRef() as React.MutableRefObject<HTMLDivElement>;
   const [deliveryOrders, setDeliveryOrders] = useState<DeliveryOrder[]>([]);
   const [selected, setSelected] = useState<number>();
-  const [showDO, setShowDO] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingPage, setLoadingPage] = useState<boolean>(true);
   const [dropdownButton, setDropdownButton] = useState(false);
@@ -95,14 +96,48 @@ const DeliveryOrders: React.FC = () => {
       db.collection("deliveryOrders")
         .where("dealerId", "==", dealerId)
         .where("active", "==", true)
-        .onSnapshot(function (querySnapshot) {
-          const dOs: any = querySnapshot.docs.map((doc) => ({
-            ...doc.data(),
-            id: doc.id,
-          }));
-          setDeliveryOrders(dOs);
-          setLoadingPage(false);
-        });
+        // .get().then((docSnaps) => {
+        //   docSnaps.forEach((doc) => {
+        //     const dOs: any = doc.data();
+        //     dOs[doc.id] = doc.data();
+        //     setDeliveryOrders(dOs);
+        //    setLoadingPage(false);
+        //   });
+          
+        // });
+      .onSnapshot(function (querySnapshot) {
+        const dOs: any = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+        setDeliveryOrders(dOs);
+        setLoadingPage(false);
+      });
+      window.api.receive("fromMain", (statusData: any) => {
+        console.log(statusData);
+        debugger;
+        switch (statusData.type) {
+          case "INVOICE_CREATED": {
+            setShowModal(!showModal);
+            if(showModal==true){
+              updateStatus(statusData);
+            }
+            
+            setLoading(false);
+            break;
+          }
+          case "INSURANCE_CREATED": {
+            setLoading(false);
+            updateStatus(statusData);
+            break;
+          }
+          case "DONE": {
+            setLoading(false);
+            updateStatus(statusData);
+            break;
+          }
+        }
+      });
     }
   }, []);
 
@@ -189,11 +224,11 @@ const DeliveryOrders: React.FC = () => {
       setSelected(index);
     }
   };
-
+  let selectedDoId: any;
   const deleteDeliveryOrder = () => {
     if (selected !== undefined) {
       const tempOrders = deliveryOrders;
-      const selectedDoId = deliveryOrders[selected].id;
+      selectedDoId = deliveryOrders[selected].id;
       tempOrders.splice(selected, 1);
 
       setSelected(undefined);
@@ -205,6 +240,16 @@ const DeliveryOrders: React.FC = () => {
         { merge: true }
       );
     }
+  };
+
+  //update status
+  const updateStatus = (data: any) => {
+    db.collection("deliveryOrders").doc(data.data).set(
+      {
+        status: data.type,
+      },
+      { merge: true }
+    );
   };
 
   // TODO: Make fetching data if it does not exist common
@@ -313,14 +358,12 @@ const DeliveryOrders: React.FC = () => {
     getSetUserData(currentUser.uid);
   }
 
-  //create DO
   const createDO = async () => {
     try {
       setLoading(true);
       const status: any = await fetchDeliveryOrder();
       if (status) {
-        setShowDO(!showDO);
-        setLoading(false);
+        setShowModal(!showModal);
       }
     } catch (err) {
       console.log(err);
@@ -337,11 +380,9 @@ const DeliveryOrders: React.FC = () => {
         if (status) {
           window.api.send("toMain", {
             type: "CREATE_INVOICE",
-            data: {...deliveryOrders[selected],
-                      credentials
-            },
+            data: { ...deliveryOrders[selected], credentials },
           });
-          setLoading(false);
+          //setShowModal(!showModal);
         }
       }
     } catch (err) {
@@ -367,8 +408,6 @@ const DeliveryOrders: React.FC = () => {
               credentials,
             },
           });
-          //console.log(JSON.stringify(uaerIDPassword), "Insurance Data Get!");
-          setLoading(false);
         }
       }
     } catch (err) {
@@ -387,7 +426,6 @@ const DeliveryOrders: React.FC = () => {
             type: "CREATE_REGISTRATION",
             data: deliveryOrders[selected],
           });
-          setLoading(false);
         }
       }
     } catch (err) {
@@ -399,17 +437,34 @@ const DeliveryOrders: React.FC = () => {
   const printPage = useReactToPrint({
     content: () => deliveryOrderTableRef.current,
     copyStyles: true,
+    onAfterPrint: () => {
+      if (selected !== undefined) {
+        setLoading(false);
+        setShowModal(false);
+        updateStatus({
+          data: deliveryOrders[selected].id,
+          type: "DO_CREATED",
+        });
+      }
+    },
   });
+
+  //close model onclick on close button
+  const closeModel = async () => {
+    setShowModal(!showModal);
+    setLoading(false);
+  };
 
   return (
     <>
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
-        {showDO && selected !== undefined && (
+        {/* {showModal && getModal("DO" || "INVOICE")} */}
+        {showModal && selected !== undefined && (
           <Modal
-            isOpen={showDO}
-            toggle={() => setShowDO(!showDO)}
+            isOpen={showModal}
+            toggle={() => setShowModal(!showModal)}
             backdrop="static"
             keyboard={false}
             size="lg"
@@ -417,21 +472,30 @@ const DeliveryOrders: React.FC = () => {
             <ModalHeader
               className="p-4"
               tag="h3"
-              toggle={() => setShowDO(!showDO)}
+              toggle={() => setShowModal(!showModal)}
             >
-              Delivery Order
+              {deliveryOrders[selected].status === "PENDING"
+                ? "Delivery Order"
+                : "Invoice"}
             </ModalHeader>
             <ModalBody className="px-4 py-0">
-              <DeliveryOrderTable
-                ref={deliveryOrderTableRef}
-                deliveryOrder={deliveryOrders[selected]}
-              />
+              {deliveryOrders[selected].status === "PENDING" ? (
+                <DeliveryOrderTable
+                  ref={deliveryOrderTableRef}
+                  deliveryOrder={deliveryOrders[selected]}
+                />
+              ) : (
+                <InvoiceTable
+                  ref={deliveryOrderTableRef}
+                  deliveryOrder={deliveryOrders[selected]}
+                />
+              )}
             </ModalBody>
             <ModalFooter>
               <Button color="primary" onClick={printPage}>
                 Print
               </Button>{" "}
-              <Button color="secondary" onClick={() => setShowDO(!showDO)}>
+              <Button color="secondary" onClick={() => closeModel()}>
                 Close
               </Button>
             </ModalFooter>
@@ -466,10 +530,9 @@ const DeliveryOrders: React.FC = () => {
               </CardHeader>
               {loadingPage ? (
                 <>
-                  <div className="w-100 d-flex justify-content-center">
+                  <div className="w-100 my-4 d-flex justify-content-center">
                     <Loading />
                   </div>
-                  <hr className="my-4" />
                 </>
               ) : (
                 <div>

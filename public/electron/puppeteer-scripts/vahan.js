@@ -1,17 +1,24 @@
-module.exports = function vahan(page, data, win) {
+module.exports = function vahan(page, data, mainWindow) {
   const path = require("path");
   const fetch = require("node-fetch");
   const _ = require("get-safe");
   // Imports the Google Cloud client library
   const vision = require("@google-cloud/vision");
-  console.log(data);
+  //console.log(data);
 
   const timeout = 10000000;
   page.setDefaultTimeout(timeout);
   page.setDefaultNavigationTimeout(timeout);
 
   // Extract invoice date
-  let invoiceDateArray = data["Invoice Date"].split(" ")[0].split("/");
+
+  let deliveryDate = new Date()
+  .toJSON()
+  .slice(0, 10)
+  .split("-")
+  .reverse()
+  .join("/");
+  let invoiceDateArray = deliveryDate.split(" ")[0].split("/");
 
   if (invoiceDateArray[2].length < 4) {
     invoiceDateArray[2] = `20${invoiceDateArray[2]}`;
@@ -61,16 +68,20 @@ module.exports = function vahan(page, data, win) {
     // return Math.random() * 100;
   }
 
+  const {
+    credentials: { username, password, otp },
+  } = data;
+
   const automate = async function () {
     try {
       if (
-        dealerData["vahanUsername"] &&
-        dealerData["vahanPassword"] &&
-        dealerData["vahanOtp"]
+        username &&
+        password &&
+        otp
       ) {
         await page.waitForSelector("#user_id", { visible: true });
         await waitForRandom();
-        await page.type("#user_id", dealerData["vahanUsername"], {
+        await page.type("#user_id", username, {
           delay: randomTypeDelay(),
         });
         // let captcha = await page.$('#loginPanel img.bottom-space');
@@ -102,14 +113,14 @@ module.exports = function vahan(page, data, win) {
 
         await page.waitForSelector("#passwordID", { visible: true });
         await waitForRandom();
-        await page.type("#passwordID", dealerData["vahanPassword"], {
+        await page.type("#passwordID", password, {
           delay: randomTypeDelay(),
         });
         await waitForRandom();
         await page.click("#submit_form");
         await page.waitForSelector("#otp_text", { visible: true });
         await waitForRandom();
-        await page.type("#otp_text", dealerData["vahanOtp"], {
+        await page.type("#otp_text", otp, {
           delay: randomTypeDelay(),
         });
         await waitForRandom();
@@ -126,23 +137,23 @@ module.exports = function vahan(page, data, win) {
       await waitForRandom();
       await page.click("#pending_action");
 
-      win.webContents.send("update-progress-bar", ["10%", "vahan"]);
+      //win.webContents.send("update-progress-bar", ["10%", "vahan"]);
 
       await page.waitForSelector("#chasi_no_new_entry", { visible: true });
       await waitForRandom();
-      await page.type("#chasi_no_new_entry", _("Frame #", data), {
+      await page.type("#chasi_no_new_entry", data.vehicleInfo.frameNumber , {
         delay: randomTypeDelay(),
       });
       await waitForRandom();
       await page.type(
         "#eng_no_new_entry",
-        data["Engine #"].substr(data["Engine #"].length - 5),
+        data.vehicleInfo.engineNumber.substr(data.vehicleInfo.engineNumber.length - 5),
         { delay: randomTypeDelay() }
       );
       await waitForRandom();
       await page.click("#get_dtls_btn");
 
-      win.webContents.send("update-progress-bar", ["20%", "vahan"]);
+      //win.webContents.send("update-progress-bar", ["20%", "vahan"]);
 
       await page.waitForSelector("#workbench_tabview\\:purchase_dt_input", {
         visible: true,
@@ -199,7 +210,7 @@ module.exports = function vahan(page, data, win) {
       await waitForRandom();
       await page.type(
         "#workbench_tabview\\:tf_owner_name",
-        `${data["Customer First Name"]} ${data["Customer Last Name"]}`,
+        `${data.customerInfo.firstName} ${data.customerInfo.lastName}`,
         { delay: randomTypeDelay() }
       );
       await waitForRandom();
@@ -210,7 +221,7 @@ module.exports = function vahan(page, data, win) {
       await waitForRandom();
       await page.click("#workbench_tabview\\:tf_owner_cd_11");
       await waitForRandom();
-      await page.type("#workbench_tabview\\:tf_f_name", data["Relative Name"], {
+      await page.type("#workbench_tabview\\:tf_f_name", data.customerInfo.swdo, {
         delay: randomTypeDelay(),
       });
       await waitForRandom();
@@ -225,30 +236,30 @@ module.exports = function vahan(page, data, win) {
         "#workbench_tabview\\:tf_mobNo",
         (el) => (el.value = "")
       );
-      await page.type("#workbench_tabview\\:tf_mobNo", data["Mobile Phone #"], {
+      await page.type("#workbench_tabview\\:tf_mobNo", data.customerInfo.phoneNo, {
         delay: randomTypeDelay(),
       });
       await waitForRandom();
 
-      win.webContents.send("update-progress-bar", ["30%", "vahan"]);
+      //win.webContents.send("update-progress-bar", ["30%", "vahan"]);
 
       await page.type(
         "#workbench_tabview\\:tf_c_add1",
-        data["Address Line 1"].substring(0, 36),
+        data.customerInfo.currLineOne.substring(0, 36),
         { delay: randomTypeDelay() }
       );
       // Filling current address.
       await fetch_retry(
-        `https://api.postalpincode.in/pincode/${data["Zip Code"]}`,
+        `https://api.postalpincode.in/pincode/${data.customerInfo.currPostal}`,
         {},
         5
       ).then(async ([{ Status, PostOffice }]) => {
         // Fetching district and police station data
         if (Status === "Success" && PostOffice[0]) {
-          if (data["City"]) {
+          if (data.customerInfo.currCity) {
             await page.type(
               "#workbench_tabview\\:tf_c_add2",
-              data["City"].substring(0, 36),
+              data.customerInfo.currCity.substring(0, 36),
               { delay: randomTypeDelay() }
             );
           } else {
@@ -261,7 +272,7 @@ module.exports = function vahan(page, data, win) {
           await waitForRandom();
           await page.type(
             "#workbench_tabview\\:tf_c_add3",
-            data["Address Line 2"].substring(0, 36),
+            data.customerInfo.currLineTwo.substring(0, 36),
             { delay: randomTypeDelay() }
           );
           await waitForRandom();
@@ -297,29 +308,30 @@ module.exports = function vahan(page, data, win) {
           );
           await page.type(
             "#workbench_tabview\\:tf_c_pincode",
-            data["Zip Code"],
+            data.customerInfo.currPostal,
             { delay: randomTypeDelay() }
           );
         }
       });
+      ///////////////
       await waitForRandom();
       await page.type(
         "#workbench_tabview\\:tf_p_add1",
-        data["Temporary Address"].substring(0, 36),
+        data.customerInfo.permLineOne.substring(0, 36),
         { delay: randomTypeDelay() }
       );
       // Filling permanent address
       await fetch_retry(
-        `https://api.postalpincode.in/pincode/${data["Temporary Postal Code"]}`,
+        `https://api.postalpincode.in/pincode/${data.customerInfo.permPostal}`,
         {},
         5
       ).then(async ([{ Status, PostOffice }]) => {
         // Fetching district and police station data
         if (Status === "Success" && PostOffice[0]) {
-          if (data["Temporary City"]) {
+          if (data.customerInfo.permCity) {
             await page.type(
               "#workbench_tabview\\:tf_p_add2",
-              data["Temporary City"].substring(0, 36),
+              data.customerInfo.permCity.substring(0, 36),
               { delay: randomTypeDelay() }
             );
           } else {
@@ -332,7 +344,7 @@ module.exports = function vahan(page, data, win) {
           await waitForRandom();
           await page.type(
             "#workbench_tabview\\:tf_p_add3",
-            data["Temporary Address2"].substring(0, 36),
+            data.customerInfo.permLineTwo.substring(0, 36),
             { delay: randomTypeDelay() }
           );
           await waitForRandom();
@@ -368,14 +380,14 @@ module.exports = function vahan(page, data, win) {
           );
           await page.type(
             "#workbench_tabview\\:tf_p_pincode",
-            data["Temporary Postal Code"],
+            data.customerInfo.permPostal,
             { delay: randomTypeDelay() }
           );
         }
       });
       await waitForRandom();
 
-      win.webContents.send("update-progress-bar", ["40%", "vahan"]);
+     // win.webContents.send("update-progress-bar", ["40%", "vahan"]);
 
       await page.click("#workbench_tabview\\:partial_vh_class");
       await page.waitForSelector(
@@ -407,7 +419,7 @@ module.exports = function vahan(page, data, win) {
       await page.click("#j_idt96");
       await waitForRandom();
 
-      win.webContents.send("update-progress-bar", ["50%", "vahan"]);
+     // win.webContents.send("update-progress-bar", ["50%", "vahan"]);
 
       // Enter vehicle details
       await page.waitForSelector("a[href='#workbench_tabview:veh_info_tab']", {
@@ -433,96 +445,96 @@ module.exports = function vahan(page, data, win) {
       await page.click("#workbench_tabview\\:tableTaxMode\\:1\\:taxModeType_1");
       await waitForRandom();
 
-      win.webContents.send("update-progress-bar", ["70%", "vahan"]);
+     // win.webContents.send("update-progress-bar", ["70%", "vahan"]);
 
       // Enter insurance details
-      await page.click("a[href='#workbench_tabview\\:HypothecationOwner']");
-      await waitForRandom();
-      await page.click("#workbench_tabview\\:ins_type");
-      await waitForRandom();
-      await page.waitForSelector("#workbench_tabview\\:ins_type_4");
-      await page.click("#workbench_tabview\\:ins_type_4");
-      await waitForRandom();
-      await page.click("#workbench_tabview\\:ins_cd");
-      await page.waitForSelector("#workbench_tabview\\:ins_cd_filter");
-      await page.type(
-        "#workbench_tabview\\:ins_cd_filter",
-        data["Insurance Name"],
-        { delay: randomTypeDelay() }
-      );
-      await waitForRandom();
-      await page.click(
-        "#workbench_tabview\\:ins_cd_items > li:not([style='display: none;'])"
-      );
-      await page.type(
-        "#workbench_tabview\\:policy_no",
-        data["Policy No"] || "9898989898989898",
-        { delay: randomTypeDelay() }
-      );
-      await waitForRandom();
-      await page.waitForSelector("#workbench_tabview\\:ins_from_input", {
-        visible: true,
-      });
-      await page.focus("#workbench_tabview\\:ins_from_input");
-      await page.waitForSelector("#ui-datepicker-div", { visible: true });
-      await page.waitForSelector(".ui-datepicker-month");
-      monthOptions = await page.$$eval(
-        ".ui-datepicker-month > option",
-        (options) =>
-          options.map((option) => ({
-            value: option.value,
-            name: option.textContent,
-          }))
-      );
-      month = monthOptions.find(
-        (monthOption) => months[invoiceDate.getMonth()] === monthOption.name
-      );
-      await page.select(".ui-datepicker-month", month.value);
-      await page.waitForSelector(".ui-datepicker-year");
-      yearOptions = await page.$$eval(
-        ".ui-datepicker-year > option",
-        (options) =>
-          options.map((option) => ({
-            value: option.value,
-            name: option.textContent,
-          }))
-      );
-      year = yearOptions.find(
-        (yearOption) => invoiceDate.getFullYear().toString() === yearOption.name
-      );
-      await page.select(".ui-datepicker-year", year.value);
-      await page.waitForSelector("#ui-datepicker-div tbody", { visible: true });
-      dates = await page.$$eval("#ui-datepicker-div tbody td a", (options) =>
-        options.map((option) => option.textContent)
-      );
-      dateIndex = dates.findIndex(
-        (date) => date === invoiceDate.getDate().toString()
-      );
-      await page.evaluate(
-        (dateIndex) =>
-          document
-            .querySelectorAll(`#ui-datepicker-div tbody td a`)
-            [dateIndex].click(),
-        dateIndex
-      );
-      await page.waitForSelector("#ui-datepicker-div", { hidden: true });
-      await waitForRandom();
-      await page.click("#workbench_tabview\\:ins_year");
-      await waitForRandom();
-      await page.waitForSelector("#workbench_tabview\\:ins_year_5", {
-        visible: true,
-      });
-      await waitForRandom();
-      await page.click("#workbench_tabview\\:ins_year_5");
-      await waitForRandom();
-      await page.$eval("#workbench_tabview\\:idv", (el) => (el.value = ""));
-      await page.type("#workbench_tabview\\:idv", data["IDV"] || "", {
-        delay: randomTypeDelay(),
-      });
+      // await page.click("a[href='#workbench_tabview\\:HypothecationOwner']");
+      // await waitForRandom();
+      // await page.click("#workbench_tabview\\:ins_type");
+      // await waitForRandom();
+      // await page.waitForSelector("#workbench_tabview\\:ins_type_4");
+      // await page.click("#workbench_tabview\\:ins_type_4");
+      // await waitForRandom();
+      // await page.click("#workbench_tabview\\:ins_cd");
+      // await page.waitForSelector("#workbench_tabview\\:ins_cd_filter");
+      // await page.type(
+      //   "#workbench_tabview\\:ins_cd_filter",
+      //   data.additionalInfo.insuranceName,
+      //   { delay: randomTypeDelay() }
+      // );
+      // await waitForRandom();
+      // await page.click(
+      //   "#workbench_tabview\\:ins_cd_items > li:not([style='display: none;'])"
+      // );
+      // await page.type(
+      //   "#workbench_tabview\\:policy_no",
+      //   data["Policy No"] || "9898989898989898", //todo policy no
+      //   { delay: randomTypeDelay() }
+      // );
+      // await waitForRandom();
+      // await page.waitForSelector("#workbench_tabview\\:ins_from_input", {
+      //   visible: true,
+      // });
+      // await page.focus("#workbench_tabview\\:ins_from_input");
+      // await page.waitForSelector("#ui-datepicker-div", { visible: true });
+      // await page.waitForSelector(".ui-datepicker-month");
+      // monthOptions = await page.$$eval(
+      //   ".ui-datepicker-month > option",
+      //   (options) =>
+      //     options.map((option) => ({
+      //       value: option.value,
+      //       name: option.textContent,
+      //     }))
+      // );
+      // month = monthOptions.find(
+      //   (monthOption) => months[invoiceDate.getMonth()] === monthOption.name
+      // );
+      // await page.select(".ui-datepicker-month", month.value);
+      // await page.waitForSelector(".ui-datepicker-year");
+      // yearOptions = await page.$$eval(
+      //   ".ui-datepicker-year > option",
+      //   (options) =>
+      //     options.map((option) => ({
+      //       value: option.value,
+      //       name: option.textContent,
+      //     }))
+      // );
+      // year = yearOptions.find(
+      //   (yearOption) => invoiceDate.getFullYear().toString() === yearOption.name
+      // );
+      // await page.select(".ui-datepicker-year", year.value);
+      // await page.waitForSelector("#ui-datepicker-div tbody", { visible: true });
+      // dates = await page.$$eval("#ui-datepicker-div tbody td a", (options) =>
+      //   options.map((option) => option.textContent)
+      // );
+      // dateIndex = dates.findIndex(
+      //   (date) => date === invoiceDate.getDate().toString()
+      // );
+      // await page.evaluate(
+      //   (dateIndex) =>
+      //     document
+      //       .querySelectorAll(`#ui-datepicker-div tbody td a`)
+      //       [dateIndex].click(),
+      //   dateIndex
+      // );
+      // await page.waitForSelector("#ui-datepicker-div", { hidden: true });
+      // await waitForRandom();
+      // await page.click("#workbench_tabview\\:ins_year");
+      // await waitForRandom();
+      // await page.waitForSelector("#workbench_tabview\\:ins_year_5", {
+      //   visible: true,
+      // });
+      // await waitForRandom();
+      // await page.click("#workbench_tabview\\:ins_year_5");
+      // await waitForRandom();
+      // await page.$eval("#workbench_tabview\\:idv", (el) => (el.value = ""));
+      // await page.type("#workbench_tabview\\:idv", data["IDV"] || "", {//todo idv
+      //   delay: randomTypeDelay(),
+      // });
 
       // Enter hypothecation details
-      if (data["Hypothecation"] !== "") {
-        win.webContents.send("update-progress-bar", ["80%", "vahan"]);
+      if (data.additionalInfo.financier !== "") {
+        //win.webContents.send("update-progress-bar", ["80%", "vahan"]);
 
         await page.click("#workbench_tabview\\:isHypo");
         await waitForRandom();
@@ -539,16 +551,16 @@ module.exports = function vahan(page, data, win) {
         await waitForRandom();
         await page.type(
           "#workbench_tabview\\:hpa_fncr_name",
-          data["Hypothecation"],
+          data.additionalInfo.financier,
           { delay: randomTypeDelay() }
         );
         await waitForRandom();
-        await page.type("#workbench_tabview\\:hpa_fncr_add1", data["City"], {
+        await page.type("#workbench_tabview\\:hpa_fncr_add1", data.customerInfo.currCity, {
           delay: randomTypeDelay(),
         });
 
         await fetch_retry(
-          `https://api.postalpincode.in/pincode/${data["Zip Code"]}`,
+          `https://api.postalpincode.in/pincode/${data.customerInfo.currPostal}`,
           {},
           5
         ).then(async ([{ Status, PostOffice }]) => {
@@ -603,7 +615,7 @@ module.exports = function vahan(page, data, win) {
         });
       }
 
-      win.webContents.send("update-progress-bar", ["100%", "vahan"]);
+     // win.webContents.send("update-progress-bar", ["100%", "vahan"]);
     } catch (err) {
       console.log(err);
     }

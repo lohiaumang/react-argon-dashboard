@@ -26,7 +26,11 @@ module.exports = function (appWindow, browser) {
     measurementId: "G-G3NJR57E7H",
   };
 
-  firebase.initializeApp(firebaseConfig);
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  } else {
+    firebase.app(); // if already initialized, use that one
+  }
 
   ipc.on("toMain", async (event, args) => {
     let { type = "", data = {} } = args;
@@ -54,7 +58,7 @@ module.exports = function (appWindow, browser) {
         const createUserFirestore = functions.httpsCallable("createUserIndia");
         createUserFirestore(data)
           .then((resp) => {
-            console.log("User created!", JSON.stringify(resp.data));
+            // console.log("User created!", JSON.stringify(resp.data));
             const uid = resp.data.uid || "";
             delete data.password;
             fs.writeFileSync(
@@ -90,7 +94,8 @@ module.exports = function (appWindow, browser) {
         } catch (err) {
           userData = null;
         }
-        if (userData == null) {
+
+        if (userData === null || userData.uid !== data.uid) {
           firebase
             .firestore()
             .collection("users")
@@ -151,7 +156,7 @@ module.exports = function (appWindow, browser) {
         //  console.log("Step", step++, data);
         createUserDataFirestore(data)
           .then((resp) => {
-            console.log("User created!", JSON.stringify(resp.data));
+            // console.log("User created!", JSON.stringify(resp.data));
             // console.log("Step", step++, resp.data);
             appWindow.webContents.send("fromMain", {
               type: "CREATE_USER_SUCCESS",
@@ -256,6 +261,13 @@ module.exports = function (appWindow, browser) {
         }
 
         erp(page, data, appWindow);
+        erpWindow.webContents.once("close", function () {
+          appWindow.webContents.send("fromMain", {
+            type: "INVOICE_CREATED",
+            data: data.id,
+            // data:"INSURANCE_CREATED",
+          });
+        });
 
         break;
       }
@@ -277,9 +289,8 @@ module.exports = function (appWindow, browser) {
           width: 700,
           // TODO: Might want to change this to false
           frame: true,
+          resizable: false,
         });
-
-        // insuranceWindow.webContents.openDevTools();
 
         // insuranceWindow.webContents.openDevTools();
         await insuranceWindow.loadURL(
@@ -307,24 +318,35 @@ module.exports = function (appWindow, browser) {
         // const modelData = JSON.parse(fs.readFileSync(path.join(__dirname, 'model-data.json')));
         // const dealerData = JSON.parse(fs.readFileSync(path.join(__dirname, 'dealer-data.json')));
 
-        const doc = await firebase
+        const insuranceConfig = await firebase
           .firestore()
           .collection("insuranceConfig")
           .doc("config")
           .get();
 
-        if (doc.exists) {
-          const modelNames = doc.data();
-          const modelName =
-            modelNames[data.vehicleInfo.modelName][
-              `${insuranceCompany.toLowerCase()}ModelName`
-            ];
+        const priceConfig = await firebase
+          .firestore()
+          .collection("priceConfig")
+          .doc("config")
+          .get();
+
+        if (insuranceConfig.exists && priceConfig.exists) {
+          const insuranceDetails = insuranceConfig.data();
+          const priceDetails = priceConfig.data();
           const { credentials } = getCredentials();
           if (credentials) {
             data = {
               ...data,
               credentials: credentials[insuranceCompany],
-              modelName,
+              insuranceDetails: {
+                modelName:
+                  insuranceDetails[data.vehicleInfo.modelName][
+                    `${insuranceCompany.toLowerCase()}ModelName`
+                  ],
+                userRate:
+                  insuranceDetails[data.vehicleInfo.modelName]["userRate"],
+              },
+              priceDetails: priceDetails[data.vehicleInfo.modelName],
             };
           }
 
@@ -358,11 +380,13 @@ module.exports = function (appWindow, browser) {
         //   }
         // });
 
-        // insuranceWindow.webContents.once("close", function () {
-        //   // insuranceWindow.close();
-        //   appWindow.webContents.send("remove-overlay");
-        //   appWindow.reload();
-        // });
+        insuranceWindow.webContents.once("close", function () {
+          appWindow.webContents.send("fromMain", {
+            type: "INSURANCE_CREATED",
+            data: data.id,
+            // data:"INSURANCE_CREATED",
+          });
+        });
 
         // ipc.once("close-insurance-window", function () {
         //   insuranceWindow.destroy();
@@ -387,31 +411,52 @@ module.exports = function (appWindow, browser) {
           width: 1440,
           // TODO: Might want to change this to false
           frame: true,
-          // webPreferences: {
-          //   preload: path.join(__dirname, "./js/vahan.js"),
-          //   backgroundThrottling: false,
-          // },
+          webPreferences: {
+            preload: path.join(__dirname, "./js/vahan.js"),
+            backgroundThrottling: false,
+          },
         });
 
-        vahanWindow.loadURL(
+        await vahanWindow.loadURL(
           "https://vahan.parivahan.gov.in/vahan/vahan/ui/login/login.xhtml"
         );
-        vahanWindow.webContents.send("start-vahan");
+        //vahanWindow.webContents.send("start-vahan");
         page = await pie.getPage(browser, vahanWindow);
+
+        const { credentials } = getCredentials();
+
+        const priceConfig = await firebase
+          .firestore()
+          .collection("priceConfig")
+          .doc("config")
+          .get();
+
+        if (priceConfig.exists && credentials) {
+          const priceDetails = priceConfig.data();
+          data = {
+            ...data,
+            credentials: credentials["VAHAN"],
+            priceDetails: priceDetails[data.vehicleInfo.modelName],
+          };
+        }
 
         vahan(page, data, appWindow);
 
         vahanWindow.webContents.once("close", function () {
-          appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
-          appWindow.reload();
+          appWindow.webContents.send("fromMain", {
+            type: "DONE",
+            data: data.id,
+            // data:"INSURANCE_CREATED",
+          });
         });
 
-        vahanWindow.webContents.on("new-window", function (event, url) {
-          event.preventDefault();
-          vahanWindow.webContents.send("navigate-to-url", [url]);
-        });
+        // vahanWindow.webContents.on("new-window", function (event, url) {
+        //   event.preventDefault();
+        //   vahanWindow.webContents.send("navigate-to-url", [url]);
+        // });
         break;
       }
+
       default: {
         console.log("default", args);
       }
