@@ -179,275 +179,276 @@ module.exports = function erp(page, data, mainWindow) {
 
     //Enquiry Type
 
-    await click(page, 'input[aria-label="Enquiry Type"] + span');
-    await page.waitForSelector(
-      "ul[role='combobox']:not([style*='display: none'])",
-      {
-        visible: true,
-      }
-    );
-    let enquiryListItems = await page.$$eval(
-      "ul[role='combobox']:not([style*='display: none']) > li > div",
-      (listItems) =>
-        listItems.map((item) => {
-          return {
-            name: item.textContent,
-            id: item.id,
-          };
-        })
-    );
-    const enquiryButton = enquiryListItems.find(
-      (item) => item.name === data.additionalInfo.inquiryType
-    );
-    await click(page, `#${enquiryButton.id}`);
+    // await click(page, 'input[aria-label="Enquiry Type"] + span');
+    // await page.waitForSelector(
+    //   "ul[role='combobox']:not([style*='display: none'])",
+    //   {
+    //     visible: true,
+    //   }
+    // );
+    // let enquiryListItems = await page.$$eval(
+    //   "ul[role='combobox']:not([style*='display: none']) > li > div",
+    //   (listItems) =>
+    //     listItems.map((item) => {
+    //       return {
+    //         name: item.textContent,
+    //         id: item.id,
+    //       };
+    //     })
+    // );
+    // const enquiryButton = enquiryListItems.find(
+    //   (item) => item.name === data.additionalInfo.inquiryType
+    // );
+    // await click(page, `#${enquiryButton.id}`);
 
-    //Customer Type
-    await click(page, 'input[aria-label="Customer Type"] + span');
-    await page.waitForSelector(
-      "ul[role='combobox']:not([style*='display: none'])",
-      {
-        visible: true,
-      }
-    );
-    let customerType = await page.$$eval(
-      "ul[role='combobox']:not([style*='display: none']) > li > div",
-      (listItems) =>
-        listItems.map((item) => {
-          return {
-            name: item.textContent,
-            id: item.id,
-          };
-        })
-    );
-    const customerTypeButton = customerType.find(
-      (item) => item.name === data.customerInfo.customerType
-    );
-    await click(page, `#${customerTypeButton.id}`);
+    // //Customer Type
+    // await click(page, 'input[aria-label="Customer Type"] + span');
+    // await page.waitForSelector(
+    //   "ul[role='combobox']:not([style*='display: none'])",
+    //   {
+    //     visible: true,
+    //   }
+    // );
+    // let customerType = await page.$$eval(
+    //   "ul[role='combobox']:not([style*='display: none']) > li > div",
+    //   (listItems) =>
+    //     listItems.map((item) => {
+    //       return {
+    //         name: item.textContent,
+    //         id: item.id,
+    //       };
+    //     })
+    // );
+    // const customerTypeButton = customerType.find(
+    //   (item) => item.name === data.customerInfo.customerType
+    // );
+    // await click(page, `#${customerTypeButton.id}`);
 
-    //Enquiry Source
-    await click(page, 'input[aria-label="Enquiry Source"] + span');
-    await page.waitForSelector(
-      "ul[role='combobox']:not([style*='display: none'])",
-      {
-        visible: true,
-      }
-    );
-    let enquirySourceItems = await page.$$eval(
-      "ul[role='combobox']:not([style*='display: none']) > li > div",
-      (listItems) =>
-        listItems.map((item) => {
-          return {
-            name: item.textContent,
-            id: item.id,
-          };
-        })
-    );
-    const enquirySourceButton = enquirySourceItems.find(
-      (item) => item.name === data.customerInfo.enquirySource
-    );
-    await click(page, `#${enquirySourceButton.id}`);
+    // //Enquiry Source
+    // await click(page, 'input[aria-label="Enquiry Source"] + span');
+    // await page.waitForSelector(
+    //   "ul[role='combobox']:not([style*='display: none'])",
+    //   {
+    //     visible: true,
+    //   }
+    // );
+    // let enquirySourceItems = await page.$$eval(
+    //   "ul[role='combobox']:not([style*='display: none']) > li > div",
+    //   (listItems) =>
+    //     listItems.map((item) => {
+    //       return {
+    //         name: item.textContent,
+    //         id: item.id,
+    //       };
+    //     })
+    // );
+    // const enquirySourceButton = enquirySourceItems.find(
+    //   (item) => item.name === data.customerInfo.enquirySource
+    // );
+    // await click(page, `#${enquirySourceButton.id}`);
 
-    //Customer Category
+    // //Customer Category
 
-    await click(page, 'input[aria-label="Customer Category"] + span');
-    await page.waitForSelector(
-      "ul[role='combobox']:not([style*='display: none'])",
-      {
-        visible: true,
-      }
-    );
-    let customerCategoryItems = await page.$$eval(
-      "ul[role='combobox']:not([style*='display: none']) > li > div",
-      (listItems) =>
-        listItems.map((item) => ({
-          name: item.textContent,
-          id: item.id,
-        }))
-    );
-    const customerCategoryButton = customerCategoryItems.find(
-      (item) => item.name.toUpperCase() === data.customerInfo.type.toUpperCase()
-    );
-    await click(page, `#${customerCategoryButton.id}`);
+    // await click(page, 'input[aria-label="Customer Category"] + span');
+    // await page.waitForSelector(
+    //   "ul[role='combobox']:not([style*='display: none'])",
+    //   {
+    //     visible: true,
+    //   }
+    // );
+    // let customerCategoryItems = await page.$$eval(
+    //   "ul[role='combobox']:not([style*='display: none']) > li > div",
+    //   (listItems) =>
+    //     listItems.map((item) => ({
+    //       name: item.textContent,
+    //       id: item.id,
+    //     }))
+    // );
+    // const customerCategoryButton = customerCategoryItems.find(
+    //   (item) => item.name.toUpperCase() === data.customerInfo.type.toUpperCase()
+    // );
+    // await click(page, `#${customerCategoryButton.id}`);
 
-    //Enquiry Category
+    // //Enquiry Category
 
-    await click(page, 'input[aria-label="Enquiry Category"] + span');
-    await page.waitForSelector(
-      "ul[role='combobox']:not([style*='display: none'])",
-      {
-        visible: true,
-      }
-    );
-    let enquiryCategoryItems = await page.$$eval(
-      "ul[role='combobox']:not([style*='display: none']) > li > div",
-      (listItems) =>
-        listItems.map((item) => ({
-          name: item.textContent,
-          id: item.id,
-        }))
-    );
-    const enquiryCategoryButton = enquiryCategoryItems.find(
-      (item) => item.name.toUpperCase() === data.customerInfo.type.toUpperCase()
-    );
-    await click(page, `#${enquiryCategoryButton.id}`);
+    // await click(page, 'input[aria-label="Enquiry Category"] + span');
+    // await page.waitForSelector(
+    //   "ul[role='combobox']:not([style*='display: none'])",
+    //   {
+    //     visible: true,
+    //   }
+    // );
+    // let enquiryCategoryItems = await page.$$eval(
+    //   "ul[role='combobox']:not([style*='display: none']) > li > div",
+    //   (listItems) =>
+    //     listItems.map((item) => ({
+    //       name: item.textContent,
+    //       id: item.id,
+    //     }))
+    // );
+    // const enquiryCategoryButton = enquiryCategoryItems.find(
+    //   (item) => item.name.toUpperCase() === data.customerInfo.type.toUpperCase()
+    // );
+    // await click(page, `#${enquiryCategoryButton.id}`);
 
-    //Purchase Type
-    let purchaseTypeButton;
-    await click(page, 'input[aria-label="Purchase Type"] + span');
-    await page.waitForSelector(
-      "ul[role='combobox']:not([style*='display: none'])",
-      {
-        visible: true,
-      }
-    );
-    let purchaseTypes = await page.$$eval(
-      "ul[role='combobox']:not([style*='display: none']) > li > div",
-      (listItems) =>
-        listItems.map((item) => ({
-          name: item.textContent,
-          id: item.id,
-        }))
-    );
-    const purchaseType = !!data.additionalInfo.financier ? "Cash" : "Financier";
-    purchaseTypeButton = purchaseTypes.find(
-      (item) => item.name.toUpperCase() === purchaseType.toUpperCase()
-    );
-    await click(page, `#${purchaseTypeButton.id}`);
+    // //Purchase Type
+    // let purchaseTypeButton;
+    // await click(page, 'input[aria-label="Purchase Type"] + span');
+    // await page.waitForSelector(
+    //   "ul[role='combobox']:not([style*='display: none'])",
+    //   {
+    //     visible: true,
+    //   }
+    // );
+    // let purchaseTypes = await page.$$eval(
+    //   "ul[role='combobox']:not([style*='display: none']) > li > div",
+    //   (listItems) =>
+    //     listItems.map((item) => ({
+    //       name: item.textContent,
+    //       id: item.id,
+    //     }))
+    // );
+    // const purchaseType = !!data.additionalInfo.financier ? "Cash" : "Financier";
+    // purchaseTypeButton = purchaseTypes.find(
+    //   (item) => item.name.toUpperCase() === purchaseType.toUpperCase()
+    // );
+    // await click(page, `#${purchaseTypeButton.id}`);
 
-    //Financier Category
+    // //Financier Category
 
-    // if (purchaseTypeButton.name === "Finance") {
-    //   console.log("stape 1")
+    // // if (purchaseTypeButton.name === "Finance") {
+    // //   console.log("stape 1")
 
-    //   await click(page,'input[aria-label="Financier"]');
-    //   console.log("stape 2")
-    //   await typeText(page,'input[aria-label="Financier"]','HDFC BANK')
-    //   console.log("stape 3")
-    // }
+    // //   await click(page,'input[aria-label="Financier"]');
+    // //   console.log("stape 2")
+    // //   await typeText(page,'input[aria-label="Financier"]','HDFC BANK')
+    // //   console.log("stape 3")
+    // // }
 
-    //Model Category
+    // //Model Category
 
-    await click(
-      page,
-      'input[aria-label="Model Category<Font size= 3 color=Red><b>*</b></Font>"] + span'
-    );
-    await page.waitForSelector(
-      "ul[role='combobox']:not([style*='display: none'])",
-      {
-        visible: true,
-      }
-    );
-    let modelCategory = await page.$$eval(
-      "ul[role='combobox']:not([style*='display: none']) > li > div",
-      (listItems) =>
-        listItems.map((item) => ({
-          name: item.textContent,
-          id: item.id,
-        }))
-    );
-    const modelCategoryButton = modelCategory.find(
-      (item) => item.name === data.vehicleInfo.modelCategory
-    );
-    await click(page, `#${modelCategoryButton.id}`);
+    // await click(
+    //   page,
+    //   'input[aria-label="Model Category<Font size= 3 color=Red><b>*</b></Font>"] + span'
+    // );
+    // await page.waitForSelector(
+    //   "ul[role='combobox']:not([style*='display: none'])",
+    //   {
+    //     visible: true,
+    //   }
+    // );
+    // let modelCategory = await page.$$eval(
+    //   "ul[role='combobox']:not([style*='display: none']) > li > div",
+    //   (listItems) =>
+    //     listItems.map((item) => ({
+    //       name: item.textContent,
+    //       id: item.id,
+    //     }))
+    // );
+    // const modelCategoryButton = modelCategory.find(
+    //   (item) => item.name === data.vehicleInfo.modelCategory
+    // );
+    // await click(page, `#${modelCategoryButton.id}`);
 
-    //Model Name
+    // //Model Name
 
-    await click(
-      page,
-      'input[aria-label="Model Name<Font size= 3 color=Red><b>*</b></Font>"] + span'
-    );
-    await page.waitForSelector(
-      "ul[role='combobox']:not([style*='display: none'])",
-      {
-        visible: true,
-      }
-    );
-    let modelName = await page.$$eval(
-      "ul[role='combobox']:not([style*='display: none']) > li > div",
-      (listItems) =>
-        listItems.map((item) => ({
-          name: item.textContent,
-          id: item.id,
-        }))
-    );
-    const modelNameButton = modelName.find((item) =>
-      data.modelName.includes(item.name)
-    );
-    await click(page, `#${modelNameButton.id}`);
+    // await click(
+    //   page,
+    //   'input[aria-label="Model Name<Font size= 3 color=Red><b>*</b></Font>"] + span'
+    // );
+    // await page.waitForSelector(
+    //   "ul[role='combobox']:not([style*='display: none'])",
+    //   {
+    //     visible: true,
+    //   }
+    // );
+    // let modelName = await page.$$eval(
+    //   "ul[role='combobox']:not([style*='display: none']) > li > div",
+    //   (listItems) =>
+    //     listItems.map((item) => ({
+    //       name: item.textContent,
+    //       id: item.id,
+    //     }))
+    // );
+    // const modelNameButton = modelName.find((item) =>
+    //   data.modelName.includes(item.name)
+    // );
+    // await click(page, `#${modelNameButton.id}`);
 
-    //Model Variant
+    // //Model Variant
 
-    await click(
-      page,
-      'input[aria-label="Model Variant<Font size= 3 color=Red><b>*</b></Font>"] + span'
-    );
-    await page.waitForSelector(
-      "ul[role='combobox']:not([style*='display: none'])",
-      {
-        visible: true,
-      }
-    );
-    let modelVariant = await page.$$eval(
-      "ul[role='combobox']:not([style*='display: none']) > li > div",
-      (listItems) =>
-        listItems.map((item) => ({
-          name: item.textContent,
-          id: item.id,
-        }))
-    );
-    const modelVariantButton = modelVariant.find(
-      (item) => item.name === data.modelName
-    );
-    await click(page, `#${modelVariantButton.id}`);
+    // await click(
+    //   page,
+    //   'input[aria-label="Model Variant<Font size= 3 color=Red><b>*</b></Font>"] + span'
+    // );
+    // await page.waitForSelector(
+    //   "ul[role='combobox']:not([style*='display: none'])",
+    //   {
+    //     visible: true,
+    //   }
+    // );
+    // let modelVariant = await page.$$eval(
+    //   "ul[role='combobox']:not([style*='display: none']) > li > div",
+    //   (listItems) =>
+    //     listItems.map((item) => ({
+    //       name: item.textContent,
+    //       id: item.id,
+    //     }))
+    // );
+    // const modelVariantButton = modelVariant.find(
+    //   (item) => item.name === data.modelName
+    // );
+    // await click(page, `#${modelVariantButton.id}`);
 
-    //Assigned To (DSE)  todo
+    // //Assigned To (DSE)  todo
 
-    await click(page, 'input[aria-label="Assigned To (DSE)"] + span');
-    await click(page, 'input[aria-label="Find"] + span');
-    await page.waitForSelector(
-      "ul[role='combobox']:not([style*='display: none'])",
-      {
-        visible: true,
-      }
-    );
-    await click(
-      page,
-      'table > tbody > tr > td > .siebui-popup-button > button[aria-label="Pick Assigned To:Query"]'
-    );
-    await typeText(page, "input[name='Last_Name']", "DEVI");
-    await click(page, '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] ');
-    await typeText(
-      page,
-      '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] > input[name="First_Name"]',
-      "PINKY"
-    );
-    await click(
-      page,
-      'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]'
-    );
-    await click(page, "button[data-display='OK']");
-    await page.waitForSelector("button[title='Enquiries Menu']", {
-      visible: true,
-    });
-    await page.$eval("button[title='Enquiries Menu']", (el) => el.click());
-    await page.waitForSelector(
-      ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
-      { visible: true }
-    );
-    const menuOptions = await page.$$eval(
-      ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
-      (options) =>
-        options.map((option) => {
-          return {
-            name: option.textContent,
-            id: option.id,
-          };
-        })
-    );
-    const saveRecordButton = menuOptions.find((option) =>
-      option.name.includes("Save Record")
-    );
-    await page.$eval(`#${saveRecordButton.id}`, (el) => el.click());
+    // await click(page, 'input[aria-label="Assigned To (DSE)"] + span');
+    // await click(page, 'input[aria-label="Find"] + span');
+    // await page.waitForSelector(
+    //   "ul[role='combobox']:not([style*='display: none'])",
+    //   {
+    //     visible: true,
+    //   }
+    // );
+    // await click(
+    //   page,
+    //   'table > tbody > tr > td > .siebui-popup-button > button[aria-label="Pick Assigned To:Query"]'
+    // );
+    // await typeText(page, "input[name='Last_Name']", "DEVI");
+    // await click(page, '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] ');
+    // await typeText(
+    //   page,
+    //   '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] > input[name="First_Name"]',
+    //   "PINKY"
+    // );
+    // await click(
+    //   page,
+    //   'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]'
+    // );
+    // await click(page, "button[data-display='OK']");
+
+    // await page.waitForSelector("button[title='Enquiries Menu']", {
+    //   visible: true,
+    // });
+    // await page.$eval("button[title='Enquiries Menu']", (el) => el.click());
+    // await page.waitForSelector(
+    //   ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
+    //   { visible: true }
+    // );
+    // const menuOptions = await page.$$eval(
+    //   ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
+    //   (options) =>
+    //     options.map((option) => {
+    //       return {
+    //         name: option.textContent,
+    //         id: option.id,
+    //       };
+    //     })
+    // );
+    // const saveRecordButton = menuOptions.find((option) =>
+    //   option.name.includes("Save Record")
+    // );
+    // await page.$eval(`#${saveRecordButton.id}`, (el) => el.click());
     await page.waitForSelector("td[role='gridcell'] > a", { visible: true });
     await page.$eval("td[role='gridcell'] > a", (el) => el.click());
     await page.waitForResponse(
@@ -470,14 +471,16 @@ module.exports = function erp(page, data, mainWindow) {
       item.name.includes("Express Booking")
     );
     await page.$eval(`#${expressBookingButton.id}`, (el) => el.click());
-    await click(
-      page,
-      '.siebui-applet-buttons > .siebui-btn-grp-search > button[name="s_3_1_3_0"]'
-    );
-    await click(
-      page,
-      '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown'
-    );
+    // await click(
+    //   page,
+    //   '.siebui-applet-buttons > .siebui-btn-grp-search > button[name="s_3_1_3_0"]'
+    // );
+   // console.log("stap 1")
+    //await click(
+    //  page,
+    //  '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown'
+   // );
+    //console.log("stap 2")
   }
 
   automate();
