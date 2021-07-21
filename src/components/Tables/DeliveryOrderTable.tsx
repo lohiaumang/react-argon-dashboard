@@ -57,6 +57,7 @@ export interface DeliveryOrder {
     frameNumber: string;
     engineNumber: string;
     modelName: string;
+    modelCategory: string;
   };
   additionalInfo?: {
     hra: boolean;

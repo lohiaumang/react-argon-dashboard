@@ -44,14 +44,11 @@ import {
 } from "reactstrap";
 // core components
 import Header from "../../components/Headers/Header";
-// import DeliveryOrderTable, {
-//   DeliveryOrder,
-//   UserInfo,
-// } from "../../components/Tables/DeliveryOrderTable";
-import InvoiceTable, {
+import DeliveryOrderTable, {
   DeliveryOrder,
   UserInfo,
-} from "../../components/Tables/InvoiceTable";
+} from "../../components/Tables/DeliveryOrderTable";
+import InvoiceTable from "../../components/Tables/InvoiceTable";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 import SmallLoading from "../../components/Share/SmallLoading";
 import Loading from "../../components/Share/Loading";
@@ -72,7 +69,7 @@ const DeliveryOrders: React.FC = () => {
     useRef() as React.MutableRefObject<HTMLDivElement>;
   const [deliveryOrders, setDeliveryOrders] = useState<DeliveryOrder[]>([]);
   const [selected, setSelected] = useState<number>();
-  const [showDO, setShowDO] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingPage, setLoadingPage] = useState<boolean>(true);
   const [dropdownButton, setDropdownButton] = useState(false);
@@ -352,7 +349,7 @@ const DeliveryOrders: React.FC = () => {
       setLoading(true);
       const status: any = await fetchDeliveryOrder();
       if (status) {
-        setShowDO(!showDO);
+        setShowModal(!showModal);
       }
     } catch (err) {
       console.log(err);
@@ -361,7 +358,7 @@ const DeliveryOrders: React.FC = () => {
 
   //create invoice
   const createInvoice = async () => {
-    debugger
+    debugger;
     try {
       setLoading(true);
       if (selected !== undefined) {
@@ -429,7 +426,7 @@ const DeliveryOrders: React.FC = () => {
     onAfterPrint: () => {
       if (selected !== undefined) {
         setLoading(false);
-        setShowDO(false);
+        setShowModal(false);
         updateStatus({
           data: deliveryOrders[selected].id,
           type: "DO_CREATED",
@@ -444,10 +441,10 @@ const DeliveryOrders: React.FC = () => {
       {/* Page content */}
       <Container className="mt--7" fluid>
         {/* {showModal && getModal("DO" || "INVOICE")} */}
-        {showDO && selected !== undefined && (
+        {showModal && selected !== undefined && (
           <Modal
-            isOpen={showDO}
-            toggle={() => setShowDO(!showDO)}
+            isOpen={showModal}
+            toggle={() => setShowModal(!showModal)}
             backdrop="static"
             keyboard={false}
             size="lg"
@@ -455,21 +452,33 @@ const DeliveryOrders: React.FC = () => {
             <ModalHeader
               className="p-4"
               tag="h3"
-              toggle={() => setShowDO(!showDO)}
+              toggle={() => setShowModal(!showModal)}
             >
-              Delivery Order
+              {deliveryOrders[selected].status === "PENDING"
+                ? "Delivery Order"
+                : "Invoice"}
             </ModalHeader>
             <ModalBody className="px-4 py-0">
-              <InvoiceTable
-                ref={deliveryOrderTableRef}
-                deliveryOrder={deliveryOrders[selected]}
-              />
+              {deliveryOrders[selected].status === "PENDING" ? (
+                <DeliveryOrderTable
+                  ref={deliveryOrderTableRef}
+                  deliveryOrder={deliveryOrders[selected]}
+                />
+              ) : (
+                <InvoiceTable
+                  ref={deliveryOrderTableRef}
+                  deliveryOrder={deliveryOrders[selected]}
+                />
+              )}
             </ModalBody>
             <ModalFooter>
               <Button color="primary" onClick={printPage}>
                 Print
               </Button>{" "}
-              <Button color="secondary" onClick={() => setShowDO(!showDO)}>
+              <Button
+                color="secondary"
+                onClick={() => setShowModal(!showModal)}
+              >
                 Close
               </Button>
             </ModalFooter>
