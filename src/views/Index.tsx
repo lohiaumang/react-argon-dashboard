@@ -317,7 +317,7 @@ const Index: React.FC = () => {
             </Card>
           </Col>
           <Col xl="4">
-            <Card className="shadow">
+            <Card className="shadow socialtraffic">
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
