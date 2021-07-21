@@ -102,6 +102,48 @@ const Index: React.FC = () => {
     }, []);
   };
 
+  // const getUserData = (uid: string) => {
+  //   let users: any = {};
+  //   let loadedPosts: any = {};
+  //   useEffect(() => {
+  //     debugger;
+  //     firebase
+  //       .firestore()
+  //       .collection("deliveryOrders")
+  //       .where("dealerId", "==", uid)
+  //       .where("active", "==", true)
+  //       .get()
+  //       .then((results) => {
+  //         results.forEach((doc) => {
+  //           users[doc.id] = doc.data();
+  //         });
+  //         const posts = firebase.firestore().collection("additionals");
+  //         posts.get().then((docSnaps) => {
+  //           docSnaps.forEach((doc) => {
+  //             loadedPosts[doc.id] = doc.data();
+  //             loadedPosts[doc.id].price = users[doc.data().name];
+  //           });
+  //         });
+  //         console.log(loadedPosts);
+  //         //.where("createdOn", ">=", currentweek)
+  //         //.where("createdOn", "<", today)
+
+  //         // .onSnapshot(function (querySnapshot) {
+  //         //   setDateWiseData(
+  //         //     querySnapshot.docs.map((doc) => ({
+  //         //       id: doc.id,
+  //         //       name: doc.data().name,
+  //         //       modelName: doc.data().modelName,
+  //         //       color: doc.data().color,
+  //         //       createdOn: doc.data().createdOn,
+  //         //     }))
+  //         //   );
+  //       });
+  //   }, []);
+  // };
+
+
+
   //month wise data
   if (currentUser && currentUser.uid) {
     getUserData(currentUser.uid);
