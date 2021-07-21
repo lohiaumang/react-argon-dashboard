@@ -254,7 +254,7 @@ const Index: React.FC = () => {
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">Month Wise Order Details</h3>
+                    <h3 className="mb-0">Week Wise Order Details</h3>
                   </div>
                   {/* <div className="col text-right">
                     <Button
