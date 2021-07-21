@@ -109,6 +109,13 @@ const DeliveryOrders: React.FC = () => {
         switch (statusData.type) {
           case "INVOICE_CREATED": {
             updateStatus(statusData);
+
+            // if (statusData) {
+            //   fetchDeliveryOrder();
+            //   setShowModal(!showModal);
+            //   fetchDeliveryOrder();
+            // }
+
             setLoading(false);
             break;
           }
@@ -358,7 +365,6 @@ const DeliveryOrders: React.FC = () => {
 
   //create invoice
   const createInvoice = async () => {
-    debugger;
     try {
       setLoading(true);
       if (selected !== undefined) {
@@ -369,6 +375,7 @@ const DeliveryOrders: React.FC = () => {
             type: "CREATE_INVOICE",
             data: { ...deliveryOrders[selected], credentials },
           });
+          setShowModal(!showModal);
         }
       }
     } catch (err) {

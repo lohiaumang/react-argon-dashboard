@@ -136,6 +136,13 @@ body {
 .socialtraffic{
   margin-top: -228px;
 }
+.font{
+ font-size: small;
+}
+.fontth{
+  font-size: 9px;
+ }
+ 
 
 @page {
   size: auto;

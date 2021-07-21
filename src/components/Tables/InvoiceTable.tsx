@@ -33,7 +33,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
       .join("/");
 
     return (
-      <div className="delivery-order-table" ref={ref}>
+      <div className="delivery-order-table font" ref={ref}>
         <Row>
           <Row className="row-header">
             {/* <Col>
@@ -56,7 +56,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>Name</h5>
+                  <h6>Name</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{props.deliveryOrder.userInfo.name}</small>
@@ -64,7 +64,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>Phone number</h5>
+                  <h6>Phone number</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{props.deliveryOrder.userInfo.phoneNumber}</small>
@@ -72,7 +72,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>Email</h5>
+                  <h6>Email</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{props.deliveryOrder.userInfo.email}</small>
@@ -80,7 +80,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>GST NO</h5>
+                  <h6>GST NO</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{props.deliveryOrder.userInfo.gst}</small>
@@ -88,7 +88,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>PAN</h5>
+                  <h6>PAN</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{props.deliveryOrder.userInfo.pan}</small>
@@ -96,7 +96,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>CIN</h5>
+                  <h6>CIN</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>TODO</small>
@@ -104,7 +104,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>TC NO</h5>
+                  <h6>TC NO</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>TODO</small>
@@ -112,7 +112,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>Address</h5>
+                  <h6>Address</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{props.deliveryOrder.userInfo.address}</small>
@@ -126,7 +126,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>Name</h5>
+                  <h6>Name</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{props.deliveryOrder.name}</small>
@@ -134,7 +134,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>Phone number</h5>
+                  <h6>Phone number</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{props.deliveryOrder.customerInfo.phoneNo}</small>
@@ -142,7 +142,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>Email</h5>
+                  <h6>Email</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{props.deliveryOrder.customerInfo.email}</small>
@@ -150,7 +150,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>GST NO</h5>
+                  <h6>GST NO</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{props.deliveryOrder.customerInfo.gst}</small>
@@ -158,7 +158,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>PAN</h5>
+                  <h6>PAN</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>TODO</small>
@@ -166,7 +166,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>CIN</h5>
+                  <h6>CIN</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>TODO</small>
@@ -174,7 +174,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>UIN</h5>
+                  <h6>UIN</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>TODO</small>
@@ -182,7 +182,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>Ref 1</h5>
+                  <h6>Ref 1</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>TODO</small>
@@ -190,7 +190,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>Ref 2</h5>
+                  <h6>Ref 2</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>TODO</small>
@@ -199,22 +199,15 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
 
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>Present Address </h5>
+                  <h6>Present Address </h6>
                 </Col>
                 <Col xs="8" className="px-1">
-                  <small>{props.deliveryOrder.customerInfo.currLineOne}</small>
-                  <br />
-                  <small>{props.deliveryOrder.customerInfo.currLineTwo}</small>
-                  <br />
-                  <small>{props.deliveryOrder.customerInfo.currPS}</small>
-                  <br />
-                  <small>
-                    {props.deliveryOrder.customerInfo.currCity},{" "}
-                    {props.deliveryOrder.customerInfo.currDistrict}
-                  </small>
-                  <br />
-                  <small>
-                    {props.deliveryOrder.customerInfo.currState},{" "}
+                  <small>{props.deliveryOrder.customerInfo.currLineOne},
+                  {props.deliveryOrder.customerInfo.currLineTwo},
+                  {props.deliveryOrder.customerInfo.currPS},
+                    {props.deliveryOrder.customerInfo.currCity},
+                    {props.deliveryOrder.customerInfo.currDistrict},
+                    {props.deliveryOrder.customerInfo.currState},
                     {props.deliveryOrder.customerInfo.currPostal}
                   </small>
                 </Col>
@@ -222,10 +215,10 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
             </Col>
           </Row>
           <Row className="p-1 border border-right-0 border-left-0 border-primary w-100">
-            <Col xs="6" className="p-0">
+            <Col xs="6" className="p-0 padding-0">
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5 className="m-0">Invoice No</h5>
+                  <h6 className="m-0">Invoice No</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>123456789 TODO</small>
@@ -234,7 +227,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
 
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5 className="m-0">Invoice Date</h5>
+                  <h6 className="m-0">Invoice Date</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{invoiceDate}</small>
@@ -244,7 +237,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               {props.deliveryOrder.additionalInfo.inquiryType && (
                 <Row>
                   <Col xs="4" className="px-1">
-                    <h5 className="m-0">Inquiry Type</h5>
+                    <h6 className="m-0">Inquiry Type</h6>
                   </Col>
                   <Col xs="8" className="px-1">
                     <small>
@@ -255,7 +248,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               )}
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5 className="m-0">Salesman</h5>
+                  <h6 className="m-0">Salesman</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>TODO</small>
@@ -263,7 +256,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5 className="m-0">Mobile No</h5>
+                  <h6 className="m-0">Mobile No</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>TODO</small>
@@ -271,7 +264,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5 className="m-0">State of supply</h5>
+                  <h6 className="m-0">State of supply</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>Assam</small>
@@ -279,7 +272,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5 className="m-0">State code</h5>
+                  <h6 className="m-0">State code</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>AS</small>
@@ -289,7 +282,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
             <Col xs="6" className="p-0">
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5 className="m-0">Booking No</h5>
+                  <h6 className="m-0">Booking No</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>TODO</small>
@@ -298,7 +291,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
 
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>Battery No</h5>
+                  <h6>Battery No</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>TODO</small>
@@ -307,7 +300,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
 
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5 className="m-0">Key No</h5>
+                  <h6 className="m-0">Key No</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>TODO</small>
@@ -315,7 +308,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5 className="m-0">Purchase Type</h5>
+                  <h6 className="m-0">Purchase Type</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>
@@ -327,7 +320,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5 className="m-0">Hypothecation</h5>
+                  <h6 className="m-0">Hypothecation</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{props.deliveryOrder.additionalInfo.financier}</small>
@@ -340,7 +333,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
             <Col xs="6" className="p-0">
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5 className="m-0">Model Code</h5>
+                  <h6 className="m-0">Model Code</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{props.deliveryOrder.vehicleInfo.modelCategory}</small>
@@ -349,7 +342,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
 
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5 className="m-0">Type/Variant</h5>
+                  <h6 className="m-0">Type/Variant</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{props.deliveryOrder.vehicleInfo.modelName}</small>
@@ -358,7 +351,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
 
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5 className="m-0">Colour</h5>
+                  <h6 className="m-0">Colour</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{props.deliveryOrder.vehicleInfo.color}</small>
@@ -368,7 +361,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
             <Col xs="6" className="p-0">
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5 className="m-0">Frame no</h5>
+                  <h6 className="m-0">Frame no</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>
@@ -379,7 +372,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
 
               <Row>
                 <Col xs="4" className="px-1">
-                  <h5>Engine No</h5>
+                  <h6>Engine No</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small>{props.deliveryOrder.vehicleInfo.engineNumber}</small>
@@ -399,36 +392,36 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
             </thead>
             <tbody>
               <tr>
-                <th>{props.deliveryOrder.vehicleInfo.modelName}</th>
-                <td></td>
-                <td>{props.deliveryOrder.additionalInfo.price}</td>
-                <td>{props.deliveryOrder.additionalInfo.price}</td>
+                <th style={{fontSize : '9px'}}>{props.deliveryOrder.vehicleInfo.modelName}</th>
+                <td style={{fontSize : '9px'}}></td>
+                <td style={{fontSize : '9px'}}>{props.deliveryOrder.additionalInfo.price}</td>
+                <td style={{fontSize : '9px'}}>{props.deliveryOrder.additionalInfo.price}</td>
               </tr>
               <tr>
-                <th>CGST @ 14%</th>
-                <td></td>
-                <td></td>
-                <td>{CGST}</td>
+                <th style={{fontSize : '9px'}}>CGST @ 14%</th>
+                <td style={{fontSize : '9px'}}></td>
+                <td style={{fontSize : '9px'}}></td>
+                <td style={{fontSize : '9px'}}>{CGST}</td>
               </tr>
               <tr>
-                <th>GST @ 14%</th>
-                <td></td>
-                <td></td>
-                <td>{SGST}</td>
+                <th style={{fontSize : '9px'}}>GST @ 14%</th>
+                <td style={{fontSize : '9px'}}></td>
+                <td style={{fontSize : '9px'}}></td>
+                <td style={{fontSize : '9px'}}>{SGST}</td>
               </tr>
               <tr>
-                <th>Discount</th>
-                <td></td>
-                <td></td>
-                <td></td>
+                <th style={{fontSize : '9px'}}>Discount</th>
+                <td style={{fontSize : '9px'}}></td>
+                <td style={{fontSize : '9px'}}></td>
+                <td style={{fontSize : '9px'}}></td>
               </tr>
               <tr>
-                <th>Amount in words</th>
-                <td>
+                <th style={{fontSize : '9px'}}>Amount in words</th>
+                <td style={{fontSize : '9px'}}>
                   {"Rupee"} {totalPriceInword}
                 </td>
-                <th>Total</th>
-                <td>{totalPrice}</td>
+                <th style={{fontSize : '9px'}}>Total</th>
+                <td style={{fontSize : '9px'}}>{totalPrice}</td>
               </tr>
             </tbody>
           </Table>
@@ -436,33 +429,20 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
           <Row className="p-1 border border-right-0 border-left-0 border-primary w-100">
             <Col xs="12" className="p-0">
               <Row>
-                <Col xs="2" className="px-1">
+                {/* <Col xs="2" className="px-1">
                   <h5 className="m-0">Remarks:</h5>
-                </Col>
-                <Col xs="4" className="px-1">
+                </Col> */}
+                <Col xs="2" className="px-1">
                   <h5 className="m-0">Customer Temp Address:</h5>
                 </Col>
-                <Col xs="6" className="px-1">
+                <Col xs="8" className="px-1">
                   <small>
-                    {props.deliveryOrder.customerInfo.currLineOne}
-                    {"   "}
-                    {props.deliveryOrder.customerInfo.currLineTwo}
-                  </small>
-                  <br />
-
-                  <small>
-                    {"PS"}
-                    {"  "}
-                    {props.deliveryOrder.customerInfo.currPS}
-                  </small>
-                  <br />
-                  <small>
-                    {props.deliveryOrder.customerInfo.currCity},{" "}
-                    {props.deliveryOrder.customerInfo.currDistrict}
-                  </small>
-                  <br />
-                  <small>
-                    {props.deliveryOrder.customerInfo.currState},{" "}
+                    {props.deliveryOrder.customerInfo.currLineOne},
+                    {props.deliveryOrder.customerInfo.currLineTwo},
+                    {props.deliveryOrder.customerInfo.currPS},
+                    {props.deliveryOrder.customerInfo.currCity},
+                    {props.deliveryOrder.customerInfo.currDistrict},
+                    {props.deliveryOrder.customerInfo.currState},
                     {props.deliveryOrder.customerInfo.currPostal}
                   </small>
                 </Col>
@@ -504,44 +484,44 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
             </thead>
             <tbody>
               <tr>
-                <th>Handling & Logistics Charge</th>
-                <td>9967</td>
-                <td>1627.00</td>
-                <td>1627.00</td>
+                <th style={{fontSize : '9px'}}>Handling & Logistics Charge</th>
+                <td style={{fontSize : '9px'}}>9967</td>
+                <td style={{fontSize : '9px'}}>1627.00</td>
+                <td style={{fontSize : '9px'}}>1627.00</td>
               </tr>
               <tr>
-                <th>CGST @ 9%</th>
-                <td></td>
-                <td></td>
-                <td>146.43</td>
+                <th style={{fontSize : '9px'}}>CGST @ 9%</th>
+                <td style={{fontSize : '9px'}}></td>
+                <td style={{fontSize : '9px'}}></td>
+                <td style={{fontSize : '9px'}}>146.43</td>
               </tr>
               <tr>
-                <th>GST @ 9%</th>
-                <td></td>
-                <td></td>
-                <td>146.43</td>
+                <th style={{fontSize : '9px'}}>GST @ 9%</th>
+                <td style={{fontSize : '9px'}}></td>
+                <td style={{fontSize : '9px'}}></td>
+                <td style={{fontSize : '9px'}}>146.43</td>
               </tr>
               <tr>
-                <th>Discount</th>
-                <td></td>
-                <td></td>
-                <td></td>
+                <th style={{fontSize : '9px'}}>Discount</th>
+                <td style={{fontSize : '9px'}}></td>
+                <td style={{fontSize : '9px'}}></td>
+                <td style={{fontSize : '9px'}}></td>
               </tr>
               <tr>
-                <th>Amount in words</th>
-                <td>
+                <th style={{fontSize : '9px'}}>Amount in words</th>
+                <td style={{fontSize : '9px'}}>
                   {"Rupee"} {handlingLogisticsCharge}
                 </td>
-                <th>Total</th>
-                <td>1,920.00</td>
+                <th style={{fontSize : '9px'}}>Total</th>
+                <td style={{fontSize : '9px'}}> 1,920.00</td>
               </tr>
               <tr>
-                <th>Amount in words</th>
-                <td>
+                <th style={{fontSize : '9px'}}>Amount in words</th>
+                <td style={{fontSize : '9px'}}>
                   {"Rupee"} {grandTotalPriceInword}
                 </td>
-                <th>Grand Total</th>
-                <td>{totalPrice + 1920}</td>
+                <th style={{fontSize : '9px'}}>Grand Total</th>
+                <td style={{fontSize : '9px'}}>{totalPrice + 1920}</td>
               </tr>
             </tbody>
           </Table>
