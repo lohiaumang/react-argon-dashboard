@@ -76,37 +76,12 @@ const Index: React.FC = () => {
   const dataCount = dateWiseData.length;
   console.log(dateWiseData);
 
-  // useEffect(() => {
-  //   const today = new Date();
-  //   const currentweek = new Date(
-  //     today.getFullYear(),
-  //     today.getMonth(),
-  //     today.getDate() - 60
-  //   );
-  //   firebase
-  //     .firestore()
-  //     .collection("deliveryOrders")
-  //     .where("createdOn", ">=", currentweek)
-  //     .where("createdOn", "<", today)
-
-  //     .onSnapshot(function (querySnapshot) {
-  //       setDateWiseData(
-  //         querySnapshot.docs.map((doc) => ({
-  //           id: doc.id,
-  //           name: doc.data().name,
-  //           modelName: doc.data().modelName,
-  //           color: doc.data().color,
-  //         }))
-  //       );
-  //     });
-  // }, []);
-
   const currentUser = firebase.auth().currentUser;
   // const pageSize = 10;
   const getUserData = (uid: string) => {
     useEffect(() => {
       firebase
-        .firestore()
+        .firestore()          
         .collection("deliveryOrders")
         .where("dealerId", "==", uid)
         .where("active", "==", true)
@@ -127,6 +102,7 @@ const Index: React.FC = () => {
     }, []);
   };
 
+  //month wise data
   if (currentUser && currentUser.uid) {
     getUserData(currentUser.uid);
   }
@@ -143,6 +119,21 @@ const Index: React.FC = () => {
     (d: { createdOn: string | number | Date }) => {
       let time = new Date(d.createdOn).getTime();
       return monthDay < time && time < todayDate;
+    }
+  );
+
+  const weekToday = new Date();
+  const currentWeek = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - 7
+  );
+  const weekDate = new Date(weekToday).getTime();
+  const weekDay = new Date(currentWeek).getTime();
+  const weekWiseData = dateWiseData.filter(
+    (d: { createdOn: string | number | Date }) => {
+      let time = new Date(d.createdOn).getTime();
+      return weekDay < time && time < weekDate;
     }
   );
 
@@ -279,7 +270,7 @@ const Index: React.FC = () => {
               </CardHeader>
               <MonthWiseDelevery
                 ref={monthWiseDeliveryOrderTableRef}
-                monthWiseDeliveryOrder={monthWiseData}
+                monthWiseDeliveryOrder={weekWiseData}
               />
             </Card>
           </Col>
