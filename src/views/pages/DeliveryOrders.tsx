@@ -87,6 +87,7 @@ const DeliveryOrders: React.FC = () => {
     uid: "",
   });
   let credentials: any;
+  const [currentStatus, setCurrentStatus] = useState<string>();
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
   useEffect(() => {
@@ -96,50 +97,77 @@ const DeliveryOrders: React.FC = () => {
       db.collection("deliveryOrders")
         .where("dealerId", "==", dealerId)
         .where("active", "==", true)
-        // .get().then((docSnaps) => {
-        //   docSnaps.forEach((doc) => {
-        //     const dOs: any = doc.data();
-        //     dOs[doc.id] = doc.data();
-        //     setDeliveryOrders(dOs);
-        //    setLoadingPage(false);
-        //   });
-          
-        // });
-      .onSnapshot(function (querySnapshot) {
-        const dOs: any = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
-        setDeliveryOrders(dOs);
-        setLoadingPage(false);
-      });
+        .get()
+        .then((querySnapshot) => {
+          const dOs: any = querySnapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+          }));
+          setDeliveryOrders(dOs);
+          setLoadingPage(false);
+        });
+
       window.api.receive("fromMain", (statusData: any) => {
-        console.log(statusData);
-        debugger;
         switch (statusData.type) {
           case "INVOICE_CREATED": {
             setShowModal(!showModal);
-            if(showModal==true){
-              updateStatus(statusData);
-            }
-            
-            setLoading(false);
+
             break;
           }
           case "INSURANCE_CREATED": {
-            setLoading(false);
-            updateStatus(statusData);
+            setCurrentStatus(statusData.type);
+
             break;
           }
           case "DONE": {
-            setLoading(false);
-            updateStatus(statusData);
+            setCurrentStatus(statusData.type);
+
             break;
+          }
+          case "RESET": {
+            setLoading(false);
           }
         }
       });
     }
   }, []);
+
+  useEffect(() => {
+    if (
+      selected !== undefined &&
+      currentStatus !== undefined &&
+      deliveryOrders[selected].status !== currentStatus
+    ) {
+      db.collection("deliveryOrders")
+        .doc(deliveryOrders[selected].id)
+        .set(
+          {
+            status: currentStatus,
+          },
+          { merge: true }
+        )
+        .then(() => {
+          if (currentStatus === "DONE") {
+            deleteDeliveryOrder();
+          } else {
+            let newDos = deliveryOrders;
+            newDos[selected].status = currentStatus;
+            setDeliveryOrders(newDos);
+          }
+
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error writing document: ", error);
+        });
+    }
+  }, [currentStatus]);
+
+  useEffect(() => {
+    if (selected !== undefined) {
+      setCurrentStatus(deliveryOrders[selected].status);
+    }
+  }, [selected]);
 
   const getActionButton = () => {
     if (selected !== undefined) {
@@ -224,11 +252,11 @@ const DeliveryOrders: React.FC = () => {
       setSelected(index);
     }
   };
-  let selectedDoId: any;
+
   const deleteDeliveryOrder = () => {
     if (selected !== undefined) {
       const tempOrders = deliveryOrders;
-      selectedDoId = deliveryOrders[selected].id;
+      let selectedDoId: string = deliveryOrders[selected].id;
       tempOrders.splice(selected, 1);
 
       setSelected(undefined);
@@ -240,16 +268,6 @@ const DeliveryOrders: React.FC = () => {
         { merge: true }
       );
     }
-  };
-
-  //update status
-  const updateStatus = (data: any) => {
-    db.collection("deliveryOrders").doc(data.data).set(
-      {
-        status: data.type,
-      },
-      { merge: true }
-    );
   };
 
   // TODO: Make fetching data if it does not exist common
@@ -439,18 +457,18 @@ const DeliveryOrders: React.FC = () => {
     copyStyles: true,
     onAfterPrint: () => {
       if (selected !== undefined) {
-        setLoading(false);
         setShowModal(false);
-        updateStatus({
-          data: deliveryOrders[selected].id,
-          type: "DO_CREATED",
-        });
+        if (currentStatus === "PENDING") {
+          setCurrentStatus("DO_CREATED");
+        } else {
+          setCurrentStatus("INVOICE_CREATED");
+        }
       }
     },
   });
 
   //close model onclick on close button
-  const closeModel = async () => {
+  const closeModal = async () => {
     setShowModal(!showModal);
     setLoading(false);
   };
@@ -495,7 +513,7 @@ const DeliveryOrders: React.FC = () => {
               <Button color="primary" onClick={printPage}>
                 Print
               </Button>{" "}
-              <Button color="secondary" onClick={() => closeModel()}>
+              <Button color="secondary" onClick={() => closeModal()}>
                 Close
               </Button>
             </ModalFooter>
@@ -552,28 +570,31 @@ const DeliveryOrders: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {deliveryOrders.map((curElem: any, index: number) => (
-                          <tr
-                            key={curElem.id}
-                            onClick={() => toggleSelected(index)}
-                            style={{ cursor: "pointer" }}
-                          >
-                            <td scope="row" className="text-center">
-                              <Input
-                                className="position-relative"
-                                type="checkbox"
-                                color="primary"
-                                disabled={!!loading}
-                                checked={index === selected}
+                        {deliveryOrders.map(
+                          (currElem: any, index: number) =>
+                            currElem.active && (
+                              <tr
+                                key={currElem.id}
+                                onClick={() => toggleSelected(index)}
                                 style={{ cursor: "pointer" }}
-                                onChange={() => toggleSelected(index)}
-                              />
-                            </td>
-                            <td>{curElem.name}</td>
-                            <td>{curElem.modelName}</td>
-                            <td>{curElem.color}</td>
-                          </tr>
-                        ))}
+                              >
+                                <td scope="row" className="text-center">
+                                  <Input
+                                    className="position-relative"
+                                    type="checkbox"
+                                    color="primary"
+                                    disabled={!!loading}
+                                    checked={index === selected}
+                                    style={{ cursor: "pointer" }}
+                                    onChange={() => toggleSelected(index)}
+                                  />
+                                </td>
+                                <td>{currElem.name}</td>
+                                <td>{currElem.modelName}</td>
+                                <td>{currElem.color}</td>
+                              </tr>
+                            )
+                        )}
                       </tbody>
                     </Table>
                   ) : (
