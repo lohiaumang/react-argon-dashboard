@@ -442,10 +442,22 @@ module.exports = function (appWindow, browser) {
 
         vahan(page, data, appWindow);
 
+        vahanWindow.webContents.once("vahan-done", function () {
+          // vahanWindow.webContents.
+          vahanWindow.webContents.once("close", function () {
+            appWindow.webContents.send("fromMain", {
+              type: "DONE",
+              data: data.id,
+              // data:"INSURANCE_CREATED",
+            });
+          });
+        });
+
         vahanWindow.webContents.once("close", function () {
+          console.log("HERE\n\n\n");
           appWindow.webContents.send("fromMain", {
-            type: "DONE",
-            data: data,
+            type: "RESET",
+            data: data.id,
             // data:"INSURANCE_CREATED",
           });
         });

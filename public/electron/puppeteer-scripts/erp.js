@@ -290,11 +290,11 @@ module.exports = function erp(page, data, mainWindow) {
     // if (purchaseTypeButton.name === "Finance") {
     //   console.log("stape 1")
 
-    //   await click(page,'input[aria-label="Financier"]');
-    //   console.log("stape 2")
-    //   await typeText(page,'input[aria-label="Financier"]','HDFC BANK')
-    //   console.log("stape 3")
-    // }
+    // //   await click(page,'input[aria-label="Financier"]');
+    // //   console.log("stape 2")
+    // //   await typeText(page,'input[aria-label="Financier"]','HDFC BANK')
+    // //   console.log("stape 3")
+    // // }
 
     //Model Category
     await click(
