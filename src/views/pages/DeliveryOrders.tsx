@@ -68,6 +68,7 @@ const DeliveryOrders: React.FC = () => {
   const deliveryOrderTableRef =
     useRef() as React.MutableRefObject<HTMLDivElement>;
   const [deliveryOrders, setDeliveryOrders] = useState<DeliveryOrder[]>([]);
+  const [deliveryOrderData, setDeliveryOrderData] = useState<any>([]);
   const [selected, setSelected] = useState<number>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -87,6 +88,7 @@ const DeliveryOrders: React.FC = () => {
     uid: "",
   });
   let credentials: any;
+
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
   useEffect(() => {
@@ -104,36 +106,36 @@ const DeliveryOrders: React.FC = () => {
           setDeliveryOrders(dOs);
           setLoadingPage(false);
         });
-      window.api.receive("fromMain", (statusData: any) => {
-        //console.log(statusData);
-        switch (statusData.type) {
-          case "INVOICE_CREATED": {
-            updateStatus(statusData);
-
-            // if (statusData) {
-            //   fetchDeliveryOrder();
-            //   setShowModal(!showModal);
-            //   fetchDeliveryOrder();
-            // }
-
-            setLoading(false);
-            break;
-          }
-          case "INSURANCE_CREATED": {
-            setLoading(false);
-            updateStatus(statusData);
-            break;
-          }
-          case "DONE": {
-            setLoading(false);
-            updateStatus(statusData);
-            break;
-          }
-        }
-      });
+  
     }
   }, []);
 
+
+  window.api.receive("fromMain", (statusData: any) => {
+    //console.log(statusData.data);
+    setDeliveryOrderData (statusData.data);
+    switch (statusData.type) {
+      case "INVOICE_CREATED": {
+        updateStatus(statusData);
+        setShowModal(!showModal);
+
+        setLoading(false);
+        break;
+      }
+      case "INSURANCE_CREATED": {
+        setLoading(false);
+        updateStatus(statusData);
+        break;
+      }
+      case "DONE": {
+        setLoading(false);
+        updateStatus(statusData);
+        break;
+      }
+    }
+  });
+
+   //  console.log(deliveryOrderData,"Hello");
   const getActionButton = () => {
     if (selected !== undefined) {
       switch (deliveryOrders[selected].status) {
@@ -237,7 +239,7 @@ const DeliveryOrders: React.FC = () => {
 
   //update status
   const updateStatus = (data: any) => {
-    db.collection("deliveryOrders").doc(data.data).set(
+    db.collection("deliveryOrders").doc(data.data.id).set(
       {
         status: data.type,
       },
@@ -375,7 +377,7 @@ const DeliveryOrders: React.FC = () => {
             type: "CREATE_INVOICE",
             data: { ...deliveryOrders[selected], credentials },
           });
-          setShowModal(!showModal);
+          // setShowModal(!showModal);
         }
       }
     } catch (err) {
@@ -435,7 +437,7 @@ const DeliveryOrders: React.FC = () => {
         setLoading(false);
         setShowModal(false);
         updateStatus({
-          data: deliveryOrders[selected].id,
+          data: deliveryOrders[selected],
           type: "DO_CREATED",
         });
       }
@@ -480,7 +482,7 @@ const DeliveryOrders: React.FC = () => {
               ) : (
                 <InvoiceTable
                   ref={deliveryOrderTableRef}
-                  deliveryOrder={deliveryOrders[selected]}
+                  deliveryOrder={deliveryOrderData}
                 />
               )}
             </ModalBody>

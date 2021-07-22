@@ -264,7 +264,7 @@ module.exports = function (appWindow, browser) {
         erpWindow.webContents.once("close", function () {
           appWindow.webContents.send("fromMain", {
             type: "INVOICE_CREATED",
-            data: data.id,
+            data: data,
             // data:"INSURANCE_CREATED",
           });
         });
@@ -383,7 +383,7 @@ module.exports = function (appWindow, browser) {
         insuranceWindow.webContents.once("close", function () {
           appWindow.webContents.send("fromMain", {
             type: "INSURANCE_CREATED",
-            data: data.id,
+            data: data,
             // data:"INSURANCE_CREATED",
           });
         });
@@ -445,7 +445,7 @@ module.exports = function (appWindow, browser) {
         vahanWindow.webContents.once("close", function () {
           appWindow.webContents.send("fromMain", {
             type: "DONE",
-            data: data.id,
+            data: data,
             // data:"INSURANCE_CREATED",
           });
         });
