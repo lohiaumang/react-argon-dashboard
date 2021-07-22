@@ -79,12 +79,16 @@ module.exports = function vahan(page, data, win) {
       if (username && password && otp) {
         ipc.send("vahan-done");
 
+        // win.webContents.send('vahan-done');
+        // win.webContents.send("vahan-done");
+
         await page.waitForNavigation();
         await page.waitForSelector("#user_id", { visible: true });
         await waitForRandom();
         await page.type("#user_id", username, {
           delay: randomTypeDelay(),
         });
+
         // let captcha = await page.$('#loginPanel img.bottom-space');
 
         // while(captcha) {

@@ -81,7 +81,7 @@ const Index: React.FC = () => {
   const getUserData = (uid: string) => {
     useEffect(() => {
       firebase
-        .firestore()          
+        .firestore()
         .collection("deliveryOrders")
         .where("dealerId", "==", uid)
         //.where("active", "==", true)
@@ -141,8 +141,6 @@ const Index: React.FC = () => {
   //       });
   //   }, []);
   // };
-
-
 
   //month wise data
   if (currentUser && currentUser.uid) {

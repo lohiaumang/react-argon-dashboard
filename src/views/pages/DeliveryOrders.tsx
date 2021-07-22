@@ -93,6 +93,7 @@ const DeliveryOrders: React.FC = () => {
 
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
+      debugger;
       setLoadingPage(true);
       const dealerId = user.createdBy || user.uid || "";
       db.collection("deliveryOrders")
@@ -131,9 +132,10 @@ const DeliveryOrders: React.FC = () => {
         }
       });
     }
-  });
+  }, []);
 
   useEffect(() => {
+    debugger;
     if (
       selected !== undefined &&
       currentStatus !== undefined &&
@@ -165,6 +167,7 @@ const DeliveryOrders: React.FC = () => {
   }, [currentStatus]);
 
   useEffect(() => {
+    debugger;
     if (selected !== undefined) {
       setCurrentStatus(deliveryOrders[selected].status);
     }
@@ -537,6 +540,7 @@ const DeliveryOrders: React.FC = () => {
                       <Button
                         className="small-button-width my-2"
                         color={"danger"}
+                        disabled={loading === true}
                         onClick={deleteDeliveryOrder}
                         size="sm"
                       >

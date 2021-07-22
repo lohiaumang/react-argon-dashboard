@@ -442,8 +442,13 @@ module.exports = function (appWindow, browser) {
 
         vahan(page, data, appWindow);
 
+        // vahanWindow.webContents.on('vahan-done', function () {
+        //   console.log("store...............");
+        //  });
+
         vahanWindow.webContents.once("vahan-done", function () {
           // vahanWindow.webContents.
+          console.log("vahan hit");
           vahanWindow.webContents.once("close", function () {
             appWindow.webContents.send("fromMain", {
               type: "DONE",
