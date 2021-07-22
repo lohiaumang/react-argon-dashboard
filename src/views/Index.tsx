@@ -84,7 +84,7 @@ const Index: React.FC = () => {
         .firestore()          
         .collection("deliveryOrders")
         .where("dealerId", "==", uid)
-        .where("active", "==", true)
+        //.where("active", "==", true)
         //.where("createdOn", ">=", currentweek)
         //.where("createdOn", "<", today)
 
