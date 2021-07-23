@@ -4,6 +4,7 @@ module.exports = function (appWindow, browser) {
   const path = require("path");
   const fs = require("fs");
   const { ipcMain: ipc, BrowserWindow } = require("electron");
+ // const ipc = electron.ipcRenderer;
   const pie = require("puppeteer-in-electron");
   const erp = require("./puppeteer-scripts/erp");
   const vahan = require("./puppeteer-scripts/vahan");
@@ -31,6 +32,8 @@ module.exports = function (appWindow, browser) {
   } else {
     firebase.app(); // if already initialized, use that one
   }
+
+
 
   ipc.on("toMain", async (event, args) => {
     let { type = "", data = {} } = args;
@@ -445,8 +448,24 @@ module.exports = function (appWindow, browser) {
         // vahanWindow.webContents.on('vahan-done', function () {
         //   console.log("store...............");
         //  });
+      //   vahanWindow.webContents.once('asynchronous-message', function (evt, message) {
+      //     console.log(message); // Returns: {'SAVED': 'File Saved'}
+      // });
 
-        vahanWindow.webContents.once("vahan-done", function () {
+
+      // vahanWindow.api.once("fromMain", (statusData) => {
+      //   switch (statusData.type) {
+      //     case "vahan-done": {
+      //      console.log(statusData);
+      //      console.log(statusData.type);
+      //      console.log(statusData.data);
+    
+      //       break;
+      //     }
+      //   }
+      // });
+
+      vahanWindow.webContents.once("vahan-done", function () {
           // vahanWindow.webContents.
           console.log("vahan hit");
           vahanWindow.webContents.once("close", function () {

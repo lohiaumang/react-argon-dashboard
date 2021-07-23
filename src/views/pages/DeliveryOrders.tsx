@@ -68,14 +68,12 @@ const DeliveryOrders: React.FC = () => {
   const deliveryOrderTableRef =
     useRef() as React.MutableRefObject<HTMLDivElement>;
   const [deliveryOrders, setDeliveryOrders] = useState<DeliveryOrder[]>([]);
-  const [deliveryOrderData, setDeliveryOrderData] = useState<any>([]);
   const [selected, setSelected] = useState<number>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingPage, setLoadingPage] = useState<boolean>(true);
   const [dropdownButton, setDropdownButton] = useState(false);
   const db = firebase.firestore();
-  const fs = require("fs");
   const currentUser = firebase.auth().currentUser;
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: "",
@@ -478,10 +476,11 @@ const DeliveryOrders: React.FC = () => {
   };
 
   return (
+    
     <>
-      <Header />
+      <Header  />
       {/* Page content */}
-      <Container className="mt--7" fluid>
+      <Container className="mt--7">
         {/* {showModal && getModal("DO" || "INVOICE")} */}
         {showModal && selected !== undefined && (
           <Modal
@@ -509,7 +508,7 @@ const DeliveryOrders: React.FC = () => {
               ) : (
                 <InvoiceTable
                   ref={deliveryOrderTableRef}
-                  deliveryOrder={deliveryOrderData}
+                  deliveryOrder={deliveryOrders[selected]}
                 />
               )}
             </ModalBody>

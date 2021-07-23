@@ -1,6 +1,6 @@
 module.exports = function vahan(page, data, win) {
-  const electron = require("electron");
-  const ipc = electron.ipcRenderer;
+//  const electron = require("electron");
+ // const ipc = electron.ipcRenderer;
   // const path = require("path");
   // const fetch = require("node-fetch");
   // const _ = require("get-safe");
@@ -77,11 +77,19 @@ module.exports = function vahan(page, data, win) {
   const automate = async function () {
     try {
       if (username && password && otp) {
-        ipc.send("vahan-done");
-
-        // win.webContents.send('vahan-done');
-        // win.webContents.send("vahan-done");
-
+       // ipc.send("vahan-done");
+      //  win.webContents.send("toMain", {
+      //   type: "vahan-done",
+      //   //data: data.userData,
+      // });
+       //  win.webContents.send('vahan-done');
+         win.webContents.send("vahan-done");
+        // win.webContents.send("fromMain", {
+        //   type: "vahan-done",
+        //   data: "vahan don send",
+        //   // data:"INSURANCE_CREATED",
+        // });
+      
         await page.waitForNavigation();
         await page.waitForSelector("#user_id", { visible: true });
         await waitForRandom();
