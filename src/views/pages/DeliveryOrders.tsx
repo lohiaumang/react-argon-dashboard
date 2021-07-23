@@ -121,11 +121,13 @@ const DeliveryOrders: React.FC = () => {
           }
           case "DONE": {
             setCurrentStatus(statusData.type);
+            console.log("Hi")
 
             break;
           }
           case "RESET": {
             setLoading(false);
+            console.log("Hi")
           }
         }
       });
@@ -476,9 +478,10 @@ const DeliveryOrders: React.FC = () => {
   };
 
   return (
-    
     <>
-      <Header  />
+     {loading && <div className="overlay" onClick={(ev) => ev.preventDefault()}></div>}
+
+      <Header />
       {/* Page content */}
       <Container className="mt--7">
         {/* {showModal && getModal("DO" || "INVOICE")} */}

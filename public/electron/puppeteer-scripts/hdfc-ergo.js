@@ -1,4 +1,4 @@
-module.exports = async function (page, data, mainWindow) {
+module.exports = async function (page, data, mainWindow,insuranceWindow) {
   // const fetch = require('node-fetch');
   // const _ = require("get-safe");
 
@@ -55,12 +55,24 @@ module.exports = async function (page, data, mainWindow) {
     await page.waitForTimeout((Math.random() + 1) * 1000);
   }
 
+
   const {
     credentials: { username, password },
   } = data;
+  const automate = async function () {
+    // let done = false;
+
+    // insuranceWindow.webContents.once("close", function () {
+    //   mainWindow.webContents.send("fromMain", {
+    //     type: done ? "INSURANCE_CREATED" : "INVOICE_CREATED",
+    //     data: data.id,
+    //   });
+    // });
 
   try {
     if (username && password) {
+
+  
       await page.waitForSelector("#UserName", { visible: true });
       await waitForRandom();
       await page.type("#UserName", username);
@@ -163,8 +175,12 @@ module.exports = async function (page, data, mainWindow) {
     await page.waitForSelector("div[data-ng-if='loading']", { hidden: true });
     await page.waitForSelector("#IDV_SumInsured");
     await page.$eval("#IDV_SumInsured", (el) => (el.value = ""));
-    const idv = new Number(data.priceDetails.price) * 0.95;
+    console.log(data.priceDetails.price);
+    const idv = Math.round(new Number(data.priceDetails.price) * 0.95);
+    console.log(idv);
+    console.log(Math.round(idv));
     await page.type("#IDV_SumInsured", idv.toString());
+    console.log(idv);
     await waitForRandom();
     await page.waitForSelector("input[name='EngineNumber']");
     await page.type(
@@ -333,7 +349,11 @@ module.exports = async function (page, data, mainWindow) {
     await page.type("input[name='Information3']", "65");
     // await page.click("form[name='TwoWheelerForm'] > .text-right > button.btn-submit");
     // mainWindow.webContents.send("update-progress-bar", ["100%", "insurance"]);
+    done = true;
   } catch (err) {
     console.log(err);
   }
+  
+};
+automate();
 };

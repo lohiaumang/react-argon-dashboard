@@ -1,4 +1,4 @@
-module.exports = function erp(page, data, mainWindow) {
+module.exports = function erp(page, data, mainWindow, erpWindow) {
   const { click, typeText } = require("./helper");
   const { enquiryType, customerCategory } = require("../enums");
 
@@ -9,8 +9,19 @@ module.exports = function erp(page, data, mainWindow) {
   const navigationPromise = page.waitForNavigation();
 
   async function automate() {
+
+    let done = false;
+
+    erpWindow.webContents.once("close", function () {
+      mainWindow.webContents.send("fromMain", {
+        type: done ? "INVOICE_CREATED" : "DO_CREATED",
+        data: data.id,
+      });
+    });
+    //done = true;
     await typeText(page, "#s_swepi_1", username);
     await typeText(page, "#s_swepi_2", password);
+    done = true;
     const captcha = await page.$eval("#captchaCode", (el) =>
       el.textContent.replace(/\s+/g, "")
     );
@@ -551,7 +562,7 @@ module.exports = function erp(page, data, mainWindow) {
       item.name.includes("Booking Details & Vehicle Allotment")
     );
     await page.$eval(`#${vehicleAllotment.id}`, (el) => el.click());
-
+   // done = true;
     await click(
       page,
       '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]'
@@ -662,6 +673,7 @@ module.exports = function erp(page, data, mainWindow) {
     await page.$eval("td[role='gridcell'] > a", (el) => el.click());
     await click(page, 'div > button[data-display="Permanent Invoice"]');
     // await browser.close();
+    done = true;
   }
 
   automate();

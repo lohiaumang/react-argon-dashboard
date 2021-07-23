@@ -1,15 +1,15 @@
-module.exports = function (page, data, insuranceCompany, mainWindow) {
+module.exports = function (page, data, insuranceCompany, mainWindow,insuranceWindow) {
   const hdfcAutomation = require("./electron/puppeteer-scripts/hdfc-ergo");
   const iciciAutomation = require("./electron/puppeteer-scripts/icici-lombard");
 
   switch (insuranceCompany) {
     case "HDFC": {
-      hdfcAutomation(page, data, mainWindow);
+      hdfcAutomation(page, data, mainWindow,insuranceWindow);
 
       break;
     }
     case "ICICI": {
-      iciciAutomation(page, data, mainWindow);
+      iciciAutomation(page, data, mainWindow,insuranceWindow);
 
       break;
     }

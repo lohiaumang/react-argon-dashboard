@@ -1,6 +1,4 @@
-module.exports = function vahan(page, data, win) {
-//  const electron = require("electron");
- // const ipc = electron.ipcRenderer;
+module.exports = function vahan(page, data, mainWindow, vahanWindow) {
   // const path = require("path");
   // const fetch = require("node-fetch");
   // const _ = require("get-safe");
@@ -75,28 +73,22 @@ module.exports = function vahan(page, data, win) {
   } = data;
 
   const automate = async function () {
+    let done = false;
+
+    vahanWindow.webContents.once("close", function () {
+      mainWindow.webContents.send("fromMain", {
+        type: done ? "DONE" : "RESET",
+        //data: data.id,
+      });
+    });
+
     try {
       if (username && password && otp) {
-       // ipc.send("vahan-done");
-      //  win.webContents.send("toMain", {
-      //   type: "vahan-done",
-      //   //data: data.userData,
-      // });
-       //  win.webContents.send('vahan-done');
-         win.webContents.send("vahan-done");
-        // win.webContents.send("fromMain", {
-        //   type: "vahan-done",
-        //   data: "vahan don send",
-        //   // data:"INSURANCE_CREATED",
-        // });
-      
-        await page.waitForNavigation();
         await page.waitForSelector("#user_id", { visible: true });
         await waitForRandom();
         await page.type("#user_id", username, {
           delay: randomTypeDelay(),
         });
-
         // let captcha = await page.$('#loginPanel img.bottom-space');
 
         // while(captcha) {
@@ -150,7 +142,7 @@ module.exports = function vahan(page, data, win) {
       await waitForRandom();
       await page.click("#pending_action");
 
-      //win.webContents.send("update-progress-bar", ["10%", "vahan"]);
+      //mainWindow, vahanWindow.webContents.send("update-progress-bar", ["10%", "vahan"]);
 
       await page.waitForSelector("#chasi_no_new_entry", { visible: true });
       await waitForRandom();
@@ -168,7 +160,7 @@ module.exports = function vahan(page, data, win) {
       await waitForRandom();
       await page.click("#get_dtls_btn");
 
-      //win.webContents.send("update-progress-bar", ["20%", "vahan"]);
+      //mainWindow, vahanWindow.webContents.send("update-progress-bar", ["20%", "vahan"]);
 
       await page.waitForSelector("#workbench_tabview\\:purchase_dt_input", {
         visible: true,
@@ -264,7 +256,7 @@ module.exports = function vahan(page, data, win) {
       );
       await waitForRandom();
 
-      //win.webContents.send("update-progress-bar", ["30%", "vahan"]);
+      //mainWindow, vahanWindow.webContents.send("update-progress-bar", ["30%", "vahan"]);
 
       await page.type(
         "#workbench_tabview\\:tf_c_add1",
@@ -367,7 +359,7 @@ module.exports = function vahan(page, data, win) {
       );
       await waitForRandom();
 
-      // win.webContents.send("update-progress-bar", ["40%", "vahan"]);
+      // mainWindow, vahanWindow.webContents.send("update-progress-bar", ["40%", "vahan"]);
 
       await page.click("#workbench_tabview\\:partial_vh_class");
       await page.waitForSelector(
@@ -404,7 +396,7 @@ module.exports = function vahan(page, data, win) {
       );
       await waitForRandom();
 
-      // win.webContents.send("update-progress-bar", ["50%", "vahan"]);
+      // mainWindow, vahanWindow.webContents.send("update-progress-bar", ["50%", "vahan"]);
 
       // Enter vehicle details
       await page.waitForSelector("a[href='#workbench_tabview:veh_info_tab']", {
@@ -431,7 +423,7 @@ module.exports = function vahan(page, data, win) {
       await waitForRandom();
       await page.type("#workbench_tabview\\:sale_amt", data.priceDetails.price);
 
-      // win.webContents.send("update-progress-bar", ["70%", "vahan"]);
+      // mainWindow, vahanWindow.webContents.send("update-progress-bar", ["70%", "vahan"]);
 
       // Enter insurance details
       await page.click("a[href='#workbench_tabview\\:HypothecationOwner']");
@@ -520,7 +512,7 @@ module.exports = function vahan(page, data, win) {
 
       // Enter hypothecation details
       if (data.additionalInfo.hasOwnProperty("financier")) {
-        //win.webContents.send("update-progress-bar", ["80%", "vahan"]);
+        //mainWindow, vahanWindow.webContents.send("update-progress-bar", ["80%", "vahan"]);
         await page.click("#workbench_tabview\\:isHypo");
         await waitForRandom();
         await page.waitForSelector("#workbench_tabview\\:hpa_hp_type", {
@@ -593,6 +585,7 @@ module.exports = function vahan(page, data, win) {
           data.customerInfo.currPostal,
           { delay: randomTypeDelay() }
         );
+        done = true;
       }
     } catch (err) {
       console.log(err);
