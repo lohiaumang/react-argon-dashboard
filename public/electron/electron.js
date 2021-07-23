@@ -4,7 +4,7 @@ const path = require("path");
 const isDev = require("electron-is-dev");
 const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
-const mainWindow = require("./mainWindow");
+const functions = require("./functions");
 
 let win, browser;
 
@@ -43,7 +43,7 @@ function createWindow() {
   //   win.webContents.openDevTools({ mode: "detach" });
   // }
 
-  mainWindow(win, browser);
+  functions(win, browser);
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common

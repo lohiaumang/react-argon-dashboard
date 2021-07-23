@@ -1,6 +1,6 @@
 const { localeData } = require("moment");
 
-module.exports = function (appWindow, browser) {
+module.exports = function (mainWindow, browser) {
   const path = require("path");
   const fs = require("fs");
   const { ipcMain: ipc, BrowserWindow } = require("electron");
@@ -68,14 +68,14 @@ module.exports = function (appWindow, browser) {
                 uid,
               })
             );
-            appWindow.webContents.send("fromMain", {
+            mainWindow.webContents.send("fromMain", {
               type: "CREATE_DEALER_SUCCESS",
               resp,
             });
           })
           .catch((err) => {
             console.log("User creation failed!", err);
-            appWindow.webContents.send("fromMain", {
+            mainWindow.webContents.send("fromMain", {
               type: "CREATE_DEALER_FAILURE",
               err,
             });
@@ -116,7 +116,7 @@ module.exports = function (appWindow, browser) {
                     uid: info.uid,
                   };
                   userData = data;
-                  appWindow.webContents.send("fromMain", {
+                  mainWindow.webContents.send("fromMain", {
                     type: "GET_DEALER_FAILURE",
                     userData,
                   });
@@ -125,7 +125,7 @@ module.exports = function (appWindow, browser) {
             });
         }
         if (userData && userData.uid === data.uid) {
-          appWindow.webContents.send("fromMain", {
+          mainWindow.webContents.send("fromMain", {
             type: "GET_DEALER_SUCCESS",
             userData,
           });
@@ -138,11 +138,11 @@ module.exports = function (appWindow, browser) {
             path.join(__dirname, "../dataStore/user-info.json"),
             JSON.stringify(data)
           );
-          appWindow.webContents.send("fromMain", {
+          mainWindow.webContents.send("fromMain", {
             type: "SET_DEALER_SUCCESS",
           });
         } catch (err) {
-          appWindow.webContents.send("fromMain", {
+          mainWindow.webContents.send("fromMain", {
             type: "SET_DEALER_FAILURE",
           });
         }
@@ -158,14 +158,14 @@ module.exports = function (appWindow, browser) {
           .then((resp) => {
             // console.log("User created!", JSON.stringify(resp.data));
             // console.log("Step", step++, resp.data);
-            appWindow.webContents.send("fromMain", {
+            mainWindow.webContents.send("fromMain", {
               type: "CREATE_USER_SUCCESS",
               resp,
             });
           })
           .catch((err) => {
             console.log("User creation failed!", err);
-            appWindow.webContents.send("fromMain", {
+            mainWindow.webContents.send("fromMain", {
               type: "CREATE_USER_FAILURE",
               err,
             });
@@ -180,13 +180,13 @@ module.exports = function (appWindow, browser) {
         //  console.log("Step", step++, data);
         deleteUserDataFirestore(data)
           .then((resp) => {
-            appWindow.webContents.send("fromMain", {
+            mainWindow.webContents.send("fromMain", {
               type: "DELETE_USER_SUCCESS",
               resp,
             });
           })
           .catch((err) => {
-            appWindow.webContents.send("fromMain", {
+            mainWindow.webContents.send("fromMain", {
               type: "DELETE_USER_FAILURE",
               err,
             });
@@ -209,12 +209,12 @@ module.exports = function (appWindow, browser) {
         const userData = getCredentials();
 
         if (userData) {
-          appWindow.webContents.send("fromMain", {
+          mainWindow.webContents.send("fromMain", {
             type: "GET_CREDENTIALS_SUCCESS",
             userData,
           });
         } else {
-          appWindow.webContents.send("fromMain", {
+          mainWindow.webContents.send("fromMain", {
             type: "GET_CREDENTIALS_FAILURE",
           });
         }
@@ -228,7 +228,7 @@ module.exports = function (appWindow, browser) {
           title: "AutoAuto ERP",
           height: 950,
           width: 1200,
-          // parent: appWindow,
+          // parent: mainWindow,
           // TODO: Might want to change this to false
           frame: true,
         });
@@ -247,8 +247,8 @@ module.exports = function (appWindow, browser) {
 
         // erpWindow.webContents.once("close", function () {
         //   // erpWindow.close();
-        //   appWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
-        //   appWindow.reload();
+        //   mainWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
+        //   mainWindow.reload();
         // });
         // TODOTODO
         const { credentials } = getCredentials();
@@ -260,9 +260,9 @@ module.exports = function (appWindow, browser) {
           };
         }
 
-        erp(page, data, appWindow);
+        erp(page, data, mainWindow);
         erpWindow.webContents.once("close", function () {
-          appWindow.webContents.send("fromMain", {
+          mainWindow.webContents.send("fromMain", {
             type: "INVOICE_CREATED",
             data: data.id,
             // data:"INSURANCE_CREATED",
@@ -305,7 +305,7 @@ module.exports = function (appWindow, browser) {
         //     ) || currUrl.includes("https://pie.hdfcergo.com//Login/");
         //   if (isLoginPage) {
         //     insuranceWindow.webContents.send("prompt-for-login");
-        //     // appWindow.webContents.send("update-progress-bar", [
+        //     // mainWindow.webContents.send("update-progress-bar", [
         //     //   "10%",
         //     //   "insurance",
         //     // ]);
@@ -351,7 +351,7 @@ module.exports = function (appWindow, browser) {
           }
 
           page = await pie.getPage(browser, insuranceWindow);
-          insurance(page, data, insuranceCompany, appWindow);
+          insurance(page, data, insuranceCompany, mainWindow);
         }
 
         // insuranceWindow.webContents.on("did-navigate", function (event, url) {
@@ -381,7 +381,7 @@ module.exports = function (appWindow, browser) {
         // });
 
         insuranceWindow.webContents.once("close", function () {
-          appWindow.webContents.send("fromMain", {
+          mainWindow.webContents.send("fromMain", {
             type: "INSURANCE_CREATED",
             data: data.id,
             // data:"INSURANCE_CREATED",
@@ -390,7 +390,7 @@ module.exports = function (appWindow, browser) {
 
         // ipc.once("close-insurance-window", function () {
         //   insuranceWindow.destroy();
-        //   appWindow.webContents.send("remove-overlay");
+        //   mainWindow.webContents.send("remove-overlay");
         // });
         //console.log(JSON.stringify(data), "Insurance Data Get!");
         break;
@@ -440,27 +440,31 @@ module.exports = function (appWindow, browser) {
           };
         }
 
-        vahan(page, data, appWindow);
+        vahan(page, data, mainWindow, vahanWindow);
 
-        vahanWindow.webContents.once("vahan-done", function () {
-          // vahanWindow.webContents.
-          vahanWindow.webContents.once("close", function () {
-            appWindow.webContents.send("fromMain", {
-              type: "DONE",
-              data: data.id,
-              // data:"INSURANCE_CREATED",
-            });
-          });
-        });
+        // ipc.once("vahan-done", function () {
+        //   console.log("HERE");
+        //   vahanWindow.webContents.once("close", function () {
+        //     mainWindow.webContents.send("fromMain", {
+        //       type: "DONE",
+        //       data: data.id,
+        //     });
+        //   });
+        // });
 
-        vahanWindow.webContents.once("close", function () {
-          console.log("HERE\n\n\n");
-          appWindow.webContents.send("fromMain", {
-            type: "RESET",
-            data: data.id,
-            // data:"INSURANCE_CREATED",
-          });
-        });
+        // vahanWindow.webContents.once("close", function () {
+        //   mainWindow.webContents.send("fromMain", {
+        //     type: "DONE",
+        //     data: data.id,
+        //   });
+        // });
+
+        // vahanWindow.webContents.once("close", function () {
+        //   mainWindow.webContents.send("fromMain", {
+        //     type: "RESET",
+        //     data: data.id,
+        //   });
+        // });
 
         // vahanWindow.webContents.on("new-window", function (event, url) {
         //   event.preventDefault();
