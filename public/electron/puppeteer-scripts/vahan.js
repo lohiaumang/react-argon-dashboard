@@ -1,3 +1,4 @@
+// TODO: CLean everything that is not being used
 module.exports = function vahan(page, data, mainWindow, vahanWindow) {
   // const path = require("path");
   // const fetch = require("node-fetch");
@@ -74,8 +75,14 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
 
   const automate = async function () {
     let done = false;
-    console.log(done, "step 1");
-    vahanWindow.webContents.once("close", function () {
+
+    vahanWindow.webContents.once("close", async (event) => {
+      // Prevent default, logout and then close
+      // event.preventDefault();
+      // await page.click("logout button")
+      // await page.waitForSelector("OK button");
+      // await page.click("OK button");
+      // vahanWindow.close(); <-- check if this is accurate
       mainWindow.webContents.send("fromMain", {
         type: done ? "DONE" : "RESET",
         //data: data.id,
@@ -385,7 +392,7 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
       );
       await waitForRandom();
       await page.click("#workbench_tabview\\:ownerBeanPartial");
-       done = true;
+      // done = true;
       await waitForRandom();
       await page.waitForSelector(
         "#op_showPartialGenApplNo .ui-dialog-content.ui-widget-content > .center-position > button",
@@ -588,7 +595,8 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
           { delay: randomTypeDelay() }
         );
       }
-      done = true;  console.log(done, "step 6");
+      done = true;
+      console.log(done, "step 6");
     } catch (err) {
       console.log(err);
     }
