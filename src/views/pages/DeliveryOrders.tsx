@@ -108,10 +108,16 @@ const DeliveryOrders: React.FC = () => {
         });
 
       window.api.receive("fromMain", (statusData: any) => {
+        debugger;
         switch (statusData.type) {
+        
           case "INVOICE_CREATED": {
             setShowModal(!showModal);
 
+            break;
+          }
+          case "INVOICE_CREATE": {
+            setLoading(false);
             break;
           }
           case "INSURANCE_CREATED": {

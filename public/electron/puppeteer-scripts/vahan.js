@@ -74,14 +74,14 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
 
   const automate = async function () {
     let done = false;
-
+    console.log(done, "step 1");
     vahanWindow.webContents.once("close", function () {
       mainWindow.webContents.send("fromMain", {
         type: done ? "DONE" : "RESET",
         //data: data.id,
       });
     });
-
+    console.log(done, "step 2");
     try {
       if (username && password && otp) {
         await page.waitForSelector("#user_id", { visible: true });
@@ -385,6 +385,7 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
       );
       await waitForRandom();
       await page.click("#workbench_tabview\\:ownerBeanPartial");
+       done = true;
       await waitForRandom();
       await page.waitForSelector(
         "#op_showPartialGenApplNo .ui-dialog-content.ui-widget-content > .center-position > button",
@@ -513,6 +514,7 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
       // Enter hypothecation details
       if (data.additionalInfo.hasOwnProperty("financier")) {
         //mainWindow, vahanWindow.webContents.send("update-progress-bar", ["80%", "vahan"]);
+
         await page.click("#workbench_tabview\\:isHypo");
         await waitForRandom();
         await page.waitForSelector("#workbench_tabview\\:hpa_hp_type", {
@@ -585,8 +587,8 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
           data.customerInfo.currPostal,
           { delay: randomTypeDelay() }
         );
-        done = true;
       }
+      done = true;  console.log(done, "step 6");
     } catch (err) {
       console.log(err);
     }

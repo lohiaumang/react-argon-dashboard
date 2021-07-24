@@ -18,10 +18,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         data: data.id,
       });
     });
+    console.log(done);
     //done = true;
     await typeText(page, "#s_swepi_1", username);
     await typeText(page, "#s_swepi_2", password);
-    done = true;
+    done = true; //done true
+    console.log(done);
     const captcha = await page.$eval("#captchaCode", (el) =>
       el.textContent.replace(/\s+/g, "")
     );

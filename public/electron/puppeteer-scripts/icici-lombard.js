@@ -1,4 +1,4 @@
-module.exports = async function (page, data, mainWindow,insuranceWindow) {
+module.exports = async function (page, data, mainWindow, insuranceWindow) {
   console.log("HERE ICICI", Object.keys(data));
   // const fetch = require('node-fetch');
   // const _ = require("get-safe");
@@ -34,13 +34,14 @@ module.exports = async function (page, data, mainWindow,insuranceWindow) {
     credentials: { username, password },
   } = data;
   let done = false;
-
+  console.log(done, "Step 1");
   insuranceWindow.webContents.once("close", function () {
     mainWindow.webContents.send("fromMain", {
       type: done ? "INSURANCE_CREATED" : "INVOICE_CREATED",
-      data: data.id,
+      //data: data.id,
     });
   });
+  console.log(done, "Step 2");
   try {
     if (username && password) {
       await page.waitForSelector("#login2_txtLoginId", { visible: true });
@@ -222,6 +223,8 @@ module.exports = async function (page, data, mainWindow,insuranceWindow) {
     //   data:data.id,
     //  // data:"INSURANCE_CREATED",
     // });
+    done = true;
+    console.log(done,"Step 3");
   } catch (err) {
     console.log(err);
   }
