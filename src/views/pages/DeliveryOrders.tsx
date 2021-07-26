@@ -68,6 +68,7 @@ const DeliveryOrders: React.FC = () => {
   const deliveryOrderTableRef =
     useRef() as React.MutableRefObject<HTMLDivElement>;
   const [deliveryOrders, setDeliveryOrders] = useState<DeliveryOrder[]>([]);
+  const [price, setPriceDetalis] = useState<any>([]);
   const [selected, setSelected] = useState<number>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -86,6 +87,7 @@ const DeliveryOrders: React.FC = () => {
     uid: "",
   });
   let credentials: any;
+  let priceDetails: any;
   const [currentStatus, setCurrentStatus] = useState<string>();
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
@@ -110,7 +112,6 @@ const DeliveryOrders: React.FC = () => {
       window.api.receive("fromMain", (statusData: any) => {
         debugger;
         switch (statusData.type) {
-        
           case "INVOICE_CREATED": {
             setShowModal(!showModal);
 
@@ -127,13 +128,13 @@ const DeliveryOrders: React.FC = () => {
           }
           case "DONE": {
             setCurrentStatus(statusData.type);
-            console.log("Hi")
+            console.log("Hi");
 
             break;
           }
           case "RESET": {
             setLoading(false);
-            console.log("Hi")
+            console.log("Hi");
           }
         }
       });
@@ -280,6 +281,18 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
+  // const priceConfig = () => {
+  //   debugger;
+  //   db.collection("priceConfig")
+  //     .doc("config")
+  //     .get()
+  //     .then((doc) => {
+  //       if (doc.exists) {
+  //         priceDetails = doc.data();
+  //       }
+  //     });
+  // };
+  console.log(priceDetails);
   // TODO: Make fetching data if it does not exist common
   const fetchDeliveryOrder = () => {
     if (selected !== undefined) {
@@ -445,14 +458,29 @@ const DeliveryOrders: React.FC = () => {
 
   //create erp data
   const createRegistration = async () => {
+    debugger;
     try {
       setLoading(true);
       if (selected !== undefined) {
         const status: any = await fetchDeliveryOrder();
+        db.collection("priceConfig")
+          .doc("config")
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              priceDetails=doc.data();
+              const priceData=priceDetails[deliveryOrders[selected].modelName];
+              setPriceDetalis(priceData);
+            }
+          });
+        console.log(price);
         if (status) {
           window.api.send("toMain", {
             type: "CREATE_REGISTRATION",
-            data: deliveryOrders[selected],
+            data: {
+              ...deliveryOrders[selected],
+              priceDetails,
+            },
           });
         }
       }
@@ -485,7 +513,9 @@ const DeliveryOrders: React.FC = () => {
 
   return (
     <>
-     {loading && <div className="overlay" onClick={(ev) => ev.preventDefault()}></div>}
+      {loading && (
+        <div className="overlay" onClick={(ev) => ev.preventDefault()}></div>
+      )}
 
       <Header />
       {/* Page content */}

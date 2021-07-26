@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Row, Col } from "reactstrap";
+import NumberFormat from "react-number-format";
 
 export interface UserInfo {
   name: string;
@@ -101,7 +102,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
       );
       const total = [
         price + insurance + mvTax + postalCharge + extendedWarranty,
-      ];
+      ].toString();
       //create DO
 
       // window.api.send("fromMain", {
@@ -334,26 +335,52 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                 {props.deliveryOrder.additionalInfo.price && (
                   <tr>
                     <th>Price</th>
-                    <td>Rs. {props.deliveryOrder.additionalInfo.price}</td>
+                    <td>
+                      <NumberFormat
+                        value={props.deliveryOrder.additionalInfo.price}
+                        displayType={"text"}
+                        thousandSeparator={true}
+                        prefix={"₹"}
+                      />
+                    </td>
                   </tr>
                 )}
                 {props.deliveryOrder.additionalInfo.insurance && (
                   <tr>
                     <th>Insurance</th>
-                    <td>Rs. {props.deliveryOrder.additionalInfo.insurance}</td>
+                    <td>
+                      <NumberFormat
+                        value={props.deliveryOrder.additionalInfo.insurance}
+                        displayType={"text"}
+                        thousandSeparator={true}
+                        prefix={"₹"}
+                      />
+                    </td>
                   </tr>
                 )}
                 {props.deliveryOrder.additionalInfo.mvTax && (
                   <tr>
                     <th>MV Tax</th>
-                    <td>Rs. {props.deliveryOrder.additionalInfo.mvTax}</td>
+                    <td>
+                      <NumberFormat
+                        value={props.deliveryOrder.additionalInfo.mvTax}
+                        displayType={"text"}
+                        thousandSeparator={true}
+                        prefix={"₹"}
+                      />
+                    </td>
                   </tr>
                 )}
                 {props.deliveryOrder.additionalInfo.postalCharge && (
                   <tr>
                     <th>Postal Charge</th>
                     <td>
-                      Rs. {props.deliveryOrder.additionalInfo.postalCharge}
+                      <NumberFormat
+                        value={props.deliveryOrder.additionalInfo.postalCharge}
+                        displayType={"text"}
+                        thousandSeparator={true}
+                        prefix={"₹"}
+                      />
                     </td>
                   </tr>
                 )}
@@ -372,26 +399,52 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                 {props.deliveryOrder.additionalInfo.joyClub && (
                   <tr>
                     <th>Joy Club</th>
-                    <td>Rs. 412</td>
+                    <td>
+                      <NumberFormat
+                        value={412}
+                        displayType={"text"}
+                        thousandSeparator={true}
+                        prefix={"₹"}
+                      />
+                    </td>
                   </tr>
                 )}
                 {props.deliveryOrder.additionalInfo.hra && (
                   <tr>
                     <th>Honda Roadside Assistance</th>
-                    <td>Rs. 299</td>
+                    <td>
+                      <NumberFormat
+                        value={229}
+                        displayType={"text"}
+                        thousandSeparator={true}
+                        prefix={"₹"}
+                      />
+                    </td>
                   </tr>
                 )}
                 {props.deliveryOrder.additionalInfo.ptfePolish && (
                   <tr>
                     <th>PTFE Polish</th>
-                    <td>Rs. {props.deliveryOrder.additionalInfo.ptfePolish}</td>
+                    <td>
+                      <NumberFormat
+                        value={props.deliveryOrder.additionalInfo.ptfePolish}
+                        displayType={"text"}
+                        thousandSeparator={true}
+                        prefix={"₹"}
+                      />
+                    </td>
                   </tr>
                 )}
                 {props.deliveryOrder.additionalInfo.accessories && (
                   <tr>
                     <th>Accessories</th>
                     <td>
-                      Rs. {props.deliveryOrder.additionalInfo.accessories}
+                      <NumberFormat
+                        value={props.deliveryOrder.additionalInfo.accessories}
+                        displayType={"text"}
+                        thousandSeparator={true}
+                        prefix={"₹"}
+                      />
                     </td>
                   </tr>
                 )}
@@ -399,7 +452,14 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                   <th>
                     <strong>Total</strong>
                   </th>
-                  <td>{total}</td>
+                  <td>
+                    <NumberFormat
+                      value={total}
+                      displayType={"text"}
+                      thousandSeparator={true}
+                      prefix={"₹"}
+                    />
+                  </td>
                 </tr>
               </tbody>
             </Table>

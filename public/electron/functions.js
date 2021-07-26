@@ -428,18 +428,18 @@ module.exports = function (mainWindow, browser) {
 
         const { credentials } = getCredentials();
 
-        const priceConfig = await firebase
-          .firestore()
-          .collection("priceConfig")
-          .doc("config")
-          .get();
+        // const priceConfig = await firebase
+        //   .firestore()
+        //   .collection("priceConfig")
+        //   .doc("config")
+        //   .get();
 
-        if (priceConfig.exists && credentials) {
-          const priceDetails = priceConfig.data();
+        if (credentials) {
+        //  const priceDetails = priceConfig.data();
           data = {
             ...data,
             credentials: credentials["VAHAN"],
-            priceDetails: priceDetails[data.vehicleInfo.modelName],
+            //priceDetails: priceDetails[data.vehicleInfo.modelName],
           };
         }
 
