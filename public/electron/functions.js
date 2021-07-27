@@ -4,7 +4,7 @@ module.exports = function (mainWindow, browser) {
   const path = require("path");
   const fs = require("fs");
   const { ipcMain: ipc, BrowserWindow } = require("electron");
- // const ipc = electron.ipcRenderer;
+  // const ipc = electron.ipcRenderer;
   const pie = require("puppeteer-in-electron");
   const erp = require("./puppeteer-scripts/erp");
   const vahan = require("./puppeteer-scripts/vahan");
@@ -32,8 +32,6 @@ module.exports = function (mainWindow, browser) {
   } else {
     firebase.app(); // if already initialized, use that one
   }
-
-
 
   ipc.on("toMain", async (event, args) => {
     let { type = "", data = {} } = args;
@@ -263,7 +261,7 @@ module.exports = function (mainWindow, browser) {
           };
         }
 
-         erp(page, data, mainWindow,erpWindow);
+        erp(page, data, mainWindow, erpWindow);
         // erpWindow.webContents.once("close", function () {
         //   mainWindow.webContents.send("fromMain", {
         //     type: "INVOICE_CREATED",
@@ -289,7 +287,7 @@ module.exports = function (mainWindow, browser) {
         insuranceWindow = new BrowserWindow({
           title: "autoAuto Insurance",
           height: 750,
-          width: 700,
+          width: 1200,
           // TODO: Might want to change this to false
           frame: true,
           resizable: false,
@@ -321,21 +319,22 @@ module.exports = function (mainWindow, browser) {
         // const modelData = JSON.parse(fs.readFileSync(path.join(__dirname, 'model-data.json')));
         // const dealerData = JSON.parse(fs.readFileSync(path.join(__dirname, 'dealer-data.json')));
 
-        const insuranceConfig = await firebase
-          .firestore()
-          .collection("insuranceConfig")
-          .doc("config")
-          .get();
+        // const insuranceConfig = await firebase
+        //   .firestore()
+        //   .collection("insuranceConfig")
+        //   .doc("config")
+        //   .get();
 
-        const priceConfig = await firebase
-          .firestore()
-          .collection("priceConfig")
-          .doc("config")
-          .get();
+        // const priceConfig = await firebase
+        //   .firestore()
+        //   .collection("priceConfig")
+        //   .doc("config")
+        //   .get();
+        //   console.log(data.insuranceDetails);
 
-        if (insuranceConfig.exists && priceConfig.exists) {
-          const insuranceDetails = insuranceConfig.data();
-          const priceDetails = priceConfig.data();
+        if (data.insuranceDetails && data.priceDetails) {
+          // const insuranceDetails = insuranceConfig.data();
+          // const priceDetails = priceConfig.data();
           const { credentials } = getCredentials();
           if (credentials) {
             data = {
@@ -343,18 +342,18 @@ module.exports = function (mainWindow, browser) {
               credentials: credentials[insuranceCompany],
               insuranceDetails: {
                 modelName:
-                  insuranceDetails[data.vehicleInfo.modelName][
+                  data.insuranceDetails[data.vehicleInfo.modelName][
                     `${insuranceCompany.toLowerCase()}ModelName`
                   ],
                 userRate:
-                  insuranceDetails[data.vehicleInfo.modelName]["userRate"],
+                  data.insuranceDetails[data.vehicleInfo.modelName]["userRate"],
               },
-              priceDetails: priceDetails[data.vehicleInfo.modelName],
+             // priceDetails: priceDetails[data.vehicleInfo.modelName],
             };
           }
 
           page = await pie.getPage(browser, insuranceWindow);
-          insurance(page, data, insuranceCompany, mainWindow,insuranceWindow);
+          insurance(page, data, insuranceCompany, mainWindow, insuranceWindow);
         }
 
         // insuranceWindow.webContents.on("did-navigate", function (event, url) {
@@ -428,18 +427,17 @@ module.exports = function (mainWindow, browser) {
 
         const { credentials } = getCredentials();
 
-        // const priceConfig = await firebase
-        //   .firestore()
+        // const priceConfig = await db
         //   .collection("priceConfig")
         //   .doc("config")
         //   .get();
 
         if (credentials) {
-        //  const priceDetails = priceConfig.data();
+         // const priceDetails = priceConfig.data();
           data = {
             ...data,
             credentials: credentials["VAHAN"],
-            //priceDetails: priceDetails[data.vehicleInfo.modelName],
+           // priceDetails: priceDetails[data.vehicleInfo.modelName],
           };
         }
 

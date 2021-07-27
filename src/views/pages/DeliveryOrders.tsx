@@ -88,6 +88,7 @@ const DeliveryOrders: React.FC = () => {
   });
   let credentials: any;
   let priceDetails: any;
+  let insuranceDetails:any;
   const [currentStatus, setCurrentStatus] = useState<string>();
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
@@ -128,13 +129,11 @@ const DeliveryOrders: React.FC = () => {
           }
           case "DONE": {
             setCurrentStatus(statusData.type);
-            console.log("Hi");
 
             break;
           }
           case "RESET": {
             setLoading(false);
-            console.log("Hi");
           }
         }
       });
@@ -281,18 +280,36 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-  // const priceConfig = () => {
-  //   debugger;
-  //   db.collection("priceConfig")
-  //     .doc("config")
-  //     .get()
-  //     .then((doc) => {
-  //       if (doc.exists) {
-  //         priceDetails = doc.data();
-  //       }
-  //     });
-  // };
-  console.log(priceDetails);
+  const priceConfig = () => {
+    debugger;
+    if (selected !== undefined) {
+    firebase.firestore().collection("priceConfig")
+      .doc("config")
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          priceDetails = doc.data();
+          priceDetails = priceDetails[deliveryOrders[selected].modelName];
+        }
+      });
+  };
+}
+
+
+const insuranceConfig = () => {
+  debugger;
+  if (selected !== undefined) {
+  firebase.firestore().collection("insuranceConfig")
+    .doc("config")
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        insuranceDetails = doc.data();
+      }
+    });
+};
+}
+  //console.log(priceDetails);
   // TODO: Make fetching data if it does not exist common
   const fetchDeliveryOrder = () => {
     if (selected !== undefined) {
@@ -438,8 +455,13 @@ const DeliveryOrders: React.FC = () => {
     try {
       setLoading(true);
       if (selected !== undefined) {
+  
         await getCredentials();
+        await insuranceConfig();
+        await priceConfig();
         const status: any = await fetchDeliveryOrder();
+    
+       
         if (status) {
           window.api.send("toMain", {
             type: "CREATE_INSURANCE",
@@ -447,6 +469,9 @@ const DeliveryOrders: React.FC = () => {
               ...deliveryOrders[selected],
               insuranceCompany,
               credentials,
+              priceDetails,
+              insuranceDetails,
+    
             },
           });
         }
@@ -462,18 +487,8 @@ const DeliveryOrders: React.FC = () => {
     try {
       setLoading(true);
       if (selected !== undefined) {
+        await priceConfig();
         const status: any = await fetchDeliveryOrder();
-        db.collection("priceConfig")
-          .doc("config")
-          .get()
-          .then((doc) => {
-            if (doc.exists) {
-              priceDetails=doc.data();
-              const priceData=priceDetails[deliveryOrders[selected].modelName];
-              setPriceDetalis(priceData);
-            }
-          });
-        console.log(price);
         if (status) {
           window.api.send("toMain", {
             type: "CREATE_REGISTRATION",
@@ -528,6 +543,7 @@ const DeliveryOrders: React.FC = () => {
             backdrop="static"
             keyboard={false}
             size="lg"
+            onExit={() => closeModal()}
           >
             <ModalHeader
               className="p-4"
