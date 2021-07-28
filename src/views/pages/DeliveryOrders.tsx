@@ -14,27 +14,17 @@ import { useReactToPrint } from "react-to-print";
 
 // reactstrap components
 import {
-  Badge,
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   DropdownMenu,
   DropdownItem,
-  UncontrolledDropdown,
   DropdownToggle,
-  Media,
-  Pagination,
-  PaginationItem,
-  PaginationLink,
-  Progress,
   Table,
   Container,
   Row,
   Input,
   ButtonDropdown,
-  UncontrolledTooltip,
-  FormGroup,
   Button,
   Col,
   Modal,
@@ -68,7 +58,6 @@ const DeliveryOrders: React.FC = () => {
   const deliveryOrderTableRef =
     useRef() as React.MutableRefObject<HTMLDivElement>;
   const [deliveryOrders, setDeliveryOrders] = useState<DeliveryOrder[]>([]);
-  const [price, setPriceDetalis] = useState<any>([]);
   const [selected, setSelected] = useState<number>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -88,13 +77,12 @@ const DeliveryOrders: React.FC = () => {
   });
   let credentials: any;
   let priceDetails: any;
-  let insuranceDetails:any;
+  let insuranceDetails: any;
   const [currentStatus, setCurrentStatus] = useState<string>();
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
-      debugger;
       setLoadingPage(true);
       const dealerId = user.createdBy || user.uid || "";
       db.collection("deliveryOrders")
@@ -111,7 +99,6 @@ const DeliveryOrders: React.FC = () => {
         });
 
       window.api.receive("fromMain", (statusData: any) => {
-        debugger;
         switch (statusData.type) {
           case "INVOICE_CREATED": {
             setShowModal(!showModal);
@@ -141,7 +128,6 @@ const DeliveryOrders: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    debugger;
     if (
       selected !== undefined &&
       currentStatus !== undefined &&
@@ -173,7 +159,6 @@ const DeliveryOrders: React.FC = () => {
   }, [currentStatus]);
 
   useEffect(() => {
-    debugger;
     if (selected !== undefined) {
       setCurrentStatus(deliveryOrders[selected].status);
     }
@@ -281,35 +266,36 @@ const DeliveryOrders: React.FC = () => {
   };
 
   const priceConfig = () => {
-    debugger;
     if (selected !== undefined) {
-    firebase.firestore().collection("priceConfig")
-      .doc("config")
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          priceDetails = doc.data();
-          priceDetails = priceDetails[deliveryOrders[selected].modelName];
-        }
-      });
+      firebase
+        .firestore()
+        .collection("priceConfig")
+        .doc("config")
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            priceDetails = doc.data();
+            priceDetails = priceDetails[deliveryOrders[selected].modelName];
+          }
+        });
+    }
   };
-}
 
+  const insuranceConfig = () => {
+    if (selected !== undefined) {
+      firebase
+        .firestore()
+        .collection("insuranceConfig")
+        .doc("config")
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            insuranceDetails = doc.data();
+          }
+        });
+    }
+  };
 
-const insuranceConfig = () => {
-  debugger;
-  if (selected !== undefined) {
-  firebase.firestore().collection("insuranceConfig")
-    .doc("config")
-    .get()
-    .then((doc) => {
-      if (doc.exists) {
-        insuranceDetails = doc.data();
-      }
-    });
-};
-}
-  //console.log(priceDetails);
   // TODO: Make fetching data if it does not exist common
   const fetchDeliveryOrder = () => {
     if (selected !== undefined) {
@@ -440,7 +426,6 @@ const insuranceConfig = () => {
             type: "CREATE_INVOICE",
             data: { ...deliveryOrders[selected], credentials },
           });
-          //setShowModal(!showModal);
         }
       }
     } catch (err) {
@@ -450,18 +435,14 @@ const insuranceConfig = () => {
 
   //create insurance
   const createInsurance = async (insuranceCompany: string) => {
-    //console.log(data, "UserId Password!");
-    //console.log(JSON.stringify(data), "UserId Password!");
     try {
       setLoading(true);
       if (selected !== undefined) {
-  
         await getCredentials();
         await insuranceConfig();
         await priceConfig();
         const status: any = await fetchDeliveryOrder();
-    
-       
+
         if (status) {
           window.api.send("toMain", {
             type: "CREATE_INSURANCE",
@@ -471,7 +452,6 @@ const insuranceConfig = () => {
               credentials,
               priceDetails,
               insuranceDetails,
-    
             },
           });
         }
@@ -483,7 +463,6 @@ const insuranceConfig = () => {
 
   //create erp data
   const createRegistration = async () => {
-    debugger;
     try {
       setLoading(true);
       if (selected !== undefined) {

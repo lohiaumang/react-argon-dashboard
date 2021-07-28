@@ -88,7 +88,6 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
         //data: data.id,
       });
     });
-    console.log(done, "step 2");
     try {
       if (username && password && otp) {
         await page.waitForSelector("#user_id", { visible: true });
@@ -596,7 +595,6 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
         );
       }
       done = true;
-      console.log(done, "step 6");
     } catch (err) {
       console.log(err);
     }

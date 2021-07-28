@@ -9,7 +9,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
   const navigationPromise = page.waitForNavigation();
 
   async function automate() {
-
     let done = false;
 
     erpWindow.webContents.once("close", function () {
@@ -18,12 +17,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         data: data.id,
       });
     });
-    console.log(done);
+
     //done = true;
     await typeText(page, "#s_swepi_1", username);
     await typeText(page, "#s_swepi_2", password);
     done = true; //done true
-    console.log(done);
+
     const captcha = await page.$eval("#captchaCode", (el) =>
       el.textContent.replace(/\s+/g, "")
     );
@@ -521,7 +520,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
         listItems.map((item) => {
-          console.log(item.textContent, item.id);
           return {
             name: item.textContent,
             id: item.id,
@@ -531,7 +529,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
     const paymentTypeButton = paymentType.find(
       (item) => item.name === "Advance/Final Payment"
     );
-    console.log(paymentTypeButton.name, paymentTypeButton.id);
+
     await page.waitForSelector(`#${paymentTypeButton.id}`, { visible: true });
     await page.$eval(`#${paymentTypeButton.id}`, (el) => el.click());
     //await typeText("input[aria-labelledby='1_s_2_l_Payment_Profile_Name s_2_l_Transaction_Type s_2_l_altCombo']:not([style*='display: none']",'Advance/Final Payment');
@@ -564,7 +562,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       item.name.includes("Booking Details & Vehicle Allotment")
     );
     await page.$eval(`#${vehicleAllotment.id}`, (el) => el.click());
-   // done = true;
+    // done = true;
     await click(
       page,
       '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]'
@@ -637,7 +635,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
         listItems.map((item) => {
-          console.log(item.textContent, item.id);
           return {
             name: item.textContent,
             id: item.id,
@@ -645,7 +642,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         })
     );
     const ridingTypeButton = ridingType.find((item) => item.name === "N");
-    console.log(ridingTypeButton.name, ridingTypeButton.id);
+
     await page.waitForSelector(`#${ridingTypeButton.id}`, { visible: true });
     await page.$eval(`#${ridingTypeButton.id}`, (el) => el.click());
     await click(
@@ -660,7 +657,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       "ul[role='combobox']:not([style*='display: none']) > li > div",
       (listItems) =>
         listItems.map((item) => {
-          console.log(item.textContent, item.id);
           return {
             name: item.textContent,
             id: item.id,
@@ -668,7 +664,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         })
     );
     const pdsaGivenpdsaGiven = pdsaGiven.find((item) => item.name === "N");
-    console.log(pdsaGivenpdsaGiven.name, pdsaGivenpdsaGiven.id);
+
     await page.waitForSelector(`#${pdsaGivenpdsaGiven.id}`, { visible: true });
     await page.$eval(`#${pdsaGivenpdsaGiven.id}`, (el) => el.click());
     await page.waitForSelector("td[role='gridcell'] > a", { visible: true });

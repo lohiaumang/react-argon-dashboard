@@ -1,10 +1,7 @@
-const { localeData } = require("moment");
-
 module.exports = function (mainWindow, browser) {
   const path = require("path");
   const fs = require("fs");
   const { ipcMain: ipc, BrowserWindow } = require("electron");
-  // const ipc = electron.ipcRenderer;
   const pie = require("puppeteer-in-electron");
   const erp = require("./puppeteer-scripts/erp");
   const vahan = require("./puppeteer-scripts/vahan");
@@ -59,7 +56,6 @@ module.exports = function (mainWindow, browser) {
         const createUserFirestore = functions.httpsCallable("createUserIndia");
         createUserFirestore(data)
           .then((resp) => {
-            // console.log("User created!", JSON.stringify(resp.data));
             const uid = resp.data.uid || "";
             delete data.password;
             fs.writeFileSync(
@@ -154,11 +150,8 @@ module.exports = function (mainWindow, browser) {
         const createUserDataFirestore = functions.httpsCallable(
           "createUserdataIndia"
         );
-        //  console.log("Step", step++, data);
         createUserDataFirestore(data)
           .then((resp) => {
-            // console.log("User created!", JSON.stringify(resp.data));
-            // console.log("Step", step++, resp.data);
             mainWindow.webContents.send("fromMain", {
               type: "CREATE_USER_SUCCESS",
               resp,
@@ -178,7 +171,6 @@ module.exports = function (mainWindow, browser) {
         const deleteUserDataFirestore = functions.httpsCallable(
           "deleteUserDataIndia"
         );
-        //  console.log("Step", step++, data);
         deleteUserDataFirestore(data)
           .then((resp) => {
             mainWindow.webContents.send("fromMain", {
@@ -224,13 +216,10 @@ module.exports = function (mainWindow, browser) {
 
       // Create ERP sale entry
       case "CREATE_INVOICE": {
-        // data = args[0];
         erpWindow = new BrowserWindow({
           title: "AutoAuto ERP",
           height: 950,
           width: 1200,
-          // parent: mainWindow,
-          // TODO: Might want to change this to false
           frame: true,
         });
 
@@ -239,21 +228,7 @@ module.exports = function (mainWindow, browser) {
         );
 
         page = await pie.getPage(browser, erpWindow);
-        // const modelData = JSON.parse(
-        //   fs.readFileSync(path.join(__dirname, "model-data.json"))
-        // );
-        // const dealerData = JSON.parse(
-        //   fs.readFileSync(path.join(__dirname, "dealer-data.json"))
-        // );
-
-        // erpWindow.webContents.once("close", function () {
-        //   // erpWindow.close();
-        //   mainWindow.webContents.send("fromMain", { type: "REMOVE_OVERLAY" });
-        //   mainWindow.reload();
-        // });
-        // TODOTODO
         const { credentials } = getCredentials();
-
         if (credentials) {
           data = {
             ...data,
@@ -275,49 +250,18 @@ module.exports = function (mainWindow, browser) {
 
       // Code to create insurance proposal
       case "CREATE_INSURANCE": {
-        // data = args[0];
         const insuranceCompany = data.insuranceCompany;
-        // console.log(
-        //   // JSON.stringify(data),
-        //   insuranceCompany,
-        //   insuranceLinks[insuranceCompany].loginPageUrl,
-        //   insuranceLinks[insuranceCompany].preloadScript,
-        //   "Insurance Data Get!"
-        // );
         insuranceWindow = new BrowserWindow({
           title: "autoAuto Insurance",
           height: 750,
           width: 1200,
-          // TODO: Might want to change this to false
           frame: true,
           resizable: false,
         });
 
-        // insuranceWindow.webContents.openDevTools();
         await insuranceWindow.loadURL(
           insuranceLinks[insuranceCompany].loginPageUrl
         );
-
-        // insuranceWindow.webContents.on("dom-ready", function (event) {
-        //   const currUrl = insuranceWindow.webContents.getURL();
-        //   const isLoginPage =
-        //     currUrl.includes(
-        //       "https://ipartner.icicilombard.com/WebPages/Login.aspx"
-        //     ) || currUrl.includes("https://pie.hdfcergo.com//Login/");
-        //   if (isLoginPage) {
-        //     insuranceWindow.webContents.send("prompt-for-login");
-        //     // mainWindow.webContents.send("update-progress-bar", [
-        //     //   "10%",
-        //     //   "insurance",
-        //     // ]);
-        //   }
-        // });
-
-        // insuranceWindow.webContents.send("prompt-for-login", [
-        //   insuranceLinks[insuranceCompany].loginPageUrl,
-        // ]);
-        // const modelData = JSON.parse(fs.readFileSync(path.join(__dirname, 'model-data.json')));
-        // const dealerData = JSON.parse(fs.readFileSync(path.join(__dirname, 'dealer-data.json')));
 
         // const insuranceConfig = await firebase
         //   .firestore()
@@ -348,7 +292,7 @@ module.exports = function (mainWindow, browser) {
                 userRate:
                   data.insuranceDetails[data.vehicleInfo.modelName]["userRate"],
               },
-             // priceDetails: priceDetails[data.vehicleInfo.modelName],
+              // priceDetails: priceDetails[data.vehicleInfo.modelName],
             };
           }
 
@@ -356,57 +300,10 @@ module.exports = function (mainWindow, browser) {
           insurance(page, data, insuranceCompany, mainWindow, insuranceWindow);
         }
 
-        // insuranceWindow.webContents.on("did-navigate", function (event, url) {
-        //   if (
-        //     url.includes(
-        //       "https://ipartner.icicilombard.com/WebPages/Portfolio/UserPolicies.aspx"
-        //     )
-        //   ) {
-        //     page.waitForFunction(
-        //       'document.querySelector("#ctl00_ContentPlaceHolder1_GridID0_ctl02_ctl00").textContent !== ""'
-        //     );
-        //     data["Policy No"] = page.$eval(
-        //       "#ctl00_ContentPlaceHolder1_GridID0_ctl02_ctl00",
-        //       (el) => el.textContent
-        //     );
-        //   } else if (
-        //     url.includes("https://pie.hdfcergo.com/en-US/Dashboard/Details")
-        //   ) {
-        //     page.waitForFunction(
-        //       `document.querySelector("td[data-title='Prop./Pol. No']").textContent !== ""`
-        //     );
-        //     data["Policy No"] = page.$eval(
-        //       "td[data-title='Prop./Pol. No']",
-        //       (el) => el.textContent
-        //     );
-        //   }
-        // });
-
-        // insuranceWindow.webContents.once("close", function () {
-        //   mainWindow.webContents.send("fromMain", {
-        //     type: "INSURANCE_CREATED",
-        //     data: data,
-        //     // data:"INSURANCE_CREATED",
-        //   });
-        // });
-
-        // ipc.once("close-insurance-window", function () {
-        //   insuranceWindow.destroy();
-        //   mainWindow.webContents.send("remove-overlay");
-        // });
-        //console.log(JSON.stringify(data), "Insurance Data Get!");
         break;
       }
-
       // Code to create vahan application
       case "CREATE_REGISTRATION": {
-        // data = {
-        //   ...data,
-        //   ...args[0],
-        // };
-
-        // const dealerData = JSON.parse(fs.readFileSync(path.join(__dirname, 'dealer-data.json')));
-
         vahanWindow = new BrowserWindow({
           title: "autoAuto Vahan",
           height: 786,
@@ -422,58 +319,19 @@ module.exports = function (mainWindow, browser) {
         await vahanWindow.loadURL(
           "https://vahan.parivahan.gov.in/vahan/vahan/ui/login/login.xhtml"
         );
-        //vahanWindow.webContents.send("start-vahan");
         page = await pie.getPage(browser, vahanWindow);
 
         const { credentials } = getCredentials();
 
-        // const priceConfig = await db
-        //   .collection("priceConfig")
-        //   .doc("config")
-        //   .get();
-
         if (credentials) {
-         // const priceDetails = priceConfig.data();
           data = {
             ...data,
             credentials: credentials["VAHAN"],
-           // priceDetails: priceDetails[data.vehicleInfo.modelName],
           };
         }
-
         vahan(page, data, mainWindow, vahanWindow);
-
-        // ipc.once("vahan-done", function () {
-        //   console.log("HERE");
-        //   vahanWindow.webContents.once("close", function () {
-        //     mainWindow.webContents.send("fromMain", {
-        //       type: "DONE",
-        //       data: data.id,
-        //     });
-        //   });
-        // });
-
-        // vahanWindow.webContents.once("close", function () {
-        //   mainWindow.webContents.send("fromMain", {
-        //     type: "DONE",
-        //     data: data.id,
-        //   });
-        // });
-
-        // vahanWindow.webContents.once("close", function () {
-        //   mainWindow.webContents.send("fromMain", {
-        //     type: "RESET",
-        //     data: data.id,
-        //   });
-        // });
-
-        // vahanWindow.webContents.on("new-window", function (event, url) {
-        //   event.preventDefault();
-        //   vahanWindow.webContents.send("navigate-to-url", [url]);
-        // });
         break;
       }
-
       default: {
         console.log("default", args);
       }

@@ -380,7 +380,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
             </Col>
           </Row>
 
-          <Table className="table   my-3">
+          <Table className="table my-3" responsive>
             <thead>
               <tr>
                 <th>Description</th>
@@ -507,7 +507,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
             </Col>
           </Row>
 
-          <Table className="table   my-3">
+          <Table className="table my-3" responsive>
             <thead>
               <tr>
                 <th>Description</th>

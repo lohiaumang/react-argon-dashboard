@@ -1,5 +1,5 @@
 module.exports = async function (page, data, mainWindow, insuranceWindow) {
-  console.log("HERE ICICI", Object.keys(data));
+  //console.log("HERE ICICI", Object.keys(data));
   // const fetch = require('node-fetch');
   // const _ = require("get-safe");
 
@@ -34,7 +34,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     credentials: { username, password },
   } = data;
   let done = false;
-  console.log(done, "Step 1");
+
   insuranceWindow.webContents.once("close", async (event) => {
     // Prevent default, logout and then close
     event.preventDefault();
@@ -47,7 +47,6 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
       //data: data.id,
     });
   });
-  console.log(done, "Step 2");
 
   try {
     if (username && password) {
@@ -58,7 +57,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
       await page.select("#login2_ddlLandingPage", "1");
       await page.click("#login2_btnLogin");
     }
-  
+
     // mainWindow.webContents.send("update-progress-bar", ["20%", "insurance"]);
     await page.waitForSelector("input[value='Get Full Quote']", {
       visible: true,
@@ -231,9 +230,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     //  // data:"INSURANCE_CREATED",
     // });
     done = true;
-    console.log(done, "Step 3");
   } catch (err) {
-    console.log("Error Get")
     console.log(err);
   }
 };

@@ -62,7 +62,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
   } = data;
   const automate = async function () {
     let done = false;
-    console.log(done, "Step 1");
+
     insuranceWindow.webContents.once("close", async (event) => {
       // Prevent default, logout and then close
       event.preventDefault();
@@ -76,7 +76,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
         data: data.id,
       });
     });
-    console.log(done, "Step 2");
+
     try {
       if (username && password) {
         await page.waitForSelector("#UserName", { visible: true });
@@ -185,10 +185,10 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
       await page.waitForSelector("div[data-ng-if='loading']", { hidden: true });
       await page.waitForSelector("#IDV_SumInsured");
       await page.$eval("#IDV_SumInsured", (el) => (el.value = ""));
-      console.log(data.priceDetails.price);
+
       const idv = Math.round(new Number(data.priceDetails.price) * 0.95);
       await page.type("#IDV_SumInsured", idv.toString());
-      console.log(idv);
+
       await waitForRandom();
       await page.waitForSelector("input[name='EngineNumber']");
       await page.type(
@@ -219,8 +219,6 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
                 "none" &&
               button.offsetHeight
             ) {
-              console.log("HERE");
-              console.log(button);
               button.click();
             }
           })
@@ -362,7 +360,6 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
       // await page.click("form[name='TwoWheelerForm'] > .text-right > button.btn-submit");
       // mainWindow.webContents.send("update-progress-bar", ["100%", "insurance"]);
       done = true;
-      console.log(done, "All Script Run");
     } catch (err) {
       console.log(err);
     }
