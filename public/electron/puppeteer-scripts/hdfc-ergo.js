@@ -65,16 +65,28 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
 
     insuranceWindow.webContents.once("close", async (event) => {
       // Prevent default, logout and then close
-      event.preventDefault();
-      //  await page.click(".head-right > li > a[onclick='LogOut();']")
-      //  await page.waitForSelector("OK button");
-      //  await page.click("OK button");
-      //  insuranceWindow.close();
-      await logout.logoutSalesforce();
+      //  event.preventDefault();
+      //  console.log("step 1");
+      // // await page.waitForSelector(".head-right > li > a[onclick='LogOut();']")
+      // // console.log("step 2");
+      //   await page.click(".head-right > li > a[onclick='LogOut();']")
+      //   console.log("step 3");
+      //   //await page.waitForSelector("OK button");
+      // //  await page.click("OK button");
+      //   insuranceWindow.close();
+      //   console.log("step 4");
+      // await logout.logoutSalesforce();
+     // await page.click(".head-right > li > a[onclick='LogOut();']");
+    
       mainWindow.webContents.send("fromMain", {
         type: done ? "INSURANCE_CREATED" : "INVOICE_CREATE",
         data: data.id,
       });
+      // console.log("step 5");
+      // event.preventDefault();
+
+      //insuranceWindow.destroy();
+      //insuranceWindow.destroy();
     });
 
     try {
@@ -201,6 +213,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
         "input[name='ChassisNumber']",
         data.vehicleInfo.frameNumber
       );
+
       await waitForRandom();
       //   mainWindow.webContents.send("update-progress-bar", ["40%", "insurance"]);
       await page.waitForSelector("#AddOnEdit", { visible: true });
@@ -361,6 +374,8 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
       // mainWindow.webContents.send("update-progress-bar", ["100%", "insurance"]);
       done = true;
     } catch (err) {
+      // await page.click(".head-right > li > a[onclick='LogOut();']");
+      // console.log("Error logout");
       console.log(err);
     }
   };

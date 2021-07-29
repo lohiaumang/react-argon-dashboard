@@ -5,11 +5,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
   const {
     credentials: { username, password },
   } = data;
-
+  let done = false;
   const navigationPromise = page.waitForNavigation();
 
   async function automate() {
-    let done = false;
+    
 
     erpWindow.webContents.once("close", function () {
       mainWindow.webContents.send("fromMain", {
@@ -18,7 +18,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       });
     });
 
+    try {
     //done = true;
+    if (username && password) {
     await typeText(page, "#s_swepi_1", username);
     await typeText(page, "#s_swepi_2", password);
     done = true; //done true
@@ -30,7 +32,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
     await click(page, "#s_swepi_22");
     await navigationPromise;
     await click(page, "#s_sctrl > #s_sctrl_tabScreen #ui-id-130");
-
+    }
     // fill data select
     // await click(
     //   page,
@@ -672,6 +674,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
     await click(page, 'div > button[data-display="Permanent Invoice"]');
     // await browser.close();
     done = true;
+  } catch (err) {
+    console.log(err,"WE GET ERROR");
+  }
   }
 
   automate();
