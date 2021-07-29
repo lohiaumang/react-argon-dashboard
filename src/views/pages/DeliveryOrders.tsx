@@ -265,6 +265,8 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
+
+//fatch price config
   const priceConfig = () => {
     if (selected !== undefined) {
       firebase
@@ -281,6 +283,7 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
+  //fatch insuranceconfig
   const insuranceConfig = () => {
     if (selected !== undefined) {
       firebase
