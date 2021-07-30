@@ -6,22 +6,21 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
     credentials: { username, password },
   } = data;
 
-  const navigationPromise = page.waitForNavigation();
+  //const navigationPromise = page.waitForNavigation();
 
   async function automate() {
     let done = false;
-    console.log(done);
+
     erpWindow.once("close", async (e) => {
-      // console.log("step 1");
       e.preventDefault();
-      //  console.log("step 2");
+
       await page.waitForSelector("#tb_0");
       await page.click("#tb_0");
       await page.waitForSelector("button[title='Logout']");
       await page.click("button[title='Logout']");
       erpWindow.destroy();
       // erpWindow.session-end();
-      console.log("step 3");
+
       if (done === "true") {
         mainWindow.webContents.send("fromMain", {
           type: "INVOICE_CREATED",
@@ -37,7 +36,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
 
     try {
       //done = true;
-      await page .waitForSelector("#s_swepi_2");
+      await page.waitForSelector("#s_swepi_2");
       await page.click("#s_swepi_2");
       if (username && password) {
         await typeText(page, "#s_swepi_1", username);
@@ -49,7 +48,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         );
         await typeText(page, "#s_captcha", captcha);
         await click(page, "#s_swepi_22");
-        await navigationPromise;
+        // await navigationPromise;
         await click(page, "#s_sctrl > #s_sctrl_tabScreen #ui-id-130");
       }
       // fill data select
