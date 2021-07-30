@@ -37,6 +37,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
 
     try {
       //done = true;
+      await page .waitForSelector("#s_swepi_2");
+      await page.click("#s_swepi_2");
       if (username && password) {
         await typeText(page, "#s_swepi_1", username);
         await typeText(page, "#s_swepi_2", password);
