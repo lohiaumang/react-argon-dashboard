@@ -1,12 +1,5 @@
 // TODO: CLean everything that is not being used
 module.exports = function vahan(page, data, mainWindow, vahanWindow) {
-  // const path = require("path");
-  // const fetch = require("node-fetch");
-  // const _ = require("get-safe");
-  // Imports the Google Cloud client library
-  // const vision = require("@google-cloud/vision");
-  //console.log(data.priceDetails.price);
-
   const timeout = 10000000;
   page.setDefaultTimeout(timeout);
   page.setDefaultNavigationTimeout(timeout);
@@ -45,28 +38,12 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
     invoiceDateArray[0]
   );
 
-  // function fetch_retry(url, options, n) {
-  //   return new Promise(function (resolve, reject) {
-  //     fetch(url, options)
-  //       .then((res) => res.json()) // <--- Much cleaner!
-  //       .catch(function (error) {
-  //         if (n === 1) return reject(error);
-  //         fetch_retry(url, options, n - 1)
-  //           .then(resolve)
-  //           .catch(reject);
-  //       })
-  //       .then(resolve);
-  //   });
-  // }
-
   async function waitForRandom() {
     await page.waitForTimeout((Math.random() + 1) * 1000);
   }
 
   function randomTypeDelay() {
     return 0;
-    // Incase we need a delay vvv
-    // return Math.random() * 100;
   }
 
   const {
@@ -89,7 +66,6 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
       });
     });
 
-
     try {
       if (username && password && otp) {
         await page.waitForSelector("#user_id", { visible: true });
@@ -97,32 +73,6 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
         await page.type("#user_id", username, {
           delay: randomTypeDelay(),
         });
-        // let captcha = await page.$('#loginPanel img.bottom-space');
-
-        // while(captcha) {
-        //   const captchaLocation = await captcha.boxModel();
-        //   await page.screenshot({
-        //     path: path.join(__dirname, "../assets/captcha/captchaImage.png"),
-        //     clip: {
-        //       x: captchaLocation.content[0].x,
-        //       y: captchaLocation.content[0].y,
-        //       width: captchaLocation.width,
-        //       height: captchaLocation.height
-        //     }
-        //   });
-
-        //   const client = new vision.ImageAnnotatorClient();
-        //   const fileName = path.join(__dirname, "../assets/captcha/captchaImage.png");
-        //   const [result] = await client.textDetection(fileName);
-        //   const detections = result.textAnnotations;
-
-        //   await page.waitForSelector("#loginPanel img.bottom-space ~ input", { visible: true });
-        //   await page.type("#loginPanel img.bottom-space ~ input", detections[0].description);
-        //   await page.waitForSelector("button[type='submit']", { visible: true });
-        //   await page.click("button[type='submit']");
-        //   await waitForRandom();
-        //   captcha = await page.$('#loginPanel img.bottom-space');
-        // }
 
         await page.waitForSelector("#passwordID", { visible: true });
         await waitForRandom();
@@ -150,8 +100,6 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
       await waitForRandom();
       await page.click("#pending_action");
 
-      //mainWindow, vahanWindow.webContents.send("update-progress-bar", ["10%", "vahan"]);
-
       await page.waitForSelector("#chasi_no_new_entry", { visible: true });
       await waitForRandom();
       await page.type("#chasi_no_new_entry", data.vehicleInfo.frameNumber, {
@@ -167,8 +115,6 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
       );
       await waitForRandom();
       await page.click("#get_dtls_btn");
-
-      //mainWindow, vahanWindow.webContents.send("update-progress-bar", ["20%", "vahan"]);
 
       await page.waitForSelector("#workbench_tabview\\:purchase_dt_input", {
         visible: true,
@@ -263,8 +209,6 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
         }
       );
       await waitForRandom();
-
-      //mainWindow, vahanWindow.webContents.send("update-progress-bar", ["30%", "vahan"]);
 
       await page.type(
         "#workbench_tabview\\:tf_c_add1",
@@ -367,8 +311,6 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
       );
       await waitForRandom();
 
-      // mainWindow, vahanWindow.webContents.send("update-progress-bar", ["40%", "vahan"]);
-
       await page.click("#workbench_tabview\\:partial_vh_class");
       await page.waitForSelector(
         "#workbench_tabview\\:partial_vh_class_items > li[data-label='M-Cycle/Scooter']",
@@ -405,8 +347,6 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
       );
       await waitForRandom();
 
-      // mainWindow, vahanWindow.webContents.send("update-progress-bar", ["50%", "vahan"]);
-
       // Enter vehicle details
       await page.waitForSelector("a[href='#workbench_tabview:veh_info_tab']", {
         visible: true,
@@ -431,8 +371,6 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
       await page.click("#workbench_tabview\\:tableTaxMode\\:1\\:taxModeType_1");
       await waitForRandom();
       await page.type("#workbench_tabview\\:sale_amt", data.priceDetails.price);
-
-      // mainWindow, vahanWindow.webContents.send("update-progress-bar", ["70%", "vahan"]);
 
       // Enter insurance details
       await page.click("a[href='#workbench_tabview\\:HypothecationOwner']");

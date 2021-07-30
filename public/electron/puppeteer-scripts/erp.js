@@ -172,17 +172,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         data.customerInfo.email
       );
 
-      //code work
-
-      //await page.waitForSelector('.AppletStyleParent77 > div > .siebui-applet-header > #s_vis_div > select')
-      //await page.click('.AppletStyleParent77 > div > .siebui-applet-header > #s_vis_div > select')
-      // await page.select('.AppletStyleParent77 > div > .siebui-applet-header > #s_vis_div > select', 'All Contacts across My Organization')
-      // await page.waitForSelector('.AppletStyleParent77 > div > .siebui-applet-header > #s_vis_div > select')
-      // await page.click('.AppletStyleParent77 > div > .siebui-applet-header > #s_vis_div > select')
-
-      //UnhandledPromiseRejectionWarning: Error: Evaluation failed: DOMException: Failed to execute 'querySelector' on 'Document': '#s_2_l > tbody > #↓ > #↓_s_2_l_First_Name > .drilldown' is not a valid selector.
-      //await page.waitFor(8000);
-
       await click(
         page,
         '.ui-jqgrid-btable > tbody > .jqgrow > td[role="gridcell"] > .drilldown '
@@ -557,7 +546,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
 
       await page.waitForSelector(`#${paymentTypeButton.id}`, { visible: true });
       await page.$eval(`#${paymentTypeButton.id}`, (el) => el.click());
-      //await typeText("input[aria-labelledby='1_s_2_l_Payment_Profile_Name s_2_l_Transaction_Type s_2_l_altCombo']:not([style*='display: none']",'Advance/Final Payment');
+
       await click(
         page,
         '#s_2_l > tbody > tr[role="row"] > td[aria-labelledby="s_2_l_altCalc"]',

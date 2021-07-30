@@ -75,41 +75,14 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
       e.preventDefault();
       await page.waitForSelector(".head-right > li > a[onclick='LogOut();']");
       await page.click(".head-right > li > a[onclick='LogOut();']");
-      console.log("step 1");
+
       insuranceWindow.destroy();
-      console.log("step 2");
+
       mainWindow.webContents.send("fromMain", {
         type: done ? "INSURANCE_CREATED" : "INVOICE_CREATE",
         data: data.id,
       });
-      // }
-      console.log("step 3");
     });
-  
-    // Prevent default, logout and then close
-    //  event.preventDefault();
-    //  console.log("step 1");
-    // // await page.waitForSelector(".head-right > li > a[onclick='LogOut();']")
-    // // console.log("step 2");
-    //  await page.click(".head-right > li > a[onclick='LogOut();']")
-    //   console.log("step 3");
-    //   //await page.waitForSelector("OK button");
-    // //  await page.click("OK button");
-    //  insuranceWindow.close();
-    //   console.log("step 4");
-    // await logout.logoutSalesforce();
-    // await page.click(".head-right > li > a[onclick='LogOut();']");
-
-    // mainWindow.webContents.send("fromMain", {
-    //   type: done ? "INSURANCE_CREATED" : "INVOICE_CREATE",
-    //   data: data.id,
-    // });
-    // console.log("step 5");
-    // event.preventDefault();
-
-    //insuranceWindow.destroy();
-    //insuranceWindow.destroy();
-    // });
 
     try {
       if (username && password) {

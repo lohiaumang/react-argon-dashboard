@@ -97,34 +97,13 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
       const postalCharge = parseInt(
         props.deliveryOrder.additionalInfo.postalCharge
       );
-      const extendedWarranty = parseInt(
-        props.deliveryOrder.additionalInfo.extendedWarranty
+      const accessories = parseInt(
+        props.deliveryOrder.additionalInfo.accessories
       );
       const total = [
-        price + insurance + mvTax + postalCharge + extendedWarranty,
+        price + insurance + mvTax + postalCharge + accessories,
       ].toString();
-      //create DO
-
-      // window.api.send("fromMain", {
-      //   type: "DO_CREATED",
-      //   data:   props.deliveryOrder.id,
-      //   // data:"INSURANCE_CREATED",
-      // });
-
-      // window.api.once("close", function () {
-      //   debugger
-      //   window.api.send("fromMain", {
-      //     type: "DO_CREATED",
-      //     data:  props.deliveryOrder.id,
-      //     // data:"INSURANCE_CREATED",
-      //   });
-      // // });
-
-      // window.api.send("toMain", {
-      //   type: "DO_CREATED_STATUS",
-      //   data: props.deliveryOrder.id
-      // });
-
+     
       return (
         <div className="delivery-order-table" ref={ref}>
           <Row>

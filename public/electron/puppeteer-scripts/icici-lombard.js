@@ -1,35 +1,12 @@
 module.exports = async function (page, data, mainWindow, insuranceWindow) {
-  //console.log("HERE ICICI", Object.keys(data));
-  // const fetch = require('node-fetch');
-  // const _ = require("get-safe");
-
   const timeout = 10000000;
   page.setDefaultTimeout(timeout);
   page.setDefaultNavigationTimeout(timeout);
-
-  // function fetch_retry(url, options, n) {
-  //   return new Promise(function (resolve, reject) {
-  //     fetch(url, options).then(res => res.json()) // <--- Much cleaner!
-  //       .catch(function (error) {
-  //         if (n === 1) return reject(error);
-  //         fetch_retry(url, options, n - 1)
-  //           .then(resolve)
-  //           .catch(reject);
-  //       }).then(resolve);
-  //   });
-  // }
 
   async function waitForRandom() {
     await page.waitForTimeout((Math.random() + 1) * 1000);
   }
 
-  // let location;
-
-  // await fetch_retry(`https://api.postalpincode.in/pincode/${data["Zip Code"]}`, {}, 5).then(async function ([{ Status, PostOffice }]) { // Fetching district and police station data
-  //   if (Status === "Success" && PostOffice[0]) {
-  //     location = await _("0", PostOffice);
-  //   }
-  // });
   const {
     credentials: { username, password },
   } = data;
@@ -37,18 +14,19 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
 
   insuranceWindow.on("close", async (e) => {
     e.preventDefault();
-    await page.goto('https://ipartner.icicilombard.com/WebPages/Agents/welcome.aspx')
+    await page.goto(
+      "https://ipartner.icicilombard.com/WebPages/Agents/welcome.aspx"
+    );
     await page.waitForSelector("a[href='/WebPages/Logout.aspx?type=agent']");
     await page.click("a[href='/WebPages/Logout.aspx?type=agent']");
-    console.log("step 1");
+
     insuranceWindow.destroy();
-    console.log("step 2");
+
     mainWindow.webContents.send("fromMain", {
       type: done ? "INSURANCE_CREATED" : "INVOICE_CREATE",
       data: data.id,
     });
     // }
-    console.log("step 3");
   });
 
   try {
@@ -61,12 +39,11 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
       await page.click("#login2_btnLogin");
     }
 
-    // mainWindow.webContents.send("update-progress-bar", ["20%", "insurance"]);
     await page.waitForSelector("input[value='Get Full Quote']", {
       visible: true,
     });
     await page.click("input[value='Get Full Quote']");
-    // mainWindow.webContents.send("update-progress-bar", ["30%", "insurance"]);
+
     await waitForRandom();
     await page.waitForSelector("#TxtRegistrationNumber", { visible: true });
     await page.type("#TxtRegistrationNumber", "NEW");
@@ -74,11 +51,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     await page.waitForSelector("#divwidth > div", { visible: true });
     await page.click("#divwidth > div");
     await page.waitForSelector("#divwidth > div", { hidden: true });
-    //  let actualDate = data["Actual Deliver date"].split(/[\/ \–\-]/);
-    //  if (actualDate[2].length === 2) {
-    //      actualDate[2] = `20${actualDate[2]}`;
-    // }
-    //  actualDate = actualDate.join("/");
+
     let deliveryDate = new Date()
       .toJSON()
       .slice(0, 10)
@@ -145,7 +118,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     );
     await page.select("#ddToState", stateToChoose.value);
     await page.select("#DdlCPATenure", "1");
-    // mainWindow.webContents.send("update-progress-bar", ["30%", "insurance"]);
+
     await page.click("label[for=RdbAdditionalCover_0]");
     await page.waitForSelector("#ddZeroDepValue", { visible: true });
     await page.select("#ddZeroDepValue", "Silver");
@@ -153,7 +126,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     await page.waitForSelector("#ddlTppdSumInsured", { visible: true });
     await page.select("#ddlTppdSumInsured", "1");
     await page.click("#BtnCalculatePremium");
-    // mainWindow.webContents.send("update-progress-bar", ["50%", "insurance"]);
+
     await page.waitForSelector("#TxtEngineNumber", { visible: true });
     await page.type("#TxtEngineNumber", data.vehicleInfo.engineNumber);
     await page.type("#TxtChassisNumber", data.vehicleInfo.frameNumber); //todo chassisNumber
@@ -167,7 +140,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     }
 
     await page.click("#ctrlCustomerAddress_btnCreateNew");
-    // mainWindow.webContents.send("update-progress-bar", ["60%", "insurance"]);
+
     const titleValue = data.customerInfo.gender.slice(0, 1).toUpperCase()
       ? "1"
       : "0";
@@ -191,7 +164,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
       "#ctrlCustomerAddress_TxtCustPincode",
       data.customerInfo.currPostal
     );
-    // mainWindow.webContents.send("update-progress-bar", ["70%", "insurance"]);
+
     const dropDown = await page.waitForSelector(
       "#ctrlCustomerAddress_AutoCompleteExtender1_completionListElem > div",
       { visible: true }
@@ -204,7 +177,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     await page.waitForFunction(
       "!!document.querySelector('#ctrlCustomerAddress_TxtCustCity').value"
     );
-    // mainWindow.webContents.send("update-progress-bar", ["80%", "insurance"]);
+
     await page.type(
       "#ctrlCustomerAddress_TxtCustEmail",
       data.customerInfo.email
@@ -223,15 +196,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
       visible: true,
     });
     await page.type("#ctrlCustomerAddress_txtGSTIN", data.customerInfo.gst);
-    // mainWindow.webContents.send("update-progress-bar", ["90%", "insurance"]);
-    //   await waitForRandom();
-    //   await page.click("#btnCreateProposal");
-    // mainWindow.webContents.send("update-progress-bar", ["100%", "insurance"]);
-    // appWindow.webContents.send("fromMain", {
-    //   type: "INSURANCE_CREATED",
-    //   data:data.id,
-    //  // data:"INSURANCE_CREATED",
-    // });
+
     done = true;
   } catch (err) {
     console.log(err);
