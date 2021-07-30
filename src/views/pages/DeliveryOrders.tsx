@@ -99,6 +99,7 @@ const DeliveryOrders: React.FC = () => {
         });
 
       window.api.receive("fromMain", (statusData: any) => {
+        console.log(statusData.type,"get inoice");
         switch (statusData.type) {
           case "INVOICE_CREATED": {
             setShowModal(!showModal);

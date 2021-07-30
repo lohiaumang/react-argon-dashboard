@@ -76,18 +76,20 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
   const automate = async function () {
     let done = false;
 
-    vahanWindow.webContents.once("close", async (event) => {
-      // Prevent default, logout and then close
-      // event.preventDefault();
-      // await page.click("logout button")
-      // await page.waitForSelector("OK button");
-      // await page.click("OK button");
-      // vahanWindow.close(); <-- check if this is accurate
+    vahanWindow.on("close", async (e) => {
+      e.preventDefault();
+      await page.waitForSelector("#logout");
+      await page.click("#logout");
+      await page.waitForSelector("#j_idt241");
+      await page.click("#j_idt241");
+      vahanWindow.destroy();
       mainWindow.webContents.send("fromMain", {
         type: done ? "DONE" : "RESET",
-        //data: data.id,
+        data: data.id,
       });
     });
+
+
     try {
       if (username && password && otp) {
         await page.waitForSelector("#user_id", { visible: true });

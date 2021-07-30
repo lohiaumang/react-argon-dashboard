@@ -5,11 +5,19 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
   const {
     credentials: { username, password },
   } = data;
-  let done = false;
+
   const navigationPromise = page.waitForNavigation();
 
   async function automate() {
-    erpWindow.webContents.once("close", function () {
+    let done = false;
+    console.log(done);
+    erpWindow.on("close", async (e) => {
+      e.preventDefault();
+      await page.waitForSelector("#tb_0");
+      await page.click("#tb_0");
+      await page.waitForSelector("button[title='Logout']");
+      await page.click("button[title='Logout']");
+      erpWindow.destroy();
       mainWindow.webContents.send("fromMain", {
         type: done ? "INVOICE_CREATED" : "DO_CREATED",
         data: data.id,
