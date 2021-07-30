@@ -11,17 +11,28 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
   async function automate() {
     let done = false;
     console.log(done);
-    erpWindow.on("close", async (e) => {
+    erpWindow.once("close", async (e) => {
+      // console.log("step 1");
       e.preventDefault();
+      //  console.log("step 2");
       await page.waitForSelector("#tb_0");
       await page.click("#tb_0");
       await page.waitForSelector("button[title='Logout']");
       await page.click("button[title='Logout']");
       erpWindow.destroy();
-      mainWindow.webContents.send("fromMain", {
-        type: done ? "INVOICE_CREATED" : "DO_CREATED",
-        data: data.id,
-      });
+      // erpWindow.session-end();
+      console.log("step 3");
+      if (done === "true") {
+        mainWindow.webContents.send("fromMain", {
+          type: "INVOICE_CREATED",
+          data: data.id,
+        });
+      } else {
+        mainWindow.webContents.send("fromMain", {
+          type: "DO_CREATED",
+          data: data.id,
+        });
+      }
     });
 
     try {
