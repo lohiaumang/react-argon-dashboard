@@ -399,12 +399,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         page,
         'table > tbody > tr > td > .siebui-popup-button > button[aria-label="Pick Assigned To:Query"]'
       );
-      await typeText(page, "input[name='Last_Name']", "DEVI");
+      await typeText(page, "input[name='Last_Name']", "SUMI");
       await click(page, '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] ');
       await typeText(
         page,
         '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] > input[name="First_Name"]',
-        "PINKY"
+        "DAS"
       );
       await click(
         page,
@@ -445,10 +445,14 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
       });
+      await page.waitForResponse(
+        "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
+      );
       const allTabs = await page.$$eval(
         "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
         (tabs) =>
           tabs.map((tab) => {
+         
             return {
               name: tab.textContent,
               id: tab.id,
@@ -458,6 +462,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       const expressBookingButton = allTabs.find((item) =>
         item.name.includes("Express Booking")
       );
+      console.log(expressBookingButton,"log 1");
+     // console.log(item.name,item.id,"log 2");
       await page.$eval(`#${expressBookingButton.id}`, (el) => el.click());
       // await click(
       //   page,

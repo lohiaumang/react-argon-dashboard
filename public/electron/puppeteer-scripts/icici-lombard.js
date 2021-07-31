@@ -198,6 +198,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     await page.type("#ctrlCustomerAddress_txtGSTIN", data.customerInfo.gst);
 
     done = true;
+    console.log(done);
   } catch (err) {
     console.log(err);
   }
