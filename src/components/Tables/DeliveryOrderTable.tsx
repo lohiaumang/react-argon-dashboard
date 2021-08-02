@@ -24,6 +24,7 @@ export interface DeliveryOrder {
   customerId: string;
   modelName: string;
   additionalId: string;
+  createdBy: string;
   id: string;
   customerInfo?: {
     idTwoPhotoString: string;

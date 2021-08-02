@@ -1,5 +1,6 @@
 module.exports = function erp(page, data, mainWindow, erpWindow) {
   const { click, typeText } = require("./helper");
+  console.log(data);
   const { enquiryType, customerCategory } = require("../enums");
 
   const {
@@ -399,18 +400,32 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         page,
         'table > tbody > tr > td > .siebui-popup-button > button[aria-label="Pick Assigned To:Query"]'
       );
-      await typeText(page, "input[name='Last_Name']", "SUMI");
+      await typeText(page, "input[name='Last_Name']", data.userinfo.name.toUpperCase());
+      console.log(data.userinfo.name.toUpperCase());
       await click(page, '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] ');
       await typeText(
         page,
         '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] > input[name="First_Name"]',
-        "DAS"
+        data.userinfo.lastName.toUpperCase()
       );
+      console.log(data.userinfo.lastName.toUpperCase());
+      /////////////
+      await click(
+        page,
+        'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]'
+      );
+      /////////
+      await click(
+        page,
+        'table > tbody > tr > td > .siebui-popup-button > button[aria-label="Pick Assigned To:Query"]'
+      );
+      ////////////
       await click(
         page,
         'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]'
       );
       await click(page, "button[data-display='OK']");
+  
       await page.waitForResponse(
         "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
       );
@@ -445,9 +460,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
       });
-      await page.waitForResponse(
-        "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
-      );
+    //  await page.waitForResponse(
+     //   "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
+     // );
       const allTabs = await page.$$eval(
         "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
         (tabs) =>

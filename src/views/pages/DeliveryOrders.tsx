@@ -99,7 +99,7 @@ const DeliveryOrders: React.FC = () => {
         });
 
       window.api.receive("fromMain", (statusData: any) => {
-        console.log(statusData.type,"get invoice");
+        //console.log(statusData.type,"get invoice");
         switch (statusData.type) {
           case "INVOICE_CREATED": {
             setShowModal(!showModal);
@@ -269,8 +269,7 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-
-//fatch price config
+  //fatch price config
   const priceConfig = () => {
     if (selected !== undefined) {
       firebase
@@ -307,7 +306,11 @@ const DeliveryOrders: React.FC = () => {
   const fetchDeliveryOrder = () => {
     if (selected !== undefined) {
       const order = deliveryOrders[selected];
-      let customerInfo: any, additionalInfo: any, vehicleInfo: any;
+      console.log(order.createdBy);
+      let customerInfo: any,
+        additionalInfo: any,
+        vehicleInfo: any,
+        userinfo: any;
       if (order.customerInfo && order.vehicleInfo && order.additionalInfo) {
         return new Promise<boolean>((resolve) => {
           resolve(true);
@@ -332,17 +335,28 @@ const DeliveryOrders: React.FC = () => {
                         .then((doc) => {
                           if (doc.exists) {
                             additionalInfo = doc.data();
-                            const fullDetails = {
-                              ...deliveryOrders[selected],
-                              userInfo,
-                              customerInfo,
-                              vehicleInfo,
-                              additionalInfo,
-                            };
-                            const tempOrders = deliveryOrders;
-                            tempOrders[selected] = fullDetails;
-                            setDeliveryOrders(tempOrders);
-                            resolve(true);
+                            db.collection("users")
+                              .doc(order.createdBy)
+                              .get()
+                              .then((doc) => {
+                                if (doc.exists) {
+                                  userinfo = doc.data();
+
+                                  const fullDetails = {
+                                    ...deliveryOrders[selected],
+                                    userInfo,
+                                    customerInfo,
+                                    vehicleInfo,
+                                    additionalInfo,
+                                    userinfo,
+                                  };
+                                  const tempOrders = deliveryOrders;
+                                  tempOrders[selected] = fullDetails;
+                                  setDeliveryOrders(tempOrders);
+                                  resolve(true);
+                                }
+                              })
+                              .catch((error) => reject(error));
                           }
                         })
                         .catch((error) => reject(error));
