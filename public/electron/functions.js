@@ -216,27 +216,37 @@ module.exports = function (mainWindow, browser) {
 
       // Create ERP sale entry
       case "CREATE_INVOICE": {
+        let step = 1;
+        console.log("step: ", step++);
         erpWindow = new BrowserWindow({
           title: "AutoAuto ERP",
           height: 950,
           width: 1200,
           frame: true,
         });
+        console.log("step: ", step++);
 
         await erpWindow.loadURL(
           "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/?SWECmd=Login&SWECM=S&SRN=&SWEHo=hirise.honda2wheelersindia.com"
         );
 
+        console.log("step: ", step++);
         page = await pie.getPage(browser, erpWindow);
+        console.log("step: ", step++);
         const { credentials } = getCredentials();
+        console.log("step: ", step++);
         if (credentials) {
+          console.log("step: ", step++);
           data = {
             ...data,
             credentials: credentials["ERP"],
           };
+          console.log("step: ", step++);
         }
+        console.log("step: ", step++);
 
         erp(page, data, mainWindow, erpWindow);
+        console.log("step: ", step++);
         // erpWindow.webContents.once("close", function () {
         //   mainWindow.webContents.send("fromMain", {
         //     type: "INVOICE_CREATED",
