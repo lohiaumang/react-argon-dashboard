@@ -269,6 +269,11 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
+  const refreshPage = () => {
+    window.location.reload(false);
+  };
+
+
   //fatch price config
   const priceConfig = () => {
     if (selected !== undefined) {
@@ -582,15 +587,26 @@ const DeliveryOrders: React.FC = () => {
           <div className="col">
             <Card className="shadow">
               <CardHeader className="border-0">
+                <Button
+                  className="small-button-width my-2"
+                  color={"primary"}
+                  disabled={loading === true}
+                  onClick={refreshPage}
+                  size="sm"
+                >
+                  Refresh
+                </Button>
                 <Row>
                   <Col xs="6">
                     <h3 className="my-3">Delivery Orders</h3>
                   </Col>
+
                   {selected !== undefined && (
                     <Col
                       className="d-flex justify-content-end align-items-center"
                       xs="6"
                     >
+
                       <Button
                         className="small-button-width my-2"
                         color={"danger"}
@@ -603,6 +619,7 @@ const DeliveryOrders: React.FC = () => {
                       {getActionButton()}
                     </Col>
                   )}
+
                 </Row>
               </CardHeader>
               {loadingPage ? (

@@ -53,18 +53,26 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
   const automate = async function () {
     let done = false;
 
-    vahanWindow.on("close", async (e) => {
-      e.preventDefault();
-      await page.waitForSelector("#logout");
-      await page.click("#logout");
-      await page.waitForSelector("#j_idt241");
-      await page.click("#j_idt241");
-      vahanWindow.destroy();
-      mainWindow.webContents.send("fromMain", {
-        type: done ? "DONE" : "RESET",
-        data: data.id,
-      });
+    const url = await page.evaluate(() => location.href);
+   
+if(url.startsWith('https://vahan.parivahan.gov.in/vahan/vahan/ui/login/login.xhtml')) {
+  console.log("Hello");
+}
+  vahanWindow.on("close", async (e) => {
+    e.preventDefault();
+    await page.waitForSelector("#logout");
+    await page.click("#logout");
+    await page.waitForSelector("#j_idt241");
+    await page.click("#j_idt241");
+    vahanWindow.destroy();
+    mainWindow.webContents.send("fromMain", {
+      type: done ? "DONE" : "RESET",
+      data: data.id,
     });
+  });
+
+
+
 
     try {
       if (username && password && otp) {

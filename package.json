@@ -84,7 +84,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "icon": "src/assets/img/brand/icons/mac/icon.icns",
+        "icon": "src/assets/img/brand/icons/win/icon.ico",
         "name": "AutoAuto",
         "ignore": [
           "node_modules/react-scripts",
