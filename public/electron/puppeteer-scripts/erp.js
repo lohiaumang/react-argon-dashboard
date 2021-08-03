@@ -400,15 +400,21 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         page,
         'table > tbody > tr > td > .siebui-popup-button > button[aria-label="Pick Assigned To:Query"]'
       );
-      await typeText(page, "input[name='Last_Name']", data.userinfo.name.toUpperCase());
+      const firstName=  data.userinfo.name.split(" ");
+     // console.log(firstName);
+     // console.log(firstName[0]);
+     // console.log(firstName[1]);
+      //await page.waitForNavigation()
+      await typeText(page, "input[name='Last_Name']", firstName[0].toUpperCase());
       console.log(data.userinfo.name.toUpperCase());
       await click(page, '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] ');
+    
       await typeText(
         page,
         '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] > input[name="First_Name"]',
-        data.userinfo.lastName.toUpperCase()
+        firstName[1].toUpperCase()
       );
-      console.log(data.userinfo.lastName.toUpperCase());
+     // console.log(data.userinfo.lastName.toUpperCase());
       /////////////
       await click(
         page,
