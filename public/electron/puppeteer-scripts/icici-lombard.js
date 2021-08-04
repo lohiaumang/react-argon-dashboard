@@ -33,7 +33,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     e.preventDefault();
 
     let url = "";
-    const loginUrl = "https://pie.hdfcergo.com//Login/";
+    const loginUrl = "https://ipartner.icicilombard.com/WebPages/Login.aspx";
 
     try {
       url = (await page.evaluate(() => window.location.href)) || "";
@@ -58,7 +58,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     insuranceWindow.destroy();
 
     mainWindow.webContents.send("fromMain", {
-      type: done ? "INSURANCE_CREATED" : "INVOICE_CREATE",
+      type: done ? "INSURANCE_CREATED" : "DISABLE_LOADER",
       data: data.id,
     });
   });

@@ -89,22 +89,15 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
       if (!url.startsWith(loginUrl)) {
         await page.waitForSelector(".head-right > li > a[onclick='LogOut();']");
         await page.click(".head-right > li > a[onclick='LogOut();']");
-        erpWindow.destroy();
+        insuranceWindow.destroy();
       } else {
-        erpWindow.destroy();
+        insuranceWindow.destroy();
       }
 
-      if (done === "true") {
-        mainWindow.webContents.send("fromMain", {
-          type: "INSURANCE_CREATED",
-          data: data.id,
-        });
-      } else {
-        mainWindow.webContents.send("fromMain", {
-          type: "INVOICE_CREATE",
-          data: data.id,
-        });
-      }
+      mainWindow.webContents.send("fromMain", {
+        type: done ? "INSURANCE_CREATED" : "DISABLE_LOADER",
+        data: data.id,
+      });
     });
 
     try {
