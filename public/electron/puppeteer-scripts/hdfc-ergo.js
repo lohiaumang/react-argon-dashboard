@@ -63,18 +63,28 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
   const automate = async function () {
     let done = false;
 
-    //  insuranceWindow.webContents.once("close", async (event) => {
     insuranceWindow.on("close", async (e) => {
-      // const choice = require("electron").dialog.showMessageBoxSync(this, {
-      //   type: "question",
-      //   buttons: ["Yes", "No"],
-      //   title: "Confirm",
-      //   message: "Are you sure you want to quit?",
-      // });
-      //  if (choice === 1) {
       e.preventDefault();
-      await page.waitForSelector(".head-right > li > a[onclick='LogOut();']");
-      await page.click(".head-right > li > a[onclick='LogOut();']");
+
+      let url = "";
+      const loginUrl = "https://pie.hdfcergo.com//Login/";
+
+      try {
+        url = (await page.evaluate(() => window.location.href)) || "";
+      } catch (err) {
+        console.log("Unable to get current url: ", err);
+      }
+
+      if (url && !url.startsWith(loginUrl)) {
+        try {
+          await page.waitForSelector(
+            ".head-right > li > a[onclick='LogOut();']"
+          );
+          await page.click(".head-right > li > a[onclick='LogOut();']");
+        } catch (err) {
+          console.log("Unable to log out: ", err);
+        }
+      }
 
       insuranceWindow.destroy();
 
@@ -210,17 +220,15 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
         "input[name='ChassisNumber']",
         data.vehicleInfo.frameNumber
       );
-console.log("step 3");
+      console.log("step 3");
       await waitForRandom();
       //   mainWindow.webContents.send("update-progress-bar", ["40%", "insurance"]);
       await page.waitForSelector("#AddOnEdit");
       console.log("step 4");
-      await page.click("#AddOnEdit",{visible:true});
+      await page.click("#AddOnEdit", { visible: true });
       console.log("step 5");
       await waitForRandom();
-      await page.waitForSelector(
-        "#C_ZeroDep_1"
-      );
+      await page.waitForSelector("#C_ZeroDep_1");
       console.log("step 6");
       await page.$$eval(
         "div[ng-switch-when='Vehicle Base Value - Zero Depreciation - Claim'] #C_ZeroDep_1",
@@ -235,7 +243,7 @@ console.log("step 3");
             }
           })
       );
-     
+
       await waitForRandom();
       await page.waitForSelector(
         "div[ng-switch-when='Vehicle Base Value - Zero Depreciation - Claim'] #ZD_Information2",
@@ -334,7 +342,9 @@ console.log("step 3");
       console.log("step 10");
       await waitForRandom();
       console.log("step 11");
-      await page.waitForSelector("#searchCityStatePin a:nth-of-type(1)",{visible:true});
+      await page.waitForSelector("#searchCityStatePin a:nth-of-type(1)", {
+        visible: true,
+      });
       console.log("step 12");
       await waitForRandom();
       await page.click("#searchCityStatePin a:nth-of-type(1)");
@@ -386,10 +396,14 @@ console.log("step 3");
       await waitForRandom();
       await page.type("input[name='Information3']", "65");
       await waitForRandom();
-      await page.waitForSelector("form[name='TwoWheelerForm'] > .text-right > button.btn-submit");
-      await page.click("form[name='TwoWheelerForm'] > .text-right > button.btn-submit");
+      await page.waitForSelector(
+        "form[name='TwoWheelerForm'] > .text-right > button.btn-submit"
+      );
+      await page.click(
+        "form[name='TwoWheelerForm'] > .text-right > button.btn-submit"
+      );
       // mainWindow.webContents.send("update-progress-bar", ["100%", "insurance"]);
-    
+
       done = true;
       console.log(done);
     } catch (err) {

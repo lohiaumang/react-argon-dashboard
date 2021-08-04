@@ -14,11 +14,29 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
 
   insuranceWindow.on("close", async (e) => {
     e.preventDefault();
-    await page.goto(
-      "https://ipartner.icicilombard.com/WebPages/Agents/welcome.aspx"
-    );
-    await page.waitForSelector("a[href='/WebPages/Logout.aspx?type=agent']");
-    await page.click("a[href='/WebPages/Logout.aspx?type=agent']");
+
+    let url = "";
+    const loginUrl = "https://pie.hdfcergo.com//Login/";
+
+    try {
+      url = (await page.evaluate(() => window.location.href)) || "";
+    } catch (err) {
+      console.log("Unable to get current url: ", err);
+    }
+
+    if (url && !url.startsWith(loginUrl)) {
+      try {
+        await page.goto(
+          "https://ipartner.icicilombard.com/WebPages/Agents/welcome.aspx"
+        );
+        await page.waitForSelector(
+          "a[href='/WebPages/Logout.aspx?type=agent']"
+        );
+        await page.click("a[href='/WebPages/Logout.aspx?type=agent']");
+      } catch (err) {
+        console.log("Unable to log out: ", err);
+      }
+    }
 
     insuranceWindow.destroy();
 
@@ -26,7 +44,6 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
       type: done ? "INSURANCE_CREATED" : "INVOICE_CREATE",
       data: data.id,
     });
-    // }
   });
 
   try {

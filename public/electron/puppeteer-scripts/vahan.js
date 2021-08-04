@@ -53,26 +53,37 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
   const automate = async function () {
     let done = false;
 
-    const url = await page.evaluate(() => location.href);
-   
-if(url.startsWith('https://vahan.parivahan.gov.in/vahan/vahan/ui/login/login.xhtml')) {
-  console.log("Hello");
-}
-  vahanWindow.on("close", async (e) => {
-    e.preventDefault();
-    await page.waitForSelector("#logout");
-    await page.click("#logout");
-    await page.waitForSelector("#j_idt241");
-    await page.click("#j_idt241");
-    vahanWindow.destroy();
-    mainWindow.webContents.send("fromMain", {
-      type: done ? "DONE" : "RESET",
-      data: data.id,
+    vahanWindow.on("close", async (e) => {
+      e.preventDefault();
+
+      let url = "";
+      const loginUrl =
+        "https://vahan.parivahan.gov.in/vahan/vahan/ui/login/login.xhtml";
+
+      try {
+        url = (await page.evaluate(() => window.location.href)) || "";
+      } catch (err) {
+        console.log("Unable to get current url: ", err);
+      }
+
+      if (url && !url.startsWith(loginUrl)) {
+        try {
+          await page.waitForSelector("#logout");
+          await page.click("#logout");
+          await page.waitForSelector("#j_idt241");
+          await page.click("#j_idt241");
+        } catch (err) {
+          console.log("Unable to log out: ", err);
+        }
+      }
+
+      vahanWindow.destroy();
+
+      mainWindow.webContents.send("fromMain", {
+        type: done ? "DONE" : "RESET",
+        data: data.id,
+      });
     });
-  });
-
-
-
 
     try {
       if (username && password && otp) {

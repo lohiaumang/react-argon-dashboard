@@ -14,9 +14,10 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
 
     erpWindow.on("close", async (e) => {
       e.preventDefault();
+
+      let url = "";
       const loginUrl =
         "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/?SWECmd=Login&SWECM=S&SRN=&SWEHo=hirise.honda2wheelersindia.com";
-      let url = "";
 
       try {
         url = (await page.evaluate(() => window.location.href)) || "";
@@ -37,17 +38,10 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
 
       erpWindow.destroy();
 
-      if (done === "true") {
-        mainWindow.webContents.send("fromMain", {
-          type: "INVOICE_CREATED",
-          data: data.id,
-        });
-      } else {
-        mainWindow.webContents.send("fromMain", {
-          type: "DO_CREATED",
-          data: data.id,
-        });
-      }
+      mainWindow.webContents.send("fromMain", {
+        type: done ? "INVOICE_CREATED" : "DO_CREATED",
+        data: data.id,
+      });
     });
     // Wait for navigation.
 
