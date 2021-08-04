@@ -4,6 +4,8 @@
   "private": true,
   "main": "public/electron/electron.js",
   "homepage": "./",
+  "author": "AutoAuto",
+  "description": "Automating the hard stuff",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@google-cloud/vision": "^2.3.3",
