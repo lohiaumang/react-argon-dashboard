@@ -53,12 +53,16 @@ declare global {
   }
 }
 
+interface DeliveryOrders {
+  [key: string]: DeliveryOrder;
+}
+
 const DeliveryOrders: React.FC = () => {
   const user: any = useContext(UserContext);
   const deliveryOrderTableRef =
     useRef() as React.MutableRefObject<HTMLDivElement>;
-  const [deliveryOrders, setDeliveryOrders] = useState<DeliveryOrder[]>([]);
-  const [selected, setSelected] = useState<number>();
+  const [deliveryOrders, setDeliveryOrders] = useState<DeliveryOrders>({});
+  const [selected, setSelected] = useState<string>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingPage, setLoadingPage] = useState<boolean>(true);
@@ -90,16 +94,18 @@ const DeliveryOrders: React.FC = () => {
         .where("active", "==", true)
         .get()
         .then((querySnapshot) => {
-          const dOs: any = querySnapshot.docs.map((doc) => ({
-            ...doc.data(),
-            id: doc.id,
-          }));
+          let dOs: any = {};
+          querySnapshot.docs.forEach((doc) => {
+            dOs[doc.id] = {
+              ...doc.data(),
+              id: doc.id,
+            };
+          });
           setDeliveryOrders(dOs);
           setLoadingPage(false);
         });
 
       window.api.receive("fromMain", (statusData: any) => {
-        //console.log(statusData.type,"get invoice");
         switch (statusData.type) {
           case "INVOICE_CREATED": {
             setShowModal(!showModal);
@@ -138,7 +144,7 @@ const DeliveryOrders: React.FC = () => {
       deliveryOrders[selected].status !== currentStatus
     ) {
       db.collection("deliveryOrders")
-        .doc(deliveryOrders[selected].id)
+        .doc(selected)
         .set(
           {
             status: currentStatus,
@@ -244,23 +250,22 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-  const toggleSelected = (index: number) => {
-    if (selected === index) {
+  const toggleSelected = (id: string) => {
+    if (id === selected) {
       setSelected(undefined);
     } else {
-      setSelected(index);
+      setSelected(id);
     }
   };
 
   const deleteDeliveryOrder = () => {
     if (selected !== undefined) {
       const tempOrders = deliveryOrders;
-      let selectedDoId: string = deliveryOrders[selected].id;
-      tempOrders.splice(selected, 1);
+      delete tempOrders[selected];
 
       setSelected(undefined);
       setDeliveryOrders(tempOrders);
-      db.collection("deliveryOrders").doc(selectedDoId).set(
+      db.collection("deliveryOrders").doc(selected).set(
         {
           active: false,
         },
@@ -272,7 +277,6 @@ const DeliveryOrders: React.FC = () => {
   const refreshPage = () => {
     window.location.reload(false);
   };
-
 
   //fatch price config
   const priceConfig = () => {
@@ -311,7 +315,6 @@ const DeliveryOrders: React.FC = () => {
   const fetchDeliveryOrder = () => {
     if (selected !== undefined) {
       const order = deliveryOrders[selected];
-      console.log(order.createdBy);
       let customerInfo: any,
         additionalInfo: any,
         vehicleInfo: any,
@@ -386,8 +389,6 @@ const DeliveryOrders: React.FC = () => {
       switch (data.type) {
         case "GET_CREDENTIALS_SUCCESS": {
           credentials = data.userData.credentials;
-          //  const credential = credentials["ERP"];
-          //   console.log( credential);
           return;
         }
         case "GET_CREDENTIALS_FAILURE": {
@@ -509,6 +510,31 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
+  const updateDeliveryOrders = () => {
+    if (user && (user.createdBy || user.uid)) {
+      setLoadingPage(true);
+      const dealerId = user.createdBy || user.uid || "";
+      db.collection("deliveryOrders")
+        .where("dealerId", "==", dealerId)
+        .get()
+        .then((querySnapshot) => {
+          let dOs: any = deliveryOrders;
+          querySnapshot.docChanges().forEach((change) => {
+            if (!(change.doc.id in dOs) && change.doc.data().active) {
+              dOs[change.doc.id] = {
+                ...change.doc.data(),
+                id: change.doc.id,
+              };
+            } else if (change.doc.id in dOs && !change.doc.data().active) {
+              delete dOs[change.doc.id];
+            }
+          });
+          setDeliveryOrders(dOs);
+          setLoadingPage(false);
+        });
+    }
+  };
+
   //print DO
   const printPage = useReactToPrint({
     content: () => deliveryOrderTableRef.current,
@@ -600,26 +626,34 @@ const DeliveryOrders: React.FC = () => {
                   <Col xs="6">
                     <h3 className="my-3">Delivery Orders</h3>
                   </Col>
-
-                  {selected !== undefined && (
-                    <Col
-                      className="d-flex justify-content-end align-items-center"
-                      xs="6"
+                  <Col
+                    className="d-flex justify-content-end align-items-center"
+                    xs="6"
+                  >
+                    {selected !== undefined && (
+                      <>
+                        <Button
+                          className="small-button-width my-2"
+                          color={"danger"}
+                          disabled={loading}
+                          onClick={deleteDeliveryOrder}
+                          size="sm"
+                        >
+                          Delete
+                        </Button>
+                        {getActionButton()}
+                      </>
+                    )}
+                    <Button
+                      className="my-2"
+                      color={"primary"}
+                      disabled={loadingPage}
+                      onClick={updateDeliveryOrders}
+                      size="sm"
                     >
-
-                      <Button
-                        className="small-button-width my-2"
-                        color={"danger"}
-                        disabled={loading === true}
-                        onClick={deleteDeliveryOrder}
-                        size="sm"
-                      >
-                        Delete
-                      </Button>
-                      {getActionButton()}
-                    </Col>
-                  )}
-
+                      <i className="fas fa-sync-alt" />
+                    </Button>
+                  </Col>
                 </Row>
               </CardHeader>
               {loadingPage ? (
@@ -630,7 +664,7 @@ const DeliveryOrders: React.FC = () => {
                 </>
               ) : (
                 <div>
-                  {deliveryOrders.length > 0 ? (
+                  {Object.values(deliveryOrders).length > 0 ? (
                     <Table
                       className="align-items-center table-flush"
                       responsive
@@ -646,12 +680,12 @@ const DeliveryOrders: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {deliveryOrders.map(
+                        {Object.values(deliveryOrders).map(
                           (currElem: any, index: number) =>
                             currElem.active && (
                               <tr
                                 key={currElem.id}
-                                onClick={() => toggleSelected(index)}
+                                onClick={() => toggleSelected(currElem.id)}
                                 style={{ cursor: "pointer" }}
                               >
                                 <td scope="row" className="text-center">
@@ -660,9 +694,9 @@ const DeliveryOrders: React.FC = () => {
                                     type="checkbox"
                                     color="primary"
                                     disabled={!!loading}
-                                    checked={index === selected}
+                                    checked={currElem.id === selected}
                                     style={{ cursor: "pointer" }}
-                                    onChange={() => toggleSelected(index)}
+                                    onChange={() => toggleSelected(currElem.id)}
                                   />
                                 </td>
                                 <td>{currElem.name}</td>
