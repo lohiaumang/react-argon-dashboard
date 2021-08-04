@@ -143,6 +143,7 @@ const DeliveryOrders: React.FC = () => {
       currentStatus !== undefined &&
       deliveryOrders[selected].status !== currentStatus
     ) {
+      setLoading(true);
       db.collection("deliveryOrders")
         .doc(selected)
         .set(
@@ -155,8 +156,11 @@ const DeliveryOrders: React.FC = () => {
           if (currentStatus === "DONE") {
             deleteDeliveryOrder();
           } else {
-            let newDos = deliveryOrders;
-            newDos[selected].status = currentStatus;
+            let newDos: any = deliveryOrders;
+            newDos[selected] = {
+              ...deliveryOrders[selected],
+              status: currentStatus,
+            };
             setDeliveryOrders(newDos);
           }
 
@@ -207,7 +211,11 @@ const DeliveryOrders: React.FC = () => {
         }
         case "INVOICE_CREATED": {
           return (
-            <ButtonDropdown isOpen={dropdownButton} toggle={toggle}>
+            <ButtonDropdown
+              className="mr-2"
+              isOpen={dropdownButton}
+              toggle={toggle}
+            >
               <>
                 <DropdownToggle caret size="sm" color={"primary"}>
                   {loading ? <SmallLoading /> : "Create Insurance"}
@@ -272,10 +280,6 @@ const DeliveryOrders: React.FC = () => {
         { merge: true }
       );
     }
-  };
-
-  const refreshPage = () => {
-    window.location.reload(false);
   };
 
   //fatch price config
@@ -527,11 +531,19 @@ const DeliveryOrders: React.FC = () => {
               };
             } else if (change.doc.id in dOs && !change.doc.data().active) {
               delete dOs[change.doc.id];
+            } else if (change.doc.id in dOs && change.doc.data().active) {
+              dOs[change.doc.id] = {
+                ...dOs[change.doc.id],
+                ...change.doc.data(),
+              };
             }
           });
           setDeliveryOrders(dOs);
           setLoadingPage(false);
         });
+    }
+    if (selected !== undefined) {
+      setCurrentStatus(deliveryOrders[selected].status);
     }
   };
 
@@ -613,15 +625,6 @@ const DeliveryOrders: React.FC = () => {
           <div className="col">
             <Card className="shadow">
               <CardHeader className="border-0">
-                <Button
-                  className="small-button-width my-2"
-                  color={"primary"}
-                  disabled={loading === true}
-                  onClick={refreshPage}
-                  size="sm"
-                >
-                  Refresh
-                </Button>
                 <Row>
                   <Col xs="6">
                     <h3 className="my-3">Delivery Orders</h3>
@@ -630,7 +633,7 @@ const DeliveryOrders: React.FC = () => {
                     className="d-flex justify-content-end align-items-center"
                     xs="6"
                   >
-                    {selected !== undefined && (
+                    {!loadingPage && selected !== undefined && (
                       <>
                         <Button
                           className="small-button-width my-2"

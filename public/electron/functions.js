@@ -218,7 +218,7 @@ module.exports = function (mainWindow, browser) {
       case "CREATE_INVOICE": {
         let step = 1;
         console.log("step: ", step++);
-        erpWindow = new BrowserWindow({
+        let erpWindow = new BrowserWindow({
           title: "AutoAuto ERP",
           height: 950,
           width: 1200,

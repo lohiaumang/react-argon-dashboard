@@ -1,6 +1,5 @@
 module.exports = function erp(page, data, mainWindow, erpWindow) {
   const { click, typeText } = require("./helper");
-  console.log(data);
   const { enquiryType, customerCategory } = require("../enums");
 
   const {
@@ -11,33 +10,37 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
 
   async function automate() {
     let done = false;
-    const url = await page.evaluate(() => location.href);
-   
-      erpWindow.once("close", async (e) => {
-        e.preventDefault();
-  
+    // const url = await page.evaluate(() => location.href);
+
+    erpWindow.on("close", async (e) => {
+      e.preventDefault();
+      const loginUrl =
+        "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/?SWECmd=Login&SWECM=S&SRN=&SWEHo=hirise.honda2wheelersindia.com";
+      let url = await page.evaluate(() => window.location.href);
+
+      if (!url.startsWith(loginUrl)) {
         await page.waitForSelector("#tb_0");
         await page.click("#tb_0");
         await page.waitForSelector("button[title='Logout']");
         await page.click("button[title='Logout']");
         erpWindow.destroy();
-        // erpWindow.session-end();
-  
-        if (done === "true") {
-          mainWindow.webContents.send("fromMain", {
-            type: "INVOICE_CREATED",
-            data: data.id,
-          });
-        } else {
-          mainWindow.webContents.send("fromMain", {
-            type: "DO_CREATED",
-            data: data.id,
-          });
-        }
-      });
-  // Wait for navigation.
+      } else {
+        erpWindow.destroy();
+      }
 
-
+      if (done === "true") {
+        mainWindow.webContents.send("fromMain", {
+          type: "INVOICE_CREATED",
+          data: data.id,
+        });
+      } else {
+        mainWindow.webContents.send("fromMain", {
+          type: "DO_CREATED",
+          data: data.id,
+        });
+      }
+    });
+    // Wait for navigation.
 
     try {
       //done = true;
@@ -404,21 +407,25 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         page,
         'table > tbody > tr > td > .siebui-popup-button > button[aria-label="Pick Assigned To:Query"]'
       );
-      const firstName=  data.userinfo.name.split(" ");
-     // console.log(firstName);
-     // console.log(firstName[0]);
-     // console.log(firstName[1]);
+      const firstName = data.userinfo.name.split(" ");
+      // console.log(firstName);
+      // console.log(firstName[0]);
+      // console.log(firstName[1]);
       //await page.waitForNavigation()
-      await typeText(page, "input[name='Last_Name']", firstName[0].toUpperCase());
+      await typeText(
+        page,
+        "input[name='Last_Name']",
+        firstName[0].toUpperCase()
+      );
       console.log(data.userinfo.name.toUpperCase());
       await click(page, '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] ');
-    
+
       await typeText(
         page,
         '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] > input[name="First_Name"]',
         firstName[1].toUpperCase()
       );
-     // console.log(data.userinfo.lastName.toUpperCase());
+      // console.log(data.userinfo.lastName.toUpperCase());
       /////////////
       await click(
         page,
@@ -435,7 +442,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         'table > tbody > tr > .siebui-popup-action > .siebui-popup-button > button[aria-label="Pick Assigned To:Go"]'
       );
       await click(page, "button[data-display='OK']");
-  
+
       await page.waitForResponse(
         "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
       );
@@ -470,14 +477,13 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
       });
-    //  await page.waitForResponse(
-     //   "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
-     // );
+      //  await page.waitForResponse(
+      //   "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
+      // );
       const allTabs = await page.$$eval(
         "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
         (tabs) =>
           tabs.map((tab) => {
-         
             return {
               name: tab.textContent,
               id: tab.id,
@@ -487,8 +493,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       const expressBookingButton = allTabs.find((item) =>
         item.name.includes("Express Booking")
       );
-      console.log(expressBookingButton,"log 1");
-     // console.log(item.name,item.id,"log 2");
+      console.log(expressBookingButton, "log 1");
+      // console.log(item.name,item.id,"log 2");
       await page.$eval(`#${expressBookingButton.id}`, (el) => el.click());
       // await click(
       //   page,
