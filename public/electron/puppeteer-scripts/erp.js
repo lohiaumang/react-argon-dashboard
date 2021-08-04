@@ -16,17 +16,26 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       e.preventDefault();
       const loginUrl =
         "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/?SWECmd=Login&SWECM=S&SRN=&SWEHo=hirise.honda2wheelersindia.com";
-      let url = await page.evaluate(() => window.location.href);
+      let url = "";
 
-      if (!url.startsWith(loginUrl)) {
-        await page.waitForSelector("#tb_0");
-        await page.click("#tb_0");
-        await page.waitForSelector("button[title='Logout']");
-        await page.click("button[title='Logout']");
-        erpWindow.destroy();
-      } else {
-        erpWindow.destroy();
+      try {
+        url = (await page.evaluate(() => window.location.href)) || "";
+      } catch (err) {
+        console.log("Unable to get current url: ", err);
       }
+
+      if (url && !url.startsWith(loginUrl)) {
+        try {
+          await page.waitForSelector("#tb_0");
+          await page.click("#tb_0");
+          await page.waitForSelector("button[title='Logout']");
+          await page.click("button[title='Logout']");
+        } catch (err) {
+          console.log("Unable to log out: ", err);
+        }
+      }
+
+      erpWindow.destroy();
 
       if (done === "true") {
         mainWindow.webContents.send("fromMain", {
