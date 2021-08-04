@@ -111,7 +111,7 @@ const DeliveryOrders: React.FC = () => {
             setShowModal(!showModal);
             break;
           }
-          case "INVOICE_CREATE": {
+          case "DISABLE_LOADER": {
             setLoading(false);
             break;
           }
@@ -283,35 +283,31 @@ const DeliveryOrders: React.FC = () => {
   };
 
   //fatch price config
-  const priceConfig = () => {
+  const priceConfig = async () => {
     if (selected !== undefined) {
-      firebase
+      let doc = await firebase
         .firestore()
         .collection("priceConfig")
         .doc("config")
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            priceDetails = doc.data();
-            priceDetails = priceDetails[deliveryOrders[selected].modelName];
-          }
-        });
+        .get();
+      if (doc.exists) {
+        let allPrices: any = doc.data();
+        priceDetails = allPrices[deliveryOrders[selected].modelName];
+      }
     }
   };
 
   //fatch insuranceconfig
-  const insuranceConfig = () => {
+  const insuranceConfig = async () => {
     if (selected !== undefined) {
-      firebase
+      const doc = await firebase
         .firestore()
         .collection("insuranceConfig")
         .doc("config")
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            insuranceDetails = doc.data();
-          }
-        });
+        .get();
+      if (doc.exists) {
+        insuranceDetails = doc.data();
+      }
     }
   };
 
@@ -383,25 +379,6 @@ const DeliveryOrders: React.FC = () => {
     }
   }; // -> should return true or false promise
 
-  //get userid and password
-  const getCredentials = async () => {
-    window.api.send("toMain", {
-      type: "GET_CREDENTIALS",
-    });
-
-    await window.api.receive("fromMain", (data: any) => {
-      switch (data.type) {
-        case "GET_CREDENTIALS_SUCCESS": {
-          credentials = data.userData.credentials;
-          return;
-        }
-        case "GET_CREDENTIALS_FAILURE": {
-          return;
-        }
-      }
-    });
-  };
-
   const getSetUserData = (uid: string) => {
     if (uid && window && window.api) {
       window.api.receive("fromMain", (data: any) => {
@@ -450,12 +427,11 @@ const DeliveryOrders: React.FC = () => {
     try {
       setLoading(true);
       if (selected !== undefined) {
-        await getCredentials();
         const status: any = await fetchDeliveryOrder();
         if (status) {
           window.api.send("toMain", {
             type: "CREATE_INVOICE",
-            data: { ...deliveryOrders[selected], credentials },
+            data: deliveryOrders[selected],
           });
         }
       }
@@ -469,7 +445,6 @@ const DeliveryOrders: React.FC = () => {
     try {
       setLoading(true);
       if (selected !== undefined) {
-        await getCredentials();
         await insuranceConfig();
         await priceConfig();
         const status: any = await fetchDeliveryOrder();
@@ -480,7 +455,6 @@ const DeliveryOrders: React.FC = () => {
             data: {
               ...deliveryOrders[selected],
               insuranceCompany,
-              credentials,
               priceDetails,
               insuranceDetails,
             },

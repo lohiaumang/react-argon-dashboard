@@ -1,6 +1,4 @@
 module.exports = async function (page, data, mainWindow, insuranceWindow) {
-  const psl = require("puppeteer-salesforce-library");
-  const logout = psl.logout;
   // const fetch = require('node-fetch');
   // const _ = require("get-safe");
 
@@ -89,7 +87,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
       insuranceWindow.destroy();
 
       mainWindow.webContents.send("fromMain", {
-        type: done ? "INSURANCE_CREATED" : "INVOICE_CREATE",
+        type: done ? "INSURANCE_CREATED" : "DISABLE_LOADER",
         data: data.id,
       });
     });

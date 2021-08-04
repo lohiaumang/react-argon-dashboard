@@ -41,7 +41,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     insuranceWindow.destroy();
 
     mainWindow.webContents.send("fromMain", {
-      type: done ? "INSURANCE_CREATED" : "INVOICE_CREATE",
+      type: done ? "INSURANCE_CREATED" : "DISABLE_LOADER",
       data: data.id,
     });
   });
