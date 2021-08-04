@@ -12,6 +12,23 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
   } = data;
   let done = false;
 
+  // insuranceWindow.on("close", async (e) => {
+  //   e.preventDefault();
+  //   await page.goto(
+  //     "https://ipartner.icicilombard.com/WebPages/Agents/welcome.aspx"
+  //   );
+  //   await page.waitForSelector("a[href='/WebPages/Logout.aspx?type=agent']");
+  //   await page.click("a[href='/WebPages/Logout.aspx?type=agent']");
+
+  //   insuranceWindow.destroy();
+
+  //   mainWindow.webContents.send("fromMain", {
+  //     type: done ? "INSURANCE_CREATED" : "INVOICE_CREATE",
+  //     data: data.id,
+  //   });
+  //   // }
+  // });
+
   insuranceWindow.on("close", async (e) => {
     e.preventDefault();
 
