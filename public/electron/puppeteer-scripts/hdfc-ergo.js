@@ -1,6 +1,6 @@
 module.exports = async function (page, data, mainWindow, insuranceWindow) {
-  const psl = require("puppeteer-salesforce-library");
-  const logout = psl.logout;
+  // const psl = require("puppeteer-salesforce-library");
+  // const logout = psl.logout;
   // const fetch = require('node-fetch');
   // const _ = require("get-safe");
 
