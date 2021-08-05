@@ -39,6 +39,7 @@ import DeliveryOrderTable, {
   UserInfo,
 } from "../../components/Tables/DeliveryOrderTable";
 import InvoiceTable from "../../components/Tables/InvoiceTable";
+import EditDo from "../../components/Tables/EditDo";
 import { withFadeIn } from "../../components/HOC/withFadeIn";
 import SmallLoading from "../../components/Share/SmallLoading";
 import Loading from "../../components/Share/Loading";
@@ -310,6 +311,18 @@ const DeliveryOrders: React.FC = () => {
       }
     }
   };
+
+  // const editDO = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const status: any = await fetchDeliveryOrder();
+  //     if (status) {
+  //       setShowModal(!showModal);
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   // TODO: Make fetching data if it does not exist common
   const fetchDeliveryOrder = () => {
@@ -583,6 +596,9 @@ const DeliveryOrders: React.FC = () => {
                   deliveryOrder={deliveryOrders[selected]}
                 />
               )}
+              <EditDo 
+               ref={deliveryOrderTableRef}
+               deliveryOrder={deliveryOrders[selected]}/>
             </ModalBody>
             <ModalFooter>
               <Button color="primary" onClick={printPage}>
@@ -679,6 +695,18 @@ const DeliveryOrders: React.FC = () => {
                                 <td>{currElem.name}</td>
                                 <td>{currElem.modelName}</td>
                                 <td>{currElem.color}</td>
+                                {/* <td>
+                                  {" "}
+                                  <Button
+                                    className="small-button-width my-2"
+                                    color={"danger"}
+                                    disabled={loading}
+                                    onClick={editDO}
+                                    size="sm"
+                                  >
+                                    Edit
+                                  </Button>
+                                </td> */}
                               </tr>
                             )
                         )}
