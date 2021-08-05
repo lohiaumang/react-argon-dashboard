@@ -71,6 +71,7 @@ const UserManagement: React.FC = () => {
   const [name, setName] = useState<string>();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
+  const [status, setStatus] = useState<string>();
   const [role, setRole] = useState<string>();
   const [signUpError, setSignUpError] = useState<SignUpError>();
   const [signUpSuccess, setSignUpSuccess] = useState<SignUpSuccess>();
@@ -78,6 +79,7 @@ const UserManagement: React.FC = () => {
   const [userData, setUserData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [Deleteloading, setDeleteLoading] = useState<boolean>(false);
+  const db = firebase.firestore();
 
   useEffect(() => {
     if (signUpError) {
@@ -107,6 +109,7 @@ const UserManagement: React.FC = () => {
         .collection("users")
         .where("createdBy", "==", uid)
         .where("role", "in", ["salesman", "officeStaff"])
+        .where("status", "==", true)
         .onSnapshot(function (querySnapshot) {
           setUserData(
             querySnapshot.docs.map((doc) => ({
@@ -131,40 +134,56 @@ const UserManagement: React.FC = () => {
   //   firebase.firestore().collection('users').doc(id).delete();
   // }
 
+  // const deleteUser = (uid: any) => {
+  //   setDeleteLoading(true);
+  //   if (uid) {
+  //     const user = {
+  //       uid,
+  //     };
+
+  //     if (window && window.api) {
+  //       window.api.receive("fromMain", (data: any) => {
+  //         switch (data.type) {
+  //           case "DELETE_USER_SUCCESS": {
+  //             setDeleteLoading(false);
+  //             setDeleteSuccess({
+  //               code: "FIREBASE_ERROR",
+  //               message: "User Delete Successfully.",
+  //             });
+  //             break;
+  //           }
+  //           case "DELETE_USER_FAILURE": {
+  //             setDeleteLoading(false);
+  //             setDeleteSuccess({
+  //               code: "FIREBASE_ERROR",
+  //               message: data.err.message!,
+  //             });
+  //             break;
+  //           }
+  //         }
+  //       });
+  //       window.api.send("toMain", {
+  //         type: "DELETE_USER",
+  //         data: user,
+  //       });
+  //     }
+  //   }
+  // };
+
+
   const deleteUser = (uid: any) => {
     setDeleteLoading(true);
     if (uid) {
-      const user = {
-        uid,
-      };
-
-      if (window && window.api) {
-        window.api.receive("fromMain", (data: any) => {
-          switch (data.type) {
-            case "DELETE_USER_SUCCESS": {
-              setDeleteLoading(false);
-              setDeleteSuccess({
-                code: "FIREBASE_ERROR",
-                message: "User Delete Successfully.",
-              });
-              break;
-            }
-            case "DELETE_USER_FAILURE": {
-              setDeleteLoading(false);
-              setDeleteSuccess({
-                code: "FIREBASE_ERROR",
-                message: data.err.message!,
-              });
-              break;
-            }
-          }
-        });
-        window.api.send("toMain", {
-          type: "DELETE_USER",
-          data: user,
-        });
+      db.collection("users")
+      .doc(uid)
+      .set(
+        {
+          status: false,
+        },
+        { merge: true }
+      )
       }
-    }
+    
   };
 
   const userCreate = (ev: React.FormEvent<HTMLFormElement>) => {
@@ -176,6 +195,7 @@ const UserManagement: React.FC = () => {
         email,
         password,
         role,
+        status: true,
         createdBy: currentUser.uid,
       };
 
@@ -185,13 +205,14 @@ const UserManagement: React.FC = () => {
             case "CREATE_USER_SUCCESS": {
               setLoading(false);
               setSignUpSuccess({
-                code: "FIREBASE_ERROR",
+                code: "USER_SUCCESS",
                 message: data.resp.data.result,
               });
               setPassword("");
               setName("");
               setEmail("");
               setRole("");
+              setStatus("");
               break;
             }
             case "CREATE_USER_FAILURE": {

@@ -312,20 +312,11 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-  // const editDO = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const status: any = await fetchDeliveryOrder();
-  //     if (status) {
-  //       setShowModal(!showModal);
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
+
 
   // TODO: Make fetching data if it does not exist common
   const fetchDeliveryOrder = () => {
+    debugger;
     if (selected !== undefined) {
       const order = deliveryOrders[selected];
       let customerInfo: any,
@@ -424,6 +415,7 @@ const DeliveryOrders: React.FC = () => {
   }
 
   const createDO = async () => {
+    debugger;
     try {
       setLoading(true);
       const status: any = await fetchDeliveryOrder();
@@ -531,6 +523,19 @@ const DeliveryOrders: React.FC = () => {
     }
     if (selected !== undefined) {
       setCurrentStatus(deliveryOrders[selected].status);
+    }
+  };
+//edit do
+  const editDO = async () => {
+    debugger;
+    try {
+      setLoading(true);
+      const status: any = await fetchDeliveryOrder();
+      if (status) {
+        setShowModal(!showModal);
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -670,6 +675,7 @@ const DeliveryOrders: React.FC = () => {
                           <th scope="col">Name</th>
                           <th scope="col">Model Name</th>
                           <th scope="col">Color</th>
+                          <th scope="col">Action</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -695,8 +701,7 @@ const DeliveryOrders: React.FC = () => {
                                 <td>{currElem.name}</td>
                                 <td>{currElem.modelName}</td>
                                 <td>{currElem.color}</td>
-                                {/* <td>
-                                  {" "}
+                                <td>
                                   <Button
                                     className="small-button-width my-2"
                                     color={"danger"}
@@ -706,7 +711,7 @@ const DeliveryOrders: React.FC = () => {
                                   >
                                     Edit
                                   </Button>
-                                </td> */}
+                                </td>
                               </tr>
                             )
                         )}

@@ -150,7 +150,7 @@ module.exports = function (mainWindow, browser) {
         case "CREATE_USER": {
           const functions = firebase.app().functions("asia-south1");
           const createUserDataFirestore = functions.httpsCallable(
-            "createUserdataIndia"
+            "createUserdataIndia1"
           );
           createUserDataFirestore(data)
             .then((resp) => {
@@ -168,26 +168,26 @@ module.exports = function (mainWindow, browser) {
             });
           break;
         }
-        case "DELETE_USER": {
-          const functions = firebase.app().functions("asia-south1");
-          const deleteUserDataFirestore = functions.httpsCallable(
-            "deleteUserDataIndia"
-          );
-          deleteUserDataFirestore(data)
-            .then((resp) => {
-              mainWindow.webContents.send("fromMain", {
-                type: "DELETE_USER_SUCCESS",
-                resp,
-              });
-            })
-            .catch((err) => {
-              mainWindow.webContents.send("fromMain", {
-                type: "DELETE_USER_FAILURE",
-                err,
-              });
-            });
-          break;
-        }
+        // case "DELETE_USER": {
+        //   const functions = firebase.app().functions("asia-south1");
+        //   const deleteUserDataFirestore = functions.httpsCallable(
+        //     "deleteUserDataIndia"
+        //   );
+        //   deleteUserDataFirestore(data)
+        //     .then((resp) => {
+        //       mainWindow.webContents.send("fromMain", {
+        //         type: "DELETE_USER_SUCCESS",
+        //         resp,
+        //       });
+        //     })
+        //     .catch((err) => {
+        //       mainWindow.webContents.send("fromMain", {
+        //         type: "DELETE_USER_FAILURE",
+        //         err,
+        //       });
+        //     });
+        //   break;
+        // }
         //Creeate userid and password for automation
         case "SET_CREDENTIALS": {
           const credentials = data.config;
