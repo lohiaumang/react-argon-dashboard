@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Table, Row, Col } from "reactstrap";
+import {
+  Table,
+  Row,
+  Col,
+  FormGroup,
+  Input,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Container,
+  Form,
+} from "reactstrap";
 import NumberFormat from "react-number-format";
+import SmallLoading from "../Share/SmallLoading";
 
 export interface UserInfo {
   name: string;
@@ -82,386 +95,668 @@ type Props = {
   deliveryOrder: DeliveryOrder;
 };
 
-const EditDo = React.forwardRef<HTMLDivElement, Props>(
-  (props, ref) => {
-    if (
-      props &&
-      props.deliveryOrder &&
-      props.deliveryOrder.customerInfo &&
-      props.deliveryOrder.vehicleInfo &&
-      props.deliveryOrder.additionalInfo &&
-      props.deliveryOrder.userInfo
-    ) {
-      const price = parseInt(props.deliveryOrder.additionalInfo.price);
-      const insurance = parseInt(props.deliveryOrder.additionalInfo.insurance);
-      const mvTax = parseInt(props.deliveryOrder.additionalInfo.mvTax);
-      const postalCharge = parseInt(
-        props.deliveryOrder.additionalInfo.postalCharge
-      );
-      const accessories = parseInt(
-        props.deliveryOrder.additionalInfo.accessories
-      );
-      const total = [
-        price + insurance + mvTax + postalCharge + accessories,
-      ].toString();
-     
-      return (
-        <div className="delivery-order-table" ref={ref}>
+const EditDo = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
+  if (
+    props &&
+    props.deliveryOrder &&
+    props.deliveryOrder.customerInfo &&
+    props.deliveryOrder.vehicleInfo &&
+    props.deliveryOrder.additionalInfo &&
+    props.deliveryOrder.userInfo
+  ) {
+    const [disabled, setDisabled] = useState<boolean>(true);
+    const [userInfo, setUserInfo] = useState<UserInfo>({
+      name: "",
+      phoneNumber: "",
+      email: "",
+      gst: "",
+      pan: "",
+      address: "",
+      temporaryCertificate: "",
+      uid: "",
+    });
+
+    return (
+      <div ref={ref}>
+        <Container>
           <Row>
-            <Row className="row-header">
-              <Col>
-                <h4 className="m-0" style={{ color: "white" }}>
-                  {props.deliveryOrder.userInfo.name}
-                </h4>
-              </Col>
-              <Col className="text-right">
-                <p className="m-0" style={{ color: "white" }}>
-                  <small>
-                    <strong>Sl. no. {props.deliveryOrder.id}</strong>
-                  </small>
-                </p>
-              </Col>
-            </Row>
-            <Row className="p-1 w-100">
-              <Col xs="6" className="p-0">
-                <Row>
-                  <Col xs="4" className="px-1">
-                    <h5>Name</h5>
-                  </Col>
-                  <Col xs="8" className="px-1">
-                    <small>{props.deliveryOrder.name}</small>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col xs="4" className="px-1">
-                    <h5>S/D/W/o</h5>
-                  </Col>
-                  <Col xs="8" className="px-1">
-                    <small>{props.deliveryOrder.customerInfo.swdo}</small>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col xs="4" className="px-1">
-                    <h5>Email</h5>
-                  </Col>
-                  <Col xs="8" className="px-1">
-                    <small>{props.deliveryOrder.customerInfo.email}</small>
-                  </Col>
-                </Row>
+            <Col className="order-xl-1" xl="12">
+              <Row className="align-items-center">
+                <Col xs="8">
+                  <h3 className="mb-0">Update DO</h3>
+                </Col>
+              </Row>
 
+              <Form>
                 <Row>
-                  <Col xs="4" className="px-1">
-                    <h5>Present Address </h5>
+                  <Col xs="8">
+                    <h6 className="heading-small text-muted mb-4">
+                      Customer information
+                    </h6>
                   </Col>
-                  <Col xs="8" className="px-1">
-                    <small>
-                      {props.deliveryOrder.customerInfo.currLineOne}
-                    </small>
-                    <br />
-                    <small>
-                      {props.deliveryOrder.customerInfo.currLineTwo}
-                    </small>
-                    <br />
-                    <small>{props.deliveryOrder.customerInfo.currPS}</small>
-                    <br />
-                    <small>
-                      {props.deliveryOrder.customerInfo.currCity},{" "}
-                      {props.deliveryOrder.customerInfo.currDistrict}
-                    </small>
-                    <br />
-                    <small>
-                      {props.deliveryOrder.customerInfo.currState},{" "}
-                      {props.deliveryOrder.customerInfo.currPostal}
-                    </small>
+                  <Col className="text-right" xs="4">
+                    <Button
+                      className="small-button-width"
+                      color={"success"}
+                      type="submit"
+                      size="sm"
+                    >
+                      Save
+                    </Button>
                   </Col>
                 </Row>
-              </Col>
-
-              <Col xs="6" className="p-0">
-                <Row>
-                  <Col xs="4" className="px-1">
-                    <h5>Date</h5>
-                  </Col>
-                  <Col xs="8" className="px-1">
-                    <small>{new Date().toDateString()}</small>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col xs="4" className="px-1">
-                    <h5>Date of birth</h5>
-                  </Col>
-                  <Col xs="8" className="px-1">
-                    <small>{props.deliveryOrder.customerInfo.dob}</small>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col xs="4" className="px-1">
-                    <h5>Phone number</h5>
-                  </Col>
-                  <Col xs="8" className="px-1">
-                    <small>{props.deliveryOrder.customerInfo.phoneNo}</small>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col xs="4" className="px-1">
-                    <h5>Present Address</h5>
-                  </Col>
-                  <Col xs="8" className="px-1">
-                    <small>
-                      {props.deliveryOrder.customerInfo.permLineOne}
-                    </small>
-                    <br />
-                    <small>
-                      {props.deliveryOrder.customerInfo.permLineTwo}
-                    </small>
-                    <br />
-                    <small>{props.deliveryOrder.customerInfo.permPS}</small>
-                    <br />
-                    <small>
-                      {props.deliveryOrder.customerInfo.permCity},{" "}
-                      {props.deliveryOrder.customerInfo.permDistrict}
-                    </small>
-                    <br />
-                    <small>
-                      {props.deliveryOrder.customerInfo.permState},{" "}
-                      {props.deliveryOrder.customerInfo.permPostal}
-                    </small>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-            <Row className="p-1 border border-right-0 border-left-0 border-primary w-100">
-              <Col xs="6" className="p-0">
-                <Row>
-                  <Col xs="4" className="px-1">
-                    <h5 className="m-0">Model Name</h5>
-                  </Col>
-                  <Col xs="8" className="px-1">
-                    <small>{props.deliveryOrder.vehicleInfo.modelName}</small>
-                  </Col>
-                </Row>
-                {props.deliveryOrder.additionalInfo.financier && (
+                <div className="pl-lg-4">
                   <Row>
-                    <Col xs="4" className="px-1">
-                      <h5 className="m-0">Financier</h5>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-customer-name"
+                        >
+                          Customer Name
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-customer-name"
+                          value={props.deliveryOrder.customerInfo.firstName}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              name: ev.target.value!,
+                            })
+                          }
+                          placeholder="Customer name"
+                          type="text"
+                        />
+                      </FormGroup>
                     </Col>
-                    <Col xs="8" className="px-1">
-                      <small>
-                        {props.deliveryOrder.additionalInfo.financier}
-                      </small>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-customer-lastName"
+                        >
+                          Customer Last Name
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-customer-lastName"
+                          value={props.deliveryOrder.customerInfo.lastName}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              name: ev.target.value!,
+                            })
+                          }
+                          placeholder="Customer Last Name"
+                          type="text"
+                        />
+                      </FormGroup>
                     </Col>
                   </Row>
-                )}
-                {props.deliveryOrder.additionalInfo.inquiryType && (
                   <Row>
-                    <Col xs="4" className="px-1">
-                      <h5 className="m-0">Inquiry Type</h5>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label className="form-control-label" htmlFor="S/D/W/O">
+                          S/D/W/O Name
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="S/D/W/O"
+                          value={props.deliveryOrder.customerInfo.swdo}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              name: ev.target.value!,
+                            })
+                          }
+                          placeholder="S/D/W/O Name"
+                          type="text"
+                        />
+                      </FormGroup>
                     </Col>
-                    <Col xs="8" className="px-1">
-                      <small>
-                        {props.deliveryOrder.additionalInfo.inquiryType.toUpperCase()}
-                      </small>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-email"
+                        >
+                          Email address
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-email"
+                          value={props.deliveryOrder.customerInfo.email}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              email: ev.target.value!,
+                            })
+                          }
+                          placeholder="abc@xyz.def"
+                          type="email"
+                          pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$"
+                          title="Email should be in the format abc@xyz.def"
+                        />
+                      </FormGroup>
                     </Col>
                   </Row>
-                )}
-                <Row>
-                  <Col xs="4" className="px-1">
-                    <h5 className="m-0">Reference #1</h5>
-                  </Col>
-                  <Col xs="8" className="px-1"></Col>
-                </Row>
-                <Row>
-                  <Col xs="4" className="px-1">
-                    <h5 className="m-0">Phone number</h5>
-                  </Col>
-                  <Col xs="8" className="px-1"></Col>
-                </Row>
-              </Col>
-              <Col xs="6" className="p-0">
-                <Row>
-                  <Col xs="4" className="px-1">
-                    <h5 className="m-0">Colour</h5>
-                  </Col>
-                  <Col xs="8" className="px-1">
-                    <small>{props.deliveryOrder.vehicleInfo.color}</small>
-                  </Col>
-                </Row>
-                {props.deliveryOrder.customerInfo.gst && (
                   <Row>
-                    <Col xs="4" className="px-1">
-                      <h5>GST</h5>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-phone-number"
+                        >
+                          Phone number
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-phone-number"
+                          value={props.deliveryOrder.customerInfo.phoneNo}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              phoneNumber: ev.target.value!,
+                            })
+                          }
+                          placeholder="9999999999"
+                          type="tel"
+                          pattern="^\d{10}$"
+                          title="Phone number should exactly contain 10 digits"
+                        />
+                      </FormGroup>
                     </Col>
-                    <Col xs="8" className="px-1">
-                      <small>{props.deliveryOrder.customerInfo.gst}</small>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="date-of-birth"
+                        >
+                          Date of Birth
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="date-of-birth"
+                          value={props.deliveryOrder.customerInfo.dob}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              name: ev.target.value!,
+                            })
+                          }
+                          placeholder="Date Of Birth"
+                          type="text"
+                        />
+                      </FormGroup>
                     </Col>
                   </Row>
-                )}
-                <Row>
-                  <Col xs="4" className="px-1">
-                    <h5 className="m-0">Reference #2</h5>
-                  </Col>
-                  <Col xs="8" className="px-1"></Col>
-                </Row>
-                <Row>
-                  <Col xs="4" className="px-1">
-                    <h5 className="m-0">Phone number</h5>
-                  </Col>
-                  <Col xs="8" className="px-1"></Col>
-                </Row>
-              </Col>
-            </Row>
-            <Table className="table table-striped table-bordered my-3">
-              <tbody>
-                {props.deliveryOrder.additionalInfo.price && (
-                  <tr>
-                    <th>Price</th>
-                    <td>
-                      <NumberFormat
-                        value={props.deliveryOrder.additionalInfo.price}
-                        displayType={"text"}
-                        thousandSeparator={true}
-                        prefix={"₹"}
-                      />
-                    </td>
-                  </tr>
-                )}
-                {props.deliveryOrder.additionalInfo.insurance && (
-                  <tr>
-                    <th>Insurance</th>
-                    <td>
-                      <NumberFormat
-                        value={props.deliveryOrder.additionalInfo.insurance}
-                        displayType={"text"}
-                        thousandSeparator={true}
-                        prefix={"₹"}
-                      />
-                    </td>
-                  </tr>
-                )}
-                {props.deliveryOrder.additionalInfo.mvTax && (
-                  <tr>
-                    <th>MV Tax</th>
-                    <td>
-                      <NumberFormat
-                        value={props.deliveryOrder.additionalInfo.mvTax}
-                        displayType={"text"}
-                        thousandSeparator={true}
-                        prefix={"₹"}
-                      />
-                    </td>
-                  </tr>
-                )}
-                {props.deliveryOrder.additionalInfo.postalCharge && (
-                  <tr>
-                    <th>Postal Charge</th>
-                    <td>
-                      <NumberFormat
-                        value={props.deliveryOrder.additionalInfo.postalCharge}
-                        displayType={"text"}
-                        thousandSeparator={true}
-                        prefix={"₹"}
-                      />
-                    </td>
-                  </tr>
-                )}
-                {props.deliveryOrder.additionalInfo.extendedWarranty && (
-                  <tr>
-                    <th>
-                      Extended Warranty -{" "}
-                      {props.deliveryOrder.additionalInfo.extendedWarranty}{" "}
-                      years
-                    </th>
-                    <td>
-                      {/*Add values to configs and then pull the value from there*/}
-                    </td>
-                  </tr>
-                )}
-                {props.deliveryOrder.additionalInfo.joyClub && (
-                  <tr>
-                    <th>Joy Club</th>
-                    <td>
-                      <NumberFormat
-                        value={412}
-                        displayType={"text"}
-                        thousandSeparator={true}
-                        prefix={"₹"}
-                      />
-                    </td>
-                  </tr>
-                )}
-                {props.deliveryOrder.additionalInfo.hra && (
-                  <tr>
-                    <th>Honda Roadside Assistance</th>
-                    <td>
-                      <NumberFormat
-                        value={229}
-                        displayType={"text"}
-                        thousandSeparator={true}
-                        prefix={"₹"}
-                      />
-                    </td>
-                  </tr>
-                )}
-                {props.deliveryOrder.additionalInfo.ptfePolish && (
-                  <tr>
-                    <th>PTFE Polish</th>
-                    <td>
-                      <NumberFormat
-                        value={props.deliveryOrder.additionalInfo.ptfePolish}
-                        displayType={"text"}
-                        thousandSeparator={true}
-                        prefix={"₹"}
-                      />
-                    </td>
-                  </tr>
-                )}
-                {props.deliveryOrder.additionalInfo.accessories && (
-                  <tr>
-                    <th>Accessories</th>
-                    <td>
-                      <NumberFormat
-                        value={props.deliveryOrder.additionalInfo.accessories}
-                        displayType={"text"}
-                        thousandSeparator={true}
-                        prefix={"₹"}
-                      />
-                    </td>
-                  </tr>
-                )}
-                <tr>
-                  <th>
-                    <strong>Total</strong>
-                  </th>
-                  <td>
-                    <NumberFormat
-                      value={total}
-                      displayType={"text"}
-                      thousandSeparator={true}
-                      prefix={"₹"}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
-            <Row
-              style={{ height: "80px" }}
-              className="w-100 align-items-end border border-right-0 border-left-0 border-primary"
-            >
-              <Col xs="6" className="px-1 text-center">
-                <h5>Sales Executive Signature</h5>
-              </Col>
+                  <Row>
+                    <Col xs="8">
+                      <h6 className="heading-small text-muted mb-4">
+                        Current Address
+                      </h6>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="curr-add-line-1"
+                        >
+                          Line 1
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="curr-add-line-1"
+                          value={props.deliveryOrder.customerInfo.currLineOne}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              name: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter address line 1"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="curr-add-line-2"
+                        >
+                          Line 2
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="curr-add-line-2"
+                          value={props.deliveryOrder.customerInfo.currLineTwo}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              name: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter address line 2"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input--curr-city"
+                        >
+                          City
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input--curr-city"
+                          value={props.deliveryOrder.customerInfo.currCity}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              address: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter city"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-curr-district"
+                        >
+                          District
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-curr-district"
+                          value={props.deliveryOrder.customerInfo.currDistrict}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              address: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter city"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input--curr-ps-landmark"
+                        >
+                          PS/Landmark
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-curr-ps-lankmark"
+                          value={props.deliveryOrder.customerInfo.currPS}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              temporaryCertificate: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter police station"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-curr-state"
+                        >
+                          State
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-curr-state"
+                          value={props.deliveryOrder.customerInfo.currState}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              temporaryCertificate: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter state"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-curr-postal-code"
+                        >
+                          Poatal Code
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-curr-postal-code"
+                          value={props.deliveryOrder.customerInfo.currPostal}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              temporaryCertificate: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter postal code"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
 
-              <Col xs="6" className="px-1 text-center">
-                <h5>Customer Signature</h5>
-              </Col>
-            </Row>
+                  <Row>
+                    <Col xs="8">
+                      <h6 className="heading-small text-muted mb-4">
+                        Present Address
+                      </h6>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="pre-add-line-1"
+                        >
+                          Line 1
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="pre-add-line-1"
+                          value={props.deliveryOrder.customerInfo.permLineOne}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              name: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter address line 1"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="pre-add-line-2"
+                        >
+                          Line 2
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="pre-add-line-2"
+                          value={props.deliveryOrder.customerInfo.permLineTwo}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              name: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter address line 2"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-city"
+                        >
+                          City
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-city"
+                          value={props.deliveryOrder.customerInfo.permCity}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              address: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter city"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-district"
+                        >
+                          District
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-district"
+                          value={props.deliveryOrder.customerInfo.permDistrict}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              address: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter city"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-ps-landmark"
+                        >
+                          PS/Landmark
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-ps-lankmark"
+                          value={props.deliveryOrder.customerInfo.permPS}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              temporaryCertificate: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter police station"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-state"
+                        >
+                          State
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-state"
+                          value={props.deliveryOrder.customerInfo.permState}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              temporaryCertificate: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter state"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-postal-code"
+                        >
+                          Poatal Code
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-postal-code"
+                          value={props.deliveryOrder.customerInfo.permPostal}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              temporaryCertificate: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter postal code"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col xs="8">
+                      <h6 className="heading-small text-muted mb-4">
+                        Bike Details
+                      </h6>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-model-name"
+                        >
+                          Model Name
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-model-name"
+                          value={props.deliveryOrder.vehicleInfo.modelName}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              temporaryCertificate: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter Model Name"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-colour"
+                        >
+                          Colour
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-colour"
+                          value={props.deliveryOrder.vehicleInfo.color}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              temporaryCertificate: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter colour"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-financier"
+                        >
+                          Financier Name
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-financier"
+                          value={props.deliveryOrder.additionalInfo.financier}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              temporaryCertificate: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter financier name"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-inquiry-type"
+                        >
+                          Inquiry Type
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-inquiry-type"
+                          value={props.deliveryOrder.additionalInfo.inquiryType.toUpperCase()}
+                          onChange={(ev) =>
+                            setUserInfo({
+                              ...userInfo,
+                              temporaryCertificate: ev.target.value!,
+                            })
+                          }
+                          placeholder="Enter Model Name"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                </div>
+              </Form>
+            </Col>
           </Row>
-        </div>
-      );
-    } else {
-      return <></>;
-    }
+        </Container>
+      </div>
+    );
+  } else {
+    return <></>;
   }
-);
+});
 
 export default EditDo;

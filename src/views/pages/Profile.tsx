@@ -266,6 +266,7 @@ const Profile: React.FC = () => {
                             className="form-control-alternative"
                             id="input-dealership-name"
                             value={userInfo.name}
+                            
                             onChange={(ev) =>
                               setUserInfo({
                                 ...userInfo,

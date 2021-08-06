@@ -526,8 +526,10 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 //edit do
-  const editDO = async () => {
-    debugger;
+  const editDO =  async (ev: React.SyntheticEvent) => {
+    debugger
+    ev.stopPropagation();
+   
     try {
       setLoading(true);
       const status: any = await fetchDeliveryOrder();

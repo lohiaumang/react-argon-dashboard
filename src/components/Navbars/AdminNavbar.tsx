@@ -15,8 +15,9 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
+import { UserContext } from "../../Context";
 // reactstrap components
 import {
   DropdownMenu,
@@ -41,9 +42,10 @@ type Props = {
   brandText: string;
 };
 
-class AdminNavbar extends React.PureComponent<Props> {
-  render() {
-    const { brandText } = this.props;
+  const AdminNavbar: React.FC<Props> = (props) => {
+    const { brandText } = props;
+    const user = useContext(UserContext);
+  
     return (
       <>
         <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
@@ -70,7 +72,7 @@ class AdminNavbar extends React.PureComponent<Props> {
                     </span>
                     <Media className="ml-2 d-none d-lg-block">
                       <span className="mb-0 text-sm font-weight-bold">
-                        Vinayak Honda
+                        {user.name}
                       </span>
                     </Media>
                   </Media>
@@ -100,6 +102,6 @@ class AdminNavbar extends React.PureComponent<Props> {
       </>
     );
   }
-}
+
 
 export default AdminNavbar;
