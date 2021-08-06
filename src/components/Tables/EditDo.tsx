@@ -105,6 +105,9 @@ const EditDo = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
     props.deliveryOrder.userInfo
   ) {
     const [disabled, setDisabled] = useState<boolean>(true);
+    const [deliveryOrder, setDeliveryOrder] = useState<DeliveryOrder>(
+      props.deliveryOrder
+    );
     const [userInfo, setUserInfo] = useState<UserInfo>({
       name: "",
       phoneNumber: "",
@@ -181,11 +184,18 @@ const EditDo = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                         <Input
                           className="form-control-alternative"
                           id="input-customer-lastName"
-                          value={props.deliveryOrder.customerInfo.lastName}
+                          value={
+                            deliveryOrder && deliveryOrder.customerInfo
+                              ? deliveryOrder.customerInfo.lastName
+                              : ""
+                          }
                           onChange={(ev) =>
-                            setUserInfo({
-                              ...userInfo,
-                              name: ev.target.value!,
+                            setDeliveryOrder({
+                              ...deliveryOrder,
+                              customerInfo: {
+                                ...deliveryOrder.customerInfo,
+                                lastName: ev.target.value! || "",
+                              },
                             })
                           }
                           placeholder="Customer Last Name"
