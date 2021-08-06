@@ -312,8 +312,6 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-
-
   // TODO: Make fetching data if it does not exist common
   const fetchDeliveryOrder = () => {
     debugger;
@@ -420,6 +418,7 @@ const DeliveryOrders: React.FC = () => {
       setLoading(true);
       const status: any = await fetchDeliveryOrder();
       if (status) {
+        setModalComponent(<DeliveryOrderModal />);
         setShowModal(!showModal);
       }
     } catch (err) {
@@ -525,11 +524,11 @@ const DeliveryOrders: React.FC = () => {
       setCurrentStatus(deliveryOrders[selected].status);
     }
   };
-//edit do
-  const editDO =  async (ev: React.SyntheticEvent) => {
-    debugger
+  //edit do
+  const editDO = async (ev: React.SyntheticEvent) => {
+    debugger;
     ev.stopPropagation();
-   
+
     try {
       setLoading(true);
       const status: any = await fetchDeliveryOrder();
@@ -603,9 +602,10 @@ const DeliveryOrders: React.FC = () => {
                   deliveryOrder={deliveryOrders[selected]}
                 />
               )}
-              <EditDo 
-               ref={deliveryOrderTableRef}
-               deliveryOrder={deliveryOrders[selected]}/>
+              <EditDo
+                ref={deliveryOrderTableRef}
+                deliveryOrder={deliveryOrders[selected]}
+              />
             </ModalBody>
             <ModalFooter>
               <Button color="primary" onClick={printPage}>

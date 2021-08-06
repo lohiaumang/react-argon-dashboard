@@ -101,23 +101,23 @@ const EditDo = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
     props.deliveryOrder &&
     props.deliveryOrder.customerInfo &&
     props.deliveryOrder.vehicleInfo &&
-    props.deliveryOrder.additionalInfo &&
+    // props.deliveryOrder.additionalInfo &&
     props.deliveryOrder.userInfo
   ) {
     const [disabled, setDisabled] = useState<boolean>(true);
     const [deliveryOrder, setDeliveryOrder] = useState<DeliveryOrder>(
       props.deliveryOrder
     );
-    const [userInfo, setUserInfo] = useState<UserInfo>({
-      name: "",
-      phoneNumber: "",
-      email: "",
-      gst: "",
-      pan: "",
-      address: "",
-      temporaryCertificate: "",
-      uid: "",
-    });
+    // const [userInfo, setUserInfo] = useState<UserInfo>({
+    //   name: "",
+    //   phoneNumber: "",
+    //   email: "",
+    //   gst: "",
+    //   pan: "",
+    //   address: "",
+    //   temporaryCertificate: "",
+    //   uid: "",
+    // });
 
     return (
       <div ref={ref}>
