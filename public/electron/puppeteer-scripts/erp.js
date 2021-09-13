@@ -346,7 +346,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         }
 
         await waitForNetworkIdle(page, 1000, 0);
-        
+
         const fillData = async (selector, value) => {
           console.log(selector, value);
           if (selector && value) {
@@ -773,12 +773,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       await click(page, ".AppletButtons.siebui-applet-buttons > button"); //get price clcik
       await page.waitForFunction(
         () =>
-          document.querySelector('input[aria-label="Booking Total"]').value !==
+          document.querySelector('input[aria-label="Balance Payment"]').value !==
           "Rs.0.00"
       );
 
       let price = await page.evaluate(
-        () => document.querySelector('input[aria-label="Booking Total"]').value
+        () => document.querySelector('input[aria-label="Balance Payment"]').value
       );
 
       //price select
