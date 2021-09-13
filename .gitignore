@@ -3,3 +3,7 @@
 yarn-lock.json
 .env
 /build
+.DS_Store
+
+out/
+AutoAuto-win32-x64/

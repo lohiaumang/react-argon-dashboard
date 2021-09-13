@@ -15,21 +15,22 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useEffect, useContext } from "react";
 import { Route, Switch } from "react-router-dom";
 // reactstrap components
-import { Container, Row, Col } from "reactstrap";
+import { Container, Row, Col, Alert } from "reactstrap";
 
 // core components
 import AuthNavbar from "../components/Navbars/AuthNavbar";
 import AuthFooter from "../components/Footers/AuthFooter";
-
-import routes from "../routes";
+import { UserContext } from "../Context";
+import getRoutes from "../get-routes";
 
 type Props = {
   location: {
     pathname: string;
   };
+  signInError: string;
 };
 
 type RouteType = {
@@ -38,18 +39,22 @@ type RouteType = {
   icon: string;
   component: () => JSX.Element;
   layout: string;
+  isNavigable: boolean;
 }[];
 
-class Auth extends React.Component {
-  componentDidMount() {
+const Auth: React.FC<Props> = (props) => {
+  const [user] = useContext(UserContext);
+  const routes: RouteType = getRoutes(user);
+
+  useEffect(() => {
     document.body.classList.add("bg-default");
-  }
 
-  componentWillUnmount() {
-    document.body.classList.remove("bg-default");
-  }
+    return () => {
+      document.body.classList.remove("bg-default");
+    };
+  }, []);
 
-  getRoutes = (layoutRoutes: RouteType) => {
+  const createRoutes = (layoutRoutes: RouteType) => {
     return routes.map((prop, key) => {
       if (prop.layout === "/auth") {
         return (
@@ -64,52 +69,57 @@ class Auth extends React.Component {
     });
   };
 
-  render() {
-    return (
-      <>
-        <div className="main-content">
-          <AuthNavbar />
-          <div className="header bg-gradient-info py-7 py-lg-8">
-            <Container>
-              <div className="header-body text-center mb-7">
-                <Row className="justify-content-center">
-                  <Col lg="5" md="6">
-                    <h1 className="text-white">Welcome!</h1>
-                    <p className="text-lead text-light">
-                      Use these awesome forms to login or create new account in
-                      your project for free.
-                    </p>
-                  </Col>
-                </Row>
-              </div>
-            </Container>
-            <div className="separator separator-bottom separator-skew zindex-100">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                preserveAspectRatio="none"
-                version="1.1"
-                viewBox="0 0 2560 100"
-                x="0"
-                y="0"
-              >
-                <polygon
-                  className="fill-default"
-                  points="2560 0 2560 100 0 100"
-                />
-              </svg>
+  return (
+    <>
+      <div className="main-content">
+        <AuthNavbar />
+        <div className="header bg-gradient-info py-5 py-lg-6">
+          <Container>
+            <div className="header-body text-center mb-7">
+              <Row className="justify-content-center">
+                <Col lg="5" md="6">
+                  <h1 className="text-white">Welcome!</h1>
+                  <p className="text-lead text-light">
+                    Please create an account or sign into an existing account to
+                    get started.
+                  </p>
+                </Col>
+              </Row>
             </div>
-          </div>
-          {/* Page content */}
-          <Container className="mt--8 pb-5">
-            <Row className="justify-content-center">
-              <Switch>{this.getRoutes(routes)}</Switch>
-            </Row>
           </Container>
+          <div className="separator separator-bottom separator-skew zindex-100">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="none"
+              version="1.1"
+              viewBox="0 0 2560 100"
+              x="0"
+              y="0"
+            >
+              <polygon
+                className="fill-default"
+                points="2560 0 2560 100 0 100"
+              />
+            </svg>
+          </div>
         </div>
-        <AuthFooter />
-      </>
-    );
-  }
-}
+        {/* Page content */}
+        <Container className="mt--8 pb-5">
+          <Row className="justify-content-center">
+            <Switch>{createRoutes(routes)}</Switch>
+          </Row>
+        </Container>
+        {!!props.signInError && (
+          <div className="position-fixed bottom-0 right-0 w-100 d-flex justify-content-center">
+            <Alert color="primary" isOpen={!!props.signInError}>
+              {props.signInError}
+            </Alert>
+          </div>
+        )}
+      </div>
+      <AuthFooter />
+    </>
+  );
+};
 
 export default Auth;

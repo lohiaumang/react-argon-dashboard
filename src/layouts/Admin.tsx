@@ -15,16 +15,17 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useContext } from "react";
 import { Route, Switch } from "react-router-dom";
 // reactstrap components
 import { Container } from "reactstrap";
 // Routes
-import routes from "../routes";
+import getRoutes from "../get-routes";
 // core components
 import AdminNavbar from "../components/Navbars/AdminNavbar";
 import AdminFooter from "../components/Footers/AdminFooter";
 import Sidebar from "../components/Sidebar/Sidebar";
+import { UserContext } from "../Context";
 
 type Props = {
   location: {
@@ -38,19 +39,18 @@ type RouteType = {
   icon: string;
   component: () => JSX.Element;
   layout: string;
-  subMenu?: {
-    path: string;
-    name: string;
-    icon: string;
-    component: () => JSX.Element;
-    layout: string;
-  }[];
+  isNavigable: boolean;
 }[];
 
-class Admin extends React.Component<Props> {
-  getRoutes = (layoutRoutes: RouteType) => {
+const Admin: React.FC<Props> = (props) => {
+  const [user] = useContext(UserContext);
+  const { location } = props;
+  const { pathname } = location;
+  const routes: RouteType = getRoutes(user);
+
+  const createRoutes = (layoutRoutes: RouteType) => {
     return layoutRoutes.map((prop, key) => {
-      if (prop.layout === "/admin" && !prop.subMenu) {
+      if (prop.layout === "/admin") {
         return (
           <Route
             exact
@@ -60,71 +60,45 @@ class Admin extends React.Component<Props> {
           />
         );
       }
-      else if (prop.subMenu) {
-        return prop.subMenu !== undefined && prop.subMenu.map((prop, key) => {
-          return (
-            <Route
-              exact
-              path={prop.layout + prop.path}
-              component={prop.component}
-              key={key}
-            />
-          );
-        });
-      }
       return null;
     });
   };
 
-  getBrandText = (path: string) => {
+  const getBrandText = (path: string) => {
     for (let i = 0; i < routes.length; i += 1) {
       let menu = routes[i];
-      if (path.includes(menu.layout + menu.path) && !menu.subMenu) {
+      if (path.includes(menu.layout + menu.path)) {
         return menu.name;
-      }
-      if (menu.subMenu) {
-        for (let j = 0; j < menu.subMenu.length; j++) {
-          let subMenu = menu.subMenu[j];
-          if (path === (subMenu.layout + subMenu.path)) {
-            console.log(path);
-            return subMenu.name;
-          }
-        }
       }
     }
     return "Brand";
   };
 
-  render() {
-    const { location } = this.props;
-    const { pathname } = location;
-    return (
-      <>
-        <Sidebar
+  return (
+    <>
+      <Sidebar
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...props}
+        logo={{
+          innerLink: "/admin/index",
+          // eslint-disable-next-line global-require
+          imgSrc: require("../assets/img/brand/argon-react.png"),
+          imgAlt: "Logo",
+        }}
+      />
+      <div className="main-content">
+        <AdminNavbar
           // eslint-disable-next-line react/jsx-props-no-spreading
-          {...this.props}
-          routes={routes}
-          logo={{
-            innerLink: "/admin/index",
-            // eslint-disable-next-line global-require
-            imgSrc: require("../assets/img/brand/argon-react.png"),
-            imgAlt: "Logo",
-          }}
+          {...props}
+          brandText={getBrandText(pathname)}
         />
-        <div className="main-content">
-          <AdminNavbar
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...this.props}
-            brandText={this.getBrandText(pathname)}
-          />
-          <Switch>{this.getRoutes(routes)}</Switch>
-          <Container fluid>
-            <AdminFooter />
-          </Container>
-        </div>
-      </>
-    );
-  }
-}
+        <Switch>{createRoutes(routes)}</Switch>
+        <Container fluid>
+          <AdminFooter />
+        </Container>
+      </div>
+    </>
+  );
+};
 
 export default Admin;

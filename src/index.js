@@ -18,22 +18,36 @@
 */
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./assets/vendor/nucleo/css/nucleo.css";
-import "@fortawesome/fontawesome-free/css/all.min.css"
 import "./assets/scss/argon-dashboard-react.scss";
-import "./assets/css/custom.css"
-import AdminLayout from "./layouts/Admin";
-import AuthLayout from "./layouts/Auth";
+import "./assets/css/custom.css";
+
+import App from "./layouts/App";
+import firebase from "firebase/app";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC-Tb0Xfay1bTSZNfAfM3EeBJjPqwvhKBM",
+  authDomain: "autoauto-97af8.firebaseapp.com",
+  databaseURL: "https://autoauto-97af8-default-rtdb.firebaseio.com",
+  projectId: "autoauto-97af8",
+  storageBucket: "autoauto-97af8.appspot.com",
+  messagingSenderId: "820359446551",
+  appId: "1:820359446551:web:548a78cbb34d4805839c52",
+  measurementId: "G-G3NJR57E7H",
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+} else {
+  firebase.app(); // if already initialized, use that one
+}
 
 ReactDOM.render(
-  <BrowserRouter>
-    <Switch>
-      <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
-      <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
-      <Redirect from="/" to="/admin/index" />
-    </Switch>
-  </BrowserRouter>,
+  <HashRouter>
+    <App />
+  </HashRouter>,
   document.getElementById("root")
 );
