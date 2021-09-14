@@ -38,7 +38,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
       .join("/");
 
     return (
-      <div className="delivery-order-table font" ref={ref}>
+      <div className="invoice-table font" ref={ref}>
         <Row>
           <Row className="row-header">
             <Col>
