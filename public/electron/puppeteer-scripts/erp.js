@@ -331,7 +331,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         );
 
         await waitForNetworkIdle(page, 1000, 0);
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(3000);
 
         const userExists = await page.evaluate(
           () =>
@@ -339,101 +339,101 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
               'table[summary="View All Contacts"] td[title] a'
             )
         );
-
+        console.log(userExists);
         // TODO: USER CHECK
+        await waitForNetworkIdle(page, 1000, 0);
         if (userExists) {
           await click(page, 'table[summary="View All Contacts"] td[title] a');
+
+
+          await waitForNetworkIdle(page, 1000, 0);
+          const fillData = async (selector, value) => {
+            console.log(selector, value);
+            if (selector && value) {
+              await page.waitForFunction(
+                (selector) => !!document.querySelector(selector),
+                {},
+                selector
+              );
+              await page.waitForFunction(
+                (selector) => !document.querySelector(selector).disabled,
+                {},
+                selector
+              );
+              await page.evaluate(
+                (selector) => (document.querySelector(selector).value = ""),
+                selector
+              );
+              await typeText(page, selector, value);
+            }
+          };
+          await waitForNetworkIdle(page, 1000, 0);
+          await fillData(
+            'input[aria-label="First Name"]',
+            data.customerInfo.firstName
+          );
+
+          await fillData(
+            'input[aria-label="Last Name"]',
+            data.customerInfo.lastName
+          );
+
+          await fillData(
+            'input[aria-label="Relative Name"]',
+            data.customerInfo.swdo
+          );
+
+          // Gender vvvvvv
+          await click(page, 'input[aria-label="Gender"] + span');
+          await page.waitForSelector(
+            "ul[role='combobox']:not([style*='display: none'])",
+            { visible: true }
+          );
+          let genderType = await page.$$eval(
+            "ul[role='combobox']:not([style*='display: none']) > li > div",
+            (listItems) =>
+              listItems.map((item) => {
+                return {
+                  name: item.textContent,
+                  id: item.id,
+                };
+              })
+          );
+          const genderTypeButton = genderType.find(
+            (item) =>
+              item.name === data.customerInfo.gender.slice(0, 1).toUpperCase()
+          );
+          await click(page, `#${genderTypeButton.id}`);
+          // Gender ^^^^^^
+
+          await fillData(
+            'input[aria-label="Date Of Birth"]',
+            data.customerInfo.dob
+          );
+
+          await fillData(
+            'input[aria-label="Address 1"]',
+            data.customerInfo.currLineOne
+          );
+
+          await fillData(
+            'input[aria-label="Address 2"]',
+            data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
+          );
+
+          await fillData(
+            'input[aria-label="State"]',
+            data.customerInfo.currState.slice(0, 2).toUpperCase()
+          );
+
+          await fillData(
+            'input[aria-label="Zip/Pin Code"]',
+            data.customerInfo.currPostal
+          );
+
+          await fillData('input[aria-label="Email', data.customerInfo.email);
         }
-
-        await waitForNetworkIdle(page, 1000, 0);
-
-        const fillData = async (selector, value) => {
-          console.log(selector, value);
-          if (selector && value) {
-            await page.waitForFunction(
-              (selector) => !!document.querySelector(selector),
-              {},
-              selector
-            );
-            await page.waitForFunction(
-              (selector) => !document.querySelector(selector).disabled,
-              {},
-              selector
-            );
-            await page.evaluate(
-              (selector) => (document.querySelector(selector).value = ""),
-              selector
-            );
-            await typeText(page, selector, value);
-          }
-        };
-
-        await fillData(
-          'input[aria-label="First Name"]',
-          data.customerInfo.firstName
-        );
-
-        await fillData(
-          'input[aria-label="Last Name"]',
-          data.customerInfo.lastName
-        );
-
-        await fillData(
-          'input[aria-label="Relative Name"]',
-          data.customerInfo.swdo
-        );
-
-        // Gender vvvvvv
-        await click(page, 'input[aria-label="Gender"] + span');
-        await page.waitForSelector(
-          "ul[role='combobox']:not([style*='display: none'])",
-          { visible: true }
-        );
-        let genderType = await page.$$eval(
-          "ul[role='combobox']:not([style*='display: none']) > li > div",
-          (listItems) =>
-            listItems.map((item) => {
-              return {
-                name: item.textContent,
-                id: item.id,
-              };
-            })
-        );
-        const genderTypeButton = genderType.find(
-          (item) =>
-            item.name === data.customerInfo.gender.slice(0, 1).toUpperCase()
-        );
-        await click(page, `#${genderTypeButton.id}`);
-        // Gender ^^^^^^
-
-        await fillData(
-          'input[aria-label="Date Of Birth"]',
-          data.customerInfo.dob
-        );
-
-        await fillData(
-          'input[aria-label="Address 1"]',
-          data.customerInfo.currLineOne
-        );
-
-        await fillData(
-          'input[aria-label="Address 2"]',
-          data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
-        );
-
-        await fillData(
-          'input[aria-label="State"]',
-          data.customerInfo.currState.slice(0, 2).toUpperCase()
-        );
-
-        await fillData(
-          'input[aria-label="Zip/Pin Code"]',
-          data.customerInfo.currPostal
-        );
-
-        await fillData('input[aria-label="Email', data.customerInfo.email);
       }
-
       // TODO: ENQUIRY EXIST CHECK
       const enquiryExists = await page.evaluate(
         () => !!document.querySelector('table[summary="Enquiries"] td a')
@@ -715,7 +715,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         await page.$eval("td[role='gridcell'] > a", (el) => el.click());
       }
 
-      await waitForNetworkIdle(page, 500, 0);
+      await waitForNetworkIdle(page, 1000, 0);
 
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,

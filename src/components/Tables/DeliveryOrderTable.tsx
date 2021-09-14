@@ -127,7 +127,6 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
       additionalInfo &&
       dealerInfo
     ) {
-      debugger;
       const [otherConfig, setOtherConfig] = useState<any>();
       const price = parseInt(additionalInfo.price);
       const insurance = parseInt(additionalInfo.insuranceDeclaredValue);

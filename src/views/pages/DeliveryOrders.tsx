@@ -98,7 +98,6 @@ const DeliveryOrders: React.FC = () => {
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
   useEffect(() => {
-    debugger;
     if (hsnCode && selected && invoiceNo) {
       db.collection("vehicles").doc(deliveryOrders[selected].vehicleId).set(
         {
@@ -142,7 +141,6 @@ const DeliveryOrders: React.FC = () => {
             setHsnCode(statusData.data.hsnCode);
             setInvoiceNo(statusData.data.invoiceNo);
             setShowModal(!showModal);
-
             break;
           }
           case "DISABLE_LOADER": {
@@ -155,12 +153,10 @@ const DeliveryOrders: React.FC = () => {
           }
           case "INSURANCE_CREATED": {
             setCurrentStatus(statusData.type);
-
             break;
           }
           case "DONE": {
             setCurrentStatus(statusData.type);
-
             break;
           }
           case "RESET": {
@@ -459,9 +455,9 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-  //print  invoice
+  //print invoice
   const printInvoice = async () => {
-    debugger;
+    setLoading(true);
     if (selected && !deliveryOrders[selected].invoiceNo) {
       setShowModalForInvoiceNo(!showModalForInvoiceNo);
     } else {
@@ -470,6 +466,7 @@ const DeliveryOrders: React.FC = () => {
         setShowModal(!showModal);
       }
     }
+    setLoading(false);
   };
 
   //save invoice no
