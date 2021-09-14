@@ -81,32 +81,32 @@ const Index: React.FC = () => {
   // const pageSize = 10;
 
   useEffect(() => {
-    // firebase
-    //   .firestore()
-    //   .collection("deliveryOrders")
-    //   .where("dealerId", "==", currentUser.uid)
-    //   .onSnapshot(function (querySnapshot) {
-    //     setDateWiseData(
-    //       querySnapshot.docs.map((doc) => ({
-    //         id: doc.id,
-    //         name: doc.data().name,
-    //         modelName: doc.data().modelName,
-    //         color: doc.data().color,
-    //         createdOn: doc.data().createdOn,
-    //       }))
-    //     );
-    //   });
     firebase
       .firestore()
       .collection("deliveryOrders")
       .where("dealerId", "==", currentUser.uid)
-      .get()
-      .then((snapshot) => {
-        snapshot.forEach((eventDoc) => {
-          setPendingData(eventDoc.data());
-
-        });
+      .onSnapshot(function (querySnapshot) {
+        setDateWiseData(
+          querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            name: doc.data().name,
+            modelName: doc.data().modelName,
+            color: doc.data().color,
+            createdOn: doc.data().createdOn,
+          }))
+        );
       });
+    // firebase
+    //   .firestore()
+    //   .collection("deliveryOrders")
+    //   .where("dealerId", "==", currentUser.uid)
+    //   .get()
+    //   .then((snapshot) => {
+    //     snapshot.forEach((eventDoc) => {
+    //       setPendingData(eventDoc.data());
+
+    //     });
+    //   });
   }, []);
 
   console.log(pendingData, "Pending Data");

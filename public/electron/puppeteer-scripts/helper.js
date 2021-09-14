@@ -14,7 +14,7 @@ module.exports = {
       await page.type(selector, text);
     } catch (error) {
       throw new Error(
-        `Something went wrong, selector - ${selector}, and text - ${text} \n Error: ${eror}`
+        `Something went wrong, selector - ${selector}, and text - ${text} \n Error: ${error}`
       );
     }
   },
@@ -25,7 +25,7 @@ module.exports = {
       return await page.$eval(selector, (element) => element.textContent);
     } catch (error) {
       throw new Error(
-        `Could not get text from selector ${selector} \n Error: ${eror}`
+        `Could not get text from selector ${selector} \n Error: ${error}`
       );
     }
   },
