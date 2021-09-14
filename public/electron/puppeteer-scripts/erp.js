@@ -161,6 +161,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       );
       await click(page, 'button[name="s_5_1_10_0"]');
       await waitForNetworkIdle(page, 1000, 0);
+      await page.waitForTimeout(3000);
       // await page.waitForResponse(
       //   "https://hirise.honda2wheelersindia.com/siebel/images/rcnv_nxt_1.gif"
       // );
@@ -168,6 +169,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         () => document.querySelector("input[aria-label='First Name']").value
       );
       if (!cName) {
+        console.log(cName, "print customer name");
         await page.waitForSelector("div[title='Second Level View Bar']", {
           visible: true,
         });
@@ -318,6 +320,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
           'input[aria-label="Email"]',
           data.customerInfo.email
         );
+        await click(page, 'table[summary="View All Contacts"] td[title] a');
       } else {
         await waitForNetworkIdle(page, 1000, 0);
         await click(page, 'select[name="s_vis_div"]');
@@ -442,6 +445,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       if (enquiryExists) {
         await click(page, 'table[summary="Enquiries"] td a');
       } else {
+
+        await waitForNetworkIdle(page, 1000, 0);
         await click(page, 'button[title="Enquiries:New"]');
 
         //Enquiry Type
