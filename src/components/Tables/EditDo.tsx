@@ -1445,7 +1445,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           id="input-frame-number"
                           value={vehicleInfo && vehicleInfo.frameNumber}
                           onChange={(ev) => {
-                            vehicleInfo.frameNumber = ev.target.value!;
+                            vehicleInfo.frameNumber = ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
                               vehicleInfo,
@@ -1470,7 +1470,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           id="input-engine-number"
                           value={vehicleInfo && vehicleInfo.engineNumber}
                           onChange={(ev) => {
-                            vehicleInfo.engineNumber = ev.target.value!;
+                            vehicleInfo.engineNumber = ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
                               vehicleInfo,
