@@ -35,6 +35,7 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
+  Label,
 } from "reactstrap";
 // core components
 import Header from "../../components/Headers/Header";
@@ -72,7 +73,8 @@ const DeliveryOrders: React.FC = () => {
   const [deliveryOrders, setDeliveryOrders] = useState<DeliveryOrders>({});
   const [selected, setSelected] = useState<string>();
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [showModalForInvoiceNo, setShowModalForInvoiceNo] = useState<boolean>(false);
+  const [showModalForInvoiceNo, setShowModalForInvoiceNo] =
+    useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingPage, setLoadingPage] = useState<boolean>(true);
   const [dropdownButton, setDropdownButton] = useState(false);
@@ -95,6 +97,8 @@ const DeliveryOrders: React.FC = () => {
   const [showEditDo, setShowEditDo] = useState<boolean>(false);
   const [hsnCode, setHsnCode] = useState<string>("");
   const [invoiceNo, setInvoiceNo] = useState<string>("");
+  const [inputHsnCode, setInputHsnCode] = useState<string>("");
+  const [inputInvoiceNo, setInputInvoiceNo] = useState<string>("");
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
   useEffect(() => {
@@ -148,6 +152,10 @@ const DeliveryOrders: React.FC = () => {
             break;
           }
           case "DO_CREATED": {
+            if (statusData.data) {
+              setHsnCode(statusData.data.hsnCode);
+              setInvoiceNo(statusData.data.invoiceNo);
+            }
             setLoading(false);
             break;
           }
@@ -470,20 +478,14 @@ const DeliveryOrders: React.FC = () => {
   };
 
   //save invoice no
-  const saveInvoiceNo = async () => {
-    if (selected) {
-      db.collection("deliveryOrders").doc(deliveryOrders[selected].id).set(
-        {
-          invoiceNo: invoiceNo,
-        },
-        { merge: true }
-      );
+  const saveInvoiceDetails = async () => {
+    setHsnCode(inputHsnCode);
+    setInvoiceNo(inputInvoiceNo);
 
-      setShowModalForInvoiceNo(!showModalForInvoiceNo);
-      const status: any = await fetchDeliveryOrder();
-      if (status) {
-        setShowModal(!showModal);
-      }
+    setShowModalForInvoiceNo(!showModalForInvoiceNo);
+    const status: any = await fetchDeliveryOrder();
+    if (status) {
+      setShowModal(!showModal);
     }
   };
   //create invoice
@@ -643,7 +645,6 @@ const DeliveryOrders: React.FC = () => {
 
       <Header />
       <Container className="mt--7">
-
         {showModalForInvoiceNo && selected !== undefined && (
           <Modal
             isOpen={showModalForInvoiceNo}
@@ -651,40 +652,62 @@ const DeliveryOrders: React.FC = () => {
             backdrop="static"
             keyboard={false}
             size="lg"
-          //onExit={() => closeModal()}
+            //onExit={() => closeModal()}
           >
             <ModalHeader
               className="p-4"
               tag="h3"
               toggle={() => setShowModalForInvoiceNo(!showModalForInvoiceNo)}
             >
-              Enter Invoice NO
+              Enter details
             </ModalHeader>
             <ModalBody className="pb-4 px-4 py-0">
-              <FormGroup>
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-
-                    </InputGroupText>
-                  </InputGroupAddon>
+              <FormGroup row className="m-3">
+                <Label for="invoice-no" sm={4}>
+                  Invoice no.
+                </Label>
+                <Col sm={8}>
                   <Input
+                    name="invoice-no"
+                    id="invoice-no"
+                    placeholder="Enter invoice no."
                     required
-                    placeholder="Enter Invoice No"
                     type="text"
-                    value={invoiceNo}
-                    onChange={(ev) => setInvoiceNo(ev.target.value!)}
+                    value={inputInvoiceNo}
+                    onChange={(ev) => setInputInvoiceNo(ev.target.value!)}
                   />
-                </InputGroup>
+                </Col>
               </FormGroup>
-
+              {!hsnCode && (
+                <FormGroup row className="m-3">
+                  <Label for="invoice-no" sm={4}>
+                    Vehicle HSN code
+                  </Label>
+                  <Col sm={8}>
+                    <Input
+                      name="hsn-code"
+                      id="hsn-code"
+                      placeholder="Enter HSN code"
+                      required
+                      type="text"
+                      value={inputHsnCode}
+                      onChange={(ev) => setInputHsnCode(ev.target.value!)}
+                    />
+                  </Col>
+                </FormGroup>
+              )}
             </ModalBody>
             {!showEditDo && (
               <ModalFooter>
-                <Button color="primary" onClick={saveInvoiceNo}>
+                <Button color="primary" onClick={saveInvoiceDetails}>
                   Save
                 </Button>{" "}
-                <Button color="secondary" onClick={() => setShowModalForInvoiceNo(!showModalForInvoiceNo)}>
+                <Button
+                  color="secondary"
+                  onClick={() =>
+                    setShowModalForInvoiceNo(!showModalForInvoiceNo)
+                  }
+                >
                   Close
                 </Button>
               </ModalFooter>
