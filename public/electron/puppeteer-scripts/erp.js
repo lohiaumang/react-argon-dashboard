@@ -6,6 +6,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
     credentials: { username, password },
   } = data;
 
+  let timeout = 3000;
+
   //const navigationPromise = page.waitForNavigation();
 
   // function catchRequests(page, reqs = 0) {
@@ -28,7 +30,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
   //   };
   // }
 
-  function waitForNetworkIdle(page, timeout, maxInflightRequests = 0) {
+  function waitForNetworkIdle(page, tOut, maxInflightRequests = 0) {
     page.on("request", onRequestStarted);
     page.on("requestfinished", onRequestFinished);
     page.on("requestfailed", onRequestFinished);
@@ -36,7 +38,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
     let inflight = 0;
     let fulfill;
     let promise = new Promise((x) => (fulfill = x));
-    let timeoutId = setTimeout(onTimeoutDone, timeout);
+    let timeoutId = setTimeout(onTimeoutDone, tOut);
     return promise;
 
     function onTimeoutDone() {
@@ -52,10 +54,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
     }
 
     function onRequestFinished() {
-      if (inflight === 0) return;
+      if (inflight === 0) {
+        return;
+      }
       --inflight;
       if (inflight === maxInflightRequests)
-        timeoutId = setTimeout(onTimeoutDone, timeout);
+        timeoutId = setTimeout(onTimeoutDone, tOut);
     }
   }
 
@@ -66,6 +70,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
 
     erpWindow.on("close", async (e) => {
       e.preventDefault();
+      let tOutId = setTimeout(() => erpWindow.destroy(), 3000);
+
       let url = "";
       const loginUrl =
         "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/?SWECmd=Login&SWECM=S&SRN=&SWEHo=hirise.honda2wheelersindia.com";
@@ -75,6 +81,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       } catch (err) {
         console.log("Unable to get current url: ", err);
         erpWindow.destroy();
+        clearTimeout(tOutId);
       }
 
       if (url && !url.startsWith(loginUrl)) {
@@ -86,10 +93,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         } catch (err) {
           console.log("Unable to log out: ", err);
           erpWindow.destroy();
+          clearTimeout(tOutId);
         }
       }
 
       erpWindow.destroy();
+      clearTimeout(tOutId);
 
       mainWindow.webContents.send("fromMain", {
         type: done ? "INVOICE_CREATED" : "DO_CREATED",
@@ -114,7 +123,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         // await page.waitForNavigation();
         await click(page, "#s_swepi_22");
       }
-      await waitForNetworkIdle(page, 500, 0);
+      await waitForNetworkIdle(page, timeout, 0);
       // await page.waitForResponse(
       //   "https://hirise.honda2wheelersindia.com/siebel/images/icon_execute_query.gif"
       // );
@@ -137,7 +146,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       );
       await page.waitForSelector(`#${customerButton.id}`, { visible: true });
       await page.$eval(`#${customerButton.id}`, (el) => el.click());
-      await waitForNetworkIdle(page, 1000, 0);
+      await waitForNetworkIdle(page, timeout, 0);
       // fill data select
       // await click(
       //   page,
@@ -160,8 +169,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         data.customerInfo.phoneNo
       );
       await click(page, 'button[name="s_5_1_10_0"]');
-      await waitForNetworkIdle(page, 1000, 0);
-      await page.waitForTimeout(3000);
+      await waitForNetworkIdle(page, timeout, 0);
+      // await page.waitForTimeout(3000);
       // await page.waitForResponse(
       //   "https://hirise.honda2wheelersindia.com/siebel/images/rcnv_nxt_1.gif"
       // );
@@ -187,7 +196,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
           item.name.includes("Customer Home")
         );
         await page.$eval(`#${homeButton.id}`, (el) => el.click());
-        await waitForNetworkIdle(page, 500, 0);
+        await waitForNetworkIdle(page, timeout, 0);
         // await page.waitForResponse(
         //   "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/?SWECmd=GetViewLayout&SWEView=Contact%20Screen%20Homepage%20View&SWEVI=&SWEVLC=1-NYJWBA7_Siebel+eDealer_1%7c1552926410%7c1627462847_0_23073__L&SWEApplet=undefined&LayoutIdentifier="
         // );
@@ -322,7 +331,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         );
         await click(page, 'table[summary="View All Contacts"] td[title] a');
       } else {
-        await waitForNetworkIdle(page, 1000, 0);
+        await waitForNetworkIdle(page, timeout, 0);
         await click(page, 'select[name="s_vis_div"]');
         await page.select(
           'select[name="s_vis_div"]',
@@ -333,8 +342,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
           "All Contacts across My Organization"
         );
 
-        await waitForNetworkIdle(page, 1000, 0);
-        await page.waitForTimeout(3000);
+        await waitForNetworkIdle(page, timeout, 0);
 
         const userExists = await page.evaluate(
           () =>
@@ -344,12 +352,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         );
         console.log(userExists);
         // TODO: USER CHECK
-        await waitForNetworkIdle(page, 1000, 0);
+        await waitForNetworkIdle(page, timeout, 0);
         if (userExists) {
           await click(page, 'table[summary="View All Contacts"] td[title] a');
 
-
-          await waitForNetworkIdle(page, 1000, 0);
+          await waitForNetworkIdle(page, timeout, 0);
           const fillData = async (selector, value) => {
             console.log(selector, value);
             if (selector && value) {
@@ -370,7 +377,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
               await typeText(page, selector, value);
             }
           };
-          await waitForNetworkIdle(page, 1000, 0);
+          await waitForNetworkIdle(page, timeout, 0);
           await fillData(
             'input[aria-label="First Name"]',
             data.customerInfo.firstName
@@ -445,8 +452,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       if (enquiryExists) {
         await click(page, 'table[summary="Enquiries"] td a');
       } else {
-
-        await waitForNetworkIdle(page, 1000, 0);
+        await waitForNetworkIdle(page, timeout, 0);
         await click(page, 'button[title="Enquiries:New"]');
 
         //Enquiry Type
@@ -720,7 +726,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
         await page.$eval("td[role='gridcell'] > a", (el) => el.click());
       }
 
-      await waitForNetworkIdle(page, 1000, 0);
+      await waitForNetworkIdle(page, timeout, 0);
 
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
@@ -774,16 +780,17 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
       // await page.waitForResponse(
       //   "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
       // );
-      await waitForNetworkIdle(page, 500, 0);
+      await waitForNetworkIdle(page, timeout, 0);
       await click(page, ".AppletButtons.siebui-applet-buttons > button"); //get price clcik
       await page.waitForFunction(
         () =>
-          document.querySelector('input[aria-label="Balance Payment"]').value !==
-          "Rs.0.00"
+          document.querySelector('input[aria-label="Balance Payment"]')
+            .value !== "Rs.0.00"
       );
 
       let price = await page.evaluate(
-        () => document.querySelector('input[aria-label="Balance Payment"]').value
+        () =>
+          document.querySelector('input[aria-label="Balance Payment"]').value
       );
 
       //price select

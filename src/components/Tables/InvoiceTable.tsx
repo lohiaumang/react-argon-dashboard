@@ -38,7 +38,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
       .join("/");
 
     return (
-      <div className="delivery-order-table font" ref={ref}>
+      <div className="invoice-table font" ref={ref}>
         <Row>
           <Row className="row-header">
             <Col>
@@ -189,7 +189,9 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                   <h6 className="m-0">Invoice No</h6>
                 </Col>
                 <Col xs="8" className="px-1">
-                  <small>{props.invoiceNo || props.deliveryOrder.invoiceNo}</small>
+                  <small>
+                    {props.invoiceNo || props.deliveryOrder.invoiceNo}
+                  </small>
                 </Col>
               </Row>
 
@@ -357,12 +359,10 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </tr>
             </thead>
             <tbody>
-              <tr style={{ fontSize: "9px" }}>
-                <th style={{ fontSize: "9px" }}>
-                  {props.deliveryOrder.vehicleInfo.modelName}
-                </th>
-                <td style={{ fontSize: "9px" }}>{props.hsnCode}</td>
-                <td style={{ fontSize: "9px" }}>
+              <tr>
+                <th>{props.deliveryOrder.vehicleInfo.modelName}</th>
+                <td>{props.hsnCode}</td>
+                <td>
                   <NumberFormat
                     value={props.deliveryOrder.additionalInfo.price}
                     displayType={"text"}
@@ -370,7 +370,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                     prefix={"₹"}
                   />
                 </td>
-                <td style={{ fontSize: "9px" }}>
+                <td>
                   <NumberFormat
                     value={props.deliveryOrder.additionalInfo.price}
                     displayType={"text"}
@@ -380,10 +380,10 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                 </td>
               </tr>
               <tr>
-                <th style={{ fontSize: "9px" }}>CGST @ 14%</th>
-                <td style={{ fontSize: "9px" }}></td>
-                <td style={{ fontSize: "9px" }}></td>
-                <td style={{ fontSize: "9px" }}>
+                <th>CGST @ 14%</th>
+                <td></td>
+                <td></td>
+                <td>
                   <NumberFormat
                     value={CGST}
                     displayType={"text"}
@@ -393,10 +393,10 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                 </td>
               </tr>
               <tr>
-                <th style={{ fontSize: "9px" }}>GST @ 14%</th>
-                <td style={{ fontSize: "9px" }}></td>
-                <td style={{ fontSize: "9px" }}></td>
-                <td style={{ fontSize: "9px" }}>
+                <th>GST @ 14%</th>
+                <td></td>
+                <td></td>
+                <td>
                   <NumberFormat
                     value={SGST}
                     displayType={"text"}
@@ -406,18 +406,18 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                 </td>
               </tr>
               <tr>
-                <th style={{ fontSize: "9px" }}>Discount</th>
-                <td style={{ fontSize: "9px" }}></td>
-                <td style={{ fontSize: "9px" }}></td>
-                <td style={{ fontSize: "9px" }}></td>
+                <th>Discount</th>
+                <td></td>
+                <td></td>
+                <td></td>
               </tr>
               <tr>
-                <th style={{ fontSize: "9px" }}>Amount in words</th>
-                <td style={{ fontSize: "9px" }}>
+                <th>Amount in words</th>
+                <td>
                   {"Rupee"} {totalPriceInword}
                 </td>
-                <th style={{ fontSize: "9px" }}>Total</th>
-                <td style={{ fontSize: "9px" }}>
+                <th>Total</th>
+                <td>
                   <NumberFormat
                     value={totalPrice}
                     displayType={"text"}
@@ -460,7 +460,10 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                   <h5 className="m-0">Invoice No.</h5>
                 </Col>
                 <Col xs="8" className="px-1">
-                  <small>{props.invoiceNo||props.deliveryOrder.invoiceNo}</small>
+                  <small>
+                    {props.invoiceNo || props.deliveryOrder.invoiceNo}
+                    {"-A"}
+                  </small>
                 </Col>
               </Row>
             </Col>
@@ -487,9 +490,9 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
             </thead>
             <tbody>
               <tr>
-                <th style={{ fontSize: "9px" }}>Handling & Logistics Charge</th>
-                <td style={{ fontSize: "9px" }}>{props.hsnCode}</td>
-                <td style={{ fontSize: "9px" }}>
+                <th>Handling & Logistics Charge</th>
+                <td>{props.hsnCode}</td>
+                <td>
                   <NumberFormat
                     value={1627}
                     displayType={"text"}
@@ -497,7 +500,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                     prefix={"₹"}
                   />
                 </td>
-                <td style={{ fontSize: "9px" }}>
+                <td>
                   <NumberFormat
                     value={1627}
                     displayType={"text"}
@@ -507,10 +510,10 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                 </td>
               </tr>
               <tr>
-                <th style={{ fontSize: "9px" }}>CGST @ 9%</th>
-                <td style={{ fontSize: "9px" }}></td>
-                <td style={{ fontSize: "9px" }}></td>
-                <td style={{ fontSize: "9px" }}>
+                <th>CGST @ 9%</th>
+                <td></td>
+                <td></td>
+                <td>
                   <NumberFormat
                     value={146.43}
                     displayType={"text"}
@@ -520,10 +523,10 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                 </td>
               </tr>
               <tr>
-                <th style={{ fontSize: "9px" }}>GST @ 9%</th>
-                <td style={{ fontSize: "9px" }}></td>
-                <td style={{ fontSize: "9px" }}></td>
-                <td style={{ fontSize: "9px" }}>
+                <th>GST @ 9%</th>
+                <td></td>
+                <td></td>
+                <td>
                   <NumberFormat
                     value={146.43}
                     displayType={"text"}
@@ -533,35 +536,20 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                 </td>
               </tr>
               <tr>
-                <th style={{ fontSize: "9px" }}>Discount</th>
-                <td style={{ fontSize: "9px" }}></td>
-                <td style={{ fontSize: "9px" }}></td>
-                <td style={{ fontSize: "9px" }}></td>
+                <th>Discount</th>
+                <td></td>
+                <td></td>
+                <td></td>
               </tr>
               <tr>
-                <th style={{ fontSize: "9px" }}>Amount in words</th>
-                <td style={{ fontSize: "9px" }}>
+                <th>Amount in words</th>
+                <td>
                   {"Rupee"} {handlingLogisticsCharge}
                 </td>
-                <th style={{ fontSize: "9px" }}>Total</th>
-                <td style={{ fontSize: "9px" }}>
+                <th>Total</th>
+                <td>
                   <NumberFormat
                     value={1920}
-                    displayType={"text"}
-                    thousandSeparator={true}
-                    prefix={"₹"}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th style={{ fontSize: "9px" }}>Amount in words</th>
-                <td style={{ fontSize: "9px" }}>
-                  {"Rupee"} {grandTotalPriceInword}
-                </td>
-                <th style={{ fontSize: "9px" }}>Grand Total</th>
-                <td style={{ fontSize: "9px" }}>
-                  <NumberFormat
-                    value={totalPrice + 1920}
                     displayType={"text"}
                     thousandSeparator={true}
                     prefix={"₹"}
@@ -571,6 +559,28 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
             </tbody>
           </Table>
 
+          <Row className="p-1 border border-right-0 border-left-0 border-primary w-100">
+            <Table className="table my-1" responsive>
+              <tbody>
+                <tr>
+                  {/* className="p-1 border border-right-0 border-left-0 border-primary w-100"> */}
+                  <th className="border-0">Amount in words</th>
+                  <td className="border-0">
+                    {"Rupee"} {grandTotalPriceInword}
+                  </td>
+                  <th className="border-0">Grand Total</th>
+                  <td className="border-0">
+                    <NumberFormat
+                      value={totalPrice + 1920}
+                      displayType={"text"}
+                      thousandSeparator={true}
+                      prefix={"₹"}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
+          </Row>
           <Row className="p-1 border border-right-0 border-left-0 border-primary w-100">
             <Col xs="12" className="p-0">
               <Row>
@@ -619,21 +629,19 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
             </Col>
           </Row>
 
-          <Table className="table   my-3">
+          <Table className="table my-3">
             <thead>
               <tr>
-                <th style={{ fontSize: "9px" }}>Invoice No.</th>
-                <th style={{ fontSize: "9px" }}>Invoice Date</th>
-                <th style={{ fontSize: "9px" }}>Frame No.</th>hsnCode
+                <th>Invoice No.</th>
+                <th>Invoice Date</th>
+                <th>Frame No.</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td style={{ fontSize: "9px" }}>{props.invoiceNo||props.deliveryOrder.invoiceNo}</td>
-                <td style={{ fontSize: "9px" }}>{invoiceDate}</td>
-                <td style={{ fontSize: "9px" }}>
-                  {props.deliveryOrder.vehicleInfo.frameNumber}
-                </td>
+                <td>{props.invoiceNo || props.deliveryOrder.invoiceNo}</td>
+                <td>{invoiceDate}</td>
+                <td>{props.deliveryOrder.vehicleInfo.frameNumber}</td>
               </tr>
             </tbody>
           </Table>

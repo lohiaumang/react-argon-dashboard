@@ -204,7 +204,6 @@ module.exports = async function (mainWindow, browser) {
           break;
         }
 
-
         //Creeate userid and password for automation
         case "SET_CREDENTIALS": {
           const credentials = data.config;
@@ -298,7 +297,6 @@ module.exports = async function (mainWindow, browser) {
           //   .doc("config")
           //   .get();
 
-
           if (data.insuranceDetails && data.priceDetails) {
             // const insuranceDetails = insuranceConfig.data();
             // const priceDetails = priceConfig.data();
@@ -310,11 +308,11 @@ module.exports = async function (mainWindow, browser) {
                 insuranceDetails: {
                   modelName:
                     data.insuranceDetails[data.vehicleInfo.modelName][
-                    `${insuranceCompany.toLowerCase()}ModelName`
+                      `${insuranceCompany.toLowerCase()}ModelName`
                     ],
                   userRate:
                     data.insuranceDetails[data.vehicleInfo.modelName][
-                    "userRate"
+                      "userRate"
                     ],
                 },
                 // priceDetails: priceDetails[data.vehicleInfo.modelName],
