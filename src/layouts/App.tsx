@@ -21,7 +21,7 @@ const App: React.FC = () => {
   const [currentUserDetails, setCurrentUserDetails] = useState<any>();
   const [priceConfigDetails, setPriceConfigDetails] = useState<any>();
   const [insuranceConfigDetails, setInsuranceConfigDetails] = useState<any>();
-  console.log(currentUser,"We get current user");
+ // console.log(currentUser,"We get current user");
   useEffect(() => {
     firebase.auth().onAuthStateChanged((User) => {
       if (User && User.uid) {

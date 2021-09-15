@@ -1,4 +1,4 @@
-module.exports = function (mainWindow, browser) {
+module.exports = async function (mainWindow, browser) {
   const path = require("path");
   const fs = require("fs");
   const { ipcMain: ipc, BrowserWindow } = require("electron");
@@ -29,6 +29,19 @@ module.exports = function (mainWindow, browser) {
   } else {
     firebase.app(); // if already initialized, use that one
   }
+
+  let systemConfig;
+  let docRef = firebase
+    .firestore()
+    .collection("systemConfig")
+    .doc("config");
+  let doc = await docRef.get();
+
+  if(doc.exists) {
+    systemConfig = doc.data();
+  }
+
+  //console.log(systemConfig);
 
   ipc.on("toMain", async (event, args) => {
     try {
