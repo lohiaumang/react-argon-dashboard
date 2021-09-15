@@ -29,7 +29,7 @@ module.exports = async function (mainWindow, browser) {
   } else {
     firebase.app(); // if already initialized, use that one
   }
-
+  
   let systemConfig;
   let docRef = firebase
     .firestore()
@@ -37,11 +37,11 @@ module.exports = async function (mainWindow, browser) {
     .doc("config");
   let doc = await docRef.get();
 
-  if(doc.exists) {
+  if (doc.exists) {
     systemConfig = doc.data();
   }
 
-  //console.log(systemConfig);
+ 
 
   ipc.on("toMain", async (event, args) => {
     try {
@@ -258,7 +258,7 @@ module.exports = async function (mainWindow, browser) {
             };
           }
           // erpWindow.webContents.openDevTools();
-          erp(page, data, mainWindow, erpWindow);
+          erp(page, data, mainWindow, erpWindow,systemConfig);
 
           // erpWindow.webContents.once("close", function () {
           //   mainWindow.webContents.send("fromMain", {
@@ -308,11 +308,11 @@ module.exports = async function (mainWindow, browser) {
                 insuranceDetails: {
                   modelName:
                     data.insuranceDetails[data.vehicleInfo.modelName][
-                      `${insuranceCompany.toLowerCase()}ModelName`
+                    `${insuranceCompany.toLowerCase()}ModelName`
                     ],
                   userRate:
                     data.insuranceDetails[data.vehicleInfo.modelName][
-                      "userRate"
+                    "userRate"
                     ],
                 },
                 // priceDetails: priceDetails[data.vehicleInfo.modelName],
@@ -325,7 +325,8 @@ module.exports = async function (mainWindow, browser) {
               data,
               insuranceCompany,
               mainWindow,
-              insuranceWindow
+              insuranceWindow,
+              systemConfig
             );
           }
 

@@ -1,4 +1,4 @@
-module.exports = async function (page, data, mainWindow, insuranceWindow) {
+module.exports = async function (page, data, mainWindow, insuranceWindow, systemConfig) {
   // const psl = require("puppeteer-salesforce-library");
   // const logout = psl.logout;
   // const fetch = require('node-fetch');
@@ -100,36 +100,41 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     //   });
     // });
 
-    function waitForNetworkIdle(page, timeout, maxInflightRequests = 0) {
-      page.on('request', onRequestStarted);
-      page.on('requestfinished', onRequestFinished);
-      page.on('requestfailed', onRequestFinished);
+    console.log(systemConfig, "hdfc sys");
+
+    let timeout = systemConfig.hdfcTimeOut;
+    console.log(timeout, "hdfc sys1");
+
+    function waitForNetworkIdle(page, tOut, maxInflightRequests = 0) {
+      page.on("request", onRequestStarted);
+      page.on("requestfinished", onRequestFinished);
+      page.on("requestfailed", onRequestFinished);
 
       let inflight = 0;
       let fulfill;
-      let promise = new Promise(x => fulfill = x);
-      let timeoutId = setTimeout(onTimeoutDone, timeout);
+      let promise = new Promise((x) => (fulfill = x));
+      let timeoutId = setTimeout(onTimeoutDone, tOut);
       return promise;
 
       function onTimeoutDone() {
-        page.removeListener('request', onRequestStarted);
-        page.removeListener('requestfinished', onRequestFinished);
-        page.removeListener('requestfailed', onRequestFinished);
+        page.removeListener("request", onRequestStarted);
+        page.removeListener("requestfinished", onRequestFinished);
+        page.removeListener("requestfailed", onRequestFinished);
         fulfill();
       }
 
       function onRequestStarted() {
         ++inflight;
-        if (inflight > maxInflightRequests)
-          clearTimeout(timeoutId);
+        if (inflight > maxInflightRequests) clearTimeout(timeoutId);
       }
 
       function onRequestFinished() {
-        if (inflight === 0)
+        if (inflight === 0) {
           return;
+        }
         --inflight;
         if (inflight === maxInflightRequests)
-          timeoutId = setTimeout(onTimeoutDone, timeout);
+          timeoutId = setTimeout(onTimeoutDone, tOut);
       }
     }
 
@@ -202,11 +207,11 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
 
       // This should wait till comtent is loaded on the page
       console.log("step 1");
-     // await waitForNetworkIdle(page, 500, 0);
+      // await waitForNetworkIdle(page, 500, 0);
       // await page.waitForNavigation({ waitUntil: "domcontentloaded" });
       // This should wait till loading has stopped
       console.log("step 2");
-      await waitForNetworkIdle(page, 500, 0);
+      await waitForNetworkIdle(page, timeout, 0);
       await page.waitForSelector(
         "div[data-ng-if='loading'] > .LoadingModel:not([style*='display: none'])",
         {
@@ -216,14 +221,14 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
       // This should wait for an additional 3 secs
       // await page.waitForTimeout(3000);
       console.log("step 3");
-      await waitForNetworkIdle(page, 500, 0);
+      await waitForNetworkIdle(page, timeout, 0);
       console.log("step 4");
       // This should wait for the link to be visible
       await page.waitForSelector("div[ng-show='1 == 1'] a.tw-link", {
         visible: true,
       });
       console.log("step 5");
-      await waitForNetworkIdle(page, 500, 0);
+      await waitForNetworkIdle(page, timeout, 0);
       console.log("step 6");
       await page.click("div[ng-show='1 == 1'] a.tw-link");
       console.log("step 7");

@@ -1,4 +1,4 @@
-module.exports = function erp(page, data, mainWindow, erpWindow) {
+module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
   const { click, typeText } = require("./helper");
   const { enquiryType, customerCategory } = require("../enums");
 
@@ -6,7 +6,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow) {
     credentials: { username, password },
   } = data;
 
-  let timeout = 3000;
+  let timeout = systemConfig.erpTimeOut;
+
+  
 
   //const navigationPromise = page.waitForNavigation();
 

@@ -574,8 +574,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }}
                         >
                           <option>Select Gender</option>
-                          <option value="MALE">MALE</option>
-                          <option value="FEMALE">FEMALE</option>
+                          <option value="male">MALE</option>
+                          <option value="female">FEMALE</option>
                         </Input>
                       </FormGroup>
                     </Col>
