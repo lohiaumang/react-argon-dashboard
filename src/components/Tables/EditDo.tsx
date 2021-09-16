@@ -908,7 +908,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                     <Col lg="6">
                       <FormGroup>
                         <label
-                         className="form-control-label"
+                          className="form-control-label"
                           htmlFor="curr-add-line-1"
                         >
                           LINE 1
@@ -1013,7 +1013,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                       <FormGroup>
                         <label
                           className="form-control-label"
-                          htmlFor="input-district"
+                          htmlFor="input-state"
                         >
                           STATE
                         </label>
@@ -1021,12 +1021,12 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           <Input
                             required
                             type="select"
-                            name="select-district"
-                            id="input-district"
-                            placeholder=" District"
+                            name="select-state"
+                            id="input-state"
+                            placeholder="State"
                             value={customerInfo && customerInfo.currState}
                             onChange={(ev) => {
-                              customerInfo.currState = ev.target.value.toLocaleUpperCase()!;
+                              customerInfo.currState = ev.target.value!;
                               setCurrDo({
                                 ...currDo,
                                 customerInfo,
@@ -1066,7 +1066,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             placeholder=" District"
                             value={customerInfo && customerInfo.currDistrict}
                             onChange={(ev) => {
-                              customerInfo.currDistrict = ev.target.value.toLocaleUpperCase()!;
+                              customerInfo.currDistrict = ev.target.value!;
                               setCurrDo({
                                 ...currDo,
                                 customerInfo,
@@ -1259,7 +1259,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             placeholder=" State"
                             value={customerInfo && customerInfo.permState}
                             onChange={(ev) => {
-                              customerInfo.permState = ev.target.value.toLocaleUpperCase()!;
+                              customerInfo.permState = ev.target.value!;
                               setCurrDo({
                                 ...currDo,
                                 customerInfo,
@@ -1299,7 +1299,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             placeholder=" District"
                             value={customerInfo && customerInfo.permDistrict}
                             onChange={(ev) => {
-                              customerInfo.permDistrict = ev.target.value.toLocaleUpperCase()!;
+                              customerInfo.permDistrict = ev.target.value!;
                               setCurrDo({
                                 ...currDo,
                                 customerInfo,

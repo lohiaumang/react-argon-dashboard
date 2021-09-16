@@ -181,7 +181,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
         await page.waitForResponse(
           "https://pie.hdfcergo.com/en-US/Login/AuthenticateUser"
         );
-        await waitForRandom();
+        //      await waitForRandom();
         await page.waitForSelector("h2.ng-binding");
         const headerText = await page.$eval(
           "h2.ng-binding",
@@ -201,7 +201,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
             visible: true,
           });
           await page.click("button[type='submit']");
-          await waitForRandom();
+          //       await waitForRandom();
         }
       }
 
@@ -246,23 +246,23 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
       await page.click(".btn.btn-primary[ng-click='helpers.GoToUrl(TWURL)']");
       // //   mainWindow.webContents.send("update-progress-bar", ["30%", "insurance"]);
       await page.waitForNavigation({ waitUntil: "domcontentloaded" });
-      await waitForRandom();
+      //   await waitForRandom();
       await page.waitForSelector("#option2", { visible: true });
       await page.click("#option2");
-      await waitForRandom();
+      //  await waitForRandom();
       await page.waitForSelector("#ManufacturerName", { visible: true });
       await page.type("#ManufacturerName", "HONDA.");
-      await waitForRandom();
+      //    await waitForRandom();
       await page.waitForSelector("li > a[title='HONDA.']", { visible: true });
       await page.click("li > a[title='HONDA.']");
-      await waitForRandom();
+      //   await waitForRandom();
       await page.waitForSelector("input[name='ModelName']", { visible: true });
 
       await page.type(
         "input[name='ModelName']",
         data.insuranceDetails.modelName.split(" ")[0]
       );
-      await waitForRandom();
+      //   await waitForRandom();
       await page.waitForSelector(
         `li > a[title='${data.insuranceDetails.modelName}']`,
         {
@@ -275,13 +275,13 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
         visible: true,
       });
       await page.type("input[name='RtoLocation']", data.customerInfo.currCity);
-      await waitForRandom();
+      //    await waitForRandom();
       await page.waitForSelector("input[name='RtoLocation']+ul > li > a", {
         visible: true,
       });
       await page.click("input[name='RtoLocation']+ul > li > a");
 
-      await waitForRandom();
+      //    await waitForRandom();
       let deliveryDate = new Date()
         .toJSON()
         .slice(0, 10)
@@ -289,14 +289,16 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
         .reverse()
         .join("/");
       await page.type("#Risk1", deliveryDate);
-      await waitForRandom();
+      //   await waitForRandom();
       await page.click("select[name='YearOfManufacturer']");
+      await waitForNetworkIdle(page, timeout, 0);
       await page.select(
         "select[name='YearOfManufacturer']",
         new Date().getFullYear().toString()
       );
+      await waitForNetworkIdle(page, timeout, 0);
       await page.click("#IDV_SumInsured");
-      await waitForRandom();
+      //  await waitForRandom();
       await page.waitForSelector("div[data-ng-if='loading']", { hidden: true });
       await page.waitForSelector("#IDV_SumInsured");
       await page.$eval("#IDV_SumInsured", (el) => (el.value = ""));
@@ -304,13 +306,14 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
       const idv = Math.round(new Number(data.priceDetails.price) * 0.95);
       await page.type("#IDV_SumInsured", idv.toString());
 
-      await waitForRandom();
+      // await waitForRandom();
+      await waitForNetworkIdle(page, timeout, 0);
       await page.waitForSelector("input[name='EngineNumber']");
       await page.type(
         "input[name='EngineNumber']",
         data.vehicleInfo.engineNumber
       );
-      await waitForRandom();
+      //   await waitForRandom();
       await page.waitForSelector("input[name='ChassisNumber']");
       await page.type(
         "input[name='ChassisNumber']",
@@ -321,9 +324,13 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
       //   mainWindow.webContents.send("update-progress-bar", ["40%", "insurance"]);
       await page.waitForSelector("#AddOnEdit");
 
-      await page.click("#AddOnEdit", { visible: true });
+      await page.evaluate(() => {
+        document.querySelector('#AddOnEdit').click();
+      });
 
-      await waitForRandom();
+      // page.click("#AddOnEdit", { visible: true });
+
+      //    await waitForRandom();
       await page.waitForSelector("#C_ZeroDep_1");
 
       await page.$$eval(
@@ -340,7 +347,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
           })
       );
 
-      await waitForRandom();
+      //     await waitForRandom();
       await page.waitForSelector(
         "div[ng-switch-when='Vehicle Base Value - Zero Depreciation - Claim'] #ZD_Information2",
         { visible: true }
@@ -349,31 +356,37 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
         "div[ng-switch-when='Vehicle Base Value - Zero Depreciation - Claim'] #ZD_Information2",
         data.insuranceDetails.userRate
       );
-      await waitForRandom();
+      //    await waitForRandom();
       //   mainWindow.webContents.send("update-progress-bar", ["50%", "insurance"]);
       await page.waitForSelector("div[data-ng-if='loading']", { hidden: true });
-      await page.click("#DiscountEdit");
-      await waitForRandom();
+      await page.evaluate(() => {
+        document.querySelector('#DiscountEdit').click();
+      });
+      //await page.click("#DiscountEdit");
+      //    await waitForRandom();
       await page.waitForSelector("label[uib-btn-radio='6000']", {
         visible: true,
       });
       await page.click("label[uib-btn-radio='6000']");
-      await waitForRandom();
+      //     await waitForRandom();
       await page.waitForSelector("div[data-ng-if='loading']", { hidden: true });
-      await page.click("#PersonalEdit");
+      await page.evaluate(() => {
+        document.querySelector('#PersonalEdit').click();
+      });
+      //await page.click("#PersonalEdit");
       await page.waitForSelector("#CustomerName", { visible: true });
       await page.type("#CustomerName", data.name);
       await page.type("#CustomerEmailMask", "Cbr250r9999@gmail.com");
       await page.type("#CustomerMobileMask", data.customerInfo.phoneNo);
-      await waitForRandom();
+      //    await waitForRandom();
       await page.waitForSelector(
         "form[name='TwoWheelerForm'] > .text-center > button",
         { visible: true }
       );
       await page.click("form[name='TwoWheelerForm'] > .text-center > button");
-      await waitForRandom();
+      //     await waitForRandom();
       await page.waitForSelector("div[data-ng-if='loading']", { hidden: true });
-      await waitForRandom();
+      //     await waitForRandom();
       await page.waitForSelector("h5[data-title='Total Premium Amount']", {
         visible: true,
       });
@@ -385,7 +398,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
         "form[name='TwoWheelerForm'] > .text-right > button.btn-submit"
       );
       // mainWindow.webContents.send("update-progress-bar", ["60%", "insurance"]);
-      await waitForRandom();
+      //     await waitForRandom();
       await page.waitForSelector(
         "div[ng-show='showSuccessSection'] button:nth-of-type(2)",
         { visible: true }
@@ -393,7 +406,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
       await page.click(
         "div[ng-show='showSuccessSection'] button:nth-of-type(2)"
       );
-      await waitForRandom();
+      //     await waitForRandom();
       await page.waitForSelector(
         "div[ng-show='AlertProceedToBuy'] button:nth-of-type(1)",
         { visible: true }
@@ -406,59 +419,59 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
       await page.waitForFunction(
         'document.querySelector(".section-detail b").textContent.length'
       );
-      await waitForRandom();
+      //     await waitForRandom();
       //   mainWindow.webContents.send("update-progress-bar", ["70%", "insurance"]);
 
       // const genderValue = data["Gender"] === "M" ? "MALE" : "FEMALE";
       const salutationValue =
         data.customerInfo.gender.toUpperCase() === "MALE" ? "MR" : "MRS";
       await page.select("#Gender", data.customerInfo.gender.toUpperCase());
-      await waitForRandom();
+      //     await waitForRandom();
       await page.select("#salutation", salutationValue);
-      await waitForRandom();
+      //     await waitForRandom();
       await page.type("input[name='Firstname']", data.customerInfo.firstName);
-      await waitForRandom();
+      //    await waitForRandom();
       await page.type("input[name='Lastname']", data.customerInfo.lastName);
-      await waitForRandom();
+      //    await waitForRandom();
       await page.type("#flatNo", data.customerInfo.currLineOne);
-      await waitForRandom();
+      //   await waitForRandom();
       await page.waitForSelector("#CurAddress23");
-      await waitForRandom();
+      //   await waitForRandom();
       await page.type("#CurAddress23", data.customerInfo.currLineTwo);
 
-      await waitForRandom();
+      //   await waitForRandom();
       await page.waitForSelector("input[name='CurPincode']~span>a");
-      await waitForRandom();
+      //   await waitForRandom();
       await page.click("input[name='CurPincode']~span>a");
-      await waitForRandom();
+      //   await waitForRandom();
 
       await page.waitForSelector("input[name='PinCode']");
 
       await page.type("input[name='PinCode']", data.customerInfo.currPostal);
 
-      await waitForRandom();
+      //  await waitForRandom();
 
       await page.waitForSelector("#searchCityStatePin a:nth-of-type(1)", {
         visible: true,
       });
 
-      await waitForRandom();
+      //   await waitForRandom();
       await page.click("#searchCityStatePin a:nth-of-type(1)");
 
-      await waitForRandom();
+      //   await waitForRandom();
 
       await page.waitForSelector(
         "#searchCityStatePin #no-more-tables a.ng-binding"
       );
 
       await page.click("#searchCityStatePin #no-more-tables a.ng-binding");
-      await waitForRandom();
+      //     await waitForRandom();
       // mainWindow.webContents.send("update-progress-bar", ["80%", "insurance"]);
 
       // Enter hypothecation details
       if (data.additionalInfo.hasOwnProperty("financier")) {
         await page.click("#RiskEdit");
-        await waitForRandom();
+        //       await waitForRandom();
         await page.waitForSelector(
           "label[ng-change='SetFinancierDetailBanca();LosAndLgCodeValidation()']",
           { visible: true }
@@ -466,32 +479,32 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
         await page.click(
           "label[ng-change='SetFinancierDetailBanca();LosAndLgCodeValidation()']"
         );
-        await waitForRandom();
+        //     await waitForRandom();
         await page.waitForSelector("#FinancierName", { visible: true });
         await page.type("#FinancierName", data.additionalInfo.financier);
-        await waitForRandom();
+        //     await waitForRandom();
         await page.waitForSelector(
           `a[title="${data.additionalInfo.financier}"]`,
           { visible: true }
         );
         await page.click(`a[title="${data.additionalInfo.financier}"]`);
-        await waitForRandom();
+        //      await waitForRandom();
         await page.select("#AgreementType", "string:Hypothecation");
-        await waitForRandom();
+        //      await waitForRandom();
         await page.type("#FinancierBranchCode", data.customerInfo.currCity);
-        await waitForRandom();
+        //     await waitForRandom();
       }
       //   mainWindow.webContents.send("update-progress-bar", ["90%", "insurance"]);
 
       // Enter Nominee Information
       await page.click("#CoverEdit");
-      await waitForRandom();
+      //    await waitForRandom();
       await page.select("#ddlRelationship", "string:Other");
-      await waitForRandom();
+      //   await waitForRandom();
       await page.type("input[name='Information2']", data.customerInfo.swdo);
-      await waitForRandom();
+      //   await waitForRandom();
       await page.type("input[name='Information3']", "65");
-      await waitForRandom();
+      //   await waitForRandom();
       await page.waitForSelector(
         "form[name='TwoWheelerForm'] > .text-right > button.btn-submit"
       );
