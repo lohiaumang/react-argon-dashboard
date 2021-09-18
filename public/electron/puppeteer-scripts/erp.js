@@ -8,7 +8,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
   let timeout = systemConfig.erpTimeOut;
 
-  
+
 
   //const navigationPromise = page.waitForNavigation();
 
@@ -179,6 +179,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       const cName = await page.evaluate(
         () => document.querySelector("input[aria-label='First Name']").value
       );
+      console.log(cName, "print cName");
       if (!cName) {
         console.log(cName, "print customer name");
         await page.waitForSelector("div[title='Second Level View Bar']", {
