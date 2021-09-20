@@ -652,7 +652,7 @@ const DeliveryOrders: React.FC = () => {
             backdrop="static"
             keyboard={false}
             size="lg"
-            //onExit={() => closeModal()}
+          //onExit={() => closeModal()}
           >
             <ModalHeader
               className="p-4"
