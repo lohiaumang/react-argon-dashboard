@@ -121,7 +121,7 @@ const ConfigTable: React.FC<TableProps> = (props) => {
   const readFile = (ev: React.SyntheticEvent) => {
     const target = ev.target as HTMLInputElement;
     const files = target.files!;
-
+debugger;
     Papa.parse(files[0], {
       header: true,
       complete: function (results) {
@@ -145,12 +145,12 @@ const ConfigTable: React.FC<TableProps> = (props) => {
           error = err;
         }
 
-        if (error === null) {
+        if (error === undefined) {
           setCurrConfig(tempCurrConfig);
         } else {
           setFileInputKey(new Date().toString());
           setBulkUploadError(
-            "Something went wrong, please try again. Tip: check the file format."
+              "Something went wrong, please try again. Tip: check the file format."
           );
         }
       },
