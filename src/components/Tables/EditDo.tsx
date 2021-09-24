@@ -54,6 +54,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   const [accessories, setAccessories] = useState<any>();
   const [purchaseType, setPurchaseType] = useState<string>("cash");
   const [catogryType, setCatogryType] = useState<string>("individual");
+  const [postalCharge, setPostalCharge] = useState<any>({});
+  const [ptefCharge, setptefCharge] = useState<any>({});
+
 
   const [userInfoUpdateError, setDoInfoUpdateError] = useState<{
     code: string;
@@ -101,6 +104,19 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
         ...initialCustomerInfo,
         ...deliveryOrder.customerInfo,
       },
+    });
+
+    const docRef = firebase
+      .firestore()
+      .collection("priceConfig")
+      .doc("otherPriceConfig");
+    docRef.get().then((doc) => {
+      if (doc.exists) {
+        let otherPriceDetails: any = doc.data();
+        setPostalCharge(Object.values(otherPriceDetails.postalCharge));
+        setptefCharge(Object.values(otherPriceDetails.ptfe));
+        //console.log(Object.values(otherPriceDetails.postalCharge), "get postal charge");
+      }
     });
   }, []);
 
@@ -1594,17 +1610,26 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           placeholder="Role"
                           value={additionalInfo && additionalInfo.postalCharge}
                           onChange={(ev) => {
-                            additionalInfo.postalCharge = ev.target.value.toLocaleUpperCase()!;
+                            additionalInfo.postalCharge = ev.target.value!;
                             setCurrDo({
                               ...currDo,
                               additionalInfo,
                             });
                           }}
                         >
-                          <option value="25">25</option>
-                          <option value="250">250</option>
+                          <option value="0">None</option>
+                          {Object.values(postalCharge).map((postalCharge: any) => {
+                            return (
+                              <option key={postalCharge} value={postalCharge}>
+                                {postalCharge}
+                              </option>
+                            );
+                          })}
+                          {/* <option value="25">25</option>
+                          <option value="250">250</option> */}
                         </Input>
                       </FormGroup>
+
                     </Col>
                     <Col lg="6">
                       <FormGroup>
@@ -1650,7 +1675,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           placeholder=" hra Type"
                           value={additionalInfo && additionalInfo.hra}
                           onChange={(ev) => {
-                            additionalInfo.hra = ev.target.value.toLocaleUpperCase()!;
+                            additionalInfo.hra = ev.target.value!;
                             setCurrDo({
                               ...currDo,
                               additionalInfo,
@@ -1721,9 +1746,17 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             });
                           }}
                         >
-                          <option value="0">NONE</option>
+                          <option value="0">None</option>
+                          {Object.values(ptefCharge).map((ptefCharge: any) => {
+                            return (
+                              <option key={ptefCharge} value={ptefCharge}>
+                                {ptefCharge}
+                              </option>
+                            );
+                          })}
+                          {/* <option value="0">NONE</option>
                           <option value="150">150</option>
-                          <option value="150">500</option>
+                          <option value="150">500</option> */}
                         </Input>
                       </FormGroup>
                     </Col>
@@ -1776,7 +1809,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           placeholder=" Joy Club "
                           value={additionalInfo && additionalInfo.joyClub}
                           onChange={(ev) => {
-                            additionalInfo.joyClub = ev.target.value.toLocaleUpperCase()!;
+                            additionalInfo.joyClub = ev.target.value!;
                             setCurrDo({
                               ...currDo,
                               additionalInfo,

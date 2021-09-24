@@ -37,10 +37,14 @@ import {
   Col,
 } from "reactstrap";
 import firebase from "firebase/app";
-import "firebase/firestore";
+//import "firebase/firestore";
 
 import Header from "../components/Headers/Header";
 import MonthWiseDelevery from "../../src/components/Tables/MonthWiseDelevery";
+import { UserContext } from "../Context";
+import { result } from "lodash";
+import WeekWiseDelevery from "../components/Tables/WeekWiseDelevery";
+
 //import modelData from "../model-data";
 
 // class Index extends React.Component<
@@ -71,8 +75,10 @@ const Index: React.FC = () => {
   const [dateWiseData, setDateWiseData] = useState<any>([]);
   const [pendingData, setPendingData] = useState<any>([]);
   const [tatalSaleValue, settatalSaleValue] = useState<any>([]);
+  const [user]: any = useContext(UserContext);
+  const [weekWiseSale, setWeekWiseSale] = useState<any>([]);
   // const [deliveryOrders, setDeliveryOrders] = useState<any>([]);
-  const monthWiseDeliveryOrderTableRef =
+  const weekWiseRef =
     useRef() as React.MutableRefObject<HTMLDivElement>;
   const dataCount = dateWiseData.length;
   console.log(dateWiseData);
@@ -107,6 +113,48 @@ const Index: React.FC = () => {
 
     //     });
     //   });
+    // const currentdate:any = new Date();
+    // var oneJan:any = new Date(currentdate.getFullYear(),0,1);
+    // var numberOfDays = Math.floor((currentdate - oneJan) / (24 * 60 * 60 * 1000));
+    // var result = Math.ceil(( currentdate.getDay() + 1 + numberOfDays) / 7);
+    // console.log(`The week number of the current date (${currentdate}) is ${result}.`);
+
+    // const today:any = new Date();
+    // const firstDayOfYear:any = new Date(today.getFullYear(), 0, 1);
+    // const pastDaysOfYear = (today - firstDayOfYear) / 86400000;
+    // let currenteel= Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+    // console.log(currenteel);
+
+    //   function ISO8601_week_no(dt:any) 
+    // {
+
+    const dt = new Date();
+    let weekNumber: any;
+    const tdt: any = new Date(dt.valueOf());
+    const dayn = (dt.getDay() + 6) % 7;
+    tdt.setDate(tdt.getDate() - dayn + 3);
+    const firstThursday = tdt.valueOf();
+    tdt.setMonth(0, 1);
+    if (tdt.getDay() !== 4) {
+      tdt.setMonth(0, 1 + ((4 - tdt.getDay()) + 7) % 7);
+    }
+    weekNumber = 1 + Math.ceil((firstThursday - tdt) / 604800000);
+    // }
+    const dealerId = user.createdBy || user.uid || "";
+    const docRef = firebase
+      .firestore()
+      .collection("byWeek")
+      .doc(dealerId);
+    docRef.get().then((doc) => {
+      if (doc.exists) {
+        let tempData: any = doc.data();
+        tempData = tempData[weekNumber]
+        // tempData.weekNumber;
+        console.log(tempData, "get week wise data");
+        setWeekWiseSale(tempData);
+      }
+    });
+
   }, []);
 
   console.log(pendingData, "Pending Data");
@@ -152,21 +200,21 @@ const Index: React.FC = () => {
   //     });
   // }, []);
 
-  let totalSaleValue = 0;
-  useEffect(() => {
-    firebase
-      .firestore()
-      .collection("additionals")
-      .get()
-      .then((snapshot) => {
-        snapshot.forEach((doc) => {
-          totalSaleValue += Number(doc.data()["price"]);
+  // let totalSaleValue = 0;
+  // useEffect(() => {
+  //   firebase
+  //     .firestore()
+  //     .collection("additionals")
+  //     .get()
+  //     .then((snapshot) => {
+  //       snapshot.forEach((doc) => {
+  //         totalSaleValue += Number(doc.data()["price"]);
 
-          settatalSaleValue(totalSaleValue);
-        });
-      });
-  }, []);
-  console.log(totalSaleValue);
+  //         settatalSaleValue(totalSaleValue);
+  //       });
+  //     });
+  // }, []);
+  //console.log(totalSaleValue);
 
   /////////////////////////////
   //month wise data
@@ -312,7 +360,7 @@ const Index: React.FC = () => {
                 </Row>
               </CardHeader>
               <MonthWiseDelevery
-                ref={monthWiseDeliveryOrderTableRef}
+                ref={weekWiseRef}
                 monthWiseDeliveryOrder={monthWiseData}
               />
             </Card>
@@ -322,7 +370,7 @@ const Index: React.FC = () => {
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">Week Wise Order Details</h3>
+                    <h3 className="mb-0">Week Wise Sale Details</h3>
                   </div>
                   {/* <div className="col text-right">
                     <Button
@@ -336,9 +384,9 @@ const Index: React.FC = () => {
                   </div> */}
                 </Row>
               </CardHeader>
-              <MonthWiseDelevery
-                ref={monthWiseDeliveryOrderTableRef}
-                monthWiseDeliveryOrder={weekWiseData}
+              <WeekWiseDelevery
+                ref={weekWiseRef}
+                weekWiseData={weekWiseSale}
               />
             </Card>
           </Col>

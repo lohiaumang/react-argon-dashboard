@@ -121,7 +121,6 @@ const ConfigTable: React.FC<TableProps> = (props) => {
   const readFile = (ev: React.SyntheticEvent) => {
     const target = ev.target as HTMLInputElement;
     const files = target.files!;
-debugger;
     Papa.parse(files[0], {
       header: true,
       complete: function (results) {
@@ -131,7 +130,8 @@ debugger;
         try {
           results.data.forEach((entry: any) => {
             if (Object.keys(entry).length !== headers.length) {
-              throw "Incorrect format";
+              return;
+              // throw "Incorrect format";
             }
             tempCurrConfig[entry["MODEL NAME"]] = {};
             headers.forEach(
@@ -150,7 +150,7 @@ debugger;
         } else {
           setFileInputKey(new Date().toString());
           setBulkUploadError(
-              "Something went wrong, please try again. Tip: check the file format."
+            "Something went wrong, please try again. Tip: check the file format."
           );
         }
       },

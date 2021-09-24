@@ -136,9 +136,10 @@ const DeliveryOrders: React.FC = () => {
             };
           });
           setDeliveryOrders(dOs);
+         
           setLoadingPage(false);
         });
-
+        
       window.api.receive("fromMain", (statusData: any) => {
         switch (statusData.type) {
           case "INVOICE_CREATED": {
