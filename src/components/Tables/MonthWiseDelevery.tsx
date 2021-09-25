@@ -8,35 +8,27 @@ type Props = {
 const MonthWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
   (props, ref) => {
     if (props && props.monthWiseDeliveryOrder) {
+      let monthData;
+      monthData = props.monthWiseDeliveryOrder
+
       return (
         <div className="delivery-order-table" ref={ref}>
           <Table className="align-items-center table-flush" responsive>
             <thead className="thead-light">
               <tr>
-                <th scope="col">Name</th>
                 <th scope="col">Model Name</th>
-                <th scope="col">Color</th>
-                <th scope="col">Action</th>
+                <th scope="col">Total Sale</th>
+                <th scope="col">Total Sale Value</th>
+
               </tr>
             </thead>
             <tbody>
-              {props.monthWiseDeliveryOrder.map((curElem: any) => {
+              {Object.keys(props.monthWiseDeliveryOrder).map((modelName: string, index) => {
                 return (
-                  <tr key={curElem.id}>
-                    <th scope="row">{curElem.name}</th>
-                    <td>{curElem.modelName}</td>
-                    <td>{curElem.color}</td>
-                    <td className="text-right">
-                      <Button
-                        className="small-button-width"
-                        color="danger"
-                        size="sm"
-                        //onClick={() => deleteUser(curElem.id)}
-                      >
-                        {/* {Deleteloading ? <Loading /> : "Delete"} */}
-                        Delete
-                      </Button>
-                    </td>
+                  <tr key={index}>
+                    <th scope="row">{modelName}</th>
+                    <td>{props.monthWiseDeliveryOrder[modelName].totalSaleNo}</td>
+                    <td>{props.monthWiseDeliveryOrder[modelName].totalSaleValue}</td>
                   </tr>
                 );
               })}

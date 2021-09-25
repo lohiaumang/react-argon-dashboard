@@ -23,15 +23,12 @@ import classnames from "classnames";
 import { Line, Bar } from "react-chartjs-2";
 // reactstrap components
 import {
-  Button,
   Card,
   CardHeader,
   CardBody,
   NavItem,
   NavLink,
   Nav,
-  Progress,
-  Table,
   Container,
   Row,
   Col,
@@ -44,90 +41,27 @@ import MonthWiseDelevery from "../../src/components/Tables/MonthWiseDelevery";
 import { UserContext } from "../Context";
 import { result } from "lodash";
 import WeekWiseDelevery from "../components/Tables/WeekWiseDelevery";
+import SalesManWiseSale from "../components/Tables/SalesManWiseSale";
+import DashBoardStatus from "../components/Tables/DashBoardStatus";
 
-//import modelData from "../model-data";
-
-// class Index extends React.Component<
-//   {},
-//   { activeNav: number; chartExample1Data: string }
-// > {
-//   constructor(props: any) {
-//     super(props);
-//     this.state = {
-//       activeNav: 1,
-//       chartExample1Data: "data1",
-//     };
-//   }
-
-//   toggleNavs = (e: React.MouseEvent, index: number) => {
-//     e.preventDefault();
-//     const { chartExample1Data } = this.state;
-//     this.setState({
-//       activeNav: index,
-//       chartExample1Data: chartExample1Data === "data1" ? "data2" : "data1",
-//     });
-//     // this.chartReference.update();
-//   };
-
-//   render() {
-//     const { activeNav, chartExample1Data } = this.state;
 const Index: React.FC = () => {
-  const [dateWiseData, setDateWiseData] = useState<any>([]);
-  const [pendingData, setPendingData] = useState<any>([]);
-  const [tatalSaleValue, settatalSaleValue] = useState<any>([]);
   const [user]: any = useContext(UserContext);
   const [weekWiseSale, setWeekWiseSale] = useState<any>([]);
-  // const [deliveryOrders, setDeliveryOrders] = useState<any>([]);
+  const [monthWiseSale, setMonthWiseSale] = useState<any>([]);
+  const [salesManWiseSale, setSalesManWiseSale] = useState<any>([]);
+  const [dashBoardStatus, setDashBoardStatus] = useState<any>([]);
+
   const weekWiseRef =
     useRef() as React.MutableRefObject<HTMLDivElement>;
-  const dataCount = dateWiseData.length;
-  console.log(dateWiseData);
+  // const dataCount = dateWiseData.length;
+
 
   const currentUser: any = firebase.auth().currentUser;
   // const pageSize = 10;
 
   useEffect(() => {
-    firebase
-      .firestore()
-      .collection("deliveryOrders")
-      .where("dealerId", "==", currentUser.uid)
-      .onSnapshot(function (querySnapshot) {
-        setDateWiseData(
-          querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            name: doc.data().name,
-            modelName: doc.data().modelName,
-            color: doc.data().color,
-            createdOn: doc.data().createdOn,
-          }))
-        );
-      });
-    // firebase
-    //   .firestore()
-    //   .collection("deliveryOrders")
-    //   .where("dealerId", "==", currentUser.uid)
-    //   .get()
-    //   .then((snapshot) => {
-    //     snapshot.forEach((eventDoc) => {
-    //       setPendingData(eventDoc.data());
 
-    //     });
-    //   });
-    // const currentdate:any = new Date();
-    // var oneJan:any = new Date(currentdate.getFullYear(),0,1);
-    // var numberOfDays = Math.floor((currentdate - oneJan) / (24 * 60 * 60 * 1000));
-    // var result = Math.ceil(( currentdate.getDay() + 1 + numberOfDays) / 7);
-    // console.log(`The week number of the current date (${currentdate}) is ${result}.`);
-
-    // const today:any = new Date();
-    // const firstDayOfYear:any = new Date(today.getFullYear(), 0, 1);
-    // const pastDaysOfYear = (today - firstDayOfYear) / 86400000;
-    // let currenteel= Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
-    // console.log(currenteel);
-
-    //   function ISO8601_week_no(dt:any) 
-    // {
-
+    //Get Week
     const dt = new Date();
     let weekNumber: any;
     const tdt: any = new Date(dt.valueOf());
@@ -139,7 +73,9 @@ const Index: React.FC = () => {
       tdt.setMonth(0, 1 + ((4 - tdt.getDay()) + 7) % 7);
     }
     weekNumber = 1 + Math.ceil((firstThursday - tdt) / 604800000);
-    // }
+
+
+
     const dealerId = user.createdBy || user.uid || "";
     const docRef = firebase
       .firestore()
@@ -148,16 +84,75 @@ const Index: React.FC = () => {
     docRef.get().then((doc) => {
       if (doc.exists) {
         let tempData: any = doc.data();
-        tempData = tempData[weekNumber]
-        // tempData.weekNumber;
+        tempData = tempData[weekNumber];
         console.log(tempData, "get week wise data");
         setWeekWiseSale(tempData);
       }
     });
 
+    //Get Month
+    const month = new Array();
+    month[0] = "January";
+    month[1] = "February";
+    month[2] = "March";
+    month[3] = "April";
+    month[4] = "May";
+    month[5] = "June";
+    month[6] = "July";
+    month[7] = "August";
+    month[8] = "September";
+    month[9] = "October";
+    month[10] = "November";
+    month[11] = "December";
+
+    const d = new Date();
+    const currentMonth = month[d.getMonth()].toLowerCase();
+    console.log(currentMonth)
+    const docRef1 = firebase
+      .firestore()
+      .collection("byMonth")
+      .doc(dealerId);
+    docRef1.get().then((doc) => {
+      if (doc.exists) {
+        let tempData: any = doc.data();
+        tempData = tempData[currentMonth];
+        console.log(tempData, "get current month data");
+        setMonthWiseSale(tempData);
+      }
+    });
+
+    const docRef2 = firebase
+      .firestore()
+      .collection("bySalesMan")
+      .doc(dealerId);
+    docRef2.get().then((doc) => {
+      if (doc.exists) {
+        let tempData: any = doc.data();
+        // tempData = tempData[weekNumber];
+        console.log(tempData, "get week wise data");
+        setSalesManWiseSale(tempData);
+      }
+    });
+
+
+    const docRef3 = firebase
+      .firestore()
+      .collection("status")
+      .doc(dealerId);
+    docRef3.get().then((doc) => {
+      if (doc.exists) {
+        let tempData: any = doc.data();
+        setDashBoardStatus(tempData);
+      }
+    });
+
   }, []);
 
-  console.log(pendingData, "Pending Data");
+
+  const weekTotalSale = () => {
+    let totalsale: any = Object.keys(weekWiseSale);
+    weekWiseSale[totalsale].totalsaleValue;
+  }
   ////////////////////////
   // useEffect(() => {
   //
@@ -222,35 +217,35 @@ const Index: React.FC = () => {
   //   getUserData(currentUser.uid);
   // }
 
-  const today = new Date();
-  const currentMonth = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate() - 30
-  );
-  const todayDate = new Date(today).getTime();
-  const monthDay = new Date(currentMonth).getTime();
-  const monthWiseData = dateWiseData.filter(
-    (d: { createdOn: string | number | Date }) => {
-      let time = new Date(d.createdOn).getTime();
-      return monthDay < time && time < todayDate;
-    }
-  );
+  // const today = new Date();
+  // const currentMonth = new Date(
+  //   today.getFullYear(),
+  //   today.getMonth(),
+  //   today.getDate() - 30
+  // );
+  // const todayDate = new Date(today).getTime();
+  // const monthDay = new Date(currentMonth).getTime();
+  // const monthWiseData = dateWiseData.filter(
+  //   (d: { createdOn: string | number | Date }) => {
+  //     let time = new Date(d.createdOn).getTime();
+  //     return monthDay < time && time < todayDate;
+  //   }
+  // );
 
-  const weekToday = new Date();
-  const currentWeek = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate() - 7
-  );
-  const weekDate = new Date(weekToday).getTime();
-  const weekDay = new Date(currentWeek).getTime();
-  const weekWiseData = dateWiseData.filter(
-    (d: { createdOn: string | number | Date }) => {
-      let time = new Date(d.createdOn).getTime();
-      return weekDay < time && time < weekDate;
-    }
-  );
+  // const weekToday = new Date();
+  // const currentWeek = new Date(
+  //   today.getFullYear(),
+  //   today.getMonth(),
+  //   today.getDate() - 7
+  // );
+  // const weekDate = new Date(weekToday).getTime();
+  // const weekDay = new Date(currentWeek).getTime();
+  // const weekWiseData = dateWiseData.filter(
+  //   (d: { createdOn: string | number | Date }) => {
+  //     let time = new Date(d.createdOn).getTime();
+  //     return weekDay < time && time < weekDate;
+  //   }
+  // );
 
   // monthUiseData();
   return (
@@ -259,7 +254,7 @@ const Index: React.FC = () => {
       {/* Page content */}
       <Container className="mt--7" fluid>
         <Row>
-          <Col className="mb-5 mb-xl-0" xl="8">
+          <Col className="mb-5 mb-xl-0" xl="12">
             <Card className="bg-gradient-default shadow">
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
@@ -268,7 +263,7 @@ const Index: React.FC = () => {
                       Overview
                     </h6>
                     <h2 className="text-white mb-0">Sales value</h2>
-                    <h3 className="text-white mb-0">₹{tatalSaleValue}</h3>
+                    <h3 className="text-white mb-0">₹</h3>
                   </div>
                   <div className="col">
                     <Nav className="justify-content-end" pills>
@@ -292,9 +287,9 @@ const Index: React.FC = () => {
                           })}
                           data-toggle="tab"
                           href="#pablo"
-                        // onClick={(e) => this.toggleNavs(e, 2)}
+                          onClick={(e) => weekTotalSale()}
                         >
-                          <span className="d-none d-md-block">Week</span>
+                          <span className="d-none d-md-block">Week data</span>
                           <span className="d-md-none">W</span>
                         </NavLink>
                       </NavItem>
@@ -303,85 +298,38 @@ const Index: React.FC = () => {
                 </Row>
               </CardHeader>
               <CardBody>
-                {/* Chart */}
-                {/* <div className="chart">
-                    <Line
-                      data={chartExample1[chartExample1Data]}
-                      options={chartExample1.options}
-                      getDatasetAtEvent={(e) => console.log(e)}
-                    />
-                  </div> */}
-              </CardBody>
-            </Card>
-          </Col>
-          <Col xl="4">
-            <Card className="shadow">
-              <CardHeader className="bg-transparent">
-                <Row className="align-items-center">
-                  <div className="col">
-                    <h6 className="text-uppercase text-muted ls-1 mb-1">
-                      Performance
-                    </h6>
-                    <h2 className="mb-0">Total orders</h2>
-                    <p>{dataCount}</p>
-                  </div>
-                </Row>
-              </CardHeader>
-              <CardBody>
-                {/* Chart */}
-                {/* <div className="chart">
-                    <Bar
-                      data={chartExample2.data}
-                      options={chartExample2.options}
-                    />
-                  </div> */}
               </CardBody>
             </Card>
           </Col>
         </Row>
+
+        <DashBoardStatus
+          ref={weekWiseRef}
+          dashBoardStatus={dashBoardStatus}
+        />
         <Row className="mt-5">
-          <Col className="mb-5 mb-xl-0" xl="8">
+          <Col className="mb-5 mb-xl-0" xl="12">
             <Card className="shadow">
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
                     <h3 className="mb-0">Month Wise Order Details</h3>
                   </div>
-                  {/* <div className="col text-right">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      See all
-                    </Button>
-                  </div> */}
                 </Row>
               </CardHeader>
               <MonthWiseDelevery
                 ref={weekWiseRef}
-                monthWiseDeliveryOrder={monthWiseData}
+                monthWiseDeliveryOrder={monthWiseSale}
               />
             </Card>
           </Col>
-          <Col className="mb-5 mb-xl-0" xl="8">
+          <Col className="mb-5 mb-xl-0" xl="12">
             <Card className="shadow weektable">
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
                     <h3 className="mb-0">Week Wise Sale Details</h3>
                   </div>
-                  {/* <div className="col text-right">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      See all
-                    </Button>
-                  </div> */}
                 </Row>
               </CardHeader>
               <WeekWiseDelevery
@@ -390,57 +338,23 @@ const Index: React.FC = () => {
               />
             </Card>
           </Col>
-          <Col xl="4">
-            <Card className="shadow socialtraffic">
+
+          <Col className="mb-5 mb-xl-0" xl="12">
+            <Card className="shadow weektable">
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">Social traffic</h3>
-                  </div>
-                  <div className="col text-right">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      See all
-                    </Button>
+                    <h3 className="mb-0">Sales Man Wise Sale Details</h3>
                   </div>
                 </Row>
               </CardHeader>
-              <Table className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
-                  <tr>
-                    <th scope="col">Referral</th>
-                    <th scope="col">Visitors</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">Facebook</th>
-                    <td>1,480</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Facebook</th>
-                    <td>5,480</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Google</th>
-                    <td>4,807</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Instagram</th>
-                    <td>3,678</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">twitter</th>
-                    <td>2,645</td>
-                  </tr>
-                </tbody>
-              </Table>
+              <SalesManWiseSale
+                ref={weekWiseRef}
+                salesManWise={salesManWiseSale}
+              />
             </Card>
           </Col>
+
         </Row>
       </Container>
     </>

@@ -1562,7 +1562,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }}
                           placeholder="Enter Insurance"
                           type="text"
-                          disabled={disabled}
                         />
                       </FormGroup>
                     </Col>
@@ -1588,7 +1587,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }}
                           placeholder="Enter Mv Tax"
                           type="text"
-                          disabled={disabled}
                         />
                       </FormGroup>
                     </Col>
@@ -1653,7 +1651,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }}
                           placeholder="Enter price"
                           type="text"
-                          disabled={disabled}
                         />
                       </FormGroup>
                     </Col>

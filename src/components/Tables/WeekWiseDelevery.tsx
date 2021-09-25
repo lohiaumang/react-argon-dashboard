@@ -8,10 +8,10 @@ type Props = {
 const WeekWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
   (props, ref) => {
     if (props && props.weekWiseData) {
-      let weekData=[];
-      weekData=props.weekWiseData
+      let weekData: any = [];
+      weekData = props.weekWiseData
+      
 
-      console.log(props.weekWiseData, "get prop data");
       return (
         <div className="delivery-order-table" ref={ref}>
           <Table className="align-items-center table-flush" responsive>
@@ -23,12 +23,12 @@ const WeekWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
               </tr>
             </thead>
             <tbody>
-              {Object.keys(props.weekWiseData).map((curElem: any,i) => {
+              {Object.keys(props.weekWiseData).map((modelName: string, index) => {
                 return (
-                  <tr key={curElem}>
-                    <th scope="row">{curElem}</th>
-                    <td>{curElem.totalsaleNo}</td>
-                    <td>{curElem.color}</td>
+                  <tr key={index}>
+                    <th scope="row">{modelName}</th>
+                    <td>{props.weekWiseData[modelName].totalSaleNo}</td>
+                    <td>{props.weekWiseData[modelName].totalSaleValue}</td>
                   </tr>
                 );
               })}
