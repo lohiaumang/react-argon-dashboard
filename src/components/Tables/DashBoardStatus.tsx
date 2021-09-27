@@ -17,8 +17,8 @@ const DashBoardStatus = React.forwardRef<HTMLDivElement, Props>(
     (props, ref) => {
         if (props && props.dashBoardStatus) {
             debugger;
-            let salesManWise;
-            salesManWise = props.dashBoardStatus
+            let dashBoardStatus;
+            dashBoardStatus = props.dashBoardStatus
 
 
             return (
@@ -40,19 +40,19 @@ const DashBoardStatus = React.forwardRef<HTMLDivElement, Props>(
                                     <Col xl="4">
                                         <Card body inverse color="success">
                                             <CardTitle style={{ color: 'white' }} tag="h5">DONE</CardTitle>
-                                            <CardText>{salesManWise.DONE}</CardText>
+                                            <CardText>{dashBoardStatus.DONE}</CardText>
                                         </Card>
                                     </Col>
                                     <Col xl="4">
                                         <Card body inverse color="warning">
                                             <CardTitle style={{ color: 'white' }} tag="h5">PENDING</CardTitle>
-                                            <CardText>{salesManWise.PENDING}</CardText>
+                                            <CardText>{dashBoardStatus.PENDING}</CardText>
                                         </Card>
                                     </Col>
                                     <Col xl="4">
                                         <Card body inverse color="info">
                                             <CardTitle style={{ color: 'white' }} tag="h5">DO CREATE</CardTitle>
-                                            <CardText>{salesManWise.DO_CREATED}</CardText>
+                                            <CardText>{dashBoardStatus.DO_CREATED}</CardText>
                                         </Card>
                                     </Col>
                                 </Row>
@@ -60,19 +60,19 @@ const DashBoardStatus = React.forwardRef<HTMLDivElement, Props>(
                                     <Col xl="4">
                                         <Card body inverse style={{ backgroundColor: '#31bda8', borderColor: '#31bda8' }}>
                                             <CardTitle style={{ color: 'white' }} tag="h5">INVOICE</CardTitle>
-                                            <CardText>{salesManWise.INVOICE_CREATED}</CardText>
+                                            <CardText>{dashBoardStatus.INVOICE_CREATED}</CardText>
                                         </Card>
                                     </Col>
                                     <Col xl="4">
                                         <Card body inverse color="primary">
                                             <CardTitle style={{ color: 'white' }} tag="h5">INSURENCE</CardTitle>
-                                            <CardText>{salesManWise.INSURENCE_CREATED}</CardText>
+                                            <CardText>{dashBoardStatus.INSURENCE_CREATED}</CardText>
                                         </Card>
                                     </Col>
                                     <Col xl="4">
                                         <Card body inverse style={{ backgroundColor: '#8e2fbd', borderColor: '#8e2fbd' }}>
-                                            <CardTitle style={{ color: 'white' }} tag="h5">TOTAL SALE</CardTitle>
-                                            <CardText>15</CardText>
+                                            <CardTitle style={{ color: 'white' }} tag="h5">INCOMPLETE</CardTitle>
+                                            <CardText>{dashBoardStatus.INCOMPLETE}</CardText>
                                         </Card>
                                     </Col>
                                 </Row>

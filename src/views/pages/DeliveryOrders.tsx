@@ -136,10 +136,10 @@ const DeliveryOrders: React.FC = () => {
             };
           });
           setDeliveryOrders(dOs);
-         
+
           setLoadingPage(false);
         });
-        
+
       window.api.receive("fromMain", (statusData: any) => {
         switch (statusData.type) {
           case "INVOICE_CREATED": {
@@ -177,6 +177,7 @@ const DeliveryOrders: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    debugger;
     if (
       selected !== undefined &&
       currentStatus !== undefined &&
@@ -210,6 +211,175 @@ const DeliveryOrders: React.FC = () => {
         });
     }
   }, [currentStatus]);
+
+
+
+  //dashboard status count
+  useEffect(() => {
+    debugger;
+    const dealerId = user.createdBy || user.uid || "";
+    let tempData: any
+    if (
+      selected !== undefined &&
+      currentStatus !== undefined &&
+      deliveryOrders[selected].status !== currentStatus &&
+      deliveryOrders[selected].status === "PENDING"
+    ) {
+      const docRef = firebase
+        .firestore()
+        .collection("status")
+        .doc(dealerId);
+      docRef.get().then((doc) => {
+        if (doc.exists) {
+          tempData = doc.data();
+          //setDashBoardStatus(tempData);
+        }
+      }).then(() => {
+        if (currentStatus === "DO_CREATED") {
+          let statusCount: Number;
+          statusCount = tempData.DO_CREATED + 1;
+          db.collection("status")
+            .doc(dealerId)
+            .set({
+              DO_CREATED: statusCount
+            },
+              { merge: true }
+            )
+        }
+      }).then(() => {
+        let statusCount: Number;
+        statusCount = tempData.PENDING - 1;
+        firebase.firestore().collection("status")
+          .doc(dealerId)
+          .set({
+            PENDING: statusCount
+          },
+            { merge: true }
+          )
+      })
+    }
+    //dashboard invoice status count
+    if (
+      selected !== undefined &&
+      currentStatus !== undefined &&
+      deliveryOrders[selected].status !== currentStatus &&
+      deliveryOrders[selected].status === "DO_CREATED"
+    ) {
+      const docRef = firebase
+        .firestore()
+        .collection("status")
+        .doc(dealerId);
+      docRef.get().then((doc) => {
+        if (doc.exists) {
+          tempData = doc.data();
+          //setDashBoardStatus(tempData);
+        }
+      }).then(() => {
+        if (currentStatus === "INVOICE_CREATED") {
+          let statusCount: Number;
+          statusCount = tempData.INVOICE_CREATED + 1;
+          db.collection("status")
+            .doc(dealerId)
+            .set({
+              INVOICE_CREATED: statusCount
+            },
+              { merge: true }
+            )
+        }
+      }).then(() => {
+        let statusCount: Number;
+        statusCount = tempData.DO_CREATED - 1;
+        firebase.firestore().collection("status")
+          .doc(dealerId)
+          .set({
+            DO_CREATED: statusCount
+          },
+            { merge: true }
+          )
+      })
+    }
+    //dashboard insurance status count
+    if (
+      selected !== undefined &&
+      currentStatus !== undefined &&
+      deliveryOrders[selected].status !== currentStatus &&
+      deliveryOrders[selected].status === "INVOICE_CREATED"
+    ) {
+      const docRef = firebase
+        .firestore()
+        .collection("status")
+        .doc(dealerId);
+      docRef.get().then((doc) => {
+        if (doc.exists) {
+          tempData = doc.data();
+          //setDashBoardStatus(tempData);
+        }
+      }).then(() => {
+        if (currentStatus === "INSURANCE_CREATED") {
+          let statusCount: Number;
+          statusCount = tempData.INSURENCE_CREATED + 1;
+          db.collection("status")
+            .doc(dealerId)
+            .set({
+              INSURENCE_CREATED: statusCount
+            },
+              { merge: true }
+            )
+        }
+      }).then(() => {
+        let statusCount: Number;
+        statusCount = tempData.INVOICE_CREATED - 1;
+        firebase.firestore().collection("status")
+          .doc(dealerId)
+          .set({
+            INVOICE_CREATED: statusCount
+          },
+            { merge: true }
+          )
+      })
+    }
+    //dashboard done status count
+    if (
+      selected !== undefined &&
+      currentStatus !== undefined &&
+      deliveryOrders[selected].status !== currentStatus &&
+      deliveryOrders[selected].status === "INSURANCE_CREATED"
+    ) {
+      const docRef = firebase
+        .firestore()
+        .collection("status")
+        .doc(dealerId);
+      docRef.get().then((doc) => {
+        if (doc.exists) {
+          tempData = doc.data();
+        }
+      }).then(() => {
+        if (currentStatus === "DONE") {
+          let statusCount: Number;
+          statusCount = tempData.DONE + 1;
+          db.collection("status")
+            .doc(dealerId)
+            .set({
+              DONE: statusCount
+            },
+              { merge: true }
+            )
+        }
+      }).then(() => {
+        let statusCount: Number;
+        statusCount = tempData.INSURENCE_CREATED - 1;
+        firebase.firestore().collection("status")
+          .doc(dealerId)
+          .set({
+            INSURENCE_CREATED: statusCount
+          },
+            { merge: true }
+          )
+      })
+    }
+  }, [currentStatus]);
+
+
 
   useEffect(() => {
     if (selected !== undefined) {

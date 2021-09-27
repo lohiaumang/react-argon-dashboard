@@ -281,19 +281,58 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
           .doc(id)
           .set(order, { merge: true });
       }
+      //dashboard status count
+
+      const dealerId = user.createdBy || user.uid || "";
+      let tempData: any
+      if (status === "PENDING") {
+        const docRef = firebase
+          .firestore()
+          .collection("status")
+          .doc(dealerId);
+        docRef.get().then((doc) => {
+          if (doc.exists) {
+            tempData = doc.data();
+            //setDashBoardStatus(tempData);
+          }
+        }).then(() => {
+
+          let statusCount: Number;
+          statusCount = tempData.PENDING + 1;
+          firebase.firestore().collection("status")
+            .doc(dealerId)
+            .set({
+              PENDING: statusCount
+            },
+              { merge: true }
+            )
+
+        }).then(() => {
+          let statusCount: Number;
+          statusCount = tempData.INCOMPLETE - 1;
+          firebase.firestore().collection("status")
+            .doc(dealerId)
+            .set({
+              INCOMPLETE: statusCount
+            },
+              { merge: true }
+            )
+        })
+      } 
+
+      //dashboard status End
       setEditDoLoading(false);
       return [order, { vehicleInfo, customerInfo, additionalInfo }];
     };
 
+    //save  function
     const onSave = async () => {
       setEditDoLoading(true);
-
       const [order, info] = await getDeliveryOrder("INCOMPLETE");
       onCreate({
         ...order,
         ...info,
       });
-
       setEditDoLoading(false);
     };
 
