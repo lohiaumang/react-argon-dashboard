@@ -19,12 +19,22 @@ const SalesManWiseSale = React.forwardRef<HTMLDivElement, Props>(
                         <thead className="thead-light">
                             <tr>
                                 <th scope="col">Sales Man Name</th>
-                                <th scope="col">Model Name</th>
                                 <th scope="col">Total Sale</th>
                                 <th scope="col">Total Sale Value</th>
                             </tr>
                         </thead>
-
+                        <tbody>
+                            {Object.keys(salesManWise).map((salesManName: string, index) => {
+                                return (
+                                    <tr key={index}>
+                                        <th scope="row">{salesManWise[salesManName].salesManName}</th>
+                                        <td>{salesManWise[salesManName].totalSaleNo}</td>
+                                        <td>{salesManWise[salesManName].totalSaleValue}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                        {/* 
                         <tbody>
                             {Object.keys(salesManWise).map((salesManName: string, index) => {
                                 let modelName: any = Object.keys(props.salesManWise[salesManName])
@@ -46,7 +56,7 @@ const SalesManWiseSale = React.forwardRef<HTMLDivElement, Props>(
                                     </>
                                 );
                             })}
-                        </tbody>
+                        </tbody> */}
                     </Table>
                 </div>
             );

@@ -313,7 +313,7 @@ const Index: React.FC = () => {
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">Month Wise Order Details</h3>
+                    <h3 className="mb-0">Month wise order details</h3>
                   </div>
                 </Row>
               </CardHeader>
@@ -328,7 +328,7 @@ const Index: React.FC = () => {
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">Week Wise Sale Details</h3>
+                    <h3 className="mb-0">Week wise sale details</h3>
                   </div>
                 </Row>
               </CardHeader>
@@ -344,7 +344,7 @@ const Index: React.FC = () => {
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">Sales Man Wise Sale Details</h3>
+                    <h3 className="mb-0">sales man wise sale details</h3>
                   </div>
                 </Row>
               </CardHeader>
