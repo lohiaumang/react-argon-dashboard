@@ -583,8 +583,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
               id: item.id,
             }))
         );
+        console.log(data.additionalInfo.financier);
         const purchaseType = !!data.additionalInfo.financier //("HDFC")
-          ? "Financier"
+          ? "Finance"
           : "Cash";
 
         purchaseTypeButton = purchaseTypes.find(
