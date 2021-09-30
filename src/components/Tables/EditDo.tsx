@@ -1931,7 +1931,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             >
                               FINANCIER NAME
                             </label>
-                            <Input
+                            {/* <Input
                               required
                               className="form-control-alternative"
                               id="input-financier"
@@ -1945,7 +1945,48 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               }}
                               placeholder="Enter Financier Name"
                               type="text"
-                            />
+                            /> */}
+
+
+                            <Input
+                              required
+                              type="select"
+                              name="select-financer"
+                              id="input-financer"
+                              placeholder="Select Financer"
+                              value={additionalInfo && additionalInfo.financier}
+                              onChange={(ev) => {
+                                additionalInfo.financier = ev.target.value!;
+                                setCurrDo({
+                                  ...currDo,
+                                  additionalInfo,
+                                });
+                              }}
+                            >
+                              <option value="COOPERATIVE BANK">COOPERATIVE BANK</option>
+                              <option value="ICICI BANK">ICICI BANK</option>
+                              <option value="AU BANK">AU BANK</option>
+                              <option value="DEALER OWNED FINANCE">DEALER OWNED FINANCE</option>
+                              <option value="GOVERNMENT BANK">GOVERNMENT BANK</option>
+                              <option value="GRAMIN BANK">GRAMIN BANK</option>
+                              <option value="L&T FINANCIAL SERVICES">L&T FINANCIAL SERVICES</option>
+                              <option value="CHOLA MURUGAPPA">CHOLA MURUGAPPA</option>
+                              <option value="HDFC BANK">HDFC BANK</option>
+                              <option value="HOME CREDIT">HOME CREDIT</option>
+                              <option value="Hinduja Leyland Finance Ltd">Hinduja Leyland Finance Ltd</option>
+                              <option value="IDFC FIRST BANK">IDFC FIRST BANK</option>
+                              <option value="Induslnd">Induslnd</option>
+                              <option value="Panjab National Bank">Panjab National Bank</option>
+                              <option value="SBI">SBI</option>
+                              <option value="Shri Ram Finance">Shri Ram Finance</option>
+                              <option value="TATA CAPITAL">TATA CAPITAL</option>
+                              <option value="Muthoot Finance">Muthoot Finance</option>
+                              <option value="OTHERS">OTHERS</option>
+
+                              {/* <option value="0">NONE</option>
+                          <option value="150">150</option>
+                          <option value="150">500</option> */}
+                            </Input>
                           </FormGroup>
                         </Col>
                       </Row>
@@ -1973,6 +2014,51 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               placeholder="Enter Executive  Name"
                               type="text"
                             />
+                          </FormGroup>
+                        </Col>
+                        <Col lg="6">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="input-financier"
+                            >
+                              SALE TYPE
+                            </label>
+                            {/* <Input
+                              required
+                              className="form-control-alternative"
+                              id="input-financier"
+                              value={additionalInfo && additionalInfo.financier}
+                              onChange={(ev) => {
+                                additionalInfo.financier = ev.target.value.toLocaleUpperCase()!;
+                                setCurrDo({
+                                  ...currDo,
+                                  additionalInfo,
+                                });
+                              }}
+                              placeholder="Enter Financier Name"
+                              type="text"
+                            /> */}
+
+
+                            <Input
+                              required
+                              type="select"
+                              name="select-financer"
+                              id="input-financer"
+                              placeholder="Select Financer"
+                              value={additionalInfo && additionalInfo.saleType}
+                              onChange={(ev) => {
+                                additionalInfo.saleType = ev.target.value!;
+                                setCurrDo({
+                                  ...currDo,
+                                  additionalInfo,
+                                });
+                              }}
+                            >
+                              <option value="Counter Sale">Counter Sale</option>
+                              <option value="Non-Counter Sale">Non-Counter Sale</option>
+                            </Input>
                           </FormGroup>
                         </Col>
                       </Row>

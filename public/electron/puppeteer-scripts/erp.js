@@ -170,6 +170,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         'input[name="s_5_1_0_0"]',
         data.customerInfo.phoneNo
       );
+      await waitForNetworkIdle(page, timeout, 0);
       await click(page, 'button[name="s_5_1_10_0"]');
       await waitForNetworkIdle(page, timeout, 0);
       // await page.waitForTimeout(3000);
@@ -350,7 +351,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         const userExists = await page.evaluate(
           () =>
             !!document.querySelector(
-              'table[summary="View All Contacts"] td[title] a'
+              'table[summary="View All Contacts"] td[title] a', {
+              waitUntil: 'networkidle2',
+            }
             )
         );
         console.log(userExists);
@@ -659,6 +662,40 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         );
         await click(page, `#${modelVariantButton.id}`);
 
+        //Select Finencer
+        if (data.additionalInfo.financier) {
+          // await click(page, 'span[aria-label="Selection Field"]');
+          // await click(page, 'button[aria-label="Pick Financier:Query"]');
+          // await typeText(page, 'input[aria-labelledby="s_6_l_Name "]', data.additionalInfo.financier);
+          // await click(page, 'button[aria-label="Pick Financier:Go"]');
+          // await click(page, 'button[aria-label="Pick Financier:OK"]');
+          await typeText(page, 'input[aria-label="Financier"]', data.additionalInfo.financier);
+
+
+          //Model Variant
+          await click(
+            page,
+            'input[aria-label="Counter/Non-Counter"]+span'
+          );
+          await page.waitForSelector(
+            "ul[role='combobox']:not([style*='display: none'])",
+            { visible: true }
+          );
+          let saleType = await page.$$eval(
+            "ul[role='combobox']:not([style*='display: none']) > li > div",
+            (listItems) =>
+              listItems.map((item) => ({
+                name: item.textContent,
+                id: item.id,
+              }))
+          );
+          const saleTypeButton = saleType.find(
+            (item) => item.name === "Counter Sale"
+          );
+          await click(page, `#${saleTypeButton.id}`);
+        }
+
+
         //Assigned To (DSE)  todo
         await click(page, 'input[aria-label="Assigned To (DSE)"] + span');
         await click(page, 'input[aria-label="Find"] + span');
@@ -785,6 +822,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       //   "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
       // );
       await waitForNetworkIdle(page, timeout, 0);
+
       await click(page, ".AppletButtons.siebui-applet-buttons > button"); //get price clcik
       await page.waitForFunction(
         () =>
@@ -901,50 +939,51 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         '#s_3_l > tbody > tr[role="row"] > td[data-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
         { visible: true }
       );
-      await typeText(
-        page,
-        'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
-        data.vehicleInfo.frameNumber
-      ); //todo not fill
-      await click(page, 'div > button[aria-label="Vehicles:New"]');
-      await page.goBack();
+      if (data.vehicleInfo.frameNumber) {
+        await typeText(
+          page,
+          'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
+          data.vehicleInfo.frameNumber
+        ); //todo not fill
+        await click(page, 'div > button[aria-label="Vehicles:New"]');
+        await page.goBack();
 
-      //Invoice Click
+        //Invoice Click
 
-      await page.waitForSelector("div[title='Third Level View Bar']", {
-        visible: true,
-      });
-      const invoiceTabs = await page.$$eval(
-        "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
-        (tabs) =>
-          tabs.map((tab) => {
-            return {
-              name: tab.textContent,
-              id: tab.id,
-            };
-          })
-      );
-      const invoiceButton = invoiceTabs.find((item) =>
-        item.name.includes("Invoice")
-      );
-      await page.$eval(`#${invoiceButton.id}`, (el) => el.click());
+        await page.waitForSelector("div[title='Third Level View Bar']", {
+          visible: true,
+        });
+        const invoiceTabs = await page.$$eval(
+          "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
+          (tabs) =>
+            tabs.map((tab) => {
+              return {
+                name: tab.textContent,
+                id: tab.id,
+              };
+            })
+        );
+        const invoiceButton = invoiceTabs.find((item) =>
+          item.name.includes("Invoice")
+        );
+        await page.$eval(`#${invoiceButton.id}`, (el) => el.click());
 
-      await click(
-        page,
-        'div > button[aria-label="Sales Invoice:Generate Invoice"]'
-      );
-      //Invoice End
+        await click(
+          page,
+          'div > button[aria-label="Sales Invoice:Generate Invoice"]'
+        );
+        //Invoice End
 
-      await page.waitForFunction(
-        () =>
-          !!document.querySelector("input[name='TMI_Invoice_Number']").value,
-        { timeout: 360000 }
-      );
+        await page.waitForFunction(
+          () =>
+            !!document.querySelector("input[name='TMI_Invoice_Number']").value,
+          { timeout: 360000 }
+        );
 
-      invoiceNo = await page.evaluate(
-        () => document.querySelector("input[name='TMI_Invoice_Number']").value
-      );
-
+        invoiceNo = await page.evaluate(
+          () => document.querySelector("input[name='TMI_Invoice_Number']").value
+        );
+      }
       // await page.goBack();
 
       // await page.waitForSelector("div[title='Third Level View Bar']", {

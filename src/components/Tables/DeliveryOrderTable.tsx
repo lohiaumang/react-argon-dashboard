@@ -97,6 +97,7 @@ export interface DeliveryOrder {
     insuranceDeclaredValue: string;
     inquiryType: string;
     financier?: string;
+    saleType?: string;
     downPayment?: string;
     accessoriesList?: string;
     executive?: string;
