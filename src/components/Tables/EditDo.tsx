@@ -955,7 +955,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                   <Row>
                     <Col xs="8" style={{ marginTop: "35px" }}>
                       <h6 className="heading-small text-muted mb-4 ">
-                        CURRENT ADDRESS
+                        PRRSENT ADDRESS
                       </h6>
                     </Col>
                   </Row>
@@ -1188,9 +1188,61 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                   <Row>
                     <Col xs="8">
                       <h6 className="heading-small text-muted mb-4">
-                        PRESENT ADDRESS
+                        PERMANENT ADDRESS
                       </h6>
                     </Col>
+                  </Row>
+                  <Row>
+                    <Col lg="12">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-curr-postal-code"
+                        >
+                          SAME AS PRESENT ADDRESS
+                        </label>
+                        <Input
+                          className="position-relative"
+                          type="checkbox"
+                          color="primary"
+                          checked={customerInfo.sameAddress === "true"}
+                          onChange={(e: any) => {
+                            if (!e.target.value) return;
+
+                            let info = {
+                              ...customerInfo,
+                              sameAddress: e.target.checked!.toString(),
+                            };
+
+                            if (e.target.checked!) {
+                              info = {
+                                ...info,
+                                permLineOne: customerInfo.currLineOne || "",
+                                permLineTwo: customerInfo.currLineTwo || "",
+                                permCity: customerInfo.currCity || "",
+                                permPS: customerInfo.currPS || "",
+                                permState: customerInfo.currState || "",
+                                permDistrict: customerInfo.currDistrict || "",
+                                permPostal: customerInfo.currPostal || "",
+                              };
+                            } else {
+                              delete info.permLineOne;
+                              delete info.permLineTwo;
+                              delete info.permCity;
+                              delete info.permPS;
+                              delete info.permState;
+                              delete info.permDistrict;
+                              delete info.permPostal;
+                            }
+
+                            customerInfo = info;
+                          }}
+                        />
+                      </FormGroup>
+                    </Col>
+                    {/* <Col xs="3">
+                      <h6>SAME AS PRESENT ADDRESS</h6>
+                    </Col> */}
                   </Row>
                   <Row>
                     <Col lg="6">
