@@ -1022,7 +1022,41 @@ const DeliveryOrders: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {Object.values(deliveryOrders).map(
+
+                        {Object.values(deliveryOrders).map((currElem: any) => {
+                          let deliveryDate = new Date(currElem.createdOn)
+                          .toJSON()
+                          .slice(0, 10)
+                          .split("-")
+                          .reverse()
+                          .join("/");
+                          return (
+                            <tr
+                              key={currElem.id}
+                              onClick={() => toggleSelected(currElem.id)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <td scope="row" className="text-center">
+                                <Input
+                                  className="position-relative"
+                                  type="checkbox"
+                                  color="primary"
+                                  disabled={!!loading}
+                                  checked={currElem.id === selected}
+                                  style={{ cursor: "pointer" }}
+                                  onChange={() => toggleSelected(currElem.id)}
+                                />
+                              </td>
+                              <td>{currElem.name}</td>
+                              <td>{currElem.modelName}</td>
+                              <td>{currElem.color}</td>
+                              <td>{currElem.status.split("_").join(" ")}</td>
+                              <td>{deliveryDate}</td>
+                            </tr>
+                          );
+                        })}
+
+                        {/* {Object.values(deliveryOrders).map(
                           (currElem: any, index: number) =>
                             currElem.active && (
                               <tr
@@ -1048,7 +1082,7 @@ const DeliveryOrders: React.FC = () => {
                                 <td>{currElem.createdOn}</td>
                               </tr>
                             )
-                        )}
+                        )} */}
                       </tbody>
                     </Table>
                   ) : (
