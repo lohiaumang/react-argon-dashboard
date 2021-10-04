@@ -12,6 +12,7 @@ import {
   InsuranceConfigContext,
 } from "../Context";
 
+
 const App: React.FC = () => {
   const currentUser = firebase.auth().currentUser;
   const [loading, setLoading] = useState<boolean>(true);

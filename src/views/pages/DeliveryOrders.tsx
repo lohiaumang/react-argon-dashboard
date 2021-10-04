@@ -47,6 +47,12 @@ import InvoiceTable from "../../components/Tables/InvoiceTable";
 import EditDo from "../../components/Tables/EditDo";
 import SmallLoading from "../../components/Share/SmallLoading";
 import Loading from "../../components/Share/Loading";
+
+import 'jquery/dist/jquery.min.js';
+import "datatables.net-dt/js/dataTables.dataTables"
+import "datatables.net-dt/css/jquery.dataTables.min.css"
+var $ = require("jquery");
+
 import {
   UserContext,
   InsuranceConfigContext,
@@ -173,7 +179,14 @@ const DeliveryOrders: React.FC = () => {
           }
         }
       });
+
     }
+    $(document).ready(function () {
+      setTimeout(function () {
+        $('#example').DataTable();
+      }, 1000);
+    });
+
   }, []);
 
   useEffect(() => {
@@ -808,6 +821,7 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
+
   return (
     <>
       {loading && (
@@ -993,6 +1007,7 @@ const DeliveryOrders: React.FC = () => {
                     <Table
                       className="align-items-center table-flush"
                       responsive
+                      id="example"
                     >
                       <thead className="thead-light">
                         <tr>
@@ -1003,6 +1018,7 @@ const DeliveryOrders: React.FC = () => {
                           <th scope="col">Model Name</th>
                           <th scope="col">Color</th>
                           <th scope="col">Status</th>
+                          <th scope="col">Date</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1029,6 +1045,7 @@ const DeliveryOrders: React.FC = () => {
                                 <td>{currElem.modelName}</td>
                                 <td>{currElem.color}</td>
                                 <td>{currElem.status.split("_").join(" ")}</td>
+                                <td>{currElem.createdOn}</td>
                               </tr>
                             )
                         )}
@@ -1037,6 +1054,7 @@ const DeliveryOrders: React.FC = () => {
                   ) : (
                     <CardBody className="p-4">You are all done!</CardBody>
                   )}
+
                 </div>
               )}
             </Card>

@@ -10,6 +10,9 @@ import {
   Media,
   Row,
   Table,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
 } from "reactstrap";
 
 import { DeliveryOrder } from "./DeliveryOrderTable";
@@ -1186,290 +1189,288 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                     </Col>
                   </Row>
                   <Row>
-                    <Col xs="8">
-                      <h6 className="heading-small text-muted mb-4">
-                        PERMANENT ADDRESS
-                      </h6>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col lg="12">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="input-curr-postal-code"
-                        >
-                          SAME AS PRESENT ADDRESS
-                        </label>
-                        <Input
-                          className="position-relative"
-                          type="checkbox"
-                          color="primary"
-                          checked={customerInfo.sameAddress === "true"}
-                          onChange={(e: any) => {
-                            if (!e.target.value) return;
-
-                            let info = {
-                              ...customerInfo,
-                              sameAddress: e.target.checked!.toString(),
-                            };
-
-                            if (e.target.checked!) {
-                              info = {
-                                ...info,
-                                permLineOne: customerInfo.currLineOne || "",
-                                permLineTwo: customerInfo.currLineTwo || "",
-                                permCity: customerInfo.currCity || "",
-                                permPS: customerInfo.currPS || "",
-                                permState: customerInfo.currState || "",
-                                permDistrict: customerInfo.currDistrict || "",
-                                permPostal: customerInfo.currPostal || "",
+                    <Col>
+                      <InputGroup>
+                        <InputGroupAddon addonType="prepend">
+                          <Input addon type="checkbox" aria-label="Checkbox for following text input"
+                            checked={customerInfo.sameAddress === "true"}
+                            onChange={(e: any) => {
+                              let info = {
+                                ...customerInfo,
+                                sameAddress: e.target.checked!.toString(),
                               };
-                            } else {
-                              delete info.permLineOne;
-                              delete info.permLineTwo;
-                              delete info.permCity;
-                              delete info.permPS;
-                              delete info.permState;
-                              delete info.permDistrict;
-                              delete info.permPostal;
-                            }
 
-                            customerInfo = info;
-                          }}
-                        />
-                      </FormGroup>
-                    </Col>
-                    {/* <Col xs="3">
-                      <h6>SAME AS PRESENT ADDRESS</h6>
-                    </Col> */}
-                  </Row>
-                  <Row>
-                    <Col lg="6">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="pre-add-line-1"
-                        >
-                          LINE 1
-                        </label>
-                        <Input
-                          required
-                          className="form-control-alternative"
-                          id="pre-add-line-1"
-                          value={customerInfo && customerInfo.permLineOne}
-                          onChange={(ev) => {
-                            customerInfo.permLineOne = ev.target.value.toLocaleUpperCase()!;
-                            setCurrDo({
-                              ...currDo,
-                              customerInfo,
-                            });
-                          }}
-                          placeholder="Enter Address Line 1"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col lg="6">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="pre-add-line-2"
-                        >
-                          LINE 2
-                        </label>
-                        <Input
-                          required
-                          className="form-control-alternative"
-                          id="pre-add-line-2"
-                          value={customerInfo && customerInfo.permLineTwo}
-                          onChange={(ev) => {
-                            customerInfo.permLineTwo = ev.target.value.toLocaleUpperCase()!;
-                            setCurrDo({
-                              ...currDo,
-                              customerInfo,
-                            });
-                          }}
-                          placeholder="Enter Address Line 2"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col lg="6">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="input-city"
-                        >
-                          CITY
-                        </label>
-                        <Input
-                          required
-                          className="form-control-alternative"
-                          id="input-city"
-                          value={customerInfo && customerInfo.permCity}
-                          onChange={(ev) => {
-                            customerInfo.permCity = ev.target.value.toLocaleUpperCase()!;
-                            setCurrDo({
-                              ...currDo,
-                              customerInfo,
-                            });
-                          }}
-                          placeholder="Enter City"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col lg="6">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="input-ps-landmark"
-                        >
-                          PS/LANDMARK
-                        </label>
-                        <Input
-                          required
-                          className="form-control-alternative"
-                          id="input-ps-lankmark"
-                          value={customerInfo && customerInfo.permPS}
-                          onChange={(ev) => {
-                            customerInfo.permPS = ev.target.value.toLocaleUpperCase()!;
-                            setCurrDo({
-                              ...currDo,
-                              customerInfo,
-                            });
-                          }}
-                          placeholder="Enter Police Station"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col lg="6">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="input-state"
-                        >
-                          STATE
-                        </label>
-                        {states ? (
-                          <Input
-                            required
-                            type="select"
-                            name="select-state"
-                            id="input-state"
-                            placeholder=" State"
-                            value={customerInfo && customerInfo.permState}
-                            onChange={(ev) => {
-                              customerInfo.permState = ev.target.value!;
-                              setCurrDo({
-                                ...currDo,
-                                customerInfo,
-                              });
-                            }}
-                          >
-                            {Object.keys(states).map((state) => {
-                              return (
-                                <option key={state} value={state}>
-                                  {state}
-                                </option>
-                              );
-                            })}
-                          </Input>
-                        ) : (
-                          <Input />
-                        )}
-                      </FormGroup>
-                    </Col>
-                    <Col lg="6">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="input-district"
-                        >
-                          DISTRICT
-                        </label>
-                        {states &&
-                          customerInfo.permState &&
-                          states[customerInfo.permState] &&
-                          states[customerInfo.permState].districts ? (
-                          <Input
-                            required
-                            type="select"
-                            name="select-district"
-                            id="input-district"
-                            placeholder=" District"
-                            value={customerInfo && customerInfo.permDistrict}
-                            onChange={(ev) => {
-                              customerInfo.permDistrict = ev.target.value!;
-                              setCurrDo({
-                                ...currDo,
-                                customerInfo,
-                              });
-                            }}
-                          >
-                            {states[customerInfo.permState].districts.map(
-                              (district: string) => {
-                                return (
-                                  <option key={district} value={district}>
-                                    {district}
-                                  </option>
-                                );
+                              if (e.target.checked!) {
+                                info = {
+                                  ...info,
+                                  permLineOne: customerInfo.currLineOne || "",
+                                  permLineTwo: customerInfo.currLineTwo || "",
+                                  permCity: customerInfo.currCity || "",
+                                  permPS: customerInfo.currPS || "",
+                                  permState: customerInfo.currState || "",
+                                  permDistrict: customerInfo.currDistrict || "",
+                                  permPostal: customerInfo.currPostal || "",
+                                };
+                              } else {
+                                delete info.permLineOne;
+                                delete info.permLineTwo;
+                                delete info.permCity;
+                                delete info.permPS;
+                                delete info.permState;
+                                delete info.permDistrict;
+                                delete info.permPostal;
                               }
-                            )}
-                          </Input>
-                        ) : (
-                          <Input
-                            required
-                            className="form-control-alternative"
-                            id="input-curr-state"
-                            value={customerInfo && customerInfo.permDistrict}
-                            onChange={(ev) => {
-                              customerInfo.permDistrict = ev.target.value.toLocaleUpperCase()!;
+
                               setCurrDo({
                                 ...currDo,
-                                customerInfo,
+                                customerInfo: info,
                               });
                             }}
-                            placeholder="Enter State"
-                            type="text"
                           />
-                        )}
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col lg="6">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="input-postal-code"
-                        >
-                          POSTAL CODE
+                        </InputGroupAddon>
+                        <label style={{ marginTop: "-5px", marginLeft:"10px" }}>
+                          Same as present address
                         </label>
-                        <Input
-                          required
-                          className="form-control-alternative"
-                          id="input-postal-code"
-                          value={customerInfo && customerInfo.permPostal}
-                          onChange={(ev) => {
-                            customerInfo.permPostal = ev.target.value.toLocaleUpperCase()!;
-                            setCurrDo({
-                              ...currDo,
-                              customerInfo,
-                            });
-                          }}
-                          placeholder="Enter Postal Code"
-                          type="text"
-                        />
-                      </FormGroup>
+                      </InputGroup>
                     </Col>
                   </Row>
+                  {customerInfo.sameAddress !== "true" && (
+                    <>
+                      <Row>
+                        <Col xs="8">
+                          <h6 className="heading-small text-muted mb-4">
+                            PERMANENT ADDRESS
+                          </h6>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col lg="6">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="pre-add-line-1"
+                            >
+                              LINE 1
+                            </label>
+                            <Input
+                              required
+                              className="form-control-alternative"
+                              id="pre-add-line-1"
+                              value={customerInfo && customerInfo.permLineOne}
+                              onChange={(ev) => {
+                                customerInfo.permLineOne = ev.target.value.toLocaleUpperCase()!;
+                                setCurrDo({
+                                  ...currDo,
+                                  customerInfo,
+                                });
+                              }}
+                              placeholder="Enter Address Line 1"
+                              type="text"
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col lg="6">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="pre-add-line-2"
+                            >
+                              LINE 2
+                            </label>
+                            <Input
+                              required
+                              className="form-control-alternative"
+                              id="pre-add-line-2"
+                              value={customerInfo && customerInfo.permLineTwo}
+                              onChange={(ev) => {
+                                customerInfo.permLineTwo = ev.target.value.toLocaleUpperCase()!;
+                                setCurrDo({
+                                  ...currDo,
+                                  customerInfo,
+                                });
+                              }}
+                              placeholder="Enter Address Line 2"
+                              type="text"
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col lg="6">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="input-city"
+                            >
+                              CITY
+                            </label>
+                            <Input
+                              required
+                              className="form-control-alternative"
+                              id="input-city"
+                              value={customerInfo && customerInfo.permCity}
+                              onChange={(ev) => {
+                                customerInfo.permCity = ev.target.value.toLocaleUpperCase()!;
+                                setCurrDo({
+                                  ...currDo,
+                                  customerInfo,
+                                });
+                              }}
+                              placeholder="Enter City"
+                              type="text"
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col lg="6">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="input-ps-landmark"
+                            >
+                              PS/LANDMARK
+                            </label>
+                            <Input
+                              required
+                              className="form-control-alternative"
+                              id="input-ps-lankmark"
+                              value={customerInfo && customerInfo.permPS}
+                              onChange={(ev) => {
+                                customerInfo.permPS = ev.target.value.toLocaleUpperCase()!;
+                                setCurrDo({
+                                  ...currDo,
+                                  customerInfo,
+                                });
+                              }}
+                              placeholder="Enter Police Station"
+                              type="text"
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col lg="6">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="input-state"
+                            >
+                              STATE
+                            </label>
+                            {states ? (
+                              <Input
+                                required
+                                type="select"
+                                name="select-state"
+                                id="input-state"
+                                placeholder=" State"
+                                value={customerInfo && customerInfo.permState}
+                                onChange={(ev) => {
+                                  customerInfo.permState = ev.target.value!;
+                                  setCurrDo({
+                                    ...currDo,
+                                    customerInfo,
+                                  });
+                                }}
+                              >
+                                {Object.keys(states).map((state) => {
+                                  return (
+                                    <option key={state} value={state}>
+                                      {state}
+                                    </option>
+                                  );
+                                })}
+                              </Input>
+                            ) : (
+                              <Input />
+                            )}
+                          </FormGroup>
+                        </Col>
+                        <Col lg="6">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="input-district"
+                            >
+                              DISTRICT
+                            </label>
+                            {states &&
+                              customerInfo.permState &&
+                              states[customerInfo.permState] &&
+                              states[customerInfo.permState].districts ? (
+                              <Input
+                                required
+                                type="select"
+                                name="select-district"
+                                id="input-district"
+                                placeholder=" District"
+                                value={customerInfo && customerInfo.permDistrict}
+                                onChange={(ev) => {
+                                  customerInfo.permDistrict = ev.target.value!;
+                                  setCurrDo({
+                                    ...currDo,
+                                    customerInfo,
+                                  });
+                                }}
+                              >
+                                {states[customerInfo.permState].districts.map(
+                                  (district: string) => {
+                                    return (
+                                      <option key={district} value={district}>
+                                        {district}
+                                      </option>
+                                    );
+                                  }
+                                )}
+                              </Input>
+                            ) : (
+                              <Input
+                                required
+                                className="form-control-alternative"
+                                id="input-curr-state"
+                                value={customerInfo && customerInfo.permDistrict}
+                                onChange={(ev) => {
+                                  customerInfo.permDistrict = ev.target.value.toLocaleUpperCase()!;
+                                  setCurrDo({
+                                    ...currDo,
+                                    customerInfo,
+                                  });
+                                }}
+                                placeholder="Enter State"
+                                type="text"
+                              />
+                            )}
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col lg="6">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="input-postal-code"
+                            >
+                              POSTAL CODE
+                            </label>
+                            <Input
+                              required
+                              className="form-control-alternative"
+                              id="input-postal-code"
+                              value={customerInfo && customerInfo.permPostal}
+                              onChange={(ev) => {
+                                customerInfo.permPostal = ev.target.value.toLocaleUpperCase()!;
+                                setCurrDo({
+                                  ...currDo,
+                                  customerInfo,
+                                });
+                              }}
+                              placeholder="Enter Postal Code"
+                              type="text"
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                    </>
+                  )}
                   <Row>
                     <Col xs="8">
                       <h6 className="heading-small text-muted mb-4">
