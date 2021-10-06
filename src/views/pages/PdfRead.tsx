@@ -36,53 +36,31 @@ import {
   Alert,
   Nav,
 } from "reactstrap";
-// core components
 import Header from "../../components/Headers/Header";
-
-//import WebViewer from "@pdftron/webviewer";
-
 const PdfRead: React.FC = () => {
-  // var rows: any = {}; // indexed by y-position
-
-  // function printRows() {
-  //   Object.keys(rows) // => array of y-positions (type: float)
-  //     .sort((y1, y2) => parseFloat(y1) - parseFloat(y2)) // sort float positions
-  //     .forEach((y) => console.log((rows[y] || []).join("")));
-  // }
-
-  // new pdfreader.PdfReader().parseFileItems(
-  //   "rahul.pdf",
-  //   function (err: any, item: { page: any; text: any; y: string | number }) {
-  //     if (!item || item.page) {
-  //       // end of file, or page
-  //       printRows();
-  //       console.log("PAGE:", item.page);
-  //       rows = {}; // clear rows for next page
-  //     } else if (item.text) {
-  //       // accumulate text items into rows object, per line
-  //       (rows[item.y] = rows[item.y] || []).push(item.text);
-  //     }
-  //   }
-  // );
-  // const viewerDiv = useRef<HTMLDivElement>(null);
-  // useEffect(() => {
-  //   WebViewer(
-  //     {
-  //       path: "lib",
-  //       initialDoc:
-  //         "https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf",
-  //     },
-  //     viewerDiv.current as HTMLDivElement
-  //   ).then((instannce) => {
-
-  //   });
-  // }, []);
+  const [pdfDoc, setPdfDoc] = useState<string>();
+  console.log(pdfDoc);
   return (
     <>
-      {/* <Header />
-      <Container className="mt--7" fluid>
-        <div className="webviewer" ref={viewerDiv}></div>
-      </Container> */}
+      <Header />
+
+      <Row>
+        <FormGroup>
+          <label className="form-control-label" htmlFor="input-email">
+            Select Doc
+          </label>
+          <Input
+            className="form-control-alternative"
+            id="input-email"
+            placeholder="janedoe@example.com"
+            type="file"
+            title="Email should be in the format abc@xyz.def"
+            required
+            onChange={(ev) => setPdfDoc(ev.target.value!)}
+            pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$"
+          />
+        </FormGroup>
+      </Row>
     </>
   );
 };

@@ -11,6 +11,10 @@ module.exports = async function (mainWindow, browser) {
   require("firebase/auth");
   require("firebase/functions");
   require("firebase/firestore");
+  const pdf = require("pdf-parse");
+  var https = require("https");
+  var request = require("request");
+  // var pdfreader = require("pdfreader");
   let page;
 
   const firebaseConfig = {
@@ -29,19 +33,92 @@ module.exports = async function (mainWindow, browser) {
   } else {
     firebase.app(); // if already initialized, use that one
   }
-  
+
   let systemConfig;
-  let docRef = firebase
-    .firestore()
-    .collection("systemConfig")
-    .doc("config");
+  let docRef = firebase.firestore().collection("systemConfig").doc("config");
   let doc = await docRef.get();
 
   if (doc.exists) {
     systemConfig = doc.data();
   }
 
+  //////////testing code///////////
+  let dataBuffer = fs.readFileSync('test.pdf');
  
+  pdf(dataBuffer).then(function(data) {
+      // PDF text
+      console.log(data.text); 
+          
+  });
+
+
+
+  function PDFtoHTML(InputPath,OutputPath){
+    const API_KEY = "damarnurichwan.official@gmail.com_c689e1db10dc13cd";
+    const SourceFile = InputPath;
+    const Pages = "";
+    const Password = "";
+    const DestinationFile = OutputPath;
+    const PlainHtml = 'False';
+    const ColumnLayout = 'False';
+    
+    var query = `https://api.pdf.co/v1/pdf/convert/to/html`;
+    let reqOptions = {
+        uri: query,
+        headers: { "x-api-key": API_KEY },
+        formData: {
+            name: path.basename(DestinationFile),
+            password: Password,
+            pages: Pages,
+            simple: PlainHtml,
+            columns: ColumnLayout,
+            file: fs.createReadStream(SourceFile)
+        }
+    };
+    
+    request.post(reqOptions, function (error, response, body) {
+        if (error) {
+            return console.error("Error: ", error);
+        }
+    
+        let data = JSON.parse(body);
+        if (data.error == false) {
+            // Download HTML file
+            var file = fs.createWriteStream(DestinationFile);
+            https.get(data.url, (response2) => {
+                response2.pipe(file)
+                .on("close", () => {
+                    console.log(`Generated HTML file saved as "${DestinationFile}" file.`);
+                });
+            });
+        }
+        else {
+            // Service reported error
+            console.log("Error: " + data.message);
+        }
+    });
+    }
+    PDFtoHTML();
+
+  // var rows = {}; // indexed by y-position
+
+  // function printRows() {
+  //   Object.keys(rows) // => array of y-positions (type: float)
+  //     .sort((y1, y2) => parseFloat(y1) - parseFloat(y2)) // sort float positions
+  //     .forEach((y) => console.log((rows[y] || []).join("")));
+  // }
+
+  // new pdfreader.PdfReader().parseFileItems("test.pdf", function (err, item) {
+  //   if (!item || item.page) {
+  //     // end of file, or page
+  //     printRows();
+  //     console.log("PAGE:", item.page);
+  //     rows = {}; // clear rows for next page
+  //   } else if (item.text) {
+  //     // accumulate text items into rows object, per line
+  //     (rows[item.y] = rows[item.y] || []).push(item.text);
+  //   }
+  // });
 
   ipc.on("toMain", async (event, args) => {
     try {
@@ -258,7 +335,7 @@ module.exports = async function (mainWindow, browser) {
             };
           }
           // erpWindow.webContents.openDevTools();
-          erp(page, data, mainWindow, erpWindow,systemConfig);
+          erp(page, data, mainWindow, erpWindow, systemConfig);
 
           // erpWindow.webContents.once("close", function () {
           //   mainWindow.webContents.send("fromMain", {
@@ -308,11 +385,11 @@ module.exports = async function (mainWindow, browser) {
                 insuranceDetails: {
                   modelName:
                     data.insuranceDetails[data.vehicleInfo.modelName][
-                    `${insuranceCompany.toLowerCase()}ModelName`
+                      `${insuranceCompany.toLowerCase()}ModelName`
                     ],
                   userRate:
                     data.insuranceDetails[data.vehicleInfo.modelName][
-                    "userRate"
+                      "userRate"
                     ],
                 },
                 // priceDetails: priceDetails[data.vehicleInfo.modelName],
