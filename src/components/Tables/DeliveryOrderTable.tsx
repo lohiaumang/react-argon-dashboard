@@ -64,6 +64,7 @@ export interface DeliveryOrder {
     permState: string;
     category: string;
     source: string;
+    sameAddress:string;
     refOne?: {
       name: string;
       phoneNo: string;

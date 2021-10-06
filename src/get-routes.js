@@ -21,6 +21,7 @@ import CreateAccount from "./views/pages/CreateAccount";
 import UserManagement from "./views/pages/UserManagement";
 import Settings from "./views/pages/Settings";
 import Profile from "./views/pages/Profile";
+import PdfRead from "./views/pages/PdfRead";
 import Index from "./views/Index";
 import DeliveryOrders from "./views/pages/DeliveryOrders";
 
@@ -83,6 +84,14 @@ const getRoutes = (user) => {
       component: () => <CreateAccount />,
       layout: "/auth",
       isNavigable: false,
+    },
+    {
+      path: "/read-pdf",
+      name: "Read PDF",
+      icon: "fas fa-user text-info",
+      component: () => <PdfRead />,
+      layout: "/admin",
+      isNavigable: true,
     },
   ];
 };

@@ -60,7 +60,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   const [postalCharge, setPostalCharge] = useState<any>({});
   const [ptefCharge, setptefCharge] = useState<any>({});
 
-
   const [userInfoUpdateError, setDoInfoUpdateError] = useState<{
     code: string;
     message: string;
@@ -156,6 +155,23 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
       });
     }
   }, [deliveryOrder]);
+
+  // useEffect(() => {
+  //   if(currDo.customerInfo?.sameAddress==="true"){
+  //     setCurrDo({
+  //       ...currDo,
+  //       customerInfo: {
+  //         permLineOne: currDo.customerInfo.currLineOne || "",
+  //         permLineTwo: currDo.customerInfo.currLineTwo || "",
+  //         permCity: currDo.customerInfo.currCity || "",
+  //         permPS: currDo.customerInfo.currPS || "",
+  //         permState: currDo.customerInfo.currState || "",
+  //         permDistrict: currDo.customerInfo.currDistrict || "",
+  //         permPostal: currDo.customerInfo.currPostal || "",
+  //       },
+  //     });
+  //   }
+  // }, [currDo.customerInfo]);
 
   const updateAccessories = (modelName: string) => {
     firebase
@@ -287,40 +303,37 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
       //dashboard status count
 
       const dealerId = user.createdBy || user.uid || "";
-      let tempData: any
+      let tempData: any;
       if (status === "PENDING") {
-        const docRef = firebase
-          .firestore()
-          .collection("status")
-          .doc(dealerId);
-        docRef.get().then((doc) => {
-          if (doc.exists) {
-            tempData = doc.data();
-            //setDashBoardStatus(tempData);
-          }
-        }).then(() => {
-
-          let statusCount: Number;
-          statusCount = tempData.PENDING + 1;
-          firebase.firestore().collection("status")
-            .doc(dealerId)
-            .set({
-              PENDING: statusCount
-            },
+        const docRef = firebase.firestore().collection("status").doc(dealerId);
+        docRef
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              tempData = doc.data();
+              //setDashBoardStatus(tempData);
+            }
+          })
+          .then(() => {
+            let statusCount: Number;
+            statusCount = tempData.PENDING + 1;
+            firebase.firestore().collection("status").doc(dealerId).set(
+              {
+                PENDING: statusCount,
+              },
               { merge: true }
-            )
-
-        }).then(() => {
-          let statusCount: Number;
-          statusCount = tempData.INCOMPLETE - 1;
-          firebase.firestore().collection("status")
-            .doc(dealerId)
-            .set({
-              INCOMPLETE: statusCount
-            },
+            );
+          })
+          .then(() => {
+            let statusCount: Number;
+            statusCount = tempData.INCOMPLETE - 1;
+            firebase.firestore().collection("status").doc(dealerId).set(
+              {
+                INCOMPLETE: statusCount,
+              },
               { merge: true }
-            )
-        })
+            );
+          });
       }
 
       //dashboard status End
@@ -567,7 +580,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           required
                           value={customerInfo && customerInfo.firstName}
                           onChange={(ev) => {
-                            customerInfo.firstName = ev.target.value.toLocaleUpperCase()!;
+                            customerInfo.firstName =
+                              ev.target.value.toLocaleUpperCase()!;
                             currDo.name = ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
@@ -594,7 +608,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             id="input-customer-lastName"
                             value={customerInfo && customerInfo.lastName}
                             onChange={(ev) => {
-                              customerInfo.lastName = ev.target.value.toLocaleUpperCase()!;
+                              customerInfo.lastName =
+                                ev.target.value.toLocaleUpperCase()!;
                               setCurrDo({
                                 ...currDo,
                                 customerInfo,
@@ -648,7 +663,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           id="S/D/W/O"
                           value={customerInfo && customerInfo.swdo}
                           onChange={(ev) => {
-                            customerInfo.swdo = ev.target.value.toLocaleUpperCase()!;
+                            customerInfo.swdo =
+                              ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
                               customerInfo,
@@ -837,13 +853,12 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             let dO = currDo;
                             dO.salesEx = ev.target.value.toLocaleUpperCase()!;
 
-                            setCurrDo({ ...dO, });
+                            setCurrDo({ ...dO });
                           }}
                           placeholder="Sales Executive"
                         />
                       </FormGroup>
                     </Col>
-
                   </Row>
 
                   <Row>
@@ -873,10 +888,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }
                           height="auto"
                           width="200px"
-                        // onclick={enlargeImg()}
-                        // onClick={() => {
-                        //   enlargeImg();
-                        // }}
+                          // onclick={enlargeImg()}
+                          // onClick={() => {
+                          //   enlargeImg();
+                          // }}
                         ></img>
                       </Media>
                       {/* <Button
@@ -913,10 +928,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }
                           height="auto"
                           width="200px"
-                        // onclick={enlargeImg()}
-                        // onClick={() => {
-                        //   enlargeImg();
-                        // }}
+                          // onclick={enlargeImg()}
+                          // onClick={() => {
+                          //   enlargeImg();
+                          // }}
                         ></img>
                       </Media>
                     </Col>
@@ -947,10 +962,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }
                           height="auto"
                           width="200px"
-                        // onclick={enlargeImg()}
-                        // onClick={() => {
-                        //   enlargeImg();
-                        // }}
+                          // onclick={enlargeImg()}
+                          // onClick={() => {
+                          //   enlargeImg();
+                          // }}
                         ></img>
                       </Media>
                     </Col>
@@ -977,7 +992,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           id="curr-add-line-1"
                           value={customerInfo && customerInfo.currLineOne}
                           onChange={(ev) => {
-                            customerInfo.currLineOne = ev.target.value.toLocaleUpperCase()!;
+                            customerInfo.currLineOne =
+                              ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
                               customerInfo,
@@ -1002,7 +1018,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           id="curr-add-line-2"
                           value={customerInfo && customerInfo.currLineTwo}
                           onChange={(ev) => {
-                            customerInfo.currLineTwo = ev.target.value.toLocaleUpperCase()!;
+                            customerInfo.currLineTwo =
+                              ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
                               customerInfo,
@@ -1029,7 +1046,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           id="input-curr-ps-lankmark"
                           value={customerInfo && customerInfo.currPS}
                           onChange={(ev) => {
-                            customerInfo.currPS = ev.target.value.toLocaleUpperCase()!;
+                            customerInfo.currPS =
+                              ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
                               customerInfo,
@@ -1054,7 +1072,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           id="input--curr-city"
                           value={customerInfo && customerInfo.currCity}
                           onChange={(ev) => {
-                            customerInfo.currCity = ev.target.value.toLocaleUpperCase()!;
+                            customerInfo.currCity =
+                              ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
                               customerInfo,
@@ -1113,9 +1132,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           DISTRIC
                         </label>
                         {states &&
-                          customerInfo.currState &&
-                          states[customerInfo.currState] &&
-                          states[customerInfo.currState].districts ? (
+                        customerInfo.currState &&
+                        states[customerInfo.currState] &&
+                        states[customerInfo.currState].districts ? (
                           <Input
                             required
                             type="select"
@@ -1148,7 +1167,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             id="input-curr-state"
                             value={customerInfo && customerInfo.currDistrict}
                             onChange={(ev) => {
-                              customerInfo.currDistrict = ev.target.value.toLocaleUpperCase()!;
+                              customerInfo.currDistrict =
+                                ev.target.value.toLocaleUpperCase()!;
                               setCurrDo({
                                 ...currDo,
                                 customerInfo,
@@ -1176,7 +1196,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           id="input-curr-postal-code"
                           value={customerInfo && customerInfo.currPostal}
                           onChange={(ev) => {
-                            customerInfo.currPostal = ev.target.value.toLocaleUpperCase()!;
+                            customerInfo.currPostal =
+                              ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
                               customerInfo,
@@ -1192,7 +1213,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                     <Col>
                       <InputGroup>
                         <InputGroupAddon addonType="prepend">
-                          <Input addon type="checkbox" aria-label="Checkbox for following text input"
+                          <Input
+                            addon
+                            type="checkbox"
+                            aria-label="Checkbox for following text input"
                             checked={customerInfo.sameAddress === "true"}
                             onChange={(e: any) => {
                               let info = {
@@ -1228,249 +1252,257 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             }}
                           />
                         </InputGroupAddon>
-                        <label style={{ marginTop: "-5px", marginLeft:"10px" }}>
+                        <label
+                          style={{ marginTop: "-5px", marginLeft: "10px" }}
+                        >
                           Same as present address
                         </label>
                       </InputGroup>
                     </Col>
                   </Row>
                   {customerInfo.sameAddress !== "true" && (
-                    <>
-                      <Row>
-                        <Col xs="8">
-                          <h6 className="heading-small text-muted mb-4">
-                            PERMANENT ADDRESS
-                          </h6>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="pre-add-line-1"
-                            >
-                              LINE 1
-                            </label>
+                  <>
+                    <Row>
+                      <Col xs="8">
+                        <h6 className="heading-small text-muted mb-4">
+                          PERMANENT ADDRESS
+                        </h6>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="pre-add-line-1"
+                          >
+                            LINE 1
+                          </label>
+                          <Input
+                            required
+                            className="form-control-alternative"
+                            id="pre-add-line-1"
+                            value={customerInfo && customerInfo.permLineOne}
+                            onChange={(ev) => {
+                              customerInfo.permLineOne =
+                                ev.target.value.toLocaleUpperCase()!;
+                              setCurrDo({
+                                ...currDo,
+                                customerInfo,
+                              });
+                            }}
+                            placeholder="Enter Address Line 1"
+                            type="text"
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="pre-add-line-2"
+                          >
+                            LINE 2
+                          </label>
+                          <Input
+                            required
+                            className="form-control-alternative"
+                            id="pre-add-line-2"
+                            value={customerInfo && customerInfo.permLineTwo}
+                            onChange={(ev) => {
+                              customerInfo.permLineTwo =
+                                ev.target.value.toLocaleUpperCase()!;
+                              setCurrDo({
+                                ...currDo,
+                                customerInfo,
+                              });
+                            }}
+                            placeholder="Enter Address Line 2"
+                            type="text"
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-city"
+                          >
+                            CITY
+                          </label>
+                          <Input
+                            required
+                            className="form-control-alternative"
+                            id="input-city"
+                            value={customerInfo && customerInfo.permCity}
+                            onChange={(ev) => {
+                              customerInfo.permCity =
+                                ev.target.value.toLocaleUpperCase()!;
+                              setCurrDo({
+                                ...currDo,
+                                customerInfo,
+                              });
+                            }}
+                            placeholder="Enter City"
+                            type="text"
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-ps-landmark"
+                          >
+                            PS/LANDMARK
+                          </label>
+                          <Input
+                            required
+                            className="form-control-alternative"
+                            id="input-ps-lankmark"
+                            value={customerInfo && customerInfo.permPS}
+                            onChange={(ev) => {
+                              customerInfo.permPS =
+                                ev.target.value.toLocaleUpperCase()!;
+                              setCurrDo({
+                                ...currDo,
+                                customerInfo,
+                              });
+                            }}
+                            placeholder="Enter Police Station"
+                            type="text"
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-state"
+                          >
+                            STATE
+                          </label>
+                          {states ? (
                             <Input
                               required
-                              className="form-control-alternative"
-                              id="pre-add-line-1"
-                              value={customerInfo && customerInfo.permLineOne}
+                              type="select"
+                              name="select-state"
+                              id="input-state"
+                              placeholder=" State"
+                              value={customerInfo && customerInfo.permState}
                               onChange={(ev) => {
-                                customerInfo.permLineOne = ev.target.value.toLocaleUpperCase()!;
+                                customerInfo.permState = ev.target.value!;
                                 setCurrDo({
                                   ...currDo,
                                   customerInfo,
                                 });
                               }}
-                              placeholder="Enter Address Line 1"
-                              type="text"
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="pre-add-line-2"
                             >
-                              LINE 2
-                            </label>
+                              {Object.keys(states).map((state) => {
+                                return (
+                                  <option key={state} value={state}>
+                                    {state}
+                                  </option>
+                                );
+                              })}
+                            </Input>
+                          ) : (
+                            <Input />
+                          )}
+                        </FormGroup>
+                      </Col>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-district"
+                          >
+                            DISTRICT
+                          </label>
+                          {states &&
+                          customerInfo.permState &&
+                          states[customerInfo.permState] &&
+                          states[customerInfo.permState].districts ? (
                             <Input
                               required
-                              className="form-control-alternative"
-                              id="pre-add-line-2"
-                              value={customerInfo && customerInfo.permLineTwo}
+                              type="select"
+                              name="select-district"
+                              id="input-district"
+                              placeholder=" District"
+                              value={customerInfo && customerInfo.permDistrict}
                               onChange={(ev) => {
-                                customerInfo.permLineTwo = ev.target.value.toLocaleUpperCase()!;
+                                customerInfo.permDistrict = ev.target.value!;
                                 setCurrDo({
                                   ...currDo,
                                   customerInfo,
                                 });
                               }}
-                              placeholder="Enter Address Line 2"
-                              type="text"
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-city"
                             >
-                              CITY
-                            </label>
-                            <Input
-                              required
-                              className="form-control-alternative"
-                              id="input-city"
-                              value={customerInfo && customerInfo.permCity}
-                              onChange={(ev) => {
-                                customerInfo.permCity = ev.target.value.toLocaleUpperCase()!;
-                                setCurrDo({
-                                  ...currDo,
-                                  customerInfo,
-                                });
-                              }}
-                              placeholder="Enter City"
-                              type="text"
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-ps-landmark"
-                            >
-                              PS/LANDMARK
-                            </label>
-                            <Input
-                              required
-                              className="form-control-alternative"
-                              id="input-ps-lankmark"
-                              value={customerInfo && customerInfo.permPS}
-                              onChange={(ev) => {
-                                customerInfo.permPS = ev.target.value.toLocaleUpperCase()!;
-                                setCurrDo({
-                                  ...currDo,
-                                  customerInfo,
-                                });
-                              }}
-                              placeholder="Enter Police Station"
-                              type="text"
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-state"
-                            >
-                              STATE
-                            </label>
-                            {states ? (
-                              <Input
-                                required
-                                type="select"
-                                name="select-state"
-                                id="input-state"
-                                placeholder=" State"
-                                value={customerInfo && customerInfo.permState}
-                                onChange={(ev) => {
-                                  customerInfo.permState = ev.target.value!;
-                                  setCurrDo({
-                                    ...currDo,
-                                    customerInfo,
-                                  });
-                                }}
-                              >
-                                {Object.keys(states).map((state) => {
+                              {states[customerInfo.permState].districts.map(
+                                (district: string) => {
                                   return (
-                                    <option key={state} value={state}>
-                                      {state}
+                                    <option key={district} value={district}>
+                                      {district}
                                     </option>
                                   );
-                                })}
-                              </Input>
-                            ) : (
-                              <Input />
-                            )}
-                          </FormGroup>
-                        </Col>
-                        <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-district"
-                            >
-                              DISTRICT
-                            </label>
-                            {states &&
-                              customerInfo.permState &&
-                              states[customerInfo.permState] &&
-                              states[customerInfo.permState].districts ? (
-                              <Input
-                                required
-                                type="select"
-                                name="select-district"
-                                id="input-district"
-                                placeholder=" District"
-                                value={customerInfo && customerInfo.permDistrict}
-                                onChange={(ev) => {
-                                  customerInfo.permDistrict = ev.target.value!;
-                                  setCurrDo({
-                                    ...currDo,
-                                    customerInfo,
-                                  });
-                                }}
-                              >
-                                {states[customerInfo.permState].districts.map(
-                                  (district: string) => {
-                                    return (
-                                      <option key={district} value={district}>
-                                        {district}
-                                      </option>
-                                    );
-                                  }
-                                )}
-                              </Input>
-                            ) : (
-                              <Input
-                                required
-                                className="form-control-alternative"
-                                id="input-curr-state"
-                                value={customerInfo && customerInfo.permDistrict}
-                                onChange={(ev) => {
-                                  customerInfo.permDistrict = ev.target.value.toLocaleUpperCase()!;
-                                  setCurrDo({
-                                    ...currDo,
-                                    customerInfo,
-                                  });
-                                }}
-                                placeholder="Enter State"
-                                type="text"
-                              />
-                            )}
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-postal-code"
-                            >
-                              POSTAL CODE
-                            </label>
+                                }
+                              )}
+                            </Input>
+                          ) : (
                             <Input
                               required
                               className="form-control-alternative"
-                              id="input-postal-code"
-                              value={customerInfo && customerInfo.permPostal}
+                              id="input-curr-state"
+                              value={customerInfo && customerInfo.permDistrict}
                               onChange={(ev) => {
-                                customerInfo.permPostal = ev.target.value.toLocaleUpperCase()!;
+                                customerInfo.permDistrict =
+                                  ev.target.value.toLocaleUpperCase()!;
                                 setCurrDo({
                                   ...currDo,
                                   customerInfo,
                                 });
                               }}
-                              placeholder="Enter Postal Code"
+                              placeholder="Enter State"
                               type="text"
                             />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                    </>
-                  )}
+                          )}
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-postal-code"
+                          >
+                            POSTAL CODE
+                          </label>
+                          <Input
+                            required
+                            className="form-control-alternative"
+                            id="input-postal-code"
+                            value={customerInfo && customerInfo.permPostal}
+                            onChange={(ev) => {
+                              customerInfo.permPostal =
+                                ev.target.value.toLocaleUpperCase()!;
+                              setCurrDo({
+                                ...currDo,
+                                customerInfo,
+                              });
+                            }}
+                            placeholder="Enter Postal Code"
+                            type="text"
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                  </>
+                 )} 
                   <Row>
                     <Col xs="8">
                       <h6 className="heading-small text-muted mb-4">
@@ -1523,7 +1555,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             // additionalInfo.inquiryType.toUpperCase()
                           }
                           onChange={(ev) => {
-                            vehicleInfo.modelCategory = ev.target.value.toLocaleUpperCase()!;
+                            vehicleInfo.modelCategory =
+                              ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
                               vehicleInfo,
@@ -1552,7 +1585,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           id="input-frame-number"
                           value={vehicleInfo && vehicleInfo.frameNumber}
                           onChange={(ev) => {
-                            vehicleInfo.frameNumber = ev.target.value.toLocaleUpperCase()!;
+                            vehicleInfo.frameNumber =
+                              ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
                               vehicleInfo,
@@ -1576,7 +1610,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           id="input-engine-number"
                           value={vehicleInfo && vehicleInfo.engineNumber}
                           onChange={(ev) => {
-                            vehicleInfo.engineNumber = ev.target.value.toLocaleUpperCase()!;
+                            vehicleInfo.engineNumber =
+                              ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
                               vehicleInfo,
@@ -1604,7 +1639,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           id="input-colour"
                           value={vehicleInfo && vehicleInfo.color}
                           onChange={(ev) => {
-                            vehicleInfo.color = ev.target.value.toLocaleUpperCase()!;
+                            vehicleInfo.color =
+                              ev.target.value.toLocaleUpperCase()!;
                             currDo.color = ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
@@ -1669,7 +1705,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           id="input-financier"
                           value={additionalInfo && additionalInfo.roadTaxWithRc}
                           onChange={(ev) => {
-                            additionalInfo.roadTaxWithRc = ev.target.value.toLocaleUpperCase()!;
+                            additionalInfo.roadTaxWithRc =
+                              ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
                               additionalInfo,
@@ -1706,18 +1743,19 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }}
                         >
                           <option value="0">None</option>
-                          {Object.values(postalCharge).map((postalCharge: any) => {
-                            return (
-                              <option key={postalCharge} value={postalCharge}>
-                                {postalCharge}
-                              </option>
-                            );
-                          })}
+                          {Object.values(postalCharge).map(
+                            (postalCharge: any) => {
+                              return (
+                                <option key={postalCharge} value={postalCharge}>
+                                  {postalCharge}
+                                </option>
+                              );
+                            }
+                          )}
                           {/* <option value="25">25</option>
                           <option value="250">250</option> */}
                         </Input>
                       </FormGroup>
-
                     </Col>
                     <Col lg="6">
                       <FormGroup>
@@ -1733,7 +1771,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           id="input-price"
                           value={additionalInfo && additionalInfo.price}
                           onChange={(ev) => {
-                            additionalInfo.price = ev.target.value.toLocaleUpperCase()!;
+                            additionalInfo.price =
+                              ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
                               additionalInfo,
@@ -1866,7 +1905,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             additionalInfo && additionalInfo.extendedWarranty
                           }
                           onChange={(ev) => {
-                            additionalInfo.extendedWarranty = ev.target.value.toLocaleUpperCase()!;
+                            additionalInfo.extendedWarranty =
+                              ev.target.value.toLocaleUpperCase()!;
                             setCurrDo({
                               ...currDo,
                               additionalInfo,
@@ -1937,7 +1977,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               });
                             }
 
-                            setPurchaseType(ev.target.value.toLocaleUpperCase()!);
+                            setPurchaseType(
+                              ev.target.value.toLocaleUpperCase()!
+                            );
                           }}
                         >
                           <option value="cash">Cash</option>
@@ -1965,7 +2007,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                                 additionalInfo && additionalInfo.downPayment
                               }
                               onChange={(ev) => {
-                                additionalInfo.downPayment = ev.target.value.toLocaleUpperCase()!;
+                                additionalInfo.downPayment =
+                                  ev.target.value.toLocaleUpperCase()!;
                                 setCurrDo({
                                   ...currDo,
                                   additionalInfo,
@@ -2000,7 +2043,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               type="text"
                             /> */}
 
-
                             <Input
                               required
                               type="select"
@@ -2016,24 +2058,44 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                                 });
                               }}
                             >
-                              <option value="COOPERATIVE BANK">COOPERATIVE BANK</option>
+                              <option value="COOPERATIVE BANK">
+                                COOPERATIVE BANK
+                              </option>
                               <option value="ICICI BANK">ICICI BANK</option>
                               <option value="AU BANK">AU BANK</option>
-                              <option value="DEALER OWNED FINANCE">DEALER OWNED FINANCE</option>
-                              <option value="GOVERNMENT BANK">GOVERNMENT BANK</option>
+                              <option value="DEALER OWNED FINANCE">
+                                DEALER OWNED FINANCE
+                              </option>
+                              <option value="GOVERNMENT BANK">
+                                GOVERNMENT BANK
+                              </option>
                               <option value="GRAMIN BANK">GRAMIN BANK</option>
-                              <option value="L&T FINANCIAL SERVICES">L&T FINANCIAL SERVICES</option>
-                              <option value="CHOLA MURUGAPPA">CHOLA MURUGAPPA</option>
+                              <option value="L&T FINANCIAL SERVICES">
+                                L&T FINANCIAL SERVICES
+                              </option>
+                              <option value="CHOLA MURUGAPPA">
+                                CHOLA MURUGAPPA
+                              </option>
                               <option value="HDFC BANK">HDFC BANK</option>
                               <option value="HOME CREDIT">HOME CREDIT</option>
-                              <option value="Hinduja Leyland Finance Ltd">Hinduja Leyland Finance Ltd</option>
-                              <option value="IDFC FIRST BANK">IDFC FIRST BANK</option>
+                              <option value="Hinduja Leyland Finance Ltd">
+                                Hinduja Leyland Finance Ltd
+                              </option>
+                              <option value="IDFC FIRST BANK">
+                                IDFC FIRST BANK
+                              </option>
                               <option value="Induslnd">Induslnd</option>
-                              <option value="Panjab National Bank">Panjab National Bank</option>
+                              <option value="Panjab National Bank">
+                                Panjab National Bank
+                              </option>
                               <option value="SBI">SBI</option>
-                              <option value="Shri Ram Finance">Shri Ram Finance</option>
+                              <option value="Shri Ram Finance">
+                                Shri Ram Finance
+                              </option>
                               <option value="TATA CAPITAL">TATA CAPITAL</option>
-                              <option value="Muthoot Finance">Muthoot Finance</option>
+                              <option value="Muthoot Finance">
+                                Muthoot Finance
+                              </option>
                               <option value="OTHERS">OTHERS</option>
 
                               {/* <option value="0">NONE</option>
@@ -2058,7 +2120,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               id="input-executive "
                               value={additionalInfo && additionalInfo.executive}
                               onChange={(ev) => {
-                                additionalInfo.executive = ev.target.value.toLocaleUpperCase()!;
+                                additionalInfo.executive =
+                                  ev.target.value.toLocaleUpperCase()!;
                                 setCurrDo({
                                   ...currDo,
                                   additionalInfo,
@@ -2093,7 +2156,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               type="text"
                             /> */}
 
-
                             <Input
                               required
                               type="select"
@@ -2110,7 +2172,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               }}
                             >
                               <option value="Counter Sale">Counter Sale</option>
-                              <option value="Non-Counter Sale">Non-Counter Sale</option>
+                              <option value="Non-Counter Sale">
+                                Non-Counter Sale
+                              </option>
                             </Input>
                           </FormGroup>
                         </Col>
@@ -2153,7 +2217,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                                         currDo.additionalInfo &&
                                         currDo.additionalInfo.accessoriesList &&
                                         currDo.additionalInfo.accessoriesList[
-                                        accessory
+                                          accessory
                                         ]
                                       )
                                     }

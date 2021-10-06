@@ -48,9 +48,9 @@ import EditDo from "../../components/Tables/EditDo";
 import SmallLoading from "../../components/Share/SmallLoading";
 import Loading from "../../components/Share/Loading";
 
-import 'jquery/dist/jquery.min.js';
-import "datatables.net-dt/js/dataTables.dataTables"
-import "datatables.net-dt/css/jquery.dataTables.min.css"
+import "jquery/dist/jquery.min.js";
+import "datatables.net-dt/js/dataTables.dataTables";
+import "datatables.net-dt/css/jquery.dataTables.min.css";
 var $ = require("jquery");
 
 import {
@@ -179,14 +179,13 @@ const DeliveryOrders: React.FC = () => {
           }
         }
       });
-
     }
+
     $(document).ready(function () {
       setTimeout(function () {
-        $('#example').DataTable();
+        $("#example").DataTable();
       }, 1000);
     });
-
   }, []);
 
   useEffect(() => {
@@ -225,51 +224,48 @@ const DeliveryOrders: React.FC = () => {
     }
   }, [currentStatus]);
 
-
-
   //dashboard status count
   useEffect(() => {
     debugger;
     const dealerId = user.createdBy || user.uid || "";
-    let tempData: any
+    let tempData: any;
     if (
       selected !== undefined &&
       currentStatus !== undefined &&
       deliveryOrders[selected].status !== currentStatus &&
       deliveryOrders[selected].status === "PENDING"
     ) {
-      const docRef = firebase
-        .firestore()
-        .collection("status")
-        .doc(dealerId);
-      docRef.get().then((doc) => {
-        if (doc.exists) {
-          tempData = doc.data();
-          //setDashBoardStatus(tempData);
-        }
-      }).then(() => {
-        if (currentStatus === "DO_CREATED") {
-          let statusCount: Number;
-          statusCount = tempData.DO_CREATED + 1;
-          db.collection("status")
-            .doc(dealerId)
-            .set({
-              DO_CREATED: statusCount
-            },
+      const docRef = firebase.firestore().collection("status").doc(dealerId);
+      docRef
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            tempData = doc.data();
+            //setDashBoardStatus(tempData);
+          }
+        })
+        .then(() => {
+          if (currentStatus === "DO_CREATED") {
+            let statusCount: Number;
+            statusCount = tempData.DO_CREATED + 1;
+            db.collection("status").doc(dealerId).set(
+              {
+                DO_CREATED: statusCount,
+              },
               { merge: true }
-            )
-        }
-      }).then(() => {
-        let statusCount: Number;
-        statusCount = tempData.PENDING - 1;
-        firebase.firestore().collection("status")
-          .doc(dealerId)
-          .set({
-            PENDING: statusCount
-          },
+            );
+          }
+        })
+        .then(() => {
+          let statusCount: Number;
+          statusCount = tempData.PENDING - 1;
+          firebase.firestore().collection("status").doc(dealerId).set(
+            {
+              PENDING: statusCount,
+            },
             { merge: true }
-          )
-      })
+          );
+        });
     }
     //dashboard invoice status count
     if (
@@ -278,38 +274,37 @@ const DeliveryOrders: React.FC = () => {
       deliveryOrders[selected].status !== currentStatus &&
       deliveryOrders[selected].status === "DO_CREATED"
     ) {
-      const docRef = firebase
-        .firestore()
-        .collection("status")
-        .doc(dealerId);
-      docRef.get().then((doc) => {
-        if (doc.exists) {
-          tempData = doc.data();
-          //setDashBoardStatus(tempData);
-        }
-      }).then(() => {
-        if (currentStatus === "INVOICE_CREATED") {
-          let statusCount: Number;
-          statusCount = tempData.INVOICE_CREATED + 1;
-          db.collection("status")
-            .doc(dealerId)
-            .set({
-              INVOICE_CREATED: statusCount
-            },
+      const docRef = firebase.firestore().collection("status").doc(dealerId);
+      docRef
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            tempData = doc.data();
+            //setDashBoardStatus(tempData);
+          }
+        })
+        .then(() => {
+          if (currentStatus === "INVOICE_CREATED") {
+            let statusCount: Number;
+            statusCount = tempData.INVOICE_CREATED + 1;
+            db.collection("status").doc(dealerId).set(
+              {
+                INVOICE_CREATED: statusCount,
+              },
               { merge: true }
-            )
-        }
-      }).then(() => {
-        let statusCount: Number;
-        statusCount = tempData.DO_CREATED - 1;
-        firebase.firestore().collection("status")
-          .doc(dealerId)
-          .set({
-            DO_CREATED: statusCount
-          },
+            );
+          }
+        })
+        .then(() => {
+          let statusCount: Number;
+          statusCount = tempData.DO_CREATED - 1;
+          firebase.firestore().collection("status").doc(dealerId).set(
+            {
+              DO_CREATED: statusCount,
+            },
             { merge: true }
-          )
-      })
+          );
+        });
     }
     //dashboard insurance status count
     if (
@@ -318,38 +313,37 @@ const DeliveryOrders: React.FC = () => {
       deliveryOrders[selected].status !== currentStatus &&
       deliveryOrders[selected].status === "INVOICE_CREATED"
     ) {
-      const docRef = firebase
-        .firestore()
-        .collection("status")
-        .doc(dealerId);
-      docRef.get().then((doc) => {
-        if (doc.exists) {
-          tempData = doc.data();
-          //setDashBoardStatus(tempData);
-        }
-      }).then(() => {
-        if (currentStatus === "INSURANCE_CREATED") {
-          let statusCount: Number;
-          statusCount = tempData.INSURENCE_CREATED + 1;
-          db.collection("status")
-            .doc(dealerId)
-            .set({
-              INSURENCE_CREATED: statusCount
-            },
+      const docRef = firebase.firestore().collection("status").doc(dealerId);
+      docRef
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            tempData = doc.data();
+            //setDashBoardStatus(tempData);
+          }
+        })
+        .then(() => {
+          if (currentStatus === "INSURANCE_CREATED") {
+            let statusCount: Number;
+            statusCount = tempData.INSURENCE_CREATED + 1;
+            db.collection("status").doc(dealerId).set(
+              {
+                INSURENCE_CREATED: statusCount,
+              },
               { merge: true }
-            )
-        }
-      }).then(() => {
-        let statusCount: Number;
-        statusCount = tempData.INVOICE_CREATED - 1;
-        firebase.firestore().collection("status")
-          .doc(dealerId)
-          .set({
-            INVOICE_CREATED: statusCount
-          },
+            );
+          }
+        })
+        .then(() => {
+          let statusCount: Number;
+          statusCount = tempData.INVOICE_CREATED - 1;
+          firebase.firestore().collection("status").doc(dealerId).set(
+            {
+              INVOICE_CREATED: statusCount,
+            },
             { merge: true }
-          )
-      })
+          );
+        });
     }
     //dashboard done status count
     if (
@@ -358,41 +352,38 @@ const DeliveryOrders: React.FC = () => {
       deliveryOrders[selected].status !== currentStatus &&
       deliveryOrders[selected].status === "INSURANCE_CREATED"
     ) {
-      const docRef = firebase
-        .firestore()
-        .collection("status")
-        .doc(dealerId);
-      docRef.get().then((doc) => {
-        if (doc.exists) {
-          tempData = doc.data();
-        }
-      }).then(() => {
-        if (currentStatus === "DONE") {
-          let statusCount: Number;
-          statusCount = tempData.DONE + 1;
-          db.collection("status")
-            .doc(dealerId)
-            .set({
-              DONE: statusCount
-            },
+      const docRef = firebase.firestore().collection("status").doc(dealerId);
+      docRef
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            tempData = doc.data();
+          }
+        })
+        .then(() => {
+          if (currentStatus === "DONE") {
+            let statusCount: Number;
+            statusCount = tempData.DONE + 1;
+            db.collection("status").doc(dealerId).set(
+              {
+                DONE: statusCount,
+              },
               { merge: true }
-            )
-        }
-      }).then(() => {
-        let statusCount: Number;
-        statusCount = tempData.INSURENCE_CREATED - 1;
-        firebase.firestore().collection("status")
-          .doc(dealerId)
-          .set({
-            INSURENCE_CREATED: statusCount
-          },
+            );
+          }
+        })
+        .then(() => {
+          let statusCount: Number;
+          statusCount = tempData.INSURENCE_CREATED - 1;
+          firebase.firestore().collection("status").doc(dealerId).set(
+            {
+              INSURENCE_CREATED: statusCount,
+            },
             { merge: true }
-          )
-      })
+          );
+        });
     }
   }, [currentStatus]);
-
-
 
   useEffect(() => {
     if (selected !== undefined) {
@@ -770,6 +761,11 @@ const DeliveryOrders: React.FC = () => {
     if (selected !== undefined) {
       setCurrentStatus(deliveryOrders[selected].status);
     }
+    $(document).ready(function () {
+      setTimeout(function () {
+        $("#example").DataTable();
+      }, 1000);
+    });
   };
 
   //edit do
@@ -821,7 +817,6 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-
   return (
     <>
       {loading && (
@@ -837,7 +832,7 @@ const DeliveryOrders: React.FC = () => {
             backdrop="static"
             keyboard={false}
             size="lg"
-          //onExit={() => closeModal()}
+            //onExit={() => closeModal()}
           >
             <ModalHeader
               className="p-4"
@@ -1002,7 +997,7 @@ const DeliveryOrders: React.FC = () => {
                   </div>
                 </>
               ) : (
-                <div>
+                <div style={{ padding: "7px" }}>
                   {Object.values(deliveryOrders).length > 0 ? (
                     <Table
                       className="align-items-center table-flush"
@@ -1022,14 +1017,13 @@ const DeliveryOrders: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody>
-
                         {Object.values(deliveryOrders).map((currElem: any) => {
                           let deliveryDate = new Date(currElem.createdOn)
-                          .toJSON()
-                          .slice(0, 10)
-                          .split("-")
-                          .reverse()
-                          .join("/");
+                            .toJSON()
+                            .slice(0, 10)
+                            .split("-")
+                            .reverse()
+                            .join("/");
                           return (
                             <tr
                               key={currElem.id}
@@ -1088,7 +1082,6 @@ const DeliveryOrders: React.FC = () => {
                   ) : (
                     <CardBody className="p-4">You are all done!</CardBody>
                   )}
-
                 </div>
               )}
             </Card>
