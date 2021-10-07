@@ -40,6 +40,13 @@ import Header from "../../components/Headers/Header";
 const PdfRead: React.FC = () => {
   const [pdfDoc, setPdfDoc] = useState<string>();
   console.log(pdfDoc);
+  useEffect(() => {
+    debugger;
+    window.api.send("toMain", {
+      type: "PDF_READ",
+      data: pdfDoc,
+    });
+  }, [pdfDoc]);
   return (
     <>
       <Header />
