@@ -461,6 +461,20 @@ const DeliveryOrders: React.FC = () => {
               >
                 {loading ? <SmallLoading /> : "Print Invoice"}
               </Button>
+              <Button
+                className="my-2"
+                color={"primary"}
+                disabled={loading}
+                onClick={editDO}
+                size="sm"
+                title="Edit"
+              >
+                {loading && showEditDo ? (
+                  <SmallLoading />
+                ) : (
+                  <i className="fas fa-pencil-alt" />
+                )}
+              </Button>
             </>
           );
         }
@@ -908,7 +922,9 @@ const DeliveryOrders: React.FC = () => {
               tag="h3"
               toggle={() => setShowModal(!showModal)}
             >
-              {deliveryOrders[selected].status === "PENDING"
+              {deliveryOrders[selected].status === "PENDING" ||
+              deliveryOrders[selected].status === "INCOMPLETE" ||
+              deliveryOrders[selected].status === "DO_CREATED"
                 ? "Delivery Order"
                 : "Invoice"}
             </ModalHeader>
