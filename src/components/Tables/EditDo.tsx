@@ -157,10 +157,11 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   }, [deliveryOrder]);
 
   // useEffect(() => {
-  //   if(currDo.customerInfo?.sameAddress==="true"){
+  //   if (currDo.customerInfo?.sameAddress === "true") {
   //     setCurrDo({
   //       ...currDo,
   //       customerInfo: {
+  //         ...currDo.customerInfo,
   //         permLineOne: currDo.customerInfo.currLineOne || "",
   //         permLineTwo: currDo.customerInfo.currLineTwo || "",
   //         permCity: currDo.customerInfo.currCity || "",
