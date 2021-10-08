@@ -37,6 +37,9 @@ import {
   InputGroupText,
   Label,
 } from "reactstrap";
+import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
+import "react-bootstrap-table/dist/react-bootstrap-table-all.min.css";
+
 // core components
 import Header from "../../components/Headers/Header";
 import DeliveryOrderTable, {
@@ -47,11 +50,6 @@ import InvoiceTable from "../../components/Tables/InvoiceTable";
 import EditDo from "../../components/Tables/EditDo";
 import SmallLoading from "../../components/Share/SmallLoading";
 import Loading from "../../components/Share/Loading";
-
-import "jquery/dist/jquery.min.js";
-import "datatables.net-dt/js/dataTables.dataTables";
-import "datatables.net-dt/css/jquery.dataTables.min.css";
-var $ = require("jquery");
 
 import {
   UserContext,
@@ -180,12 +178,6 @@ const DeliveryOrders: React.FC = () => {
         }
       });
     }
-
-    $(document).ready(function () {
-      setTimeout(function () {
-        $("#example").DataTable();
-      }, 1000);
-    });
   }, []);
 
   useEffect(() => {
@@ -775,11 +767,6 @@ const DeliveryOrders: React.FC = () => {
     if (selected !== undefined) {
       setCurrentStatus(deliveryOrders[selected].status);
     }
-    $(document).ready(function () {
-      setTimeout(function () {
-        $("#example").DataTable();
-      }, 1000);
-    });
   };
 
   //edit do
@@ -828,6 +815,61 @@ const DeliveryOrders: React.FC = () => {
       setCurrentStatus(order.status);
 
       closeModal();
+    }
+  };
+
+  const rows = Object.values(deliveryOrders).map((currElem: any) => {
+    const { name, modelName, color, status, createdOn, id } = currElem;
+
+    let date = new Date(createdOn)
+      .toJSON()
+      .slice(0, 10)
+      .split("-")
+      .reverse()
+      .join("/");
+    return {
+      id,
+      name,
+      modelName,
+      color,
+      status: status.split("_").join(" "),
+      date,
+    };
+  });
+
+  const customMultiSelect = (props: any) => {
+    const { type, checked, disabled, onChange, rowIndex } = props;
+    /*
+     * If rowIndex is 'Header', means this rendering is for header selection column.
+     */
+    if (rowIndex === "Header") {
+      return "";
+    } else {
+      return (
+        <div className="checkbox-percustomMultiSelectsonalized">
+          <Input
+            className="position-relative"
+            type={type}
+            name={"checkbox" + rowIndex}
+            id={"checkbox" + rowIndex}
+            color="primary"
+            checked={checked}
+            disabled={disabled}
+            style={{ cursor: "pointer" }}
+            // onChange={() => toggleSelected(currElem.id)}
+            onChange={(e) => onChange(e, rowIndex)}
+          />
+          <label htmlFor={"checkbox" + rowIndex}>
+            <div className="check"></div>
+          </label>
+        </div>
+      );
+    }
+  };
+
+  const handleSelect = (row: any, isSelected: boolean, e: any) => {
+    if (isSelected) {
+      toggleSelected(row.id);
     }
   };
 
@@ -1015,86 +1057,38 @@ const DeliveryOrders: React.FC = () => {
               ) : (
                 <div style={{ padding: "7px" }}>
                   {Object.values(deliveryOrders).length > 0 ? (
-                    <Table
-                      className="align-items-center table-flush"
-                      responsive
-                      id="example"
+                    <BootstrapTable
+                      data={rows}
+                      striped
+                      hover
+                      keyField="id"
+                      selectRow={{
+                        mode: "radio",
+                        customComponent: customMultiSelect,
+                        onSelect: handleSelect,
+                      }}
+                      pagination
+                      search={true}
                     >
-                      <thead className="thead-light">
-                        <tr>
-                          <th scope="col" className="text-center">
-                            Select
-                          </th>
-                          <th scope="col">Name</th>
-                          <th scope="col">Model Name</th>
-                          <th scope="col">Color</th>
-                          <th scope="col">Status</th>
-                          <th scope="col">Date</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {Object.values(deliveryOrders).map((currElem: any) => {
-                          let deliveryDate = new Date(currElem.createdOn)
-                            .toJSON()
-                            .slice(0, 10)
-                            .split("-")
-                            .reverse()
-                            .join("/");
-                          return (
-                            <tr
-                              key={currElem.id}
-                              onClick={() => toggleSelected(currElem.id)}
-                              style={{ cursor: "pointer" }}
-                            >
-                              <td scope="row" className="text-center">
-                                <Input
-                                  className="position-relative"
-                                  type="checkbox"
-                                  color="primary"
-                                  disabled={!!loading}
-                                  checked={currElem.id === selected}
-                                  style={{ cursor: "pointer" }}
-                                  onChange={() => toggleSelected(currElem.id)}
-                                />
-                              </td>
-                              <td>{currElem.name}</td>
-                              <td>{currElem.modelName}</td>
-                              <td>{currElem.color}</td>
-                              <td>{currElem.status.split("_").join(" ")}</td>
-                              <td>{deliveryDate}</td>
-                            </tr>
-                          );
-                        })}
-
-                        {/* {Object.values(deliveryOrders).map(
-                          (currElem: any, index: number) =>
-                            currElem.active && (
-                              <tr
-                                key={currElem.id}
-                                onClick={() => toggleSelected(currElem.id)}
-                                style={{ cursor: "pointer" }}
-                              >
-                                <td scope="row" className="text-center">
-                                  <Input
-                                    className="position-relative"
-                                    type="checkbox"
-                                    color="primary"
-                                    disabled={!!loading}
-                                    checked={currElem.id === selected}
-                                    style={{ cursor: "pointer" }}
-                                    onChange={() => toggleSelected(currElem.id)}
-                                  />
-                                </td>
-                                <td>{currElem.name}</td>
-                                <td>{currElem.modelName}</td>
-                                <td>{currElem.color}</td>
-                                <td>{currElem.status.split("_").join(" ")}</td>
-                                <td>{currElem.createdOn}</td>
-                              </tr>
-                            )
-                        )} */}
-                      </tbody>
-                    </Table>
+                      <TableHeaderColumn dataSort={true} dataField="id" hidden>
+                        Id
+                      </TableHeaderColumn>
+                      <TableHeaderColumn dataSort={true} dataField="name">
+                        Name
+                      </TableHeaderColumn>
+                      <TableHeaderColumn dataSort={true} dataField="modelName">
+                        Model Name
+                      </TableHeaderColumn>
+                      <TableHeaderColumn dataSort={true} dataField="color">
+                        Colour
+                      </TableHeaderColumn>
+                      <TableHeaderColumn dataSort={true} dataField="status">
+                        Status
+                      </TableHeaderColumn>
+                      <TableHeaderColumn dataSort={true} dataField="date">
+                        Date
+                      </TableHeaderColumn>
+                    </BootstrapTable>
                   ) : (
                     <CardBody className="p-4">You are all done!</CardBody>
                   )}
