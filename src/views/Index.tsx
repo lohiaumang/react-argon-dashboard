@@ -50,16 +50,13 @@ const Index: React.FC = () => {
   const [salesManWiseSale, setSalesManWiseSale] = useState<any>([]);
   const [dashBoardStatus, setDashBoardStatus] = useState<any>([]);
 
-  const weekWiseRef =
-    useRef() as React.MutableRefObject<HTMLDivElement>;
+  const weekWiseRef = useRef() as React.MutableRefObject<HTMLDivElement>;
   // const dataCount = dateWiseData.length;
-
 
   const currentUser: any = firebase.auth().currentUser;
   // const pageSize = 10;
 
   useEffect(() => {
-
     //Get Week
     const dt = new Date();
     let weekNumber: any;
@@ -69,17 +66,12 @@ const Index: React.FC = () => {
     const firstThursday = tdt.valueOf();
     tdt.setMonth(0, 1);
     if (tdt.getDay() !== 4) {
-      tdt.setMonth(0, 1 + ((4 - tdt.getDay()) + 7) % 7);
+      tdt.setMonth(0, 1 + ((4 - tdt.getDay() + 7) % 7));
     }
     weekNumber = 1 + Math.ceil((firstThursday - tdt) / 604800000);
 
-
-
     const dealerId = user.createdBy || user.uid || "";
-    const docRef = firebase
-      .firestore()
-      .collection("byWeek")
-      .doc(dealerId);
+    const docRef = firebase.firestore().collection("byWeek").doc(dealerId);
     docRef.get().then((doc) => {
       if (doc.exists) {
         let tempData: any = doc.data();
@@ -106,11 +98,8 @@ const Index: React.FC = () => {
 
     const d = new Date();
     const currentMonth = month[d.getMonth()].toLowerCase();
-    console.log(currentMonth)
-    const docRef1 = firebase
-      .firestore()
-      .collection("byMonth")
-      .doc(dealerId);
+    console.log(currentMonth);
+    const docRef1 = firebase.firestore().collection("byMonth").doc(dealerId);
     docRef1.get().then((doc) => {
       if (doc.exists) {
         let tempData: any = doc.data();
@@ -120,10 +109,7 @@ const Index: React.FC = () => {
       }
     });
 
-    const docRef2 = firebase
-      .firestore()
-      .collection("bySalesMan")
-      .doc(dealerId);
+    const docRef2 = firebase.firestore().collection("bySalesMan").doc(dealerId);
     docRef2.get().then((doc) => {
       if (doc.exists) {
         let tempData: any = doc.data();
@@ -133,25 +119,19 @@ const Index: React.FC = () => {
       }
     });
 
-
-    const docRef3 = firebase
-      .firestore()
-      .collection("status")
-      .doc(dealerId);
+    const docRef3 = firebase.firestore().collection("status").doc(dealerId);
     docRef3.get().then((doc) => {
       if (doc.exists) {
         let tempData: any = doc.data();
         setDashBoardStatus(tempData);
       }
     });
-
   }, []);
-
 
   const weekTotalSale = () => {
     let totalsale: any = Object.keys(weekWiseSale);
     weekWiseSale[totalsale].totalsaleValue;
-  }
+  };
   ////////////////////////
   // useEffect(() => {
   //
@@ -272,8 +252,8 @@ const Index: React.FC = () => {
                             //active: activeNav === 1,
                           })}
                           href="#pablo"
-                        //onClick={(e) => monthUiseData(e, 1)}
-                        // onClick={() => monthUiseData()}
+                          //onClick={(e) => monthUiseData(e, 1)}
+                          // onClick={() => monthUiseData()}
                         >
                           <span className="d-none d-md-block">Month</span>
                           <span className="d-md-none">M</span>
@@ -296,16 +276,12 @@ const Index: React.FC = () => {
                   </div>
                 </Row>
               </CardHeader>
-              <CardBody>
-              </CardBody>
+              <CardBody></CardBody>
             </Card>
           </Col>
         </Row>
 
-        <DashBoardStatus
-          ref={weekWiseRef}
-          dashBoardStatus={dashBoardStatus}
-        />
+        <DashBoardStatus ref={weekWiseRef} dashBoardStatus={dashBoardStatus} />
         <Row className="mt-5">
           <Col className="mb-5 mb-xl-0" xl="12">
             <Card className="shadow">
@@ -331,10 +307,7 @@ const Index: React.FC = () => {
                   </div>
                 </Row>
               </CardHeader>
-              <WeekWiseDelevery
-                ref={weekWiseRef}
-                weekWiseData={weekWiseSale}
-              />
+              <WeekWiseDelevery ref={weekWiseRef} weekWiseData={weekWiseSale} />
             </Card>
           </Col>
 
@@ -353,7 +326,6 @@ const Index: React.FC = () => {
               />
             </Card>
           </Col>
-
         </Row>
       </Container>
     </>
