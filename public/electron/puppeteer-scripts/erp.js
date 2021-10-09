@@ -151,6 +151,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
       await typeText(
         page,
+        'input[name="s_5_1_8_0"]',
+        data.customerInfo.lastName
+      );
+      await typeText(
+        page,
         'input[name="s_5_1_0_0"]',
         data.customerInfo.phoneNo
       );
@@ -801,16 +806,25 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         .split("-")
         .reverse()
         .join("/");
+      console.log(deliveryDate);
 
-      await typeText(
-        page,
-        '.GridBack > tbody > tr > td[valign="middle"] input[name="s_1_1_38_0"]',
-        deliveryDate
-      ); //todo
+      const dDate = await page.evaluate(
+        () => document.querySelector('input[name="s_1_1_38_0"]').value
+      );
+      if (!dDate) {
+        await typeText(page, 'input[name="s_1_1_38_0"]', deliveryDate);
+      }
+      //todo
       // await page.waitForResponse(
       //   "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
       // );
       await waitForNetworkIdle(page, timeout, 0);
+      await page.waitForSelector(
+        ".AppletButtons.siebui-applet-buttons > button",
+        {
+          visible: true,
+        }
+      );
 
       await click(page, ".AppletButtons.siebui-applet-buttons > button"); //get price clcik
       await page.waitForFunction(
