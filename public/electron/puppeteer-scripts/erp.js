@@ -318,11 +318,14 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           data.customerInfo.currPostal
         );
 
-        await typeText(
-          page,
-          'input[aria-label="Email"]',
-          data.customerInfo.email
-        );
+        if (data.customerInfo.email) {
+          await typeText(
+            page,
+            'input[aria-label="Email"]',
+            data.customerInfo.email
+          );
+        }
+
         await click(page, 'table[summary="View All Contacts"] td[title] a');
       } else {
         await waitForNetworkIdle(page, timeout, 0);
