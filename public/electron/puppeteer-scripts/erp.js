@@ -8,8 +8,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
   let timeout = systemConfig.erpTimeOut;
 
-
-
   //const navigationPromise = page.waitForNavigation();
 
   // function catchRequests(page, reqs = 0) {
@@ -126,9 +124,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await click(page, "#s_swepi_22");
       }
       await waitForNetworkIdle(page, timeout, 0);
-      // await page.waitForResponse(
-      //   "https://hirise.honda2wheelersindia.com/siebel/images/icon_execute_query.gif"
-      // );
 
       await page.waitForSelector("div[title='First Level View Bar']", {
         visible: true,
@@ -149,22 +144,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.waitForSelector(`#${customerButton.id}`, { visible: true });
       await page.$eval(`#${customerButton.id}`, (el) => el.click());
       await waitForNetworkIdle(page, timeout, 0);
-      // fill data select
-      // await click(
-      //   page,
-      //   'table > tbody > tr > .siebui-bullet-item > #s_3_2_18_0_span > .siebui-anchor-readonly > a[rowid="3"]'
-      // );
-      //inquery created automation start
       await typeText(
         page,
         'input[name="s_5_1_12_0"]',
         data.customerInfo.firstName
       );
-      // await typeText(
-      //   page,
-      //   'input[name="s_5_1_8_0"]',
-      //   data.customerInfo.lastName
-      // );
       await typeText(
         page,
         'input[name="s_5_1_0_0"]',
@@ -173,10 +157,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await waitForNetworkIdle(page, timeout, 0);
       await click(page, 'button[name="s_5_1_10_0"]');
       await waitForNetworkIdle(page, timeout, 0);
-      // await page.waitForTimeout(3000);
-      // await page.waitForResponse(
-      //   "https://hirise.honda2wheelersindia.com/siebel/images/rcnv_nxt_1.gif"
-      // );
+
+      await page.waitForSelector('select[title="Visibility"]', {
+        visible: true,
+      });
+
       const cName = await page.evaluate(
         () => document.querySelector("input[aria-label='First Name']").value
       );
@@ -348,17 +333,22 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
         await waitForNetworkIdle(page, timeout, 0);
 
+        await page.waitForSelector(
+          "div[title='Contacts List Applet'] .AppletHIListBorder",
+          { visible: true }
+        );
+
         const userExists = await page.evaluate(
           () =>
             !!document.querySelector(
-              'table[summary="View All Contacts"] td[title] a', {
-              waitUntil: 'networkidle2',
-            }
+              'table[summary="View All Contacts"] td[title] a',
+              {
+                waitUntil: "networkidle2",
+              }
             )
         );
-        console.log(userExists);
         // TODO: USER CHECK
-        await waitForNetworkIdle(page, timeout, 0);
+        // await waitForNetworkIdle(page, timeout, 0);
         if (userExists) {
           await click(page, 'table[summary="View All Contacts"] td[title] a');
 
@@ -669,14 +659,14 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           // await typeText(page, 'input[aria-labelledby="s_6_l_Name "]', data.additionalInfo.financier);
           // await click(page, 'button[aria-label="Pick Financier:Go"]');
           // await click(page, 'button[aria-label="Pick Financier:OK"]');
-          await typeText(page, 'input[aria-label="Financier"]', data.additionalInfo.financier);
-
+          await typeText(
+            page,
+            'input[aria-label="Financier"]',
+            data.additionalInfo.financier
+          );
 
           //Model Variant
-          await click(
-            page,
-            'input[aria-label="Counter/Non-Counter"]+span'
-          );
+          await click(page, 'input[aria-label="Counter/Non-Counter"]+span');
           await page.waitForSelector(
             "ul[role='combobox']:not([style*='display: none'])",
             { visible: true }
@@ -694,7 +684,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           );
           await click(page, `#${saleTypeButton.id}`);
         }
-
 
         //Assigned To (DSE)  todo
         await click(page, 'input[aria-label="Assigned To (DSE)"] + span');

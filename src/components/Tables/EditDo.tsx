@@ -199,13 +199,15 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
     } = currDo;
 
     const getDeliveryOrder = async (status: string) => {
+      setEditDoLoading(true);
+
       let vehicleId: string = currDo.vehicleId || "";
       let customerId: string = currDo.customerId || "";
       let additionalId: string = currDo.additionalId || "";
       let id: string = currDo.id || "";
 
       if (customerInfo.sameAddress === "true") {
-        customerInfo=({
+        customerInfo = {
           ...customerInfo,
           permLineOne: customerInfo.currLineOne || "",
           permLineTwo: customerInfo.currLineTwo || "",
@@ -214,9 +216,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
           permState: customerInfo.currState || "",
           permDistrict: customerInfo.currDistrict || "",
           permPostal: customerInfo.currPostal || "",
-        });
+        };
       }
-      setEditDoLoading(true);
+
       if (!vehicleId && vehicleInfo && !isEmpty(vehicleInfo)) {
         const data = await firebase
           .firestore()
