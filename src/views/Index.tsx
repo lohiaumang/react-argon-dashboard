@@ -20,7 +20,6 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import classnames from "classnames";
 // javascipt plugin for creating charts
 // react plugin used to create charts
-import { Line, Bar } from "react-chartjs-2";
 // reactstrap components
 import {
   Card,

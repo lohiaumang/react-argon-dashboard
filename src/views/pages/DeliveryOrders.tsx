@@ -402,7 +402,7 @@ const DeliveryOrders: React.FC = () => {
               size="sm"
               title="Edit"
             >
-              {loading ? <SmallLoading /> : <i className="fas fa-pencil-alt" />}
+              <i className="fas fa-pencil-alt" />
             </Button>
           );
         }
@@ -415,7 +415,7 @@ const DeliveryOrders: React.FC = () => {
                 onClick={createDO}
                 size="sm"
               >
-                {loading && !showEditDo ? <SmallLoading /> : "Print DO"}
+                Print DO
               </Button>
               <Button
                 className="my-2"
@@ -425,11 +425,7 @@ const DeliveryOrders: React.FC = () => {
                 size="sm"
                 title="Edit"
               >
-                {loading && showEditDo ? (
-                  <SmallLoading />
-                ) : (
-                  <i className="fas fa-pencil-alt" />
-                )}
+                <i className="fas fa-pencil-alt" />
               </Button>
             </>
           );
@@ -443,7 +439,7 @@ const DeliveryOrders: React.FC = () => {
                 onClick={createInvoice}
                 size="sm"
               >
-                {loading ? <SmallLoading /> : "Create Invoice"}
+                Create Invoice
               </Button>
               <Button
                 className="small-button-width my-2"
@@ -451,7 +447,7 @@ const DeliveryOrders: React.FC = () => {
                 onClick={printInvoice}
                 size="sm"
               >
-                {loading ? <SmallLoading /> : "Print Invoice"}
+                Print Invoice
               </Button>
               <Button
                 className="my-2"
@@ -461,11 +457,7 @@ const DeliveryOrders: React.FC = () => {
                 size="sm"
                 title="Edit"
               >
-                {loading && showEditDo ? (
-                  <SmallLoading />
-                ) : (
-                  <i className="fas fa-pencil-alt" />
-                )}
+                <i className="fas fa-pencil-alt" />
               </Button>
             </>
           );
@@ -479,7 +471,7 @@ const DeliveryOrders: React.FC = () => {
             >
               <>
                 <DropdownToggle caret size="sm" color={"primary"}>
-                  {loading ? <SmallLoading /> : "Create Insurance"}
+                  Create Insurance
                 </DropdownToggle>
                 <DropdownMenu>
                   <DropdownItem
@@ -510,7 +502,7 @@ const DeliveryOrders: React.FC = () => {
                 onClick={createRegistration}
                 size="sm"
               >
-                {loading ? <SmallLoading /> : "Create Registration"}
+                Create Registration
               </Button>
             </>
           );

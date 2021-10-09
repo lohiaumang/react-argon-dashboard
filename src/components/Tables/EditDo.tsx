@@ -470,17 +470,20 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                       type="submit"
                       size="sm"
                     >
-                      {editDoLoading ? <SmallLoading /> : "Create Do"}
+                      Create Do
                     </Button>
-                    <Button
-                      className="small-button-width"
-                      color={"success"}
-                      type="button"
-                      size="sm"
-                      onClick={onSave}
-                    >
-                      {editDoLoading ? <SmallLoading /> : "Save"}
-                    </Button>
+                    {deliveryOrder.status === "PENDING" ||
+                      (deliveryOrder.status === "INCOMPLETE" && (
+                        <Button
+                          className="small-button-width"
+                          color={"success"}
+                          type="button"
+                          size="sm"
+                          onClick={onSave}
+                        >
+                          Save
+                        </Button>
+                      ))}
                   </Col>
                 </Row>
                 <div className="pl-lg-4">
