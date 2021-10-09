@@ -808,6 +808,10 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         .join("/");
       console.log(deliveryDate);
 
+      await page.waitForSelector('input[name="s_1_1_38_0"]', {
+        visible: true,
+      });
+
       const dDate = await page.evaluate(
         () => document.querySelector('input[name="s_1_1_38_0"]').value
       );
