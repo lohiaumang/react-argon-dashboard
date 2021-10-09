@@ -203,6 +203,19 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
       let customerId: string = currDo.customerId || "";
       let additionalId: string = currDo.additionalId || "";
       let id: string = currDo.id || "";
+
+      if (customerInfo.sameAddress === "true") {
+        customerInfo=({
+          ...customerInfo,
+          permLineOne: customerInfo.currLineOne || "",
+          permLineTwo: customerInfo.currLineTwo || "",
+          permCity: customerInfo.currCity || "",
+          permPS: customerInfo.currPS || "",
+          permState: customerInfo.currState || "",
+          permDistrict: customerInfo.currDistrict || "",
+          permPostal: customerInfo.currPostal || "",
+        });
+      }
       setEditDoLoading(true);
       if (!vehicleId && vehicleInfo && !isEmpty(vehicleInfo)) {
         const data = await firebase
@@ -1233,26 +1246,26 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                                 sameAddress: e.target.checked!.toString(),
                               };
 
-                              if (e.target.checked!) {
-                                info = {
-                                  ...info,
-                                  permLineOne: customerInfo.currLineOne || "",
-                                  permLineTwo: customerInfo.currLineTwo || "",
-                                  permCity: customerInfo.currCity || "",
-                                  permPS: customerInfo.currPS || "",
-                                  permState: customerInfo.currState || "",
-                                  permDistrict: customerInfo.currDistrict || "",
-                                  permPostal: customerInfo.currPostal || "",
-                                };
-                              } else {
-                                delete info.permLineOne;
-                                delete info.permLineTwo;
-                                delete info.permCity;
-                                delete info.permPS;
-                                delete info.permState;
-                                delete info.permDistrict;
-                                delete info.permPostal;
-                              }
+                              // if (e.target.checked!) {
+                              //   info = {
+                              //     ...info,
+                              //     permLineOne: customerInfo.currLineOne || "",
+                              //     permLineTwo: customerInfo.currLineTwo || "",
+                              //     permCity: customerInfo.currCity || "",
+                              //     permPS: customerInfo.currPS || "",
+                              //     permState: customerInfo.currState || "",
+                              //     permDistrict: customerInfo.currDistrict || "",
+                              //     permPostal: customerInfo.currPostal || "",
+                              //   };
+                              // } else {
+                              //   delete info.permLineOne;
+                              //   delete info.permLineTwo;
+                              //   delete info.permCity;
+                              //   delete info.permPS;
+                              //   delete info.permState;
+                              //   delete info.permDistrict;
+                              //   delete info.permPostal;
+                              // }
 
                               setCurrDo({
                                 ...currDo,
