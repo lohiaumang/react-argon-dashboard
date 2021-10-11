@@ -7,6 +7,8 @@ module.exports = async function (mainWindow, browser) {
   const vahan = require("./puppeteer-scripts/vahan");
   const insurance = require("../insurance");
   const insuranceLinks = require("../insurance-links");
+  const devDbConfig=require("../dbConfig/devDbConfig");
+  const productionDbConfig=require("../dbConfig/productionDbConfig");
   var firebase = require("firebase/app");
   require("firebase/auth");
   require("firebase/functions");

@@ -8,28 +8,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
   let timeout = systemConfig.erpTimeOut;
 
-  //const navigationPromise = page.waitForNavigation();
-
-  // function catchRequests(page, reqs = 0) {
-  //   const started = () => (reqs = reqs + 1);
-  //   const ended = () => (reqs = reqs - 1);
-  //   page.on("request", started);
-  //   page.on("requestfailed", ended);
-  //   page.on("requestfinished", ended);
-  //   return async (timeout = 5000, success = false) => {
-  //     while (true) {
-  //       if (reqs < 1) break;
-  //       await new Promise((yay) => setTimeout(yay, 100));
-  //       if ((timeout = timeout - 100) < 0) {
-  //         throw new Error("Timeout");
-  //       }
-  //     }
-  //     page.off("request", started);
-  //     page.off("requestfailed", ended);
-  //     page.off("requestfinished", ended);
-  //   };
-  // }
-
+  //start network idel code
   function waitForNetworkIdle(page, tOut, maxInflightRequests = 0) {
     page.on("request", onRequestStarted);
     page.on("requestfinished", onRequestFinished);
@@ -62,7 +41,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         timeoutId = setTimeout(onTimeoutDone, tOut);
     }
   }
-
+  //end
   async function automate() {
     let done = false;
     let hsnCode = "";
@@ -108,6 +87,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
     // Wait for navigation.
 
+    //start login code
+
     try {
       await page.waitForSelector("#s_swepi_2");
       await page.click("#s_swepi_2");
@@ -123,8 +104,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         // await page.waitForNavigation();
         await click(page, "#s_swepi_22");
       }
+      //end
       await waitForNetworkIdle(page, timeout, 0);
-
+      //search inquery
       await page.waitForSelector("div[title='First Level View Bar']", {
         visible: true,
       });
@@ -161,18 +143,20 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
       await waitForNetworkIdle(page, timeout, 0);
       await click(page, 'button[name="s_5_1_10_0"]');
+
+      //end
+
       await waitForNetworkIdle(page, timeout, 0);
 
       await page.waitForSelector('select[title="Visibility"]', {
         visible: true,
       });
-
+      //get first name for validation
       const cName = await page.evaluate(
         () => document.querySelector("input[aria-label='First Name']").value
       );
-      console.log(cName, "print cName");
+      //create new inquery if first name not exist
       if (!cName) {
-        console.log(cName, "print customer name");
         await page.waitForSelector("div[title='Second Level View Bar']", {
           visible: true,
         });
@@ -327,7 +311,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         }
 
         await click(page, 'table[summary="View All Contacts"] td[title] a');
+        //end
       } else {
+        //start automation if first name exist
         await waitForNetworkIdle(page, timeout, 0);
         await click(page, 'select[name="s_vis_div"]');
         await page.select(
@@ -345,7 +331,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           "div[title='Contacts List Applet'] .AppletHIListBorder",
           { visible: true }
         );
-
+        //check user data exist or not
         const userExists = await page.evaluate(
           () =>
             !!document.querySelector(
@@ -357,6 +343,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         );
         // TODO: USER CHECK
         // await waitForNetworkIdle(page, timeout, 0);
+
+        //if user exist then not create new enquiry
         if (userExists) {
           await click(page, 'table[summary="View All Contacts"] td[title] a');
 
@@ -447,15 +435,18 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
           await fillData('input[aria-label="Email', data.customerInfo.email);
         }
+        //end
       }
       // TODO: ENQUIRY EXIST CHECK
       const enquiryExists = await page.evaluate(
         () => !!document.querySelector('table[summary="Enquiries"] td a')
       );
-
+      //if enquiry exiat then not create new enquiry
       if (enquiryExists) {
         await click(page, 'table[summary="Enquiries"] td a');
+        //end
       } else {
+        //if enquiry not exiat then create new enquiry
         await waitForNetworkIdle(page, timeout, 0);
         await click(page, 'button[title="Enquiries:New"]');
 
@@ -764,8 +755,10 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await page.$eval("td[role='gridcell'] > a", (el) => el.click());
       }
 
-      await waitForNetworkIdle(page, timeout, 0);
+      //end
 
+      await waitForNetworkIdle(page, timeout, 0);
+      //click express booking button
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
       });
@@ -780,15 +773,17 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             };
           })
       );
-
-      console.log(JSON.stringify(allTabs));
       const expressBookingButton = allTabs.find((item) =>
         item.name.includes("Express Booking")
       );
+
       await page.$eval(`#${expressBookingButton.id}`, (el) => el.click());
+      //end
       await page.waitForNavigation();
+      //click create booking button
       await page.waitForSelector('div > button[data-display="Create Booking"]');
       await click(page, 'div > button[data-display="Create Booking"]');
+      //end
 
       await page.waitForSelector(
         '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
@@ -810,7 +805,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         .reverse()
         .join("/");
       console.log(deliveryDate);
-
+      //fill delivery date
       await page.waitForSelector('input[name="s_1_1_38_0"]', {
         visible: true,
       });
@@ -821,25 +816,28 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       if (!dDate) {
         await typeText(page, 'input[name="s_1_1_38_0"]', deliveryDate);
       }
+      //end
       //todo
       // await page.waitForResponse(
       //   "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
       // );
-      await waitForNetworkIdle(page, timeout, 0);
-      await page.waitForSelector(
-        ".AppletButtons.siebui-applet-buttons > button",
-        {
-          visible: true,
-        }
-      );
+      // await waitForNetworkIdle(page, timeout, 0);
+      // await page.waitForSelector(
+      //   ".AppletButtons.siebui-applet-buttons > button",
+      //   {
+      //     visible: true,
+      //   }
+      // );
 
-      await click(page, ".AppletButtons.siebui-applet-buttons > button"); //get price clcik
+      //click get price button
+
+      await click(page, 'button[name="s_2_1_27_0"]'); //get price clcik
       await page.waitForFunction(
         () =>
           document.querySelector('input[aria-label="Balance Payment"]')
             .value !== "Rs.0.00"
       );
-
+      //get balnce price
       let price = await page.evaluate(
         () =>
           document.querySelector('input[aria-label="Balance Payment"]').value
@@ -849,6 +847,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.waitForResponse(
         "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
       );
+
+      //click payment button
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
       });
@@ -866,6 +866,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         item.name.includes("Payments")
       );
       await page.$eval(`#${paymentButton.id}`, (el) => el.click());
+
       await click(
         page,
         '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]'
@@ -893,7 +894,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
       await page.waitForSelector(`#${paymentTypeButton.id}`, { visible: true });
       await page.$eval(`#${paymentTypeButton.id}`, (el) => el.click());
+      //end
 
+      //fill price
       await click(
         page,
         '#s_2_l > tbody > tr[role="row"] > td[aria-labelledby="s_2_l_altCalc"]',
@@ -904,7 +907,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         'input[aria-labelledby="s_2_l_Transaction_Amount s_2_l_altCalc"]',
         price
       );
-
+      //end
       //Booking Details & Vehicle Allotment
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
@@ -931,6 +934,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         page,
         'div > button[aria-label="Line Items:Vehicle Allotment"]'
       );
+      //end
       await page.waitForSelector("td[id='1_s_1_l_TMI_HSN']");
       //Here get hsn code
       await page.waitForFunction(
@@ -944,6 +948,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       // let hsnCode = await page.evaluate(
       //   () => document.querySelector('td[id="1_s_1_l_TMI_HSN"]').textContent
       // );
+      //enter frame no
       await click(
         page,
         '#s_3_l > tbody > tr[role="row"] > td[data-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
