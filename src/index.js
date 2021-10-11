@@ -27,20 +27,26 @@ import "./assets/css/custom.css";
 
 import App from "./layouts/App";
 import firebase from "firebase/app";
+import devDbConfig from "./dbConfig/devDbConfig";
+import productionDbConfig from "./dbConfig/productionDbConfig";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyC-Tb0Xfay1bTSZNfAfM3EeBJjPqwvhKBM",
-  authDomain: "autoauto-97af8.firebaseapp.com",
-  databaseURL: "https://autoauto-97af8-default-rtdb.firebaseio.com",
-  projectId: "autoauto-97af8",
-  storageBucket: "autoauto-97af8.appspot.com",
-  messagingSenderId: "820359446551",
-  appId: "1:820359446551:web:548a78cbb34d4805839c52",
-  measurementId: "G-G3NJR57E7H",
-};
+// const firebaseConfig = {
+//   apiKey: "AIzaSyC-Tb0Xfay1bTSZNfAfM3EeBJjPqwvhKBM",
+//   authDomain: "autoauto-97af8.firebaseapp.com",
+//   databaseURL: "https://autoauto-97af8-default-rtdb.firebaseio.com",
+//   projectId: "autoauto-97af8",
+//   storageBucket: "autoauto-97af8.appspot.com",
+//   messagingSenderId: "820359446551",
+//   appId: "1:820359446551:web:548a78cbb34d4805839c52",
+//   measurementId: "G-G3NJR57E7H",
+// };
 
 if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
+  if (process.env.NODE_ENV === "development") {
+    firebase.initializeApp(devDbConfig);
+  } else {
+    firebase.initializeApp(productionDbConfig);
+  }
 } else {
   firebase.app(); // if already initialized, use that one
 }

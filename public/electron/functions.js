@@ -7,27 +7,34 @@ module.exports = async function (mainWindow, browser) {
   const vahan = require("./puppeteer-scripts/vahan");
   const insurance = require("../insurance");
   const insuranceLinks = require("../insurance-links");
-  const devDbConfig=require("../dbConfig/devDbConfig");
-  const productionDbConfig=require("../dbConfig/productionDbConfig");
+  const devDbConfig = require("../dbConfig/devDbConfig.js");
+  const productionDbConfig = require("../dbConfig/productionDbConfig.js");
+  const isDev = require("electron-is-dev");
   var firebase = require("firebase/app");
   require("firebase/auth");
   require("firebase/functions");
   require("firebase/firestore");
+
   let page;
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyC-Tb0Xfay1bTSZNfAfM3EeBJjPqwvhKBM",
-    authDomain: "autoauto-97af8.firebaseapp.com",
-    databaseURL: "https://autoauto-97af8-default-rtdb.firebaseio.com",
-    projectId: "autoauto-97af8",
-    storageBucket: "autoauto-97af8.appspot.com",
-    messagingSenderId: "820359446551",
-    appId: "1:820359446551:web:548a78cbb34d4805839c52",
-    measurementId: "G-G3NJR57E7H",
-  };
+  // const firebaseConfig = {
+  //   apiKey: "AIzaSyC-Tb0Xfay1bTSZNfAfM3EeBJjPqwvhKBM",
+  //   authDomain: "autoauto-97af8.firebaseapp.com",
+  //   databaseURL: "https://autoauto-97af8-default-rtdb.firebaseio.com",
+  //   projectId: "autoauto-97af8",
+  //   storageBucket: "autoauto-97af8.appspot.com",
+  //   messagingSenderId: "820359446551",
+  //   appId: "1:820359446551:web:548a78cbb34d4805839c52",
+  //   measurementId: "G-G3NJR57E7H",
+  // };
 
   if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
+    // TODO: check dev or prod
+    if (isDev) {
+      firebase.initializeApp(devDbConfig);
+    } else {
+      firebase.initializeApp(productionDbConfig);
+    }
   } else {
     firebase.app(); // if already initialized, use that one
   }

@@ -1,10 +1,10 @@
 require("dotenv").config({ path: __dirname + "/.env" });
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
-const isDev = require("electron-is-dev");
 const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
 const functions = require("./functions");
+const isDev = require("electron-is-dev");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling
 if (require("electron-squirrel-startup")) {
