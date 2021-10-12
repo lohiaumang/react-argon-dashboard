@@ -197,7 +197,24 @@ table .navbar-fixed-bottom .dropdown .caret {
   border-bottom: 4px solid \9;
   content: "";
 }
-
+/* data table button css */
+.dropdown-toggle {
+  background-color: #5e72e4;
+  border-color: #5e72e4;
+}
+.dropdown-toggle:hover {
+  color: white;
+  background-color: #5e72e4;
+  border-color: #5e72e4;
+}
+.btn-default:not(:disabled):not(.disabled):active,
+.btn-default:not(:disabled):not(.disabled):active,
+.show > .btn-default.dropdown-toggle {
+  color: white;
+  background-color: #5e72e4;
+  border-color: #5e72e4;
+}
+/* data table button css */
 @page {
   size: auto;
   margin: 2em;
