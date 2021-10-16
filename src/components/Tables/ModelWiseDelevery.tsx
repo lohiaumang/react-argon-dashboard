@@ -2,14 +2,14 @@ import React from "react";
 import { Table, Button } from "reactstrap";
 
 type Props = {
-  weekWiseData: any;
+  modelWiseData: any;
 };
 
-const WeekWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
+const ModelWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
   (props, ref) => {
-    if (props && props.weekWiseData) {
-      let weekData: any;
-      weekData = props.weekWiseData
+    if (props && props.modelWiseData) {
+      let modelData: any;
+      modelData = props.modelWiseData
       
 
       return (
@@ -17,18 +17,18 @@ const WeekWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
           <Table className="align-items-center table-flush" responsive>
             <thead className="thead-light">
               <tr>
-                <th scope="col">Week Number</th>
+                <th scope="col">Model Name</th>
                 <th scope="col">Total Sale</th>
                 <th scope="col">Total Sale Value</th>
               </tr>
             </thead>
             <tbody>
-              {Object.keys(weekData).map((currWeekData: string, index) => {
+              {Object.keys(modelData).map((modelWiseData: string, index) => {
                 return (
                   <tr key={index}>
-                    <th scope="row">{currWeekData}</th>
-                    <td>{weekData[currWeekData].totalSaleNo}</td>
-                    <td>{weekData[currWeekData].totalSaleValue}</td>
+                    <th scope="row">{modelWiseData}</th>
+                    <td>{modelData[modelWiseData].totalSaleNo}</td>
+                    <td>{modelData[modelWiseData].totalSaleValue}</td>
                   </tr>
                 );
               })}
@@ -42,4 +42,4 @@ const WeekWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
   }
 );
 
-export default WeekWiseDelevery;
+export default ModelWiseDelevery;

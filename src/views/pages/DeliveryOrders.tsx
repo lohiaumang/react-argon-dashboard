@@ -196,10 +196,10 @@ const DeliveryOrders: React.FC = () => {
           { merge: true }
         )
         .then(() => {
-          insurenceStatusCount();
+         // insurenceStatusCount();
           if (currentStatus === "DONE") {
             deleteDeliveryOrder();
-            doneStatusCount();
+            // doneStatusCount();
           } else {
             let newDos: any = deliveryOrders;
             newDos[selected] = {
@@ -222,6 +222,7 @@ const DeliveryOrders: React.FC = () => {
     debugger;
     const dealerId = user.createdBy || user.uid || "";
     let tempData: any;
+    
     if (
       selected !== undefined &&
       currentStatus !== undefined &&
@@ -786,158 +787,162 @@ const DeliveryOrders: React.FC = () => {
         setShowModal(false);
         if (currentStatus === "PENDING") {
           setCurrentStatus("DO_CREATED");
-          doStatusCount();
+          // doStatusCount();
         } else {
           setCurrentStatus("INVOICE_CREATED");
-          invoiceStatusCount();
+         // invoiceStatusCount();
         }
       }
     },
   });
 
   //docreate count
-  const doStatusCount = () => {
-    let tempData: any;
-    const docRef = firebase
-      .firestore()
-      .collection("status")
-      .doc(user.createdBy);
-    docRef
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          tempData = doc.data();
-        }
-      })
-      .then(() => {
-        let statusCount: Number;
-        statusCount = tempData.PENDING + 1;
-        db.collection("status").doc(user.createdBy).set(
-          {
-            PENDING: statusCount,
-          },
-          { merge: true }
-        );
-      })
-      .then(() => {
-        let statusCount: Number;
-        statusCount = tempData.PENDING - 1;
-        db.collection("status").doc(user.createdBy).set(
-          {
-            INCOMPLETE: statusCount,
-          },
-          { merge: true }
-        );
-      });
-  };
+  // const doStatusCount = () => {
+  //   debugger;
+  //   let tempData: any;
+  //   const docRef = firebase
+  //     .firestore()
+  //     .collection("status")
+  //     .doc(user.createdBy);
+  //   docRef
+  //     .get()
+  //     .then((doc) => {
+  //       if (doc.exists) {
+  //         tempData = doc.data();
+  //       }
+  //     })
+  //     .then(() => {
+  //       let statusCount: Number;
+  //       statusCount = tempData.PENDING + 1;
+  //       db.collection("status").doc(user.createdBy).set(
+  //         {
+  //           PENDING: statusCount,
+  //         },
+  //         { merge: true }
+  //       );
+  //     })
+  //     .then(() => {
+  //       let statusCount: Number;
+  //       statusCount = tempData.PENDING - 1;
+  //       db.collection("status").doc(user.createdBy).set(
+  //         {
+  //           INCOMPLETE: statusCount,
+  //         },
+  //         { merge: true }
+  //       );
+  //     });
+  // };
 
-  const invoiceStatusCount = () => {
-    let tempData: any;
-    const docRef = firebase
-      .firestore()
-      .collection("status")
-      .doc(user.createdBy);
-    docRef
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          tempData = doc.data();
-        }
-      })
-      .then(() => {
-        let statusCount: Number;
-        statusCount = tempData.INVOICE_CREATED + 1;
-        db.collection("status").doc(user.createdBy).set(
-          {
-            PENDING: statusCount,
-          },
-          { merge: true }
-        );
-      })
-      .then(() => {
-        let statusCount: Number;
-        statusCount = tempData.DO_CREATED - 1;
-        db.collection("status").doc(user.createdBy).set(
-          {
-            INCOMPLETE: statusCount,
-          },
-          { merge: true }
-        );
-      });
-  };
+  // const invoiceStatusCount = () => {
+  //   debugger;
+  //   let tempData: any;
+  //   const docRef = firebase
+  //     .firestore()
+  //     .collection("status")
+  //     .doc(user.createdBy);
+  //   docRef
+  //     .get()
+  //     .then((doc) => {
+  //       if (doc.exists) {
+  //         tempData = doc.data();
+  //       }
+  //     })
+  //     .then(() => {
+  //       let statusCount: Number;
+  //       statusCount = tempData.INVOICE_CREATED + 1;
+  //       db.collection("status").doc(user.createdBy).set(
+  //         {
+  //           PENDING: statusCount,
+  //         },
+  //         { merge: true }
+  //       );
+  //     })
+  //     .then(() => {
+  //       let statusCount: Number;
+  //       statusCount = tempData.DO_CREATED - 1;
+  //       db.collection("status").doc(user.createdBy).set(
+  //         {
+  //           INCOMPLETE: statusCount,
+  //         },
+  //         { merge: true }
+  //       );
+  //     });
+  // };
 
-  //isurence status count
-  const insurenceStatusCount = () => {
-    let tempData: any;
-    const docRef = firebase
-      .firestore()
-      .collection("status")
-      .doc(user.createdBy);
-    docRef
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          tempData = doc.data();
-        }
-      })
-      .then(() => {
-        let statusCount: Number;
-        statusCount = tempData.INSURENCE_CREATED + 1;
-        db.collection("status").doc(user.createdBy).set(
-          {
-            PENDING: statusCount,
-          },
-          { merge: true }
-        );
-      })
-      .then(() => {
-        let statusCount: Number;
-        statusCount = tempData.INVOICE_CREATED - 1;
-        db.collection("status").doc(user.createdBy).set(
-          {
-            INCOMPLETE: statusCount,
-          },
-          { merge: true }
-        );
-      });
-  };
+  // //isurence status count
+  // const insurenceStatusCount = () => {
+  //   debugger;
+  //   let tempData: any;
+  //   const docRef = firebase
+  //     .firestore()
+  //     .collection("status")
+  //     .doc(user.createdBy);
+  //   docRef
+  //     .get()
+  //     .then((doc) => {
+  //       if (doc.exists) {
+  //         tempData = doc.data();
+  //       }
+  //     })
+  //     .then(() => {
+  //       let statusCount: Number;
+  //       statusCount = tempData.INSURENCE_CREATED + 1;
+  //       db.collection("status").doc(user.createdBy).set(
+  //         {
+  //           PENDING: statusCount,
+  //         },
+  //         { merge: true }
+  //       );
+  //     })
+  //     .then(() => {
+  //       let statusCount: Number;
+  //       statusCount = tempData.INVOICE_CREATED - 1;
+  //       db.collection("status").doc(user.createdBy).set(
+  //         {
+  //           INCOMPLETE: statusCount,
+  //         },
+  //         { merge: true }
+  //       );
+  //     });
+  // };
 
   //done status count
   //isurence status count
-  const doneStatusCount = () => {
-    let tempData: any;
-    const docRef = firebase
-      .firestore()
-      .collection("status")
-      .doc(user.createdBy);
-    docRef
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          tempData = doc.data();
-        }
-      })
-      .then(() => {
-        let statusCount: Number;
-        statusCount = tempData.DONE + 1;
-        db.collection("status").doc(user.createdBy).set(
-          {
-            PENDING: statusCount,
-          },
-          { merge: true }
-        );
-      })
-      .then(() => {
-        let statusCount: Number;
-        statusCount = tempData.INSURENCE_CREATED - 1;
-        db.collection("status").doc(user.createdBy).set(
-          {
-            INCOMPLETE: statusCount,
-          },
-          { merge: true }
-        );
-      });
-  };
+  // const doneStatusCount = () => {
+  //   let tempData: any;
+  //   debugger;
+  //   const docRef = firebase
+  //     .firestore()
+  //     .collection("status")
+  //     .doc(user.createdBy);
+  //   docRef
+  //     .get()
+  //     .then((doc) => {
+  //       if (doc.exists) {
+  //         tempData = doc.data();
+  //       }
+  //     })
+  //     .then(() => {
+  //       let statusCount: Number;
+  //       statusCount = tempData.DONE + 1;
+  //       db.collection("status").doc(user.createdBy).set(
+  //         {
+  //           PENDING: statusCount,
+  //         },
+  //         { merge: true }
+  //       );
+  //     })
+  //     .then(() => {
+  //       let statusCount: Number;
+  //       statusCount = tempData.INSURENCE_CREATED - 1;
+  //       db.collection("status").doc(user.createdBy).set(
+  //         {
+  //           INCOMPLETE: statusCount,
+  //         },
+  //         { merge: true }
+  //       );
+  //     });
+  // };
   //close model onclick on close button
   const closeModal = async () => {
     setShowModal(!showModal);

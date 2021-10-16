@@ -8,7 +8,6 @@ type Props = {
 const SalesManWiseSale = React.forwardRef<HTMLDivElement, Props>(
     (props, ref) => {
         if (props && props.salesManWise) {
-            debugger;
             let salesManWise: any = [];
             salesManWise = props.salesManWise
 

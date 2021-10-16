@@ -1609,6 +1609,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           FRAME NUMBER
                         </label>
                         <Input
+                          required
                           className="form-control-alternative"
                           id="input-frame-number"
                           value={vehicleInfo && vehicleInfo.frameNumber}
@@ -1634,6 +1635,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           ENGINE NUMBER
                         </label>
                         <Input
+                          required
                           className="form-control-alternative"
                           id="input-engine-number"
                           value={vehicleInfo && vehicleInfo.engineNumber}

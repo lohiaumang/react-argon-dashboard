@@ -40,15 +40,18 @@ import MonthWiseDelevery from "../../src/components/Tables/MonthWiseDelevery";
 import { UserContext } from "../Context";
 import { result } from "lodash";
 import WeekWiseDelevery from "../components/Tables/WeekWiseDelevery";
+import ModelWiseDelevery from "../components/Tables/ModelWiseDelevery";
 import SalesManWiseSale from "../components/Tables/SalesManWiseSale";
 import DashBoardStatus from "../components/Tables/DashBoardStatus";
 
 const Index: React.FC = () => {
   const [user]: any = useContext(UserContext);
   const [weekWiseSale, setWeekWiseSale] = useState<any>([]);
+  const [modelWiseSale, setModelWiseSale] = useState<any>([]);
   const [monthWiseSale, setMonthWiseSale] = useState<any>([]);
   const [salesManWiseSale, setSalesManWiseSale] = useState<any>([]);
   const [dashBoardStatus, setDashBoardStatus] = useState<any>([]);
+  const [currentSaleValue, setcurrentSaleValue] = useState<any>([]);
 
   const weekWiseRef = useRef() as React.MutableRefObject<HTMLDivElement>;
   // const dataCount = dateWiseData.length;
@@ -57,68 +60,34 @@ const Index: React.FC = () => {
   // const pageSize = 10;
 
   useEffect(() => {
-    //Get Week
-    const dt = new Date();
-    let weekNumber: any;
-    const tdt: any = new Date(dt.valueOf());
-    const dayn = (dt.getDay() + 6) % 7;
-    tdt.setDate(tdt.getDate() - dayn + 3);
-    const firstThursday = tdt.valueOf();
-    tdt.setMonth(0, 1);
-    if (tdt.getDay() !== 4) {
-      tdt.setMonth(0, 1 + ((4 - tdt.getDay() + 7) % 7));
-    }
-    weekNumber = 1 + Math.ceil((firstThursday - tdt) / 604800000);
-
     const dealerId = user.createdBy || user.uid || "";
+    //Get Week
     const docRef = firebase.firestore().collection("byWeek").doc(dealerId);
     docRef.get().then((doc) => {
       if (doc.exists) {
         let tempData: any = doc.data();
-        tempData = tempData[weekNumber];
-        console.log(tempData, "get week wise data");
         setWeekWiseSale(tempData);
       }
     });
 
     //Get Month
-    const month = new Array();
-    month[0] = "January";
-    month[1] = "February";
-    month[2] = "March";
-    month[3] = "April";
-    month[4] = "May";
-    month[5] = "June";
-    month[6] = "July";
-    month[7] = "August";
-    month[8] = "September";
-    month[9] = "October";
-    month[10] = "November";
-    month[11] = "December";
-
-    const d = new Date();
-    const currentMonth = month[d.getMonth()].toLowerCase();
-    console.log(currentMonth);
     const docRef1 = firebase.firestore().collection("byMonth").doc(dealerId);
     docRef1.get().then((doc) => {
       if (doc.exists) {
         let tempData: any = doc.data();
-        tempData = tempData[currentMonth];
-        console.log(tempData, "get current month data");
         setMonthWiseSale(tempData);
       }
     });
 
+    //sales man wise
     const docRef2 = firebase.firestore().collection("bySalesMan").doc(dealerId);
     docRef2.get().then((doc) => {
       if (doc.exists) {
         let tempData: any = doc.data();
-        // tempData = tempData[weekNumber];
-        console.log(tempData, "get week wise data");
         setSalesManWiseSale(tempData);
       }
     });
-
+    //status count
     const docRef3 = firebase.firestore().collection("status").doc(dealerId);
     docRef3.get().then((doc) => {
       if (doc.exists) {
@@ -126,107 +95,30 @@ const Index: React.FC = () => {
         setDashBoardStatus(tempData);
       }
     });
+
+    //modelWise
+    const docRef4 = firebase.firestore().collection("byModel").doc(dealerId);
+    docRef4.get().then((doc) => {
+      if (doc.exists) {
+        let tempData: any = doc.data();
+        setModelWiseSale(tempData);
+      }
+    });
   }, []);
 
   const weekTotalSale = () => {
-    let totalsale: any = Object.keys(weekWiseSale);
-    weekWiseSale[totalsale].totalsaleValue;
+    let todaydate: any = new Date();
+    let oneJan: any = new Date(todaydate.getFullYear(), 0, 1);
+    let numberOfDays = Math.floor((todaydate - oneJan) / (24 * 60 * 60 * 1000));
+    let result = Math.ceil((todaydate.getDay() + 1 + numberOfDays) / 7);
+    setcurrentSaleValue(weekWiseSale[result].totalSaleValue);
   };
-  ////////////////////////
-  // useEffect(() => {
-  //
-  //   let data: any = {};
-  //   firebase
-  //     .firestore()
-  //     .collection("additionals")
-  //     .get()
-  //     .then((snapshot) => {
-  //       snapshot.forEach((additionalsDoc) => {
-  //         let additionalsDocData = additionalsDoc.data();
-  //         if (data[additionalsDoc.id] == undefined) {
-  //           data[additionalsDoc.id] = additionalsDocData;
-  //         }
-  //       });
-  //       let countEvents = 0;
-  //       Object.keys(data).forEach((additionalsDocId) => {
-  //         firebase
-  //           .firestore()
-  //           .collection("deliveryOrders")
-  //           .where("additionalId", "==", additionalsDocId)
-  //           .get()
-  //           .then((snapshot) => {
-  //             snapshot.forEach((eventDoc) => {
-  //               var eventDocData = eventDoc.data();
 
-  //               //Check if array exists, if not create it
-  //               if (data[eventDocData.userId] == undefined) {
-  //                 data[eventDocData.userId] = [];
-  //               }
-
-  //               data[eventDocData.userId].push(eventDocData);
-  //             });
-
-  //             if (countEvents == Object.keys(data).length) {
-  //               //Lookup for events in every user has finished
-  //             }
-  //           });
-  //       });
-  //     });
-  // }, []);
-
-  // let totalSaleValue = 0;
-  // useEffect(() => {
-  //   firebase
-  //     .firestore()
-  //     .collection("additionals")
-  //     .get()
-  //     .then((snapshot) => {
-  //       snapshot.forEach((doc) => {
-  //         totalSaleValue += Number(doc.data()["price"]);
-
-  //         settatalSaleValue(totalSaleValue);
-  //       });
-  //     });
-  // }, []);
-  //console.log(totalSaleValue);
-
-  /////////////////////////////
-  //month wise data
-  // if (currentUser && currentUser.uid) {
-  //   getUserData(currentUser.uid);
-  // }
-
-  // const today = new Date();
-  // const currentMonth = new Date(
-  //   today.getFullYear(),
-  //   today.getMonth(),
-  //   today.getDate() - 30
-  // );
-  // const todayDate = new Date(today).getTime();
-  // const monthDay = new Date(currentMonth).getTime();
-  // const monthWiseData = dateWiseData.filter(
-  //   (d: { createdOn: string | number | Date }) => {
-  //     let time = new Date(d.createdOn).getTime();
-  //     return monthDay < time && time < todayDate;
-  //   }
-  // );
-
-  // const weekToday = new Date();
-  // const currentWeek = new Date(
-  //   today.getFullYear(),
-  //   today.getMonth(),
-  //   today.getDate() - 7
-  // );
-  // const weekDate = new Date(weekToday).getTime();
-  // const weekDay = new Date(currentWeek).getTime();
-  // const weekWiseData = dateWiseData.filter(
-  //   (d: { createdOn: string | number | Date }) => {
-  //     let time = new Date(d.createdOn).getTime();
-  //     return weekDay < time && time < weekDate;
-  //   }
-  // );
-
-  // monthUiseData();
+  const monthTotalSale = () => {
+    const dateObj = new Date();
+    const monthName = dateObj.toLocaleString("default", { month: "long" });
+    setcurrentSaleValue(monthWiseSale[monthName].totalSaleValue);
+  };
   return (
     <>
       <Header />
@@ -242,7 +134,7 @@ const Index: React.FC = () => {
                       Overview
                     </h6>
                     <h2 className="text-white mb-0">Sales value</h2>
-                    <h3 className="text-white mb-0">₹</h3>
+                    <h3 className="text-white mb-0">₹{currentSaleValue}</h3>
                   </div>
                   <div className="col">
                     <Nav className="justify-content-end" pills>
@@ -252,8 +144,7 @@ const Index: React.FC = () => {
                             //active: activeNav === 1,
                           })}
                           href="#pablo"
-                          //onClick={(e) => monthUiseData(e, 1)}
-                          // onClick={() => monthUiseData()}
+                          onClick={() => monthTotalSale()}
                         >
                           <span className="d-none d-md-block">Month</span>
                           <span className="d-md-none">M</span>
@@ -266,7 +157,7 @@ const Index: React.FC = () => {
                           })}
                           data-toggle="tab"
                           href="#pablo"
-                          onClick={(e) => weekTotalSale()}
+                          onClick={() => weekTotalSale()}
                         >
                           <span className="d-none d-md-block">Week data</span>
                           <span className="d-md-none">W</span>
@@ -308,6 +199,22 @@ const Index: React.FC = () => {
                 </Row>
               </CardHeader>
               <WeekWiseDelevery ref={weekWiseRef} weekWiseData={weekWiseSale} />
+            </Card>
+          </Col>
+
+          <Col className="mb-5 mb-xl-0" xl="12">
+            <Card className="shadow weektable">
+              <CardHeader className="border-0">
+                <Row className="align-items-center">
+                  <div className="col">
+                    <h3 className="mb-0">Model wise sale details</h3>
+                  </div>
+                </Row>
+              </CardHeader>
+              <ModelWiseDelevery
+                ref={weekWiseRef}
+                modelWiseData={modelWiseSale}
+              />
             </Card>
           </Col>
 

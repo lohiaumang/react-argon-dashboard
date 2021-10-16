@@ -16,7 +16,6 @@ type Props = {
 const DashBoardStatus = React.forwardRef<HTMLDivElement, Props>(
     (props, ref) => {
         if (props && props.dashBoardStatus) {
-            debugger;
             let dashBoardStatus;
             dashBoardStatus = props.dashBoardStatus
 
