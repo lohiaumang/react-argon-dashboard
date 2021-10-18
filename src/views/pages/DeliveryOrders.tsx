@@ -176,9 +176,9 @@ const DeliveryOrders: React.FC = () => {
           case "RESET": {
             monthWiseSale(statusData.data);
             // TODO: implement the same as above below vvv
-            // weekWiseSale();
-            // modelWiseSale();
-            // salerCount();
+            weekWiseSale(statusData.data);
+            modelWiseSale(statusData.data);
+            salerCount(statusData.data);
             setLoading(false);
           }
         }
@@ -225,7 +225,6 @@ const DeliveryOrders: React.FC = () => {
 
   //dashboard status count
   useEffect(() => {
-    debugger;
     const dealerId = user.createdBy || user.uid || "";
     let tempData: any;
 
@@ -877,7 +876,6 @@ const DeliveryOrders: React.FC = () => {
 
   //dashboard status count
   const monthWiseSale = (dO: any) => {
-    debugger;
     if (dO.modelName) {
       let tempData: any;
       const docRef = firebase
@@ -920,38 +918,39 @@ const DeliveryOrders: React.FC = () => {
   };
 
   //week wise sale
-  const weekWiseSale = () => {
-    let tempData: any;
-    const docRef = firebase
-      .firestore()
-      .collection("byWeek")
-      .doc(user.createdBy);
-    docRef
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          tempData = doc.data();
-        }
-      })
-      .then(() => {
-        let totalSale: any = 0;
-        let totalSaleNo: any = 0;
-        let todaydate: any = new Date();
-        let oneJan: any = new Date(todaydate.getFullYear(), 0, 1);
-        let numberOfDays = Math.floor(
-          (todaydate - oneJan) / (24 * 60 * 60 * 1000)
-        );
-        let result = Math.ceil((todaydate.getDay() + 1 + numberOfDays) / 7);
-        if (tempData[result]) {
-          totalSale = tempData[result].totalSaleValue;
-          totalSaleNo = tempData[result].totalSaleNo;
-        }
-        if (selected) {
+  const weekWiseSale = (dO: any) => {
+    debugger;
+    if (dO.modelName) {
+      let tempData: any;
+      const docRef = firebase
+        .firestore()
+        .collection("byWeek")
+        .doc(user.createdBy);
+      docRef
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            tempData = doc.data();
+          }
+        })
+        .then(() => {
+          let totalSale: any = 0;
+          let totalSaleNo: any = 0;
+          let todaydate: any = new Date();
+          let oneJan: any = new Date(todaydate.getFullYear(), 0, 1);
+          let numberOfDays = Math.floor(
+            (todaydate - oneJan) / (24 * 60 * 60 * 1000)
+          );
+          let result = Math.ceil((todaydate.getDay() + 1 + numberOfDays) / 7);
+          if (tempData[result]) {
+            totalSale = tempData[result].totalSaleValue;
+            totalSaleNo = tempData[result].totalSaleNo;
+          }
+
           var docData = {
             [result]: {
               totalSaleValue:
-                totalSale +
-                parseInt(priceConfig[deliveryOrders[selected].modelName].price),
+                totalSale + parseInt(priceConfig[dO.modelName].price),
               totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
             },
           };
@@ -959,30 +958,31 @@ const DeliveryOrders: React.FC = () => {
           db.collection("byWeek")
             .doc(user.createdBy)
             .set(docData, { merge: true });
-        }
-      });
+        });
+    }
   };
 
   //model wise sale
-  const modelWiseSale = () => {
-    let tempData: any;
-    const docRef = firebase
-      .firestore()
-      .collection("byModel")
-      .doc(user.createdBy);
-    docRef
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          tempData = doc.data();
-        }
-      })
-      .then(() => {
-        let totalSale: any = 0;
-        let totalSaleNo: any = 0;
-        // let config:any;
-        if (selected) {
-          const modelName = deliveryOrders[selected].modelName;
+  const modelWiseSale = (dO: any) => {
+    if (dO.modelName) {
+      let tempData: any;
+      const docRef = firebase
+        .firestore()
+        .collection("byModel")
+        .doc(user.createdBy);
+      docRef
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            tempData = doc.data();
+          }
+        })
+        .then(() => {
+          let totalSale: any = 0;
+          let totalSaleNo: any = 0;
+          // let config:any;
+
+          const modelName = dO.modelName;
 
           if (tempData[modelName]) {
             totalSale = tempData[modelName].totalSaleValue;
@@ -992,10 +992,7 @@ const DeliveryOrders: React.FC = () => {
           var docData = {
             [modelName]: {
               totalSaleValue:
-                totalSale +
-                parseInt(
-                  priceConfig[deliveryOrders.vehicleInfo.modelName].price
-                ),
+                totalSale + parseInt(priceConfig[dO.modelName].price),
               totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
             },
           };
@@ -1003,42 +1000,42 @@ const DeliveryOrders: React.FC = () => {
           db.collection("byModel")
             .doc(user.createdBy)
             .set(docData, { merge: true });
-        }
-      });
+        });
+    }
   };
 
-  const salerCount = () => {
-    let tempData: any;
-    const docRef = firebase
-      .firestore()
-      .collection("bySalesMan")
-      .doc(user.createdBy);
-    docRef
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          tempData = doc.data();
-        }
-      })
-      .then(() => {
-        let userID: any;
-        let salerName: any = user && user.name;
-        let totalSale: any = 0;
-        let totalSaleNo: any = 0;
-        // let config:any;
-        userID = user.uid;
-        if (tempData[user.uid]) {
-          salerName = tempData[user.uid].salesManName;
-          totalSale = tempData[user.uid].totalSaleValue;
-          totalSaleNo = tempData[user.uid].totalSaleNo;
-        }
-        if (selected) {
+  const salerCount = (dO: any) => {
+    if (dO.modelName) {
+      let tempData: any;
+      const docRef = firebase
+        .firestore()
+        .collection("bySalesMan")
+        .doc(user.createdBy);
+      docRef
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            tempData = doc.data();
+          }
+        })
+        .then(() => {
+          let userID: any;
+          let salerName: any = user && user.name;
+          let totalSale: any = 0;
+          let totalSaleNo: any = 0;
+          // let config:any;
+          userID = user.uid;
+          if (tempData[user.uid]) {
+            salerName = tempData[user.uid].salesManName;
+            totalSale = tempData[user.uid].totalSaleValue;
+            totalSaleNo = tempData[user.uid].totalSaleNo;
+          }
+
           var docData = {
             [userID]: {
               salesManName: salerName,
               totalSaleValue:
-                totalSale +
-                parseInt(priceConfig[deliveryOrders[selected].modelName].price),
+                totalSale + parseInt(priceConfig[dO.modelName].price),
               totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
             },
           };
@@ -1046,8 +1043,8 @@ const DeliveryOrders: React.FC = () => {
           db.collection("bySalesMan")
             .doc(user.createdBy)
             .set(docData, { merge: true });
-        }
-      });
+        });
+    }
   };
 
   return (
