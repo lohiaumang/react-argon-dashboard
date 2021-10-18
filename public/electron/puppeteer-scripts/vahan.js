@@ -56,6 +56,7 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
 
     vahanWindow.on("close", async (e) => {
       e.preventDefault();
+      let tOutId = setTimeout(() => vahanWindow.destroy(), 3000);
 
       let url = "";
       const loginUrl =
@@ -65,6 +66,8 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
         url = (await page.evaluate(() => window.location.href)) || "";
       } catch (err) {
         console.log("Unable to get current url: ", err);
+        vahanWindow.destroy();
+        clearTimeout(tOutId);
       }
 
       if (url && !url.startsWith(loginUrl)) {
@@ -75,10 +78,13 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
           await page.click("#j_idt241");
         } catch (err) {
           console.log("Unable to log out: ", err);
+          vahanWindow.destroy();
+          clearTimeout(tOutId);
         }
       }
 
       vahanWindow.destroy();
+      clearTimeout(tOutId);
 
       mainWindow.webContents.send("fromMain", {
         type: done ? "DONE" : "RESET",

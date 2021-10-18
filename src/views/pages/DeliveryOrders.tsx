@@ -170,9 +170,14 @@ const DeliveryOrders: React.FC = () => {
           }
           case "DONE": {
             setCurrentStatus(statusData.type);
+
             break;
           }
           case "RESET": {
+            monthWiseSale();
+            weekWiseSale();
+            modelWiseSale();
+            salerCount();
             setLoading(false);
           }
         }
@@ -196,7 +201,7 @@ const DeliveryOrders: React.FC = () => {
           { merge: true }
         )
         .then(() => {
-         // insurenceStatusCount();
+          // insurenceStatusCount();
           if (currentStatus === "DONE") {
             deleteDeliveryOrder();
             // doneStatusCount();
@@ -222,7 +227,7 @@ const DeliveryOrders: React.FC = () => {
     debugger;
     const dealerId = user.createdBy || user.uid || "";
     let tempData: any;
-    
+
     if (
       selected !== undefined &&
       currentStatus !== undefined &&
@@ -790,159 +795,12 @@ const DeliveryOrders: React.FC = () => {
           // doStatusCount();
         } else {
           setCurrentStatus("INVOICE_CREATED");
-         // invoiceStatusCount();
+          // invoiceStatusCount();
         }
       }
     },
   });
 
-  //docreate count
-  // const doStatusCount = () => {
-  //   debugger;
-  //   let tempData: any;
-  //   const docRef = firebase
-  //     .firestore()
-  //     .collection("status")
-  //     .doc(user.createdBy);
-  //   docRef
-  //     .get()
-  //     .then((doc) => {
-  //       if (doc.exists) {
-  //         tempData = doc.data();
-  //       }
-  //     })
-  //     .then(() => {
-  //       let statusCount: Number;
-  //       statusCount = tempData.PENDING + 1;
-  //       db.collection("status").doc(user.createdBy).set(
-  //         {
-  //           PENDING: statusCount,
-  //         },
-  //         { merge: true }
-  //       );
-  //     })
-  //     .then(() => {
-  //       let statusCount: Number;
-  //       statusCount = tempData.PENDING - 1;
-  //       db.collection("status").doc(user.createdBy).set(
-  //         {
-  //           INCOMPLETE: statusCount,
-  //         },
-  //         { merge: true }
-  //       );
-  //     });
-  // };
-
-  // const invoiceStatusCount = () => {
-  //   debugger;
-  //   let tempData: any;
-  //   const docRef = firebase
-  //     .firestore()
-  //     .collection("status")
-  //     .doc(user.createdBy);
-  //   docRef
-  //     .get()
-  //     .then((doc) => {
-  //       if (doc.exists) {
-  //         tempData = doc.data();
-  //       }
-  //     })
-  //     .then(() => {
-  //       let statusCount: Number;
-  //       statusCount = tempData.INVOICE_CREATED + 1;
-  //       db.collection("status").doc(user.createdBy).set(
-  //         {
-  //           PENDING: statusCount,
-  //         },
-  //         { merge: true }
-  //       );
-  //     })
-  //     .then(() => {
-  //       let statusCount: Number;
-  //       statusCount = tempData.DO_CREATED - 1;
-  //       db.collection("status").doc(user.createdBy).set(
-  //         {
-  //           INCOMPLETE: statusCount,
-  //         },
-  //         { merge: true }
-  //       );
-  //     });
-  // };
-
-  // //isurence status count
-  // const insurenceStatusCount = () => {
-  //   debugger;
-  //   let tempData: any;
-  //   const docRef = firebase
-  //     .firestore()
-  //     .collection("status")
-  //     .doc(user.createdBy);
-  //   docRef
-  //     .get()
-  //     .then((doc) => {
-  //       if (doc.exists) {
-  //         tempData = doc.data();
-  //       }
-  //     })
-  //     .then(() => {
-  //       let statusCount: Number;
-  //       statusCount = tempData.INSURENCE_CREATED + 1;
-  //       db.collection("status").doc(user.createdBy).set(
-  //         {
-  //           PENDING: statusCount,
-  //         },
-  //         { merge: true }
-  //       );
-  //     })
-  //     .then(() => {
-  //       let statusCount: Number;
-  //       statusCount = tempData.INVOICE_CREATED - 1;
-  //       db.collection("status").doc(user.createdBy).set(
-  //         {
-  //           INCOMPLETE: statusCount,
-  //         },
-  //         { merge: true }
-  //       );
-  //     });
-  // };
-
-  //done status count
-  //isurence status count
-  // const doneStatusCount = () => {
-  //   let tempData: any;
-  //   debugger;
-  //   const docRef = firebase
-  //     .firestore()
-  //     .collection("status")
-  //     .doc(user.createdBy);
-  //   docRef
-  //     .get()
-  //     .then((doc) => {
-  //       if (doc.exists) {
-  //         tempData = doc.data();
-  //       }
-  //     })
-  //     .then(() => {
-  //       let statusCount: Number;
-  //       statusCount = tempData.DONE + 1;
-  //       db.collection("status").doc(user.createdBy).set(
-  //         {
-  //           PENDING: statusCount,
-  //         },
-  //         { merge: true }
-  //       );
-  //     })
-  //     .then(() => {
-  //       let statusCount: Number;
-  //       statusCount = tempData.INSURENCE_CREATED - 1;
-  //       db.collection("status").doc(user.createdBy).set(
-  //         {
-  //           INCOMPLETE: statusCount,
-  //         },
-  //         { merge: true }
-  //       );
-  //     });
-  // };
   //close model onclick on close button
   const closeModal = async () => {
     setShowModal(!showModal);
@@ -1014,6 +872,182 @@ const DeliveryOrders: React.FC = () => {
     if (isSelected) {
       toggleSelected(row.id);
     }
+  };
+
+  //dashboard status count
+  const monthWiseSale = () => {
+    debugger;
+    if (selected !== undefined) {
+      let tempData: any;
+      const docRef = firebase
+        .firestore()
+        .collection("byMonth")
+        .doc(user.createdBy);
+      docRef
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            tempData = doc.data();
+          }
+        })
+        .then(() => {
+          let totalSale: any = 0;
+          let totalSaleNo: any = 0;
+          // let config:any;
+          const dateObj = new Date();
+          const monthName = dateObj.toLocaleString("default", {
+            month: "long",
+          });
+          if (tempData[monthName]) {
+            totalSale = tempData[monthName].totalSaleValue;
+            totalSaleNo = tempData[monthName].totalSaleNo;
+          }
+
+          var docData = {
+            [monthName]: {
+              totalSaleValue:
+                totalSale +
+                parseInt(priceConfig[deliveryOrders[selected].modelName].price),
+              totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
+            },
+          };
+
+          db.collection("byMonth")
+            .doc(user.createdBy)
+            .set(docData, { merge: true });
+        });
+    }
+  };
+
+  //week wise sale
+  const weekWiseSale = () => {
+    let tempData: any;
+    const docRef = firebase
+      .firestore()
+      .collection("byWeek")
+      .doc(user.createdBy);
+    docRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          tempData = doc.data();
+        }
+      })
+      .then(() => {
+        let totalSale: any = 0;
+        let totalSaleNo: any = 0;
+        let todaydate: any = new Date();
+        let oneJan: any = new Date(todaydate.getFullYear(), 0, 1);
+        let numberOfDays = Math.floor(
+          (todaydate - oneJan) / (24 * 60 * 60 * 1000)
+        );
+        let result = Math.ceil((todaydate.getDay() + 1 + numberOfDays) / 7);
+        if (tempData[result]) {
+          totalSale = tempData[result].totalSaleValue;
+          totalSaleNo = tempData[result].totalSaleNo;
+        }
+        if (selected) {
+          var docData = {
+            [result]: {
+              totalSaleValue:
+                totalSale +
+                parseInt(priceConfig[deliveryOrders[selected].modelName].price),
+              totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
+            },
+          };
+
+          db.collection("byWeek")
+            .doc(user.createdBy)
+            .set(docData, { merge: true });
+        }
+      });
+  };
+
+  //model wise sale
+  const modelWiseSale = () => {
+    let tempData: any;
+    const docRef = firebase
+      .firestore()
+      .collection("byModel")
+      .doc(user.createdBy);
+    docRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          tempData = doc.data();
+        }
+      })
+      .then(() => {
+        let totalSale: any = 0;
+        let totalSaleNo: any = 0;
+        // let config:any;
+        if (selected) {
+          const modelName = deliveryOrders[selected].modelName;
+
+          if (tempData[modelName]) {
+            totalSale = tempData[modelName].totalSaleValue;
+            totalSaleNo = tempData[modelName].totalSaleNo;
+          }
+
+          var docData = {
+            [modelName]: {
+              totalSaleValue:
+                totalSale +
+                parseInt(
+                  priceConfig[deliveryOrders.vehicleInfo.modelName].price
+                ),
+              totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
+            },
+          };
+
+          db.collection("byModel")
+            .doc(user.createdBy)
+            .set(docData, { merge: true });
+        }
+      });
+  };
+
+  const salerCount = () => {
+    let tempData: any;
+    const docRef = firebase
+      .firestore()
+      .collection("bySalesMan")
+      .doc(user.createdBy);
+    docRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          tempData = doc.data();
+        }
+      })
+      .then(() => {
+        let userID: any;
+        let salerName: any = user && user.name;
+        let totalSale: any = 0;
+        let totalSaleNo: any = 0;
+        // let config:any;
+        userID = user.uid;
+        if (tempData[user.uid]) {
+          salerName = tempData[user.uid].salesManName;
+          totalSale = tempData[user.uid].totalSaleValue;
+          totalSaleNo = tempData[user.uid].totalSaleNo;
+        }
+        if (selected) {
+          var docData = {
+            [userID]: {
+              salesManName: salerName,
+              totalSaleValue:
+                totalSale +
+                parseInt(priceConfig[deliveryOrders[selected].modelName].price),
+              totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
+            },
+          };
+
+          db.collection("bySalesMan")
+            .doc(user.createdBy)
+            .set(docData, { merge: true });
+        }
+      });
   };
 
   return (
