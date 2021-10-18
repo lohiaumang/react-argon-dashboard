@@ -1,4 +1,10 @@
-module.exports = async function (page, data, mainWindow, insuranceWindow, systemConfig) {
+module.exports = async function (
+  page,
+  data,
+  mainWindow,
+  insuranceWindow,
+  systemConfig
+) {
   // const psl = require("puppeteer-salesforce-library");
   // const logout = psl.logout;
   // const fetch = require('node-fetch');
@@ -177,6 +183,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
         await page.waitForSelector("#Password", { visible: true });
         await page.type("#Password", password);
         await page.waitForSelector("button[type='submit']", { visible: true });
+        await waitForNetworkIdle(page, timeout, 0);
         await page.click("button[type='submit']");
         await page.waitForResponse(
           "https://pie.hdfcergo.com/en-US/Login/AuthenticateUser"
@@ -200,6 +207,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
           await page.waitForSelector("button[type='submit']", {
             visible: true,
           });
+          await waitForNetworkIdle(page, timeout, 0);
           await page.click("button[type='submit']");
           //  await waitForRandom();
         }
@@ -221,7 +229,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
       // This should wait for an additional 3 secs
       // await page.waitForTimeout(3000);
       console.log("step 3");
-      await waitForNetworkIdle(page, timeout, 0);
+      // await waitForNetworkIdle(page, timeout, 0);
       console.log("step 4");
       // This should wait for the link to be visible
       await page.waitForSelector("div[ng-show='1 == 1'] a.tw-link", {
@@ -325,7 +333,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
       await page.waitForSelector("#AddOnEdit");
 
       await page.evaluate(() => {
-        document.querySelector('#AddOnEdit').click();
+        document.querySelector("#AddOnEdit").click();
       });
 
       // page.click("#AddOnEdit", { visible: true });
@@ -339,7 +347,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
           buttons.map((button) => {
             if (
               window.getComputedStyle(button).getPropertyValue("display") !==
-              "none" &&
+                "none" &&
               button.offsetHeight
             ) {
               button.click();
@@ -360,7 +368,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
       //   mainWindow.webContents.send("update-progress-bar", ["50%", "insurance"]);
       await page.waitForSelector("div[data-ng-if='loading']", { hidden: true });
       await page.evaluate(() => {
-        document.querySelector('#DiscountEdit').click();
+        document.querySelector("#DiscountEdit").click();
       });
       //await page.click("#DiscountEdit");
       //  await waitForRandom();
@@ -371,7 +379,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow, system
       //  await waitForRandom();
       await page.waitForSelector("div[data-ng-if='loading']", { hidden: true });
       await page.evaluate(() => {
-        document.querySelector('#PersonalEdit').click();
+        document.querySelector("#PersonalEdit").click();
       });
       //await page.click("#PersonalEdit");
       await page.waitForSelector("#CustomerName", { visible: true });
