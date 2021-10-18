@@ -88,7 +88,7 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
 
       mainWindow.webContents.send("fromMain", {
         type: done ? "DONE" : "RESET",
-        data: data.id,
+        data,
       });
     });
 

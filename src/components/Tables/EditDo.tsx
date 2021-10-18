@@ -320,7 +320,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
 
       const dealerId = user.createdBy || user.uid || "";
       let tempData: any;
-      if (status === "PENDING") {
+      if (currDo.status === "INCOMPLETE" && status === "PENDING") {
         const docRef = firebase.firestore().collection("status").doc(dealerId);
         docRef
           .get()

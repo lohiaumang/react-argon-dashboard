@@ -174,10 +174,11 @@ const DeliveryOrders: React.FC = () => {
             break;
           }
           case "RESET": {
-            monthWiseSale();
-            weekWiseSale();
-            modelWiseSale();
-            salerCount();
+            monthWiseSale(statusData.data);
+            // TODO: implement the same as above below vvv
+            // weekWiseSale();
+            // modelWiseSale();
+            // salerCount();
             setLoading(false);
           }
         }
@@ -875,9 +876,9 @@ const DeliveryOrders: React.FC = () => {
   };
 
   //dashboard status count
-  const monthWiseSale = () => {
+  const monthWiseSale = (dO: any) => {
     debugger;
-    if (selected !== undefined) {
+    if (dO.modelName) {
       let tempData: any;
       const docRef = firebase
         .firestore()
@@ -906,8 +907,7 @@ const DeliveryOrders: React.FC = () => {
           var docData = {
             [monthName]: {
               totalSaleValue:
-                totalSale +
-                parseInt(priceConfig[deliveryOrders[selected].modelName].price),
+                totalSale + parseInt(priceConfig[dO.modelName].price),
               totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
             },
           };
