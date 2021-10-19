@@ -919,7 +919,6 @@ const DeliveryOrders: React.FC = () => {
 
   //week wise sale
   const weekWiseSale = (dO: any) => {
-    debugger;
     if (dO.modelName) {
       let tempData: any;
       const docRef = firebase

@@ -134,7 +134,12 @@ const Index: React.FC = () => {
                       Overview
                     </h6>
                     <h2 className="text-white mb-0">Sales value</h2>
-                    <h3 className="text-white mb-0">₹{currentSaleValue}</h3>
+                    <h3 className="text-white mb-0">
+                      {new Intl.NumberFormat("en-IN", {
+                        style: "currency",
+                        currency: "INR",
+                      }).format(currentSaleValue)}
+                    </h3>
                   </div>
                   <div className="col">
                     <Nav className="justify-content-end" pills>
@@ -223,7 +228,7 @@ const Index: React.FC = () => {
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">sales man wise sale details</h3>
+                    <h3 className="mb-0">Sales man wise sale details</h3>
                   </div>
                 </Row>
               </CardHeader>

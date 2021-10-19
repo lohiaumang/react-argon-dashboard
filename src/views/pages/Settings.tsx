@@ -136,7 +136,6 @@ const Settings: React.FC = () => {
   };
 
   const savePriceConfig = (config: Config) => {
-    debugger;
     db.collection("priceConfig").doc("config").set(config);
     setSuccess({
       message: "Update successful",

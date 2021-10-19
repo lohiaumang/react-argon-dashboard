@@ -11,7 +11,6 @@ type Props = {
 };
 
 const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
-  debugger;
   if (
     props &&
     props.deliveryOrder &&

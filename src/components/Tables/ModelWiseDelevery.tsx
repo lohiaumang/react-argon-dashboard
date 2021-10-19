@@ -9,8 +9,7 @@ const ModelWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
   (props, ref) => {
     if (props && props.modelWiseData) {
       let modelData: any;
-      modelData = props.modelWiseData
-      
+      modelData = props.modelWiseData;
 
       return (
         <div className="delivery-order-table" ref={ref}>
@@ -24,11 +23,15 @@ const ModelWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
             </thead>
             <tbody>
               {Object.keys(modelData).map((modelWiseData: string, index) => {
+                let saleValue = new Intl.NumberFormat("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                }).format(modelData[modelWiseData].totalSaleValue);
                 return (
                   <tr key={index}>
                     <th scope="row">{modelWiseData}</th>
                     <td>{modelData[modelWiseData].totalSaleNo}</td>
-                    <td>{modelData[modelWiseData].totalSaleValue}</td>
+                    <td>{saleValue}</td>
                   </tr>
                 );
               })}

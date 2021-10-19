@@ -9,8 +9,7 @@ const WeekWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
   (props, ref) => {
     if (props && props.weekWiseData) {
       let weekData: any;
-      weekData = props.weekWiseData
-      
+      weekData = props.weekWiseData;
 
       return (
         <div className="delivery-order-table" ref={ref}>
@@ -24,11 +23,15 @@ const WeekWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
             </thead>
             <tbody>
               {Object.keys(weekData).map((currWeekData: string, index) => {
+                let saleValue = new Intl.NumberFormat("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                }).format(weekData[currWeekData].totalSaleValue);
                 return (
                   <tr key={index}>
                     <th scope="row">{currWeekData}</th>
                     <td>{weekData[currWeekData].totalSaleNo}</td>
-                    <td>{weekData[currWeekData].totalSaleValue}</td>
+                    <td>{saleValue}</td>
                   </tr>
                 );
               })}

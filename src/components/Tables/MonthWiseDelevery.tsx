@@ -23,11 +23,15 @@ const MonthWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
             </thead>
             <tbody>
               {Object.keys(monthData).map((currentMonthData: any, index) => {
+                let saleValue = new Intl.NumberFormat("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                }).format(monthData[currentMonthData].totalSaleValue);
                 return (
                   <tr key={index}>
                     <th scope="row">{currentMonthData}</th>
                     <td>{monthData[currentMonthData].totalSaleNo}</td>
-                    <td>{monthData[currentMonthData].totalSaleValue}</td>
+                    <td>{saleValue}</td>
                   </tr>
                 );
               })}

@@ -2,38 +2,43 @@ import React from "react";
 import { Table, Button } from "reactstrap";
 
 type Props = {
-    salesManWise: any;
+  salesManWise: any;
 };
 
 const SalesManWiseSale = React.forwardRef<HTMLDivElement, Props>(
-    (props, ref) => {
-        if (props && props.salesManWise) {
-            let salesManWise: any = [];
-            salesManWise = props.salesManWise
+  (props, ref) => {
+    if (props && props.salesManWise) {
+      let salesManWise: any = [];
+      salesManWise = props.salesManWise;
 
-
-            return (
-                <div className="delivery-order-table" ref={ref}>
-                    <Table className="align-items-center table-flush" responsive>
-                        <thead className="thead-light">
-                            <tr>
-                                <th scope="col">Sales Man Name</th>
-                                <th scope="col">Total Sale</th>
-                                <th scope="col">Total Sale Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Object.keys(salesManWise).map((salesManName: string, index) => {
-                                return (
-                                    <tr key={index}>
-                                        <th scope="row">{salesManWise[salesManName].salesManName}</th>
-                                        <td>{salesManWise[salesManName].totalSaleNo}</td>
-                                        <td>{salesManWise[salesManName].totalSaleValue}</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                        {/* 
+      return (
+        <div className="delivery-order-table" ref={ref}>
+          <Table className="align-items-center table-flush" responsive>
+            <thead className="thead-light">
+              <tr>
+                <th scope="col">Sales Man Name</th>
+                <th scope="col">Total Sale</th>
+                <th scope="col">Total Sale Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.keys(salesManWise).map((salesManName: string, index) => {
+                let saleValue = new Intl.NumberFormat("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                }).format(salesManWise[salesManName].totalSaleValue);
+                return (
+                  <tr key={index}>
+                    <th scope="row">
+                      {salesManWise[salesManName].salesManName}
+                    </th>
+                    <td>{salesManWise[salesManName].totalSaleNo}</td>
+                    <td>{saleValue}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+            {/* 
                         <tbody>
                             {Object.keys(salesManWise).map((salesManName: string, index) => {
                                 let modelName: any = Object.keys(props.salesManWise[salesManName])
@@ -56,13 +61,13 @@ const SalesManWiseSale = React.forwardRef<HTMLDivElement, Props>(
                                 );
                             })}
                         </tbody> */}
-                    </Table>
-                </div>
-            );
-        } else {
-            return <></>;
-        }
+          </Table>
+        </div>
+      );
+    } else {
+      return <></>;
     }
+  }
 );
 
 export default SalesManWiseSale;
