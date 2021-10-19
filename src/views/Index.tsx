@@ -51,7 +51,8 @@ const Index: React.FC = () => {
   const [monthWiseSale, setMonthWiseSale] = useState<any>([]);
   const [salesManWiseSale, setSalesManWiseSale] = useState<any>([]);
   const [dashBoardStatus, setDashBoardStatus] = useState<any>([]);
-  const [currentSaleValue, setcurrentSaleValue] = useState<any>([]);
+  const [currentSaleValue, setCurrentSaleValue] = useState<number>(0);
+  const [selectedPeriod, setSelectedPeriod] = useState<string>("M");
 
   const weekWiseRef = useRef() as React.MutableRefObject<HTMLDivElement>;
   // const dataCount = dateWiseData.length;
@@ -106,19 +107,32 @@ const Index: React.FC = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if (selectedPeriod === "M") {
+      monthTotalSale();
+    } else if (selectedPeriod === "W") {
+      weekTotalSale();
+    }
+  }, [monthWiseSale, weekWiseSale, selectedPeriod]);
+
   const weekTotalSale = () => {
     let todaydate: any = new Date();
     let oneJan: any = new Date(todaydate.getFullYear(), 0, 1);
     let numberOfDays = Math.floor((todaydate - oneJan) / (24 * 60 * 60 * 1000));
     let result = Math.ceil((todaydate.getDay() + 1 + numberOfDays) / 7);
-    setcurrentSaleValue(weekWiseSale[result].totalSaleValue);
+    if (weekWiseSale[result]) {
+      setCurrentSaleValue(weekWiseSale[result].totalSaleValue);
+    }
   };
 
   const monthTotalSale = () => {
     const dateObj = new Date();
     const monthName = dateObj.toLocaleString("default", { month: "long" });
-    setcurrentSaleValue(monthWiseSale[monthName].totalSaleValue);
+    if (monthWiseSale[monthName]) {
+      setCurrentSaleValue(monthWiseSale[monthName].totalSaleValue);
+    }
   };
+
   return (
     <>
       <Header />
@@ -148,8 +162,8 @@ const Index: React.FC = () => {
                           className={classnames("py-2 px-3", {
                             //active: activeNav === 1,
                           })}
-                          href="#pablo"
-                          onClick={() => monthTotalSale()}
+                          onClick={() => setSelectedPeriod("M")}
+                          active={selectedPeriod === "M"}
                         >
                           <span className="d-none d-md-block">Month</span>
                           <span className="d-md-none">M</span>
@@ -161,10 +175,10 @@ const Index: React.FC = () => {
                             // active: activeNav === 2,
                           })}
                           data-toggle="tab"
-                          href="#pablo"
-                          onClick={() => weekTotalSale()}
+                          onClick={() => setSelectedPeriod("W")}
+                          active={selectedPeriod === "W"}
                         >
-                          <span className="d-none d-md-block">Week data</span>
+                          <span className="d-none d-md-block">Week</span>
                           <span className="d-md-none">W</span>
                         </NavLink>
                       </NavItem>
