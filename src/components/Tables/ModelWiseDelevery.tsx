@@ -16,9 +16,15 @@ const ModelWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
           <Table className="align-items-center table-flush" responsive>
             <thead className="thead-light">
               <tr>
-                <th scope="col">Model Name</th>
-                <th scope="col">Total Sale</th>
-                <th scope="col">Total Sale Value</th>
+                <th style={{ width: "40%" }} scope="col">
+                  Model Name
+                </th>
+                <th style={{ width: "40%" }} scope="col">
+                  Total Sale
+                </th>
+                <th style={{ width: "40%" }} scope="col">
+                  Total Sale Value
+                </th>
               </tr>
             </thead>
             <tbody>
