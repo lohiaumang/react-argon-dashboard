@@ -174,11 +174,11 @@ const DeliveryOrders: React.FC = () => {
             break;
           }
           case "RESET": {
-            monthWiseSale(statusData.data);
-            // TODO: implement the same as above below vvv
-            weekWiseSale(statusData.data);
-            modelWiseSale(statusData.data);
-            salerCount(statusData.data);
+            // monthWiseSale(statusData.data);
+            // // TODO: implement the same as above below vvv
+            // weekWiseSale(statusData.data);
+            // modelWiseSale(statusData.data);
+            // salerCount(statusData.data);
             setLoading(false);
           }
         }
