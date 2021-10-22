@@ -396,127 +396,127 @@ const DeliveryOrders: React.FC = () => {
     }
   }, [showModal]);
 
-  const getActionButton = () => {
-    if (selected !== undefined) {
-      switch (deliveryOrders[selected].status) {
-        case "INCOMPLETE": {
-          return (
-            <Button
-              className="my-2"
-              color={"primary"}
-              disabled={loading}
-              onClick={editDO}
-              size="sm"
-              title="Edit"
-            >
-              <i className="fas fa-pencil-alt" />
-            </Button>
-          );
-        }
-        case "PENDING": {
-          return (
-            <>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={createDO}
-                size="sm"
-              >
-                Print DO
-              </Button>
-              <Button
-                className="my-2"
-                color={"primary"}
-                disabled={loading}
-                onClick={editDO}
-                size="sm"
-                title="Edit"
-              >
-                <i className="fas fa-pencil-alt" />
-              </Button>
-            </>
-          );
-        }
-        case "DO_CREATED": {
-          return (
-            <>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={createInvoice}
-                size="sm"
-              >
-                Create Invoice
-              </Button>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={printInvoice}
-                size="sm"
-              >
-                Print Invoice
-              </Button>
-              <Button
-                className="my-2"
-                color={"primary"}
-                disabled={loading}
-                onClick={editDO}
-                size="sm"
-                title="Edit"
-              >
-                <i className="fas fa-pencil-alt" />
-              </Button>
-            </>
-          );
-        }
-        case "INVOICE_CREATED": {
-          return (
-            <ButtonDropdown
-              className="mr-2"
-              isOpen={dropdownButton}
-              toggle={toggle}
-            >
-              <>
-                <DropdownToggle caret size="sm" color={"primary"}>
-                  Create Insurance
-                </DropdownToggle>
-                <DropdownMenu>
-                  <DropdownItem
-                    onClick={() => {
-                      createInsurance("HDFC");
-                    }}
-                  >
-                    HDFC
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={() => {
-                      createInsurance("ICICI");
-                    }}
-                  >
-                    ICICI
-                  </DropdownItem>
-                </DropdownMenu>
-              </>
-            </ButtonDropdown>
-          );
-        }
-        case "INSURANCE_CREATED": {
-          return (
-            <>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={createRegistration}
-                size="sm"
-              >
-                Create Registration
-              </Button>
-            </>
-          );
-        }
-      }
-    }
-  };
+  // const getActionButton = () => {
+  //   if (selected !== undefined) {
+  //     switch (deliveryOrders[selected].status) {
+  //       case "INCOMPLETE": {
+  //         return (
+  //           <Button
+  //             className="my-2"
+  //             color={"primary"}
+  //             disabled={loading}
+  //             onClick={editDO}
+  //             size="sm"
+  //             title="Edit"
+  //           >
+  //             <i className="fas fa-pencil-alt" />
+  //           </Button>
+  //         );
+  //       }
+  //       case "PENDING": {
+  //         return (
+  //           <>
+  //             <Button
+  //               className="small-button-width my-2"
+  //               color={"primary"}
+  //               onClick={createDO}
+  //               size="sm"
+  //             >
+  //               Print DO
+  //             </Button>
+  //             <Button
+  //               className="my-2"
+  //               color={"primary"}
+  //               disabled={loading}
+  //               onClick={editDO}
+  //               size="sm"
+  //               title="Edit"
+  //             >
+  //               <i className="fas fa-pencil-alt" />
+  //             </Button>
+  //           </>
+  //         );
+  //       }
+  //       case "DO_CREATED": {
+  //         return (
+  //           <>
+  //             <Button
+  //               className="small-button-width my-2"
+  //               color={"primary"}
+  //               onClick={createInvoice}
+  //               size="sm"
+  //             >
+  //               Create Invoice
+  //             </Button>
+  //             <Button
+  //               className="small-button-width my-2"
+  //               color={"primary"}
+  //               onClick={printInvoice}
+  //               size="sm"
+  //             >
+  //               Print Invoice
+  //             </Button>
+  //             <Button
+  //               className="my-2"
+  //               color={"primary"}
+  //               disabled={loading}
+  //               onClick={editDO}
+  //               size="sm"
+  //               title="Edit"
+  //             >
+  //               <i className="fas fa-pencil-alt" />
+  //             </Button>
+  //           </>
+  //         );
+  //       }
+  //       case "INVOICE_CREATED": {
+  //         return (
+  //           <ButtonDropdown
+  //             className="mr-2"
+  //             isOpen={dropdownButton}
+  //             toggle={toggle}
+  //           >
+  //             <>
+  //               <DropdownToggle caret size="sm" color={"primary"}>
+  //                 Create Insurance
+  //               </DropdownToggle>
+  //               <DropdownMenu>
+  //                 <DropdownItem
+  //                   onClick={() => {
+  //                     createInsurance("HDFC");
+  //                   }}
+  //                 >
+  //                   HDFC
+  //                 </DropdownItem>
+  //                 <DropdownItem
+  //                   onClick={() => {
+  //                     createInsurance("ICICI");
+  //                   }}
+  //                 >
+  //                   ICICI
+  //                 </DropdownItem>
+  //               </DropdownMenu>
+  //             </>
+  //           </ButtonDropdown>
+  //         );
+  //       }
+  //       case "INSURANCE_CREATED": {
+  //         return (
+  //           <>
+  //             <Button
+  //               className="small-button-width my-2"
+  //               color={"primary"}
+  //               onClick={createRegistration}
+  //               size="sm"
+  //             >
+  //               Create Registration
+  //             </Button>
+  //           </>
+  //         );
+  //       }
+  //     }
+  //   }
+  // };
 
   const toggleSelected = (id: string) => {
     if (id === selected) {
@@ -1061,7 +1061,7 @@ const DeliveryOrders: React.FC = () => {
             backdrop="static"
             keyboard={false}
             size="lg"
-            //onExit={() => closeModal()}
+          //onExit={() => closeModal()}
           >
             <ModalHeader
               className="p-4"
@@ -1138,8 +1138,8 @@ const DeliveryOrders: React.FC = () => {
               toggle={() => setShowModal(!showModal)}
             >
               {deliveryOrders[selected].status === "PENDING" ||
-              deliveryOrders[selected].status === "INCOMPLETE" ||
-              deliveryOrders[selected].status === "DO_CREATED"
+                deliveryOrders[selected].status === "INCOMPLETE" ||
+                deliveryOrders[selected].status === "DO_CREATED"
                 ? "Delivery Order"
                 : "Invoice"}
             </ModalHeader>
@@ -1187,12 +1187,12 @@ const DeliveryOrders: React.FC = () => {
             <Card className="shadow">
               <CardHeader className="border-0">
                 <Row>
-                  <Col xs="6">
+                  <Col xs="2">
                     <h3 className="my-3">Delivery Orders</h3>
                   </Col>
                   <Col
                     className="d-flex justify-content-end align-items-center"
-                    xs="6"
+                    xs="10"
                   >
                     {!loadingPage && selected !== undefined && (
                       <>
@@ -1205,7 +1205,78 @@ const DeliveryOrders: React.FC = () => {
                         >
                           Delete
                         </Button>
-                        {getActionButton()}
+                        {/* new code here */}
+                        <Button
+                          className="small-button-width my-2"
+                          color={"primary"}
+                          onClick={createDO}
+                          size="sm"
+                        >
+                          Print DO
+                        </Button>
+                        <Button
+                          className="small-button-width my-2"
+                          color={"primary"}
+                          onClick={createInvoice}
+                          size="sm"
+                        >
+                          Create Invoice
+                        </Button>
+                        <ButtonDropdown
+                          className="mr-2"
+                          isOpen={dropdownButton}
+                          toggle={toggle}
+                        >
+                          <>
+                            <DropdownToggle caret size="sm" color={"primary"}>
+                              Create Insurance
+                            </DropdownToggle>
+                            <DropdownMenu>
+                              <DropdownItem
+                                onClick={() => {
+                                  createInsurance("HDFC");
+                                }}
+                              >
+                                HDFC
+                              </DropdownItem>
+                              <DropdownItem
+                                onClick={() => {
+                                  createInsurance("ICICI");
+                                }}
+                              >
+                                ICICI
+                              </DropdownItem>
+                            </DropdownMenu>
+                          </>
+                        </ButtonDropdown>
+                        <Button
+                          className="small-button-width my-2"
+                          color={"primary"}
+                          onClick={createRegistration}
+                          size="sm"
+                        >
+                          Create Registration
+                        </Button>
+                        <Button
+                          className="small-button-width my-2"
+                          color={"primary"}
+                          onClick={printInvoice}
+                          size="sm"
+                        >
+                          Print Invoice
+                        </Button>
+                        <Button
+                          className="my-2"
+                          color={"primary"}
+                          disabled={loading}
+                          onClick={editDO}
+                          size="sm"
+                          title="Edit"
+                        >
+                          <i className="fas fa-pencil-alt" />
+                        </Button>
+
+                        {/* {getActionButton()} */}
                       </>
                     )}
                     <Button
