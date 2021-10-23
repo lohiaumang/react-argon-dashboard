@@ -55,7 +55,7 @@ const Settings: React.FC = () => {
     }
   }, [success]);
   useEffect(() => {
-    const insuranceConfigRef = db.collection("insuranceConfig").doc("config");
+    const insuranceConfigRef = db.collection("insuranceConfig").doc(user.uid);
 
     insuranceConfigRef
       .get()
