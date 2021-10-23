@@ -29,7 +29,7 @@ class InvalidRoleError extends Error {
 }
 
 function roleIsValid(role) {
-  const validRoles = ["dealer", "salesman", "officeStaff"]; //To be adapted with your own list of roles
+  const validRoles = ["dealer", "salesman", "officeStaff","subdealer"]; //To be adapted with your own list of roles
   return validRoles.includes(role);
 }
 
@@ -45,7 +45,10 @@ exports.createUserIndia = functions
         );
       }
 
-      const userRecord = await admin.auth().createUser(data);
+      const userRecord = await admin.auth().createUser({ ...data,
+        displayName: data.name,
+        emailVerified: false,
+        disabled: false,});
 
       const userId = userRecord.uid;
       console.log(userId);
@@ -192,7 +195,7 @@ exports.createUserdataIndia1 = functions
         uid: userId,
         createdBy: data.createdBy,
         createdOn: FieldValue.serverTimestamp(),
-        displayName: data.name,
+        name: data.name,
         email: data.email,
         password: data.password,
         role: data.role,
