@@ -70,11 +70,13 @@ module.exports = async function (mainWindow, browser) {
 
       switch (type) {
         case "CREATE_DEALER": {
+          console.log("here");
           const functions = firebase.app().functions("asia-south1");
-          const createUserFirestore =
-            functions.httpsCallable("createUserIndia");
+          const createUserFirestore = functions.httpsCallable("createDealer");
+          console.log("here 1", data);
           createUserFirestore(data)
             .then((resp) => {
+              console.log("RESPONSE: ", JSON.stringify(resp));
               const uid = resp.data.uid || "";
               delete data.password;
               fs.writeFileSync(
@@ -90,7 +92,7 @@ module.exports = async function (mainWindow, browser) {
               });
             })
             .catch((err) => {
-              console.log("User creation failed!", err);
+              console.log("User creation failed!", JSON.stringify(err));
               mainWindow.webContents.send("fromMain", {
                 type: "CREATE_DEALER_FAILURE",
                 err,
@@ -168,9 +170,7 @@ module.exports = async function (mainWindow, browser) {
         }
         case "CREATE_USER": {
           const functions = firebase.app().functions("asia-south1");
-          const createUserDataFirestore = functions.httpsCallable(
-            "createUserdataIndia1"
-          );
+          const createUserDataFirestore = functions.httpsCallable("createUser");
           createUserDataFirestore(data)
             .then((resp) => {
               mainWindow.webContents.send("fromMain", {
@@ -189,9 +189,7 @@ module.exports = async function (mainWindow, browser) {
         }
         case "DELETE_USER": {
           const functions = firebase.app().functions("asia-south1");
-          const deleteUserDataFirestore = functions.httpsCallable(
-            "deleteUserDataIndia"
-          );
+          const deleteUserDataFirestore = functions.httpsCallable("deleteUser");
           deleteUserDataFirestore(data)
             .then((resp) => {
               mainWindow.webContents.send("fromMain", {

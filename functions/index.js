@@ -29,16 +29,18 @@ class InvalidRoleError extends Error {
 }
 
 function roleIsValid(role) {
-  const validRoles = ["dealer", "salesman", "officeStaff"]; //To be adapted with your own list of roles
+  const validRoles = ["dealer", "salesman", "officeStaff", "subdealer"]; //To be adapted with your own list of roles
   return validRoles.includes(role);
 }
 
-exports.createUserIndia = functions
+exports.createDealer = functions
   .region("asia-south1")
   .https.onCall(async (data, context) => {
+    functions.logger.log("Create dealer function called with: ", data);
     try {
       //Checking that the new user role is valid
-      const role = data.role;
+      const { role, dealerId } = data;
+
       if (!roleIsValid(role)) {
         throw new InvalidRoleError(
           'The "' + role + '" role is not a valid role'
@@ -46,17 +48,20 @@ exports.createUserIndia = functions
       }
 
       const userRecord = await admin.auth().createUser(data);
-
       const userId = userRecord.uid;
-      console.log(userId);
-
       const claims = {};
-      claims[role] = true;
+      const claimRole =
+        role === "dealer" || role === "subdealer" ? "dealer" : role;
       claims["xyzCompanyUser"] = true;
+      claims["dealer"] = true;
+
+      functions.logger.log("User record: ", userRecord);
+      functions.logger.log("User id: ", userId);
+      functions.logger.log("Claims: ", claims);
 
       await admin.auth().setCustomUserClaims(userId, claims);
 
-      await admin.firestore().collection("users").doc(userId).set({
+      let userData = {
         uid: userId,
         name: data.name,
         phoneNumber: data.phoneNumber,
@@ -67,10 +72,22 @@ exports.createUserIndia = functions
         address: data.address,
         temporaryCertificate: data.temporaryCertificate,
         termsAndCondition: data.termsAndCondition,
-        role: data.role,
-      });
-      functions.logger.log("Collection amended");
-      // await userCreationRequestRef.update({ status: 'Treated' })
+        role: "dealer",
+        // role: data.role,
+      };
+
+      userData = data.dealerId
+        ? {
+            ...userData,
+            dealerId: data.dealerId,
+          }
+        : userData;
+
+      functions.logger.log("User data: ", userData);
+
+      await admin.firestore().collection("users").doc(userId).set(userData);
+
+      functions.logger.log("User added to collection users in firebase");
 
       return {
         result: "The new user has been successfully created.",
@@ -78,6 +95,7 @@ exports.createUserIndia = functions
       };
     } catch (error) {
       functions.logger.log("Error: ", JSON.stringify(error));
+
       if (error.type === "UnauthenticatedError") {
         throw new functions.https.HttpsError("unauthenticated", error.message);
       } else if (
@@ -94,102 +112,32 @@ exports.createUserIndia = functions
     }
   });
 
-//create user
-// exports.createUserdataIndia = functions
-//   .region("asia-south1")
-//   .https.onCall(async (data, context) => {
-//     try {
-//       //Checking that the new user role is valid
-//       functions.logger.log("FUNCTION CALLED: ", data);
-//       const role = data.role;
-//       if (!roleIsValid(role)) {
-//         throw new InvalidRoleError(
-//           'The "' + role + '" role is not a valid role'
-//         );
-//       }
-//       functions.logger.log("INPUT DATA: ", data);
-
-//       const userRecord = await admin.auth().createUser(data);
-//       functions.logger.log("USER RECORD: ", userRecord);
-
-//       const userId = userRecord.uid;
-//       functions.logger.log("USERID: ", userId);
-//       const userCreationRequest = {
-//         uid: userId,
-//         createdBy: data.createdBy,
-//         createdOn: FieldValue.serverTimestamp(),
-//         name: data.name,
-//         email: data.email,
-//         password: data.password,
-//         role: data.role,
-//       };
-//       functions.logger.log("USER CREATION REQUEST: ", userCreationRequest);
-
-//       const claims = {};
-//       claims[role] = true;
-//       claims["xyzCompanyUser"] = true;
-
-//       await admin.auth().setCustomUserClaims(userId, claims);
-//       functions.logger.log("SETTING CUSTOM CLAIMS");
-
-//       await admin
-//         .firestore()
-//         .collection("users")
-//         .doc(userId)
-//         .set(userCreationRequest);
-//       console.log(userId);
-
-//       // await userCreationRequestRef.update({ status: 'Treated' })
-
-//       return {
-//         result: "The new user has been successfully created.",
-//         userCreationRequest,
-//       };
-//     } catch (error) {
-//       if (error.type === "UnauthenticatedError") {
-//         throw new functions.https.HttpsError("unauthenticated", error.message);
-//       } else if (
-//         error.type === "NotAnAdminError" ||
-//         error.type === "InvalidRoleError"
-//       ) {
-//         throw new functions.https.HttpsError(
-//           "failed-precondition",
-//           error.message
-//         );
-//       } else {
-//         throw new functions.https.HttpsError("internal", error.message);
-//       }
-//     }
-//   });
-
-exports.createUserdataIndia1 = functions
+exports.createUser = functions
   .region("asia-south1")
   .https.onCall(async (data, context) => {
     try {
       //Checking that the new user role is valid
-      functions.logger.log("FUNCTION CALLED: ", data);
-      const role = data.role;
+      functions.logger.log("createUser function called with: ", data);
+      const { role } = data;
+
       if (!roleIsValid(role)) {
         throw new InvalidRoleError(
           'The "' + role + '" role is not a valid role'
         );
       }
-      functions.logger.log("INPUT DATA: ", data);
 
-      const userRecord = await admin
-        .auth()
-        .createUser({
-          ...data,
-          displayName: data.name,
-          emailVerified: false,
-          disabled: false,
-        });
-      functions.logger.log("USER RECORD: ", userRecord);
+      functions.logger.log("Input data: ", data);
 
+      const userRecord = await admin.auth().createUser({
+        ...data,
+        displayName: data.name,
+        emailVerified: false,
+        disabled: false,
+      });
       const userId = userRecord.uid;
-      functions.logger.log("USERID: ", userId);
       const userCreationRequest = {
         uid: userId,
+        dealerId: data.dealerId,
         createdBy: data.createdBy,
         createdOn: FieldValue.serverTimestamp(),
         displayName: data.name,
@@ -198,23 +146,24 @@ exports.createUserdataIndia1 = functions
         role: data.role,
         status: data.status,
       };
-      functions.logger.log("USER CREATION REQUEST: ", userCreationRequest);
+      // functions.logger.log("USER RECORD: ", userRecord);
+
+      functions.logger.log("userId: ", userId);
+
+      functions.logger.log("user creation request data: ", userCreationRequest);
 
       const claims = {};
       claims[role] = true;
       claims["xyzCompanyUser"] = true;
 
       await admin.auth().setCustomUserClaims(userId, claims);
-      functions.logger.log("SETTING CUSTOM CLAIMS");
+      functions.logger.log("Setting custom claims");
 
       await admin
         .firestore()
         .collection("users")
         .doc(userId)
         .set(userCreationRequest);
-      console.log(userId);
-
-      // await userCreationRequestRef.update({ status: 'Treated' })
 
       return {
         result: "The new user has been successfully created.",
@@ -237,9 +186,7 @@ exports.createUserdataIndia1 = functions
     }
   });
 
-//Delete User
-
-exports.deleteUserDataIndia = functions
+exports.deleteUser = functions
   .region("asia-south1")
   .https.onCall(async (data, context) => {
     admin
@@ -248,29 +195,6 @@ exports.deleteUserDataIndia = functions
       .then(function () {
         return { result: "User Delete Successfully." };
       })
-      .catch(function (error) {
-        console.log("Error deleting user:", error);
-      });
-  });
-
-//Delete Usere
-
-exports.userDeletedIndia = functions
-  .region("asia-south1")
-  .auth.user()
-  .onDelete((user) => {
-    const doc = admin.firestore().collection("users").doc(user.uid);
-    return doc.delete();
-  });
-
-//Reset Pasword
-exports.resetPasswordIndia = functions
-  .region("asia-south1")
-  .https.onCall(async (data, context) => {
-    var auth = firebase.auth();
-    auth
-      .sendPasswordResetEmail(data)
-      .then(function () {})
       .catch(function (error) {
         console.log("Error deleting user:", error);
       });

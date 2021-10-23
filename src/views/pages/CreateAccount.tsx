@@ -38,6 +38,8 @@ import {
   Row,
 } from "reactstrap";
 import firebase from "firebase/app";
+import "firebase/firestore";
+
 import Loading from "../../components/Share/Loading";
 
 export interface SignUpError {
@@ -53,7 +55,9 @@ declare global {
 
 const CreateAccount: React.FC = () => {
   // TODO: Convert to type UserInfo
+  const [type, setType] = useState<string>("");
   const [name, setName] = useState<string>("");
+  const [dealer, setDealer] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -62,6 +66,7 @@ const CreateAccount: React.FC = () => {
   const [address, setAddress] = useState<string>("");
   const [temporaryCertificate, setTemporaryCertificate] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [dealerships, setDealerships] = useState<any[]>([]);
 
   // Component specific
   const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
@@ -86,6 +91,30 @@ const CreateAccount: React.FC = () => {
     }
   }, [signUpSuccess]);
 
+  useEffect(() => {
+    if (type === "subdealer" && !dealerships.length) {
+      console.log("Fetch dealers");
+      firebase
+        .firestore()
+        .collection("users")
+        .where("role", "==", "dealer")
+        .get()
+        .then((querySnapshot) => {
+          let dealers: any[] = querySnapshot.docs.map((doc) => {
+            if (doc.exists) {
+              const { name, uid } = doc.data();
+
+              return {
+                name,
+                uid,
+              };
+            }
+          });
+          setDealerships(dealers);
+        });
+    }
+  }, [type]);
+
   const signUp = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
 
@@ -101,7 +130,7 @@ const CreateAccount: React.FC = () => {
 
     setLoading(true);
 
-    const user = {
+    let user: any = {
       name,
       phoneNumber: `+91${phoneNumber}`,
       email,
@@ -111,8 +140,18 @@ const CreateAccount: React.FC = () => {
       address,
       temporaryCertificate,
       termsAndCondition,
-      role: "dealer",
+      role: type,
     };
+
+    user =
+      type === "subdealer" && !!dealer
+        ? {
+            ...user,
+            dealerId: dealer,
+          }
+        : user;
+
+    debugger;
 
     if (window && window.api) {
       window.api.receive("fromMain", (data: any) => {
@@ -155,7 +194,7 @@ const CreateAccount: React.FC = () => {
           </CardHeader>
           <CardBody className="px-lg-5 py-lg-5">
             <Form role="form" onSubmit={signUp}>
-              <FormGroup className="mb-3">
+              {/* <FormGroup className="mb-3">
                 <InputGroup className="input-group-alternative">
                   <InputGroupAddon addonType="prepend">
                     <InputGroupText>
@@ -164,13 +203,85 @@ const CreateAccount: React.FC = () => {
                   </InputGroupAddon>
                   <Input
                     required
-                    placeholder="Dealership name"
+                    placeholder="Business name"
                     type="text"
                     value={name}
                     onChange={(ev) => setName(ev.target.value!)}
                   />
                 </InputGroup>
-              </FormGroup>
+              </FormGroup> */}
+              <Row>
+                <Col>
+                  <FormGroup className="mb-3">
+                    <InputGroup className="input-group-alternative">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="fas fa-building" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        required
+                        type="select"
+                        name="select"
+                        value={type}
+                        onChange={(ev) => setType(ev.target.value!)}
+                      >
+                        <option value="">Choose type</option>
+                        <option value="dealer">Dealer</option>
+                        <option value="subdealer">Sub Dealer</option>
+                      </Input>
+                    </InputGroup>
+                  </FormGroup>
+                </Col>
+                <Col>
+                  <FormGroup>
+                    <InputGroup className="input-group-alternative">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="fas fa-briefcase" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        required
+                        placeholder="Business name"
+                        type="text"
+                        value={name}
+                        onChange={(ev) => setName(ev.target.value!)}
+                      />
+                    </InputGroup>
+                  </FormGroup>
+                </Col>
+              </Row>
+              {type === "subdealer" && dealerships.length ? (
+                <FormGroup>
+                  <InputGroup className="input-group-alternative">
+                    <InputGroupAddon addonType="prepend">
+                      <InputGroupText>
+                        <i className="fas fa-user" />
+                      </InputGroupText>
+                    </InputGroupAddon>
+                    <Input
+                      required
+                      type="select"
+                      value={dealer}
+                      className="dealership-name"
+                      onChange={(ev) => {
+                        debugger;
+                        setDealer(ev.target.value!);
+                      }}
+                    >
+                      <option value="">Choose Dealer</option>
+                      {dealerships.map((dealer) => (
+                        <option key={dealer.uid} value={dealer.uid}>
+                          {dealer.name}
+                        </option>
+                      ))}
+                    </Input>
+                  </InputGroup>
+                </FormGroup>
+              ) : (
+                <></>
+              )}
               <Row>
                 <Col>
                   <FormGroup className="mb-3">
