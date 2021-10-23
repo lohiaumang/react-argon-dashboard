@@ -126,43 +126,23 @@ const DeliveryOrders: React.FC = () => {
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
       setLoadingPage(true);
-      if (user.role === "officeStaff") {
-        db.collection("deliveryOrders")
-          .where("createdBy", "==", user.uid)
-          .where("active", "==", true)
-          .get()
-          .then((querySnapshot) => {
-            let dOs: any = {};
-            querySnapshot.docs.forEach((doc) => {
-              dOs[doc.id] = {
-                ...doc.data(),
-                id: doc.id,
-              };
-            });
-            setDeliveryOrders(dOs);
-
-            setLoadingPage(false);
+      const dealerId = user.createdBy || user.uid || "";
+      db.collection("deliveryOrders")
+        .where("dealerId", "==", dealerId)
+        .where("active", "==", true)
+        .get()
+        .then((querySnapshot) => {
+          let dOs: any = {};
+          querySnapshot.docs.forEach((doc) => {
+            dOs[doc.id] = {
+              ...doc.data(),
+              id: doc.id,
+            };
           });
-      } else {
-        const dealerId = user.createdBy || user.uid || "";
-        db.collection("deliveryOrders")
-          .where("dealerId", "==", dealerId)
-          .where("active", "==", true)
-          .get()
-          .then((querySnapshot) => {
-            let dOs: any = {};
-            querySnapshot.docs.forEach((doc) => {
-              dOs[doc.id] = {
-                ...doc.data(),
-                id: doc.id,
-              };
-            });
-            setDeliveryOrders(dOs);
+          setDeliveryOrders(dOs);
 
-            setLoadingPage(false);
-          });
-      }
-
+          setLoadingPage(false);
+        });
 
       window.api.receive("fromMain", (statusData: any) => {
         switch (statusData.type) {
@@ -460,7 +440,7 @@ const DeliveryOrders: React.FC = () => {
         case "DO_CREATED": {
           return (
             <>
-              {user.role !== "officeStaff" && (
+              {user.role !== "subdealer" && (
                 <Button
                   className="small-button-width my-2"
                   color={"primary"}
@@ -534,51 +514,160 @@ const DeliveryOrders: React.FC = () => {
             </>
           );
         }
-        // case "INVOICE_CREATED": {
-        //   return (
-        //     <ButtonDropdown
-        //       className="mr-2"
-        //       isOpen={dropdownButton}
-        //       toggle={toggle}
-        //     >
-        //       <>
-        //         <DropdownToggle caret size="sm" color={"primary"}>
-        //           Create Insurance
-        //         </DropdownToggle>
-        //         <DropdownMenu>
-        //           <DropdownItem
-        //             onClick={() => {
-        //               createInsurance("HDFC");
-        //             }}
-        //           >
-        //             HDFC
-        //           </DropdownItem>
-        //           <DropdownItem
-        //             onClick={() => {
-        //               createInsurance("ICICI");
-        //             }}
-        //           >
-        //             ICICI
-        //           </DropdownItem>
-        //         </DropdownMenu>
-        //       </>
-        //     </ButtonDropdown>
-        //   );
-        // }
-        // case "INSURANCE_CREATED": {
-        //   return (
-        //     <>
-        //       <Button
-        //         className="small-button-width my-2"
-        //         color={"primary"}
-        //         onClick={createRegistration}
-        //         size="sm"
-        //       >
-        //         Create Registration
-        //       </Button>
-        //     </>
-        //   );
-        // }
+        case "INVOICE_CREATED": {
+          return (
+            <>
+              {user.role !== "subdealer" && (
+                <Button
+                  className="small-button-width my-2"
+                  color={"primary"}
+                  onClick={createInvoice}
+                  size="sm"
+                >
+                  Create Invoice
+                </Button>
+              )}
+              <ButtonDropdown
+                className="mr-2"
+                isOpen={dropdownButton}
+                toggle={toggle}
+              >
+                <>
+                  <DropdownToggle caret size="sm" color={"primary"}>
+                    Create Insurance
+                  </DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem
+                      onClick={() => {
+                        createInsurance("HDFC");
+                      }}
+                    >
+                      HDFC
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={() => {
+                        createInsurance("ICICI");
+                      }}
+                    >
+                      ICICI
+                    </DropdownItem>
+                  </DropdownMenu>
+                </>
+              </ButtonDropdown>
+              <Button
+                className="small-button-width my-2"
+                color={"primary"}
+                onClick={createRegistration}
+                size="sm"
+              >
+                Create Registration
+              </Button>
+              <Button
+                className="small-button-width my-2"
+                color={"primary"}
+                onClick={printInvoice}
+                size="sm"
+              >
+                Print Invoice
+              </Button>
+              <Button
+                className="small-button-width my-2"
+                color={"primary"}
+                onClick={createDO}
+                size="sm"
+              >
+                Print DO
+              </Button>
+              {/* <Button
+                className="my-2"
+                color={"primary"}
+                disabled={loading}
+                onClick={editDO}
+                size="sm"
+                title="Edit"
+              >
+                <i className="fas fa-pencil-alt" />
+              </Button> */}
+            </>
+          );
+        }
+        case "INSURANCE_CREATED": {
+          return (
+            <>
+              {user.role !== "subdealer" && (
+                <Button
+                  className="small-button-width my-2"
+                  color={"primary"}
+                  onClick={createInvoice}
+                  size="sm"
+                >
+                  Create Invoice
+                </Button>
+              )}
+              <ButtonDropdown
+                className="mr-2"
+                isOpen={dropdownButton}
+                toggle={toggle}
+              >
+                <>
+                  <DropdownToggle caret size="sm" color={"primary"}>
+                    Create Insurance
+                  </DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem
+                      onClick={() => {
+                        createInsurance("HDFC");
+                      }}
+                    >
+                      HDFC
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={() => {
+                        createInsurance("ICICI");
+                      }}
+                    >
+                      ICICI
+                    </DropdownItem>
+                  </DropdownMenu>
+                </>
+              </ButtonDropdown>
+              <Button
+                className="small-button-width my-2"
+                color={"primary"}
+                onClick={createRegistration}
+                size="sm"
+              >
+                Create Registration
+              </Button>
+              <Button
+                className="small-button-width my-2"
+                color={"primary"}
+                onClick={printInvoice}
+                size="sm"
+              >
+                Print Invoice
+              </Button>
+              <Button
+                className="small-button-width my-2"
+                color={"primary"}
+                onClick={createDO}
+                size="sm"
+              >
+                Print DO
+              </Button>
+              {/* <Button
+                className="my-2"
+                color={"primary"}
+                disabled={loading}
+                onClick={editDO}
+                size="sm"
+                title="Edit"
+              >
+                <i className="fas fa-pencil-alt" />
+              </Button> */}
+            </>
+          );
+        }
       }
     }
   };
