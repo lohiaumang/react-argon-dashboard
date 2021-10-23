@@ -146,9 +146,9 @@ const CreateAccount: React.FC = () => {
     user =
       type === "subdealer" && !!dealer
         ? {
-            ...user,
-            dealerId: dealer,
-          }
+          ...user,
+          dealerId: dealer,
+        }
         : user;
 
     debugger;

@@ -55,7 +55,8 @@ const Settings: React.FC = () => {
     }
   }, [success]);
   useEffect(() => {
-    const insuranceConfigRef = db.collection("insuranceConfig").doc(user.uid);
+    const dealerId = user.createdBy || user.uid || "";
+    const insuranceConfigRef = db.collection("insuranceConfig").doc(dealerId);
 
     insuranceConfigRef
       .get()
@@ -68,7 +69,7 @@ const Settings: React.FC = () => {
       })
       .catch((err) => console.log(err));
 
-    const priceConfigRef = db.collection("priceConfig").doc("config");
+    const priceConfigRef = db.collection("priceConfig").doc(dealerId);
     priceConfigRef
       .get()
       .then((doc) => {
@@ -132,34 +133,19 @@ const Settings: React.FC = () => {
 
   //TODO subdelear create then check code run or not
   const saveInsuranceConfig = (config: Config) => {
-    if (user.role === "officeStaff") {
-      db.collection("insuranceConfig").doc(user.uid).set(config);
-      setSuccess({
-        message: "Update successful",
-      });
-    } else {
-      const dealerId = user.createdBy || user.uid || "";
-      db.collection("insuranceConfig").doc(dealerId).set(config);
-      setSuccess({
-        message: "Update successful",
-      });
-    }
-
+    const dealerId = user.createdBy || user.uid || "";
+    db.collection("insuranceConfig").doc(dealerId).set(config);
+    setSuccess({
+      message: "Update successful",
+    });
   };
 
   const savePriceConfig = (config: Config) => {
-    if (user.role === "officeStaff") {
-      db.collection("priceConfig").doc(user.uid).set(config);
-      setSuccess({
-        message: "Update successful",
-      });
-    } else {
-      const dealerId = user.createdBy || user.uid || "";
-      db.collection("priceConfig").doc(dealerId).set(config);
-      setSuccess({
-        message: "Update successful",
-      });
-    }
+    const dealerId = user.createdBy || user.uid || "";
+    db.collection("priceConfig").doc(dealerId).set(config);
+    setSuccess({
+      message: "Update successful",
+    });
   };
   //end TODO
   const saveOtherPriceConfig = (config: Config) => {
