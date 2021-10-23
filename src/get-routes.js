@@ -50,7 +50,7 @@ const getRoutes = (user) => {
       icon: "fas fa-user text-teal",
       component: () => <Profile />,
       layout: "/admin",
-      isNavigable: role === "subdealer",
+      isNavigable: role === "subdealer"||role === "dealer",
     },
     {
       path: "/user-management",
@@ -58,7 +58,7 @@ const getRoutes = (user) => {
       icon: "fas fa-user-cog text-info",
       component: () => <UserManagement />,
       layout: "/admin",
-      isNavigable: role === "subdealer",
+      isNavigable: role === "subdealer"||role === "dealer",
     },
     {
       path: "/settings",
