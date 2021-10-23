@@ -16,7 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 // reactstrap components
 import {
@@ -34,6 +34,7 @@ import "firebase/firestore";
 import Header from "../../components/Headers/Header";
 import ConfigTable, { Config } from "../../components/Tables/ConfigTable";
 import AccessoriesConfig from "../../components/Tables/AccessoriesConfig";
+import { UserContext } from "../../Context";
 
 const Settings: React.FC = () => {
   const [disabled, setDisabled] = useState<boolean>(true);
@@ -46,6 +47,7 @@ const Settings: React.FC = () => {
   const [financerConfig, setFinancerConfig] = useState<any>({});
   const [success, setSuccess] = useState<{ message: string }>();
   const db = firebase.firestore();
+  const [user] = useContext(UserContext);
   // const currentUser = firebase.auth().currentUser;
   useEffect(() => {
     if (success) {
@@ -128,20 +130,38 @@ const Settings: React.FC = () => {
     });
   };
 
+  //TODO subdelear create then check code run or not
   const saveInsuranceConfig = (config: Config) => {
-    db.collection("insuranceConfig").doc("config").set(config);
-    setSuccess({
-      message: "Update successful",
-    });
+    if (user.role === "officeStaff") {
+      db.collection("insuranceConfig").doc(user.uid).set(config);
+      setSuccess({
+        message: "Update successful",
+      });
+    } else {
+      const dealerId = user.createdBy || user.uid || "";
+      db.collection("insuranceConfig").doc(dealerId).set(config);
+      setSuccess({
+        message: "Update successful",
+      });
+    }
+
   };
 
   const savePriceConfig = (config: Config) => {
-    db.collection("priceConfig").doc("config").set(config);
-    setSuccess({
-      message: "Update successful",
-    });
+    if (user.role === "officeStaff") {
+      db.collection("priceConfig").doc(user.uid).set(config);
+      setSuccess({
+        message: "Update successful",
+      });
+    } else {
+      const dealerId = user.createdBy || user.uid || "";
+      db.collection("priceConfig").doc(dealerId).set(config);
+      setSuccess({
+        message: "Update successful",
+      });
+    }
   };
-
+  //end TODO
   const saveOtherPriceConfig = (config: Config) => {
     db.collection("priceConfig").doc("joyHondaConfig").set(config);
     setSuccess({

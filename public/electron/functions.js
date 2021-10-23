@@ -312,11 +312,11 @@ module.exports = async function (mainWindow, browser) {
                 insuranceDetails: {
                   modelName:
                     data.insuranceDetails[data.vehicleInfo.modelName][
-                      `${insuranceCompany.toLowerCase()}ModelName`
+                    `${insuranceCompany.toLowerCase()}ModelName`
                     ],
                   userRate:
                     data.insuranceDetails[data.vehicleInfo.modelName][
-                      "userRate"
+                    "userRate"
                     ],
                 },
                 // priceDetails: priceDetails[data.vehicleInfo.modelName],

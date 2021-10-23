@@ -126,23 +126,43 @@ const DeliveryOrders: React.FC = () => {
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
       setLoadingPage(true);
-      const dealerId = user.createdBy || user.uid || "";
-      db.collection("deliveryOrders")
-        .where("dealerId", "==", dealerId)
-        .where("active", "==", true)
-        .get()
-        .then((querySnapshot) => {
-          let dOs: any = {};
-          querySnapshot.docs.forEach((doc) => {
-            dOs[doc.id] = {
-              ...doc.data(),
-              id: doc.id,
-            };
-          });
-          setDeliveryOrders(dOs);
+      if (user.role === "officeStaff") {
+        db.collection("deliveryOrders")
+          .where("createdBy", "==", user.uid)
+          .where("active", "==", true)
+          .get()
+          .then((querySnapshot) => {
+            let dOs: any = {};
+            querySnapshot.docs.forEach((doc) => {
+              dOs[doc.id] = {
+                ...doc.data(),
+                id: doc.id,
+              };
+            });
+            setDeliveryOrders(dOs);
 
-          setLoadingPage(false);
-        });
+            setLoadingPage(false);
+          });
+      } else {
+        const dealerId = user.createdBy || user.uid || "";
+        db.collection("deliveryOrders")
+          .where("dealerId", "==", dealerId)
+          .where("active", "==", true)
+          .get()
+          .then((querySnapshot) => {
+            let dOs: any = {};
+            querySnapshot.docs.forEach((doc) => {
+              dOs[doc.id] = {
+                ...doc.data(),
+                id: doc.id,
+              };
+            });
+            setDeliveryOrders(dOs);
+
+            setLoadingPage(false);
+          });
+      }
+
 
       window.api.receive("fromMain", (statusData: any) => {
         switch (statusData.type) {
@@ -440,14 +460,16 @@ const DeliveryOrders: React.FC = () => {
         case "DO_CREATED": {
           return (
             <>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={createInvoice}
-                size="sm"
-              >
-                Create Invoice
-              </Button>
+              {user.role !== "officeStaff" && (
+                <Button
+                  className="small-button-width my-2"
+                  color={"primary"}
+                  onClick={createInvoice}
+                  size="sm"
+                >
+                  Create Invoice
+                </Button>
+              )}
               <ButtonDropdown
                 className="mr-2"
                 isOpen={dropdownButton}
