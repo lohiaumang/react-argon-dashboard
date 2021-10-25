@@ -419,6 +419,59 @@ const DeliveryOrders: React.FC = () => {
         case "PENDING": {
           return (
             <>
+              {user.role !== "subdealer" && (
+                <Button
+                  className="small-button-width my-2"
+                  color={"primary"}
+                  onClick={createInvoice}
+                  size="sm"
+                >
+                  Create Invoice
+                </Button>
+              )}
+              <ButtonDropdown
+                className="mr-2"
+                isOpen={dropdownButton}
+                toggle={toggle}
+              >
+                <>
+                  <DropdownToggle caret size="sm" color={"primary"}>
+                    Create Insurance
+                  </DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem
+                      onClick={() => {
+                        createInsurance("HDFC");
+                      }}
+                    >
+                      HDFC
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={() => {
+                        createInsurance("ICICI");
+                      }}
+                    >
+                      ICICI
+                    </DropdownItem>
+                  </DropdownMenu>
+                </>
+              </ButtonDropdown>
+              <Button
+                className="small-button-width my-2"
+                color={"primary"}
+                onClick={createRegistration}
+                size="sm"
+              >
+                Create Registration
+              </Button>
+              <Button
+                className="small-button-width my-2"
+                color={"primary"}
+                onClick={printInvoice}
+                size="sm"
+              >
+                Print Invoice
+              </Button>
               <Button
                 className="small-button-width my-2"
                 color={"primary"}
@@ -427,16 +480,16 @@ const DeliveryOrders: React.FC = () => {
               >
                 Print DO
               </Button>
-              <Button
-                className="my-2"
-                color={"primary"}
-                disabled={loading}
-                onClick={editDO}
-                size="sm"
-                title="Edit"
-              >
-                <i className="fas fa-pencil-alt" />
-              </Button>
+              {/* <Button
+              className="my-2"
+              color={"primary"}
+              disabled={loading}
+              onClick={editDO}
+              size="sm"
+              title="Edit"
+            >
+              <i className="fas fa-pencil-alt" />
+            </Button> */}
             </>
           );
         }
@@ -1249,7 +1302,7 @@ const DeliveryOrders: React.FC = () => {
             backdrop="static"
             keyboard={false}
             size="lg"
-            //onExit={() => closeModal()}
+          //onExit={() => closeModal()}
           >
             <ModalHeader
               className="p-4"
@@ -1326,8 +1379,8 @@ const DeliveryOrders: React.FC = () => {
               toggle={() => setShowModal(!showModal)}
             >
               {deliveryOrders[selected].status === "PENDING" ||
-              deliveryOrders[selected].status === "INCOMPLETE" ||
-              deliveryOrders[selected].status === "DO_CREATED"
+                deliveryOrders[selected].status === "INCOMPLETE" ||
+                deliveryOrders[selected].status === "DO_CREATED"
                 ? "Delivery Order"
                 : "Invoice"}
             </ModalHeader>

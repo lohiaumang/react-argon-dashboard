@@ -4,6 +4,7 @@ import NumberFormat from "react-number-format";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import { isEmpty } from "lodash";
+import { UserContext } from "../../Context";
 
 export interface DealerInfo {
   name: string;
@@ -160,12 +161,14 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
       let refOne: any = customerInfo.refOne || {};
       let refTwo: any = customerInfo.refTwo || {};
       let accessoriesList: any = additionalInfo.accessoriesList;
+      const [user] = useContext(UserContext);
 
       useEffect(() => {
+        const dealerId = user.createdBy || user.uid || "";
         const docRef = firebase
           .firestore()
-          .collection("priceConfig")
-          .doc("joyHondaConfig");
+          .collection("joyHondaConfig")
+          .doc(dealerId);
         docRef.get().then((doc) => {
           if (doc.exists) {
             let otherPriceDetails: any = doc.data();

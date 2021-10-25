@@ -175,6 +175,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   // }, [currDo.customerInfo]);
 
   const updateAccessories = (modelName: string) => {
+    debugger;
     firebase
       .firestore()
       .collection("accessories")
@@ -316,9 +317,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
           .set(order, { merge: true });
       }
       //dashboard status count
-
-      const dealerId = user.createdBy || user.uid || "";
-      let tempData: any;
       // if (currDo.status === "INCOMPLETE" && status === "PENDING") {
       //   const docRef = firebase.firestore().collection("status").doc(dealerId);
       //   docRef

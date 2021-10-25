@@ -47,7 +47,6 @@ const App: React.FC = () => {
               }
             }
           });
-
         var docRef = firebase
           .firestore()
           .collection("priceConfig")

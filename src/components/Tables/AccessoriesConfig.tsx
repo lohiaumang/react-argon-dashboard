@@ -61,10 +61,11 @@ const AccessoriesConfig1: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
+    const dealerId = user.createdBy || user.uid || "";
     const accessoriesConfigRef = firebase
       .firestore()
       .collection("accessories")
-      .doc("accessoriesConfig");
+      .doc(dealerId);
 
     accessoriesConfigRef
       .get()

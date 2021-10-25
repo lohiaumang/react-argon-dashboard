@@ -84,8 +84,8 @@ const Settings: React.FC = () => {
       .catch((err) => console.log(err));
 
     const otherPriceConfigRef = db
-      .collection("priceConfig")
-      .doc("joyHondaConfig");
+      .collection("joyHondaConfig")
+      .doc(dealerId);
     otherPriceConfigRef
       .get()
       .then((doc) => {
@@ -153,7 +153,8 @@ const Settings: React.FC = () => {
   };
   //end TODO
   const saveOtherPriceConfig = (config: Config) => {
-    db.collection("priceConfig").doc("joyHondaConfig").set(config);
+    const dealerId = user.createdBy || user.uid || "";
+    db.collection("joyHondaConfig").doc(dealerId).set(config);
     setSuccess({
       message: "Update successful",
     });
