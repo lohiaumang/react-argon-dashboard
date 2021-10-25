@@ -37,6 +37,7 @@ import {
 // core components
 import Header from "../../components/Headers/Header";
 import SmallLoading from "../../components/Share/SmallLoading";
+import { UserContext } from "../../Context";
 
 import firebase from "firebase/app";
 import "firebase/firestore";
@@ -75,10 +76,12 @@ const UserManagement: React.FC = () => {
   const [signUpError, setSignUpError] = useState<SignUpError>();
   const [signUpSuccess, setSignUpSuccess] = useState<SignUpSuccess>();
   const [deleteSuccess, setDeleteSuccess] = useState<DeleteSuccess>();
-  const [userData, setUserData] = useState<any>([]);
+  const [userData, setUserData] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [Deleteloading, setDeleteLoading] = useState<boolean>(false);
   const db = firebase.firestore();
+  // Getting user info from context
+  const [user] = useContext(UserContext);
 
   useEffect(() => {
     if (signUpError) {
@@ -98,15 +101,12 @@ const UserManagement: React.FC = () => {
     }
   }, [deleteSuccess]);
 
-  //get user data
-  const currentUser = firebase.auth().currentUser;
-  // const pageSize = 10;
-  const getUserData = (uid: string) => {
-    useEffect(() => {
+  useEffect(() => {
+    if (user && user.uid && !userData) {
       firebase
         .firestore()
         .collection("users")
-        .where("createdBy", "==", uid)
+        .where("createdBy", "==", user.uid)
         .where("role", "in", ["salesman", "officeStaff"])
         .where("status", "==", true)
         .onSnapshot(function (querySnapshot) {
@@ -119,19 +119,8 @@ const UserManagement: React.FC = () => {
             }))
           );
         });
-    }, []);
-  };
-
-  if (currentUser && currentUser.uid) {
-    getUserData(currentUser.uid);
-  }
-  // const pageCount = userData? Math.ceil(userData.length/pageSize):0;
-  //  if(pageCount ===1) return null;
-  //  const pages= _.range(1, pageCount+1);
-
-  // const handleClick=(id: any)=>{
-  //   firebase.firestore().collection('users').doc(id).delete();
-  // }
+    }
+  }, [user]);
 
   const deleteUser = (uid: any) => {
     setDeleteLoading(true);
@@ -145,10 +134,16 @@ const UserManagement: React.FC = () => {
           switch (data.type) {
             case "DELETE_USER_SUCCESS": {
               setDeleteLoading(false);
+              let newUserData: any[] = userData.filter(
+                (currUser: any) => currUser.uid !== uid
+              );
+              setUserData(newUserData);
+
               setDeleteSuccess({
                 code: "FIREBASE_ERROR",
                 message: "User Delete Successfully.",
               });
+
               break;
             }
             case "DELETE_USER_FAILURE": {
@@ -184,30 +179,46 @@ const UserManagement: React.FC = () => {
   const userCreate = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
     setLoading(true);
-    if (currentUser) {
-      const user = {
+    if (user) {
+      let newUser: any = {
         name,
         email,
         password,
         role,
         status: true,
-        createdBy: currentUser.uid,
+        createdBy: user.uid,
       };
+
+      newUser =
+        user && user.dealerId
+          ? {
+              ...newUser,
+              dealerId: user.dealerId,
+            }
+          : newUser;
 
       if (window && window.api) {
         window.api.receive("fromMain", (data: any) => {
           switch (data.type) {
             case "CREATE_USER_SUCCESS": {
               setLoading(false);
-              setSignUpSuccess({
-                code: "USER_SUCCESS",
-                message: data.resp.data.result,
-              });
+
               setPassword("");
               setName("");
               setEmail("");
               setRole("");
               setStatus("");
+
+              let newUserData: any = [...userData];
+              setUserData(newUserData.push(newUser));
+
+              // console.log(JSON.stringify(data.resp));
+
+              setSignUpSuccess({
+                code: "USER_SUCCESS",
+                message: data.resp.data.result,
+              });
+
               break;
             }
             case "CREATE_USER_FAILURE": {
@@ -222,7 +233,7 @@ const UserManagement: React.FC = () => {
         });
         window.api.send("toMain", {
           type: "CREATE_USER",
-          data: user,
+          data: newUser,
         });
       }
     }
@@ -374,7 +385,7 @@ const UserManagement: React.FC = () => {
                     </Row>
                   </div>
                 </Form>
-                {userData.length > 0 && (
+                {userData && userData.length > 0 && (
                   <>
                     <h6 className="heading-small text-muted mb-4">All users</h6>
                     {/* {deleteSuccess && (
@@ -395,26 +406,34 @@ const UserManagement: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {userData.map((curElem: any) => {
-                          return (
-                            <tr key={curElem.id}>
-                              <th scope="row">{curElem.name}</th>
-                              <td>{curElem.email}</td>
-                              <td>{curElem.role}</td>
-                              <td className="text-right">
-                                <Button
-                                  className="small-button-width"
-                                  color="danger"
-                                  size="sm"
-                                  onClick={() => deleteUser(curElem.id)}
-                                >
-                                  {/* {Deleteloading ? <Loading /> : "Delete"} */}
-                                  Delete
-                                </Button>
-                              </td>
-                            </tr>
-                          );
-                        })}
+                        {userData &&
+                          userData.map(({ id, name, email, role }: any) => {
+                            return (
+                              id &&
+                              name &&
+                              email &&
+                              role && (
+                                <tr key={id}>
+                                  <th scope="row">{name}</th>
+                                  <td>{email}</td>
+                                  <td className="capitalize">
+                                    {role.split(/(?=[A-Z])/).join(" ")}
+                                  </td>
+                                  <td className="text-right">
+                                    <Button
+                                      className="small-button-width"
+                                      color="danger"
+                                      size="sm"
+                                      onClick={() => deleteUser(id)}
+                                    >
+                                      {/* {Deleteloading ? <Loading /> : "Delete"} */}
+                                      Delete
+                                    </Button>
+                                  </td>
+                                </tr>
+                              )
+                            );
+                          })}
                       </tbody>
                     </Table>
                   </>

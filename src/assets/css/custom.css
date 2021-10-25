@@ -214,6 +214,15 @@ table .navbar-fixed-bottom .dropdown .caret {
   background-color: #5e72e4;
   border-color: #5e72e4;
 }
+
+select.dealership-name {
+  text-transform: capitalize;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
 /* data table button css */
 @page {
   size: auto;
