@@ -103,6 +103,7 @@ const DeliveryOrders: React.FC = () => {
   const [invoiceNo, setInvoiceNo] = useState<string>("");
   const [inputHsnCode, setInputHsnCode] = useState<string>("");
   const [inputInvoiceNo, setInputInvoiceNo] = useState<string>("");
+  const [origins, setOrigins] = useState<{ [key: string]: string }>({});
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
   useEffect(() => {
@@ -986,9 +987,27 @@ const DeliveryOrders: React.FC = () => {
       dealerId,
       subDealerId,
     } = currElem;
+    const originId = subDealerId || dealerId;
 
-    // const origin = await firebase.firestore().collection("users").doc(subDealerId || dealerId).get();
-    const origin = "Dealer"; // TODO: change this to dynamic;
+    if (!origins[originId]) {
+      const parent = firebase
+        .firestore()
+        .collection("users")
+        .doc(originId)
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+
+            if (data) {
+              setOrigins({
+                ...origins,
+                [originId]: data.name,
+              });
+            }
+          }
+        });
+    }
 
     let date = new Date(createdOn)
       .toJSON()
@@ -1003,7 +1022,7 @@ const DeliveryOrders: React.FC = () => {
       color,
       status: status.split("_").join(" "),
       date,
-      origin,
+      origin: origins[originId],
     };
   });
 
