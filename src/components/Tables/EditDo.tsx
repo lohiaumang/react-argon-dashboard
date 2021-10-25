@@ -271,7 +271,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
             : currDo.initiatedBy || user.uid,
         createdOn: currDo.createdOn || new Date().toString(),
         createdBy: user.uid,
-        dealerId: user.createdBy || user.uid,
         name: customerInfo.lastName
           ? `${customerInfo.firstName} ${customerInfo.lastName}`
           : customerInfo.firstName,
@@ -320,37 +319,38 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
 
       const dealerId = user.createdBy || user.uid || "";
       let tempData: any;
-      if (currDo.status === "INCOMPLETE" && status === "PENDING") {
-        const docRef = firebase.firestore().collection("status").doc(dealerId);
-        docRef
-          .get()
-          .then((doc) => {
-            if (doc.exists) {
-              tempData = doc.data();
-              //setDashBoardStatus(tempData);
-            }
-          })
-          .then(() => {
-            let statusCount: Number;
-            statusCount = tempData.PENDING + 1;
-            firebase.firestore().collection("status").doc(dealerId).set(
-              {
-                PENDING: statusCount,
-              },
-              { merge: true }
-            );
-          })
-          .then(() => {
-            let statusCount: Number;
-            statusCount = tempData.INCOMPLETE - 1;
-            firebase.firestore().collection("status").doc(dealerId).set(
-              {
-                INCOMPLETE: statusCount,
-              },
-              { merge: true }
-            );
-          });
-      }
+      // if (currDo.status === "INCOMPLETE" && status === "PENDING") {
+      //   const docRef = firebase.firestore().collection("status").doc(dealerId);
+      //   docRef
+      //     .get()
+      //     .then((doc) => {
+      //       if (doc.exists) {
+      //         tempData = doc.data();
+      //         //setDashBoardStatus(tempData);
+      //       }
+      //     })
+      //     .then(() => {
+      //       let statusCount: Number;
+      //       statusCount =
+      //         tempData && tempData.PENDING ? tempData.PENDING + 1 : 1;
+      //       firebase.firestore().collection("status").doc(dealerId).set(
+      //         {
+      //           PENDING: statusCount,
+      //         },
+      //         { merge: true }
+      //       );
+      //     })
+      //     .then(() => {
+      //       let statusCount: Number;
+      //       statusCount = tempData.INCOMPLETE - 1;
+      //       firebase.firestore().collection("status").doc(dealerId).set(
+      //         {
+      //           INCOMPLETE: statusCount,
+      //         },
+      //         { merge: true }
+      //       );
+      //     });
+      // }
 
       //dashboard status End
       setEditDoLoading(false);
@@ -1153,7 +1153,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           className="form-control-label"
                           htmlFor="input-district"
                         >
-                          DISTRIC
+                          DISTRICT
                         </label>
                         {states &&
                         customerInfo.currState &&
