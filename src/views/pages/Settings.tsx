@@ -97,7 +97,7 @@ const Settings: React.FC = () => {
       })
       .catch((err) => console.log(err));
 
-    const financeConfigRef = db.collection("financer").doc("financeConfig");
+    const financeConfigRef = db.collection("financer").doc(dealerId);
     financeConfigRef
       .get()
       .then((doc) => {
@@ -155,7 +155,8 @@ const Settings: React.FC = () => {
     });
   };
   const saveFinanceConfig = (config: Config) => {
-    db.collection("financer").doc("financeConfig").set(config);
+    const dealerId = user.createdBy || user.uid || "";
+    db.collection("financer").doc(dealerId).set(config);
     setSuccess({
       message: "Update successful",
     });

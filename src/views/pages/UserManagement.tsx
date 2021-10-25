@@ -187,6 +187,7 @@ const UserManagement: React.FC = () => {
         role,
         status: true,
         createdBy: user.uid,
+        createdByName:user.name,
       };
 
       newUser =

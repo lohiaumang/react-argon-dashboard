@@ -90,9 +90,9 @@ exports.createUserIndia = functions
       userData =
         role === "subdealer" && dealerId
           ? {
-              ...userData,
-              dealerId,
-            }
+            ...userData,
+            dealerId,
+          }
           : userData;
 
       await admin.firestore().collection("users").doc(uid).set(userData);
@@ -156,6 +156,7 @@ exports.createUserdataIndia1 = functions
         password: data.password,
         role: data.role,
         status: data.status,
+        createdByName: data.createdByName,
       };
 
       userCreationRequest = data.dealerId
@@ -234,7 +235,7 @@ exports.resetPasswordIndia = functions
     var auth = firebase.auth();
     auth
       .sendPasswordResetEmail(data)
-      .then(function () {})
+      .then(function () { })
       .catch(function (error) {
         console.log("Error deleting user:", error);
       });

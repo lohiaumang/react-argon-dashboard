@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Papa from "papaparse";
 
 // reactstrap components
@@ -35,6 +35,7 @@ import Loading from "../Share/Loading";
 import SmallLoading from "../Share/SmallLoading";
 import firebase from "firebase/app";
 import "firebase/firestore";
+import { UserContext } from "../../Context";
 
 interface ConfigRow {
   [key: string]: string;
@@ -51,6 +52,7 @@ const AccessoriesConfig1: React.FC = () => {
   const [tempAccessories, setTempAccessories] = useState<any>({});
   const [success, setSuccess] = useState<{ message: string }>();
   const [userInfoLoading, setUserInfoLoading] = useState<boolean>(false);
+  const [user] = useContext(UserContext);
   useEffect(() => {
     if (success) {
       setTimeout(() => setSuccess(undefined), 1500);
@@ -108,10 +110,11 @@ const AccessoriesConfig1: React.FC = () => {
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setUserInfoLoading(true);
+    const dealerId = user.createdBy || user.uid || "";
     firebase
       .firestore()
       .collection("accessories")
-      .doc("accessoriesConfig")
+      .doc(dealerId)
       .set(currConfig);
     setSuccess({
       message: "Update successful",
@@ -367,7 +370,7 @@ const AccessoriesConfig1: React.FC = () => {
                 value={newKey || ""}
                 //   placeholder={camelCaseToReadable(headers[0])}
                 onChange={(ev) => setNewKey(ev.target.value!.toUpperCase())}
-                //disabled={disabled}
+              //disabled={disabled}
               />
               <InputGroupAddon addonType="append">
                 <Button color="primary" onClick={addRow}>
