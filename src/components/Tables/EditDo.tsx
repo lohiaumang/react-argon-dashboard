@@ -176,16 +176,37 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
 
   const updateAccessories = (modelName: string) => {
     debugger;
-    firebase
-      .firestore()
-      .collection("accessories")
-      .get()
-      .then((querySnapshot) => {
-        const [accessoriesConfig = {}, accessoriesMap = {}] =
-          querySnapshot.docs.map((doc) => doc.data());
-        const accessories = accessoriesConfig[accessoriesMap[modelName]];
-        setAccessories(accessories);
-      });
+    if (user) {
+      const fetchId = user.subDealerId || user.dealerId || user.uid;
+
+      firebase
+        .firestore()
+        .collection("accessories")
+        .doc("accessoriesMap")
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            const accessoriesMap = doc.data() || {};
+            const fetchId = user.subDealerId || user.dealerId || user.uid;
+
+            firebase
+              .firestore()
+              .collection("accessories")
+              .doc(fetchId)
+              .get()
+              .then((doc) => {
+                if (doc.exists) {
+                  const accessoriesConfig = doc.data() || {};
+
+                  const accessories =
+                    accessoriesConfig[accessoriesMap[modelName]];
+
+                  setAccessories(accessories);
+                }
+              });
+          }
+        });
+    }
   };
 
   if (currDo) {

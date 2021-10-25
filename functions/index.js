@@ -90,9 +90,9 @@ exports.createUserIndia = functions
       userData =
         role === "subdealer" && dealerId
           ? {
-            ...userData,
-            dealerId,
-          }
+              ...userData,
+              dealerId,
+            }
           : userData;
 
       await admin.firestore().collection("users").doc(uid).set(userData);
@@ -227,15 +227,15 @@ exports.userDeletedIndia = functions
     return doc.delete();
   });
 
-//Reset Pasword
-exports.resetPasswordIndia = functions
-  .region("asia-south1")
-  .https.onCall(async (data, context) => {
-    var auth = firebase.auth();
-    auth
-      .sendPasswordResetEmail(data)
-      .then(function () { })
-      .catch(function (error) {
-        console.log("Error deleting user:", error);
-      });
-  });
+// //Reset Pasword
+// exports.resetPasswordIndia = functions
+//   .region("asia-south1")
+//   .https.onCall(async (data, context) => {
+//     var auth = firebase.auth();
+//     auth
+//       .sendPasswordResetEmail(data)
+//       .then(function () {})
+//       .catch(function (error) {
+//         console.log("Error deleting user:", error);
+//       });
+//   });
