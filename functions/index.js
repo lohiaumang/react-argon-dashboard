@@ -156,7 +156,6 @@ exports.createUserdataIndia1 = functions
         password: data.password,
         role: data.role,
         status: data.status,
-        createdByName: data.createdByName,
       };
 
       userCreationRequest = data.dealerId
