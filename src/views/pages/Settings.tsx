@@ -77,6 +77,7 @@ const Settings: React.FC = () => {
           setPriceConfig(doc.data());
           // console.log(doc.data());
         } else {
+          setPriceConfig(null);
           console.log("No price config set yet!");
         }
       })
@@ -92,6 +93,7 @@ const Settings: React.FC = () => {
           setOtherPriceConfig(doc.data());
           // console.log(doc.data());
         } else {
+          setOtherPriceConfig(null);
           console.log("No price config set yet!");
         }
       })
@@ -105,6 +107,7 @@ const Settings: React.FC = () => {
           setFinancerConfig(doc.data());
           // console.log(doc.data());
         } else {
+          setFinancerConfig(null);
           console.log("No finance config set yet!");
         }
       })
@@ -122,6 +125,7 @@ const Settings: React.FC = () => {
           return;
         }
         case "GET_CREDENTIALS_FAILURE": {
+          setCredentialConfig(null);
           return;
         }
       }

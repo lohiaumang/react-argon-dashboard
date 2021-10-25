@@ -126,9 +126,11 @@ const DeliveryOrders: React.FC = () => {
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
       setLoadingPage(true);
-      const dealerId = user.createdBy || user.uid || "";
+
+      let fetchBy: string = user.dealerId ? "subDealerId" : "dealerId";
+
       db.collection("deliveryOrders")
-        .where("dealerId", "==", dealerId)
+        .where(fetchBy, "==", user.createdBy || user.uid || "")
         .where("active", "==", true)
         .get()
         .then((querySnapshot) => {
@@ -974,7 +976,19 @@ const DeliveryOrders: React.FC = () => {
   };
 
   const rows = Object.values(deliveryOrders).map((currElem: any) => {
-    const { name, modelName, color, status, createdOn, id } = currElem;
+    const {
+      name,
+      modelName,
+      color,
+      status,
+      createdOn,
+      id,
+      dealerId,
+      subDealerId,
+    } = currElem;
+
+    // const origin = await firebase.firestore().collection("users").doc(subDealerId || dealerId).get();
+    const origin = "Dealer"; // TODO: change this to dynamic;
 
     let date = new Date(createdOn)
       .toJSON()
@@ -989,6 +1003,7 @@ const DeliveryOrders: React.FC = () => {
       color,
       status: status.split("_").join(" "),
       date,
+      origin,
     };
   });
 
@@ -1215,7 +1230,7 @@ const DeliveryOrders: React.FC = () => {
             backdrop="static"
             keyboard={false}
             size="lg"
-          //onExit={() => closeModal()}
+            //onExit={() => closeModal()}
           >
             <ModalHeader
               className="p-4"
@@ -1292,8 +1307,8 @@ const DeliveryOrders: React.FC = () => {
               toggle={() => setShowModal(!showModal)}
             >
               {deliveryOrders[selected].status === "PENDING" ||
-                deliveryOrders[selected].status === "INCOMPLETE" ||
-                deliveryOrders[selected].status === "DO_CREATED"
+              deliveryOrders[selected].status === "INCOMPLETE" ||
+              deliveryOrders[selected].status === "DO_CREATED"
                 ? "Delivery Order"
                 : "Invoice"}
             </ModalHeader>
@@ -1415,6 +1430,9 @@ const DeliveryOrders: React.FC = () => {
                       </TableHeaderColumn>
                       <TableHeaderColumn dataSort={true} dataField="date">
                         Date
+                      </TableHeaderColumn>
+                      <TableHeaderColumn dataSort={true} dataField="origin">
+                        Origin
                       </TableHeaderColumn>
                     </BootstrapTable>
                   ) : (
