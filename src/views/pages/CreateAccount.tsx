@@ -151,8 +151,6 @@ const CreateAccount: React.FC = () => {
         }
         : user;
 
-    debugger;
-
     if (window && window.api) {
       window.api.receive("fromMain", (data: any) => {
         switch (data.type) {
@@ -266,7 +264,6 @@ const CreateAccount: React.FC = () => {
                       value={dealer}
                       className="dealership-name"
                       onChange={(ev) => {
-                        debugger;
                         setDealer(ev.target.value!);
                       }}
                     >

@@ -22,7 +22,10 @@ const App: React.FC = () => {
   const [currentUserDetails, setCurrentUserDetails] = useState<any>();
   const [priceConfigDetails, setPriceConfigDetails] = useState<any>();
   const [insuranceConfigDetails, setInsuranceConfigDetails] = useState<any>();
- // console.log(currentUser,"We get current user");
+  let userDetalis: any;
+
+
+  // console.log(currentUser,"We get current user");
   useEffect(() => {
     firebase.auth().onAuthStateChanged((User) => {
       if (User && User.uid) {
@@ -35,6 +38,7 @@ const App: React.FC = () => {
             if (doc && doc.exists && doc.data()) {
               if (doc.data().role !== "salesman") {
                 setCurrentUserDetails(doc.data());
+                userDetalis = doc.data();
 
                 setUser(User);
                 setLoading(false);
@@ -47,6 +51,9 @@ const App: React.FC = () => {
               }
             }
           });
+
+        const dealerId = currentUserDetails.createdBy || currentUserDetails.uid || "";
+
         var docRef = firebase
           .firestore()
           .collection("priceConfig")

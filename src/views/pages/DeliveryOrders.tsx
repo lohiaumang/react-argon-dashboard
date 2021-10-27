@@ -226,166 +226,166 @@ const DeliveryOrders: React.FC = () => {
     }
   }, [currentStatus]);
 
-  //dashboard status count
-  useEffect(() => {
-    const dealerId = user.createdBy || user.uid || "";
-    let tempData: any;
+  // //dashboard status count
+  // useEffect(() => {
+  //   const dealerId = user.createdBy || user.uid || "";
+  //   let tempData: any;
 
-    if (
-      selected !== undefined &&
-      currentStatus !== undefined &&
-      deliveryOrders[selected].status !== currentStatus &&
-      deliveryOrders[selected].status === "PENDING"
-    ) {
-      const docRef = firebase.firestore().collection("status").doc(dealerId);
-      docRef
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            tempData = doc.data();
-            //setDashBoardStatus(tempData);
-          }
-        })
-        .then(() => {
-          if (currentStatus === "DO_CREATED") {
-            let statusCount: Number;
-            statusCount = tempData.DO_CREATED + 1;
-            db.collection("status").doc(dealerId).set(
-              {
-                DO_CREATED: statusCount,
-              },
-              { merge: true }
-            );
-          }
-        })
-        .then(() => {
-          let statusCount: Number;
-          statusCount = tempData.PENDING - 1;
-          firebase.firestore().collection("status").doc(dealerId).set(
-            {
-              PENDING: statusCount,
-            },
-            { merge: true }
-          );
-        });
-    }
-    //dashboard invoice status count
-    if (
-      selected !== undefined &&
-      currentStatus !== undefined &&
-      deliveryOrders[selected].status !== currentStatus &&
-      deliveryOrders[selected].status === "DO_CREATED"
-    ) {
-      const docRef = firebase.firestore().collection("status").doc(dealerId);
-      docRef
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            tempData = doc.data();
-            //setDashBoardStatus(tempData);
-          }
-        })
-        .then(() => {
-          if (currentStatus === "INVOICE_CREATED") {
-            let statusCount: Number;
-            statusCount = tempData.INVOICE_CREATED + 1;
-            db.collection("status").doc(dealerId).set(
-              {
-                INVOICE_CREATED: statusCount,
-              },
-              { merge: true }
-            );
-          }
-        })
-        .then(() => {
-          let statusCount: Number;
-          statusCount = tempData.DO_CREATED - 1;
-          firebase.firestore().collection("status").doc(dealerId).set(
-            {
-              DO_CREATED: statusCount,
-            },
-            { merge: true }
-          );
-        });
-    }
-    //dashboard insurance status count
-    if (
-      selected !== undefined &&
-      currentStatus !== undefined &&
-      deliveryOrders[selected].status !== currentStatus &&
-      deliveryOrders[selected].status === "INVOICE_CREATED"
-    ) {
-      const docRef = firebase.firestore().collection("status").doc(dealerId);
-      docRef
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            tempData = doc.data();
-            //setDashBoardStatus(tempData);
-          }
-        })
-        .then(() => {
-          if (currentStatus === "INSURANCE_CREATED") {
-            let statusCount: Number;
-            statusCount = tempData.INSURENCE_CREATED + 1;
-            db.collection("status").doc(dealerId).set(
-              {
-                INSURENCE_CREATED: statusCount,
-              },
-              { merge: true }
-            );
-          }
-        })
-        .then(() => {
-          let statusCount: Number;
-          statusCount = tempData.INVOICE_CREATED - 1;
-          firebase.firestore().collection("status").doc(dealerId).set(
-            {
-              INVOICE_CREATED: statusCount,
-            },
-            { merge: true }
-          );
-        });
-    }
-    //dashboard done status count
-    if (
-      selected !== undefined &&
-      currentStatus !== undefined &&
-      deliveryOrders[selected].status !== currentStatus &&
-      deliveryOrders[selected].status === "INSURANCE_CREATED"
-    ) {
-      const docRef = firebase.firestore().collection("status").doc(dealerId);
-      docRef
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            tempData = doc.data();
-          }
-        })
-        .then(() => {
-          if (currentStatus === "DONE") {
-            let statusCount: Number;
-            statusCount = tempData.DONE + 1;
-            db.collection("status").doc(dealerId).set(
-              {
-                DONE: statusCount,
-              },
-              { merge: true }
-            );
-          }
-        })
-        .then(() => {
-          let statusCount: Number;
-          statusCount = tempData.INSURENCE_CREATED - 1;
-          firebase.firestore().collection("status").doc(dealerId).set(
-            {
-              INSURENCE_CREATED: statusCount,
-            },
-            { merge: true }
-          );
-        });
-    }
-  }, [currentStatus]);
+  //   if (
+  //     selected !== undefined &&
+  //     currentStatus !== undefined &&
+  //     deliveryOrders[selected].status !== currentStatus &&
+  //     deliveryOrders[selected].status === "PENDING"
+  //   ) {
+  //     const docRef = firebase.firestore().collection("status").doc(dealerId);
+  //     docRef
+  //       .get()
+  //       .then((doc) => {
+  //         if (doc.exists) {
+  //           tempData = doc.data();
+  //           //setDashBoardStatus(tempData);
+  //         }
+  //       })
+  //       .then(() => {
+  //         if (currentStatus === "DO_CREATED") {
+  //           let statusCount: Number;
+  //           statusCount = tempData.DO_CREATED + 1;
+  //           db.collection("status").doc(dealerId).set(
+  //             {
+  //               DO_CREATED: statusCount,
+  //             },
+  //             { merge: true }
+  //           );
+  //         }
+  //       })
+  //       .then(() => {
+  //         let statusCount: Number;
+  //         statusCount = tempData.PENDING - 1;
+  //         firebase.firestore().collection("status").doc(dealerId).set(
+  //           {
+  //             PENDING: statusCount,
+  //           },
+  //           { merge: true }
+  //         );
+  //       });
+  //   }
+  //   //dashboard invoice status count
+  //   if (
+  //     selected !== undefined &&
+  //     currentStatus !== undefined &&
+  //     deliveryOrders[selected].status !== currentStatus &&
+  //     deliveryOrders[selected].status === "DO_CREATED"
+  //   ) {
+  //     const docRef = firebase.firestore().collection("status").doc(dealerId);
+  //     docRef
+  //       .get()
+  //       .then((doc) => {
+  //         if (doc.exists) {
+  //           tempData = doc.data();
+  //           //setDashBoardStatus(tempData);
+  //         }
+  //       })
+  //       .then(() => {
+  //         if (currentStatus === "INVOICE_CREATED") {
+  //           let statusCount: Number;
+  //           statusCount = tempData.INVOICE_CREATED + 1;
+  //           db.collection("status").doc(dealerId).set(
+  //             {
+  //               INVOICE_CREATED: statusCount,
+  //             },
+  //             { merge: true }
+  //           );
+  //         }
+  //       })
+  //       .then(() => {
+  //         let statusCount: Number;
+  //         statusCount = tempData.DO_CREATED - 1;
+  //         firebase.firestore().collection("status").doc(dealerId).set(
+  //           {
+  //             DO_CREATED: statusCount,
+  //           },
+  //           { merge: true }
+  //         );
+  //       });
+  //   }
+  //   //dashboard insurance status count
+  //   if (
+  //     selected !== undefined &&
+  //     currentStatus !== undefined &&
+  //     deliveryOrders[selected].status !== currentStatus &&
+  //     deliveryOrders[selected].status === "INVOICE_CREATED"
+  //   ) {
+  //     const docRef = firebase.firestore().collection("status").doc(dealerId);
+  //     docRef
+  //       .get()
+  //       .then((doc) => {
+  //         if (doc.exists) {
+  //           tempData = doc.data();
+  //           //setDashBoardStatus(tempData);
+  //         }
+  //       })
+  //       .then(() => {
+  //         if (currentStatus === "INSURANCE_CREATED") {
+  //           let statusCount: Number;
+  //           statusCount = tempData.INSURENCE_CREATED + 1;
+  //           db.collection("status").doc(dealerId).set(
+  //             {
+  //               INSURENCE_CREATED: statusCount,
+  //             },
+  //             { merge: true }
+  //           );
+  //         }
+  //       })
+  //       .then(() => {
+  //         let statusCount: Number;
+  //         statusCount = tempData.INVOICE_CREATED - 1;
+  //         firebase.firestore().collection("status").doc(dealerId).set(
+  //           {
+  //             INVOICE_CREATED: statusCount,
+  //           },
+  //           { merge: true }
+  //         );
+  //       });
+  //   }
+  //   //dashboard done status count
+  //   if (
+  //     selected !== undefined &&
+  //     currentStatus !== undefined &&
+  //     deliveryOrders[selected].status !== currentStatus &&
+  //     deliveryOrders[selected].status === "INSURANCE_CREATED"
+  //   ) {
+  //     const docRef = firebase.firestore().collection("status").doc(dealerId);
+  //     docRef
+  //       .get()
+  //       .then((doc) => {
+  //         if (doc.exists) {
+  //           tempData = doc.data();
+  //         }
+  //       })
+  //       .then(() => {
+  //         if (currentStatus === "DONE") {
+  //           let statusCount: Number;
+  //           statusCount = tempData.DONE + 1;
+  //           db.collection("status").doc(dealerId).set(
+  //             {
+  //               DONE: statusCount,
+  //             },
+  //             { merge: true }
+  //           );
+  //         }
+  //       })
+  //       .then(() => {
+  //         let statusCount: Number;
+  //         statusCount = tempData.INSURENCE_CREATED - 1;
+  //         firebase.firestore().collection("status").doc(dealerId).set(
+  //           {
+  //             INSURENCE_CREATED: statusCount,
+  //           },
+  //           { merge: true }
+  //         );
+  //       });
+  //   }
+  // }, [currentStatus]);
 
   useEffect(() => {
     if (selected !== undefined) {
@@ -399,334 +399,10 @@ const DeliveryOrders: React.FC = () => {
     }
   }, [showModal]);
 
-  const getActionButton = () => {
-    if (selected !== undefined) {
-      switch (deliveryOrders[selected].status) {
-        case "INCOMPLETE": {
-          return (
-            <Button
-              className="my-2"
-              color={"primary"}
-              disabled={loading}
-              onClick={editDO}
-              size="sm"
-              title="Edit"
-            >
-              <i className="fas fa-pencil-alt" />
-            </Button>
-          );
-        }
-        case "PENDING": {
-          return (
-            <>
-              {user.role !== "subdealer" && (
-                <Button
-                  className="small-button-width my-2"
-                  color={"primary"}
-                  onClick={createInvoice}
-                  size="sm"
-                >
-                  Create Invoice
-                </Button>
-              )}
-              <ButtonDropdown
-                className="mr-2"
-                isOpen={dropdownButton}
-                toggle={toggle}
-              >
-                <>
-                  <DropdownToggle caret size="sm" color={"primary"}>
-                    Create Insurance
-                  </DropdownToggle>
-                  <DropdownMenu>
-                    <DropdownItem
-                      onClick={() => {
-                        createInsurance("HDFC");
-                      }}
-                    >
-                      HDFC
-                    </DropdownItem>
-                    <DropdownItem
-                      onClick={() => {
-                        createInsurance("ICICI");
-                      }}
-                    >
-                      ICICI
-                    </DropdownItem>
-                  </DropdownMenu>
-                </>
-              </ButtonDropdown>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={createRegistration}
-                size="sm"
-              >
-                Create Registration
-              </Button>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={printInvoice}
-                size="sm"
-              >
-                Print Invoice
-              </Button>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={createDO}
-                size="sm"
-              >
-                Print DO
-              </Button>
-              {/* <Button
-              className="my-2"
-              color={"primary"}
-              disabled={loading}
-              onClick={editDO}
-              size="sm"
-              title="Edit"
-            >
-              <i className="fas fa-pencil-alt" />
-            </Button> */}
-            </>
-          );
-        }
-        case "DO_CREATED": {
-          return (
-            <>
-              {user.role !== "subdealer" && (
-                <Button
-                  className="small-button-width my-2"
-                  color={"primary"}
-                  onClick={createInvoice}
-                  size="sm"
-                >
-                  Create Invoice
-                </Button>
-              )}
-              <ButtonDropdown
-                className="mr-2"
-                isOpen={dropdownButton}
-                toggle={toggle}
-              >
-                <>
-                  <DropdownToggle caret size="sm" color={"primary"}>
-                    Create Insurance
-                  </DropdownToggle>
-                  <DropdownMenu>
-                    <DropdownItem
-                      onClick={() => {
-                        createInsurance("HDFC");
-                      }}
-                    >
-                      HDFC
-                    </DropdownItem>
-                    <DropdownItem
-                      onClick={() => {
-                        createInsurance("ICICI");
-                      }}
-                    >
-                      ICICI
-                    </DropdownItem>
-                  </DropdownMenu>
-                </>
-              </ButtonDropdown>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={createRegistration}
-                size="sm"
-              >
-                Create Registration
-              </Button>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={printInvoice}
-                size="sm"
-              >
-                Print Invoice
-              </Button>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={createDO}
-                size="sm"
-              >
-                Print DO
-              </Button>
-              {/* <Button
-                className="my-2"
-                color={"primary"}
-                disabled={loading}
-                onClick={editDO}
-                size="sm"
-                title="Edit"
-              >
-                <i className="fas fa-pencil-alt" />
-              </Button> */}
-            </>
-          );
-        }
-        case "INVOICE_CREATED": {
-          return (
-            <>
-              {user.role !== "subdealer" && (
-                <Button
-                  className="small-button-width my-2"
-                  color={"primary"}
-                  onClick={createInvoice}
-                  size="sm"
-                >
-                  Create Invoice
-                </Button>
-              )}
-              <ButtonDropdown
-                className="mr-2"
-                isOpen={dropdownButton}
-                toggle={toggle}
-              >
-                <>
-                  <DropdownToggle caret size="sm" color={"primary"}>
-                    Create Insurance
-                  </DropdownToggle>
-                  <DropdownMenu>
-                    <DropdownItem
-                      onClick={() => {
-                        createInsurance("HDFC");
-                      }}
-                    >
-                      HDFC
-                    </DropdownItem>
-                    <DropdownItem
-                      onClick={() => {
-                        createInsurance("ICICI");
-                      }}
-                    >
-                      ICICI
-                    </DropdownItem>
-                  </DropdownMenu>
-                </>
-              </ButtonDropdown>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={createRegistration}
-                size="sm"
-              >
-                Create Registration
-              </Button>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={printInvoice}
-                size="sm"
-              >
-                Print Invoice
-              </Button>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={createDO}
-                size="sm"
-              >
-                Print DO
-              </Button>
-              {/* <Button
-                className="my-2"
-                color={"primary"}
-                disabled={loading}
-                onClick={editDO}
-                size="sm"
-                title="Edit"
-              >
-                <i className="fas fa-pencil-alt" />
-              </Button> */}
-            </>
-          );
-        }
-        case "INSURANCE_CREATED": {
-          return (
-            <>
-              {user.role !== "subdealer" && (
-                <Button
-                  className="small-button-width my-2"
-                  color={"primary"}
-                  onClick={createInvoice}
-                  size="sm"
-                >
-                  Create Invoice
-                </Button>
-              )}
-              <ButtonDropdown
-                className="mr-2"
-                isOpen={dropdownButton}
-                toggle={toggle}
-              >
-                <>
-                  <DropdownToggle caret size="sm" color={"primary"}>
-                    Create Insurance
-                  </DropdownToggle>
-                  <DropdownMenu>
-                    <DropdownItem
-                      onClick={() => {
-                        createInsurance("HDFC");
-                      }}
-                    >
-                      HDFC
-                    </DropdownItem>
-                    <DropdownItem
-                      onClick={() => {
-                        createInsurance("ICICI");
-                      }}
-                    >
-                      ICICI
-                    </DropdownItem>
-                  </DropdownMenu>
-                </>
-              </ButtonDropdown>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={createRegistration}
-                size="sm"
-              >
-                Create Registration
-              </Button>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={printInvoice}
-                size="sm"
-              >
-                Print Invoice
-              </Button>
-              <Button
-                className="small-button-width my-2"
-                color={"primary"}
-                onClick={createDO}
-                size="sm"
-              >
-                Print DO
-              </Button>
-              {/* <Button
-                className="my-2"
-                color={"primary"}
-                disabled={loading}
-                onClick={editDO}
-                size="sm"
-                title="Edit"
-              >
-                <i className="fas fa-pencil-alt" />
-              </Button> */}
-            </>
-          );
-        }
-      }
-    }
-  };
+  // const getActionButton = () => {
+  //   if (selected !== undefined) {
+  //   }
+  // };
 
   const toggleSelected = (id: string) => {
     if (id === selected) {
@@ -1115,177 +791,177 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-  //dashboard status count
-  const monthWiseSale = (dO: any) => {
-    if (dO.modelName) {
-      let tempData: any;
-      const docRef = firebase
-        .firestore()
-        .collection("byMonth")
-        .doc(user.createdBy);
-      docRef
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            tempData = doc.data();
-          }
-        })
-        .then(() => {
-          let totalSale: any = 0;
-          let totalSaleNo: any = 0;
-          // let config:any;
-          const dateObj = new Date();
-          const monthName = dateObj.toLocaleString("default", {
-            month: "long",
-          });
-          if (tempData[monthName]) {
-            totalSale = tempData[monthName].totalSaleValue;
-            totalSaleNo = tempData[monthName].totalSaleNo;
-          }
+  // //dashboard status count
+  // const monthWiseSale = (dO: any) => {
+  //   if (dO.modelName) {
+  //     let tempData: any;
+  //     const docRef = firebase
+  //       .firestore()
+  //       .collection("byMonth")
+  //       .doc(user.createdBy);
+  //     docRef
+  //       .get()
+  //       .then((doc) => {
+  //         if (doc.exists) {
+  //           tempData = doc.data();
+  //         }
+  //       })
+  //       .then(() => {
+  //         let totalSale: any = 0;
+  //         let totalSaleNo: any = 0;
+  //         // let config:any;
+  //         const dateObj = new Date();
+  //         const monthName = dateObj.toLocaleString("default", {
+  //           month: "long",
+  //         });
+  //         if (tempData[monthName]) {
+  //           totalSale = tempData[monthName].totalSaleValue;
+  //           totalSaleNo = tempData[monthName].totalSaleNo;
+  //         }
 
-          var docData = {
-            [monthName]: {
-              totalSaleValue:
-                totalSale + parseInt(priceConfig[dO.modelName].price),
-              totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
-            },
-          };
+  //         var docData = {
+  //           [monthName]: {
+  //             totalSaleValue:
+  //               totalSale + parseInt(priceConfig[dO.modelName].price),
+  //             totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
+  //           },
+  //         };
 
-          db.collection("byMonth")
-            .doc(user.createdBy)
-            .set(docData, { merge: true });
-        });
-    }
-  };
+  //         db.collection("byMonth")
+  //           .doc(user.createdBy)
+  //           .set(docData, { merge: true });
+  //       });
+  //   }
+  // };
 
-  //week wise sale
-  const weekWiseSale = (dO: any) => {
-    if (dO.modelName) {
-      let tempData: any;
-      const docRef = firebase
-        .firestore()
-        .collection("byWeek")
-        .doc(user.createdBy);
-      docRef
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            tempData = doc.data();
-          }
-        })
-        .then(() => {
-          let totalSale: any = 0;
-          let totalSaleNo: any = 0;
-          let todaydate: any = new Date();
-          let oneJan: any = new Date(todaydate.getFullYear(), 0, 1);
-          let numberOfDays = Math.floor(
-            (todaydate - oneJan) / (24 * 60 * 60 * 1000)
-          );
-          let result = Math.ceil((todaydate.getDay() + 1 + numberOfDays) / 7);
-          if (tempData[result]) {
-            totalSale = tempData[result].totalSaleValue;
-            totalSaleNo = tempData[result].totalSaleNo;
-          }
+  // //week wise sale
+  // const weekWiseSale = (dO: any) => {
+  //   if (dO.modelName) {
+  //     let tempData: any;
+  //     const docRef = firebase
+  //       .firestore()
+  //       .collection("byWeek")
+  //       .doc(user.createdBy);
+  //     docRef
+  //       .get()
+  //       .then((doc) => {
+  //         if (doc.exists) {
+  //           tempData = doc.data();
+  //         }
+  //       })
+  //       .then(() => {
+  //         let totalSale: any = 0;
+  //         let totalSaleNo: any = 0;
+  //         let todaydate: any = new Date();
+  //         let oneJan: any = new Date(todaydate.getFullYear(), 0, 1);
+  //         let numberOfDays = Math.floor(
+  //           (todaydate - oneJan) / (24 * 60 * 60 * 1000)
+  //         );
+  //         let result = Math.ceil((todaydate.getDay() + 1 + numberOfDays) / 7);
+  //         if (tempData[result]) {
+  //           totalSale = tempData[result].totalSaleValue;
+  //           totalSaleNo = tempData[result].totalSaleNo;
+  //         }
 
-          var docData = {
-            [result]: {
-              totalSaleValue:
-                totalSale + parseInt(priceConfig[dO.modelName].price),
-              totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
-            },
-          };
+  //         var docData = {
+  //           [result]: {
+  //             totalSaleValue:
+  //               totalSale + parseInt(priceConfig[dO.modelName].price),
+  //             totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
+  //           },
+  //         };
 
-          db.collection("byWeek")
-            .doc(user.createdBy)
-            .set(docData, { merge: true });
-        });
-    }
-  };
+  //         db.collection("byWeek")
+  //           .doc(user.createdBy)
+  //           .set(docData, { merge: true });
+  //       });
+  //   }
+  // };
 
-  //model wise sale
-  const modelWiseSale = (dO: any) => {
-    if (dO.modelName) {
-      let tempData: any;
-      const docRef = firebase
-        .firestore()
-        .collection("byModel")
-        .doc(user.createdBy);
-      docRef
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            tempData = doc.data();
-          }
-        })
-        .then(() => {
-          let totalSale: any = 0;
-          let totalSaleNo: any = 0;
-          // let config:any;
+  // //model wise sale
+  // const modelWiseSale = (dO: any) => {
+  //   if (dO.modelName) {
+  //     let tempData: any;
+  //     const docRef = firebase
+  //       .firestore()
+  //       .collection("byModel")
+  //       .doc(user.createdBy);
+  //     docRef
+  //       .get()
+  //       .then((doc) => {
+  //         if (doc.exists) {
+  //           tempData = doc.data();
+  //         }
+  //       })
+  //       .then(() => {
+  //         let totalSale: any = 0;
+  //         let totalSaleNo: any = 0;
+  //         // let config:any;
 
-          const modelName = dO.modelName;
+  //         const modelName = dO.modelName;
 
-          if (tempData[modelName]) {
-            totalSale = tempData[modelName].totalSaleValue;
-            totalSaleNo = tempData[modelName].totalSaleNo;
-          }
+  //         if (tempData[modelName]) {
+  //           totalSale = tempData[modelName].totalSaleValue;
+  //           totalSaleNo = tempData[modelName].totalSaleNo;
+  //         }
 
-          var docData = {
-            [modelName]: {
-              totalSaleValue:
-                totalSale + parseInt(priceConfig[dO.modelName].price),
-              totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
-            },
-          };
+  //         var docData = {
+  //           [modelName]: {
+  //             totalSaleValue:
+  //               totalSale + parseInt(priceConfig[dO.modelName].price),
+  //             totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
+  //           },
+  //         };
 
-          db.collection("byModel")
-            .doc(user.createdBy)
-            .set(docData, { merge: true });
-        });
-    }
-  };
+  //         db.collection("byModel")
+  //           .doc(user.createdBy)
+  //           .set(docData, { merge: true });
+  //       });
+  //   }
+  // };
 
-  const salerCount = (dO: any) => {
-    if (dO.modelName) {
-      let tempData: any;
-      const docRef = firebase
-        .firestore()
-        .collection("bySalesMan")
-        .doc(user.createdBy);
-      docRef
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            tempData = doc.data();
-          }
-        })
-        .then(() => {
-          let userID: any;
-          let salerName: any = user && user.name;
-          let totalSale: any = 0;
-          let totalSaleNo: any = 0;
-          // let config:any;
-          userID = user.uid;
-          if (tempData[user.uid]) {
-            salerName = tempData[user.uid].salesManName;
-            totalSale = tempData[user.uid].totalSaleValue;
-            totalSaleNo = tempData[user.uid].totalSaleNo;
-          }
+  // const salerCount = (dO: any) => {
+  //   if (dO.modelName) {
+  //     let tempData: any;
+  //     const docRef = firebase
+  //       .firestore()
+  //       .collection("bySalesMan")
+  //       .doc(user.createdBy);
+  //     docRef
+  //       .get()
+  //       .then((doc) => {
+  //         if (doc.exists) {
+  //           tempData = doc.data();
+  //         }
+  //       })
+  //       .then(() => {
+  //         let userID: any;
+  //         let salerName: any = user && user.name;
+  //         let totalSale: any = 0;
+  //         let totalSaleNo: any = 0;
+  //         // let config:any;
+  //         userID = user.uid;
+  //         if (tempData[user.uid]) {
+  //           salerName = tempData[user.uid].salesManName;
+  //           totalSale = tempData[user.uid].totalSaleValue;
+  //           totalSaleNo = tempData[user.uid].totalSaleNo;
+  //         }
 
-          var docData = {
-            [userID]: {
-              salesManName: salerName,
-              totalSaleValue:
-                totalSale + parseInt(priceConfig[dO.modelName].price),
-              totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
-            },
-          };
+  //         var docData = {
+  //           [userID]: {
+  //             salesManName: salerName,
+  //             totalSaleValue:
+  //               totalSale + parseInt(priceConfig[dO.modelName].price),
+  //             totalSaleNo: totalSaleNo + 1, // TODO: Increment by 1
+  //           },
+  //         };
 
-          db.collection("bySalesMan")
-            .doc(user.createdBy)
-            .set(docData, { merge: true });
-        });
-    }
-  };
+  //         db.collection("bySalesMan")
+  //           .doc(user.createdBy)
+  //           .set(docData, { merge: true });
+  //       });
+  //   }
+  // };
 
   return (
     <>
@@ -1446,9 +1122,207 @@ const DeliveryOrders: React.FC = () => {
                         >
                           Delete
                         </Button>
+                        {selected !== undefined && (
 
-                        {getActionButton()}
+                          <>
+                            {deliveryOrders[selected].status === "INCOMPLETE" && (
+                              <Button
+                                className="my-2"
+                                color={"primary"}
+                                disabled={loading}
+                                onClick={editDO}
+                                size="sm"
+                                title="Edit"
+                              >
+                                <i className="fas fa-pencil-alt" />
+                              </Button>
+                            )}
+                            <>
+                              {user.role === "subdealer" ? (
+                                <>
+                                  <ButtonDropdown
+                                    className="mr-2"
+                                    isOpen={dropdownButton}
+                                    toggle={toggle}
+                                  >
+                                    <>
+                                      <DropdownToggle caret size="sm" color={"primary"}>
+                                        Create Insurance
+                                      </DropdownToggle>
+                                      <DropdownMenu>
+                                        <DropdownItem
+                                          onClick={() => {
+                                            createInsurance("HDFC");
+                                          }}
+                                        >
+                                          HDFC
+                                        </DropdownItem>
+                                        <DropdownItem
+                                          onClick={() => {
+                                            createInsurance("ICICI");
+                                          }}
+                                        >
+                                          ICICI
+                                        </DropdownItem>
+                                      </DropdownMenu>
+                                    </>
+                                  </ButtonDropdown>
+                                  {deliveryOrders[selected].status === "INSURANCE_CREATED" && (
+                                    <Button
+                                      className="small-button-width my-2"
+                                      color={"primary"}
+                                      onClick={createRegistration}
+                                      size="sm"
+                                    >
+                                      Create Registration
+                                    </Button>
+                                  )}
+
+                                  <Button
+                                    className="small-button-width my-2"
+                                    color={"primary"}
+                                    onClick={printInvoice}
+                                    size="sm"
+                                  >
+                                    Print Invoice
+                                  </Button>
+                                  <Button
+                                    className="small-button-width my-2"
+                                    color={"primary"}
+                                    onClick={createDO}
+                                    size="sm"
+                                  >
+                                    Print DO
+                                  </Button>
+                                  <Button
+                                    className="my-2"
+                                    color={"primary"}
+                                    disabled={loading}
+                                    onClick={editDO}
+                                    size="sm"
+                                    title="Edit"
+                                  >
+                                    <i className="fas fa-pencil-alt" />
+                                  </Button>
+                                </>
+                              ) : (
+                                <>
+                                  {deliveryOrders[selected].subDealerId ? (
+                                    <>
+                                      <Button
+                                        className="small-button-width my-2"
+                                        color={"primary"}
+                                        onClick={createInvoice}
+                                        size="sm"
+                                      >
+                                        Create Invoice
+                                      </Button>
+                                      <Button
+                                        className="small-button-width my-2"
+                                        color={"primary"}
+                                        onClick={printInvoice}
+                                        size="sm"
+                                      >
+                                        Print Invoice
+                                      </Button>
+                                      <Button
+                                        className="my-2"
+                                        color={"primary"}
+                                        disabled={loading}
+                                        onClick={editDO}
+                                        size="sm"
+                                        title="Edit"
+                                      >
+                                        <i className="fas fa-pencil-alt" />
+                                      </Button>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Button
+                                        className="small-button-width my-2"
+                                        color={"primary"}
+                                        onClick={createInvoice}
+                                        size="sm"
+                                      >
+                                        Create Invoice
+                                      </Button>
+                                      <ButtonDropdown
+                                        className="mr-2"
+                                        isOpen={dropdownButton}
+                                        toggle={toggle}
+                                      >
+                                        <>
+                                          <DropdownToggle caret size="sm" color={"primary"}>
+                                            Create Insurance
+                                          </DropdownToggle>
+                                          <DropdownMenu>
+                                            <DropdownItem
+                                              onClick={() => {
+                                                createInsurance("HDFC");
+                                              }}
+                                            >
+                                              HDFC
+                                            </DropdownItem>
+                                            <DropdownItem
+                                              onClick={() => {
+                                                createInsurance("ICICI");
+                                              }}
+                                            >
+                                              ICICI
+                                            </DropdownItem>
+                                          </DropdownMenu>
+                                        </>
+                                      </ButtonDropdown>
+                                      {deliveryOrders[selected].status === "INSURANCE_CREATED" && (
+                                        <Button
+                                          className="small-button-width my-2"
+                                          color={"primary"}
+                                          onClick={createRegistration}
+                                          size="sm"
+                                        >
+                                          Create Registration
+                                        </Button>
+                                      )}
+                                      <Button
+                                        className="small-button-width my-2"
+                                        color={"primary"}
+                                        onClick={printInvoice}
+                                        size="sm"
+                                      >
+                                        Print Invoice
+                                      </Button>
+                                      <Button
+                                        className="small-button-width my-2"
+                                        color={"primary"}
+                                        onClick={createDO}
+                                        size="sm"
+                                      >
+                                        Print DO
+                                      </Button>
+                                      <Button
+                                        className="my-2"
+                                        color={"primary"}
+                                        disabled={loading}
+                                        onClick={editDO}
+                                        size="sm"
+                                        title="Edit"
+                                      >
+                                        <i className="fas fa-pencil-alt" />
+                                      </Button>
+
+                                    </>
+
+                                  )}
+                                </>
+                              )}
+                            </>
+
+                            {/* {getActionButton()} */}
+                          </>
+                        )}
+
                       </>
+
                     )}
                     <Button
                       className="my-2"

@@ -36,6 +36,7 @@ export interface DeliveryOrder {
   salesEx: string;
   invoiceNo?: string;
   id: string;
+  subDealerId?: string;
   customerInfo?: {
     idTwoPhotoString: string;
     currLineTwo: string;
@@ -65,7 +66,7 @@ export interface DeliveryOrder {
     permState: string;
     category: string;
     source: string;
-    sameAddress:string;
+    sameAddress: string;
     refOne?: {
       name: string;
       phoneNo: string;
@@ -162,6 +163,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
       let refTwo: any = customerInfo.refTwo || {};
       let accessoriesList: any = additionalInfo.accessoriesList;
       const [user] = useContext(UserContext);
+
 
       useEffect(() => {
         const dealerId = user.createdBy || user.uid || "";

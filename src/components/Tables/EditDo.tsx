@@ -175,7 +175,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   // }, [currDo.customerInfo]);
 
   const updateAccessories = (modelName: string) => {
-    debugger;
     if (user) {
       const fetchId = user.subDealerId || user.dealerId || user.uid;
 
