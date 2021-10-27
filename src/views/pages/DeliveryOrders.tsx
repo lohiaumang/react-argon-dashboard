@@ -978,7 +978,7 @@ const DeliveryOrders: React.FC = () => {
             backdrop="static"
             keyboard={false}
             size="lg"
-            //onExit={() => closeModal()}
+          //onExit={() => closeModal()}
           >
             <ModalHeader
               className="p-4"
@@ -1055,8 +1055,8 @@ const DeliveryOrders: React.FC = () => {
               toggle={() => setShowModal(!showModal)}
             >
               {deliveryOrders[selected].status === "PENDING" ||
-              deliveryOrders[selected].status === "INCOMPLETE" ||
-              deliveryOrders[selected].status === "DO_CREATED"
+                deliveryOrders[selected].status === "INCOMPLETE" ||
+                deliveryOrders[selected].status === "DO_CREATED"
                 ? "Delivery Order"
                 : "Invoice"}
             </ModalHeader>
@@ -1137,7 +1137,7 @@ const DeliveryOrders: React.FC = () => {
                               </Button>
                             )} */}
                             <>
-                              {user.dealerId ? (
+                              {user.dealerId || user.role === "subdealer" ? (
                                 <>
                                   <ButtonDropdown
                                     className="mr-2"
@@ -1170,15 +1170,15 @@ const DeliveryOrders: React.FC = () => {
                                       </DropdownMenu>
                                     </>
                                   </ButtonDropdown>
-                                    <Button
-                                      className="small-button-width my-2"
-                                      color={"primary"}
-                                      onClick={createRegistration}
-                                      size="sm"
-                                    >
-                                      Create Registration
-                                    </Button>
-                                
+                                  <Button
+                                    className="small-button-width my-2"
+                                    color={"primary"}
+                                    onClick={createRegistration}
+                                    size="sm"
+                                  >
+                                    Create Registration
+                                  </Button>
+
                                   <Button
                                     className="small-button-width my-2"
                                     color={"primary"}
@@ -1278,15 +1278,15 @@ const DeliveryOrders: React.FC = () => {
                                           </DropdownMenu>
                                         </>
                                       </ButtonDropdown>
-                                        <Button
-                                          className="small-button-width my-2"
-                                          color={"primary"}
-                                          onClick={createRegistration}
-                                          size="sm"
-                                        >
-                                          Create Registration
-                                        </Button>
-                                    
+                                      <Button
+                                        className="small-button-width my-2"
+                                        color={"primary"}
+                                        onClick={createRegistration}
+                                        size="sm"
+                                      >
+                                        Create Registration
+                                      </Button>
+
                                       <Button
                                         className="small-button-width my-2"
                                         color={"primary"}
