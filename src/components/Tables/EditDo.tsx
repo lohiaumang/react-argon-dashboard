@@ -23,7 +23,7 @@ import { isEmpty } from "lodash";
 
 import {
   InsuranceConfigContext,
-  PriceCinfigContext,
+  PriceConfigContext,
   UserContext,
 } from "../../Context";
 
@@ -65,7 +65,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
     message: string;
   }>();
 
-  const priceConfig = useContext(PriceCinfigContext);
+  const priceConfig = useContext(PriceConfigContext);
   const insuranceConfig = useContext(InsuranceConfigContext);
   const [user] = useContext(UserContext);
 
@@ -928,10 +928,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }
                           height="auto"
                           width="200px"
-                        // onclick={enlargeImg()}
-                        // onClick={() => {
-                        //   enlargeImg();
-                        // }}
+                          // onclick={enlargeImg()}
+                          // onClick={() => {
+                          //   enlargeImg();
+                          // }}
                         ></img>
                       </Media>
                       {/* <Button
@@ -968,10 +968,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }
                           height="auto"
                           width="200px"
-                        // onclick={enlargeImg()}
-                        // onClick={() => {
-                        //   enlargeImg();
-                        // }}
+                          // onclick={enlargeImg()}
+                          // onClick={() => {
+                          //   enlargeImg();
+                          // }}
                         ></img>
                       </Media>
                     </Col>
@@ -1002,10 +1002,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }
                           height="auto"
                           width="200px"
-                        // onclick={enlargeImg()}
-                        // onClick={() => {
-                        //   enlargeImg();
-                        // }}
+                          // onclick={enlargeImg()}
+                          // onClick={() => {
+                          //   enlargeImg();
+                          // }}
                         ></img>
                       </Media>
                     </Col>
@@ -1172,9 +1172,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           DISTRICT
                         </label>
                         {states &&
-                          customerInfo.currState &&
-                          states[customerInfo.currState] &&
-                          states[customerInfo.currState].districts ? (
+                        customerInfo.currState &&
+                        states[customerInfo.currState] &&
+                        states[customerInfo.currState].districts ? (
                           <Input
                             required
                             type="select"
@@ -1464,9 +1464,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               DISTRICT
                             </label>
                             {states &&
-                              customerInfo.permState &&
-                              states[customerInfo.permState] &&
-                              states[customerInfo.permState].districts ? (
+                            customerInfo.permState &&
+                            states[customerInfo.permState] &&
+                            states[customerInfo.permState].districts ? (
                               <Input
                                 required
                                 type="select"
@@ -2263,7 +2263,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                                         currDo.additionalInfo &&
                                         currDo.additionalInfo.accessoriesList &&
                                         currDo.additionalInfo.accessoriesList[
-                                        accessory
+                                          accessory
                                         ]
                                       )
                                     }

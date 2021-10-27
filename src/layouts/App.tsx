@@ -8,7 +8,7 @@ import AdminLayout from "./Admin";
 import AuthLayout from "./Auth";
 import {
   UserContext,
-  PriceCinfigContext,
+  PriceConfigContext,
   InsuranceConfigContext,
 } from "../Context";
 
@@ -44,7 +44,7 @@ const App: React.FC = () => {
                 firebase
                   .firestore()
                   .collection("priceConfig")
-                  .doc(currUser.createdBy)
+                  .doc(currUser.createdBy || currUser.uid)
                   .get()
                   .then((doc: any) => {
                     if (doc.exists) {
@@ -54,7 +54,7 @@ const App: React.FC = () => {
                 firebase
                   .firestore()
                   .collection("insuranceConfig")
-                  .doc(currUser.createdBy)
+                  .doc(currUser.createdBy || currUser.uid)
                   .get()
                   .then((doc: any) => {
                     if (doc.exists) {
@@ -78,11 +78,9 @@ const App: React.FC = () => {
   }, []);
 
   const getRoutes = () => {
-    // const { role = "" } = currentUserDetails || {};
-
     return user ? (
       <UserContext.Provider value={[currentUserDetails, setCurrentUserDetails]}>
-        <PriceCinfigContext.Provider value={priceConfigDetails}>
+        <PriceConfigContext.Provider value={priceConfigDetails}>
           <InsuranceConfigContext.Provider value={insuranceConfigDetails}>
             <Switch>
               <Redirect exact from="/admin" to="/admin/index" />
@@ -93,7 +91,7 @@ const App: React.FC = () => {
               <Redirect from="/" to="/admin/index" />
             </Switch>
           </InsuranceConfigContext.Provider>
-        </PriceCinfigContext.Provider>
+        </PriceConfigContext.Provider>
       </UserContext.Provider>
     ) : (
       <UserContext.Provider value={[currentUserDetails, setCurrentUserDetails]}>

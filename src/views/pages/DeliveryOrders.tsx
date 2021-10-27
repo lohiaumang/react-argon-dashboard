@@ -54,7 +54,7 @@ import Loading from "../../components/Share/Loading";
 import {
   UserContext,
   InsuranceConfigContext,
-  PriceCinfigContext,
+  PriceConfigContext,
 } from "../../Context";
 import firebase from "firebase/app";
 import "firebase/firestore";
@@ -82,7 +82,7 @@ const DeliveryOrders: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingPage, setLoadingPage] = useState<boolean>(true);
   const [dropdownButton, setDropdownButton] = useState(false);
-  const priceConfig = useContext(PriceCinfigContext);
+  const priceConfig = useContext(PriceConfigContext);
   const insuranceConfig = useContext(InsuranceConfigContext);
   const db = firebase.firestore();
 
@@ -978,7 +978,7 @@ const DeliveryOrders: React.FC = () => {
             backdrop="static"
             keyboard={false}
             size="lg"
-          //onExit={() => closeModal()}
+            //onExit={() => closeModal()}
           >
             <ModalHeader
               className="p-4"
@@ -1055,8 +1055,8 @@ const DeliveryOrders: React.FC = () => {
               toggle={() => setShowModal(!showModal)}
             >
               {deliveryOrders[selected].status === "PENDING" ||
-                deliveryOrders[selected].status === "INCOMPLETE" ||
-                deliveryOrders[selected].status === "DO_CREATED"
+              deliveryOrders[selected].status === "INCOMPLETE" ||
+              deliveryOrders[selected].status === "DO_CREATED"
                 ? "Delivery Order"
                 : "Invoice"}
             </ModalHeader>
