@@ -1137,7 +1137,7 @@ const DeliveryOrders: React.FC = () => {
                               </Button>
                             )} */}
                             <>
-                              {user.role === "subdealer" ? (
+                              {user.dealerId ? (
                                 <>
                                   <ButtonDropdown
                                     className="mr-2"
@@ -1170,8 +1170,6 @@ const DeliveryOrders: React.FC = () => {
                                       </DropdownMenu>
                                     </>
                                   </ButtonDropdown>
-                                  {deliveryOrders[selected].status ===
-                                    "INSURANCE_CREATED" && (
                                     <Button
                                       className="small-button-width my-2"
                                       color={"primary"}
@@ -1180,8 +1178,7 @@ const DeliveryOrders: React.FC = () => {
                                     >
                                       Create Registration
                                     </Button>
-                                  )}
-
+                                
                                   <Button
                                     className="small-button-width my-2"
                                     color={"primary"}
@@ -1281,8 +1278,6 @@ const DeliveryOrders: React.FC = () => {
                                           </DropdownMenu>
                                         </>
                                       </ButtonDropdown>
-                                      {deliveryOrders[selected].status ===
-                                        "INSURANCE_CREATED" && (
                                         <Button
                                           className="small-button-width my-2"
                                           color={"primary"}
@@ -1291,7 +1286,7 @@ const DeliveryOrders: React.FC = () => {
                                         >
                                           Create Registration
                                         </Button>
-                                      )}
+                                    
                                       <Button
                                         className="small-button-width my-2"
                                         color={"primary"}

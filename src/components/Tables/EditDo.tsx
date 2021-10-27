@@ -176,7 +176,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
 
   const updateAccessories = (modelName: string) => {
     if (user) {
-      const fetchId = user.subDealerId || user.dealerId || user.uid;
+      const fetchId = user.createdBy || user.uid;
 
       firebase
         .firestore()
@@ -186,8 +186,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
         .then((doc) => {
           if (doc.exists) {
             const accessoriesMap = doc.data() || {};
-            const fetchId = user.subDealerId || user.dealerId || user.uid;
-
             firebase
               .firestore()
               .collection("accessories")
@@ -930,10 +928,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }
                           height="auto"
                           width="200px"
-                          // onclick={enlargeImg()}
-                          // onClick={() => {
-                          //   enlargeImg();
-                          // }}
+                        // onclick={enlargeImg()}
+                        // onClick={() => {
+                        //   enlargeImg();
+                        // }}
                         ></img>
                       </Media>
                       {/* <Button
@@ -970,10 +968,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }
                           height="auto"
                           width="200px"
-                          // onclick={enlargeImg()}
-                          // onClick={() => {
-                          //   enlargeImg();
-                          // }}
+                        // onclick={enlargeImg()}
+                        // onClick={() => {
+                        //   enlargeImg();
+                        // }}
                         ></img>
                       </Media>
                     </Col>
@@ -1004,10 +1002,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }
                           height="auto"
                           width="200px"
-                          // onclick={enlargeImg()}
-                          // onClick={() => {
-                          //   enlargeImg();
-                          // }}
+                        // onclick={enlargeImg()}
+                        // onClick={() => {
+                        //   enlargeImg();
+                        // }}
                         ></img>
                       </Media>
                     </Col>
@@ -1174,9 +1172,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           DISTRICT
                         </label>
                         {states &&
-                        customerInfo.currState &&
-                        states[customerInfo.currState] &&
-                        states[customerInfo.currState].districts ? (
+                          customerInfo.currState &&
+                          states[customerInfo.currState] &&
+                          states[customerInfo.currState].districts ? (
                           <Input
                             required
                             type="select"
@@ -1466,9 +1464,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               DISTRICT
                             </label>
                             {states &&
-                            customerInfo.permState &&
-                            states[customerInfo.permState] &&
-                            states[customerInfo.permState].districts ? (
+                              customerInfo.permState &&
+                              states[customerInfo.permState] &&
+                              states[customerInfo.permState].districts ? (
                               <Input
                                 required
                                 type="select"
@@ -2265,7 +2263,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                                         currDo.additionalInfo &&
                                         currDo.additionalInfo.accessoriesList &&
                                         currDo.additionalInfo.accessoriesList[
-                                          accessory
+                                        accessory
                                         ]
                                       )
                                     }
