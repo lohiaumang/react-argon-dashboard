@@ -12,7 +12,6 @@ import {
   InsuranceConfigContext,
 } from "../Context";
 
-
 const App: React.FC = () => {
   const currentUser = firebase.auth().currentUser;
   const [loading, setLoading] = useState<boolean>(true);
@@ -24,7 +23,6 @@ const App: React.FC = () => {
   const [insuranceConfigDetails, setInsuranceConfigDetails] = useState<any>();
   let userDetalis: any;
 
-
   // console.log(currentUser,"We get current user");
   useEffect(() => {
     firebase.auth().onAuthStateChanged((User) => {
@@ -32,16 +30,37 @@ const App: React.FC = () => {
         firebase
           .firestore()
           .collection("users")
-          .where("uid", "==", User.uid)
-          .onSnapshot(function (querySnapshot) {
-            const doc = querySnapshot.docs ? querySnapshot.docs[0] : null;
-            if (doc && doc.exists && doc.data()) {
-              if (doc.data().role !== "salesman") {
-                setCurrentUserDetails(doc.data());
-                userDetalis = doc.data();
+          .doc(User.uid)
+          .get()
+          .then((doc) => {
+            if (doc && doc.exists) {
+              const currUser = doc.data() || {};
 
+              if (currUser.role !== "salesman") {
+                setCurrentUserDetails(currUser);
                 setUser(User);
                 setLoading(false);
+
+                firebase
+                  .firestore()
+                  .collection("priceConfig")
+                  .doc(currUser.createdBy)
+                  .get()
+                  .then((doc: any) => {
+                    if (doc.exists) {
+                      setPriceConfigDetails(doc.data());
+                    }
+                  });
+                firebase
+                  .firestore()
+                  .collection("insuranceConfig")
+                  .doc(currUser.createdBy)
+                  .get()
+                  .then((doc: any) => {
+                    if (doc.exists) {
+                      setInsuranceConfigDetails(doc.data());
+                    }
+                  });
               } else {
                 setSignInError(
                   "You don't have permission to access the dashboard."
@@ -51,27 +70,6 @@ const App: React.FC = () => {
               }
             }
           });
-
-        const dealerId = currentUserDetails.createdBy || currentUserDetails.uid || "";
-
-        var docRef = firebase
-          .firestore()
-          .collection("priceConfig")
-          .doc("config");
-        docRef.get().then((doc) => {
-          if (doc.exists) {
-            setPriceConfigDetails(doc.data());
-          }
-        });
-        var docRef = firebase
-          .firestore()
-          .collection("insuranceConfig")
-          .doc("config");
-        docRef.get().then((doc) => {
-          if (doc.exists) {
-            setInsuranceConfigDetails(doc.data());
-          }
-        });
       } else if (User === null) {
         setUser(null);
         setLoading(false);

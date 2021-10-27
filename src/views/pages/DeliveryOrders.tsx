@@ -206,10 +206,10 @@ const DeliveryOrders: React.FC = () => {
         )
         .then(() => {
           // insurenceStatusCount();
-          if (currentStatus === "DONE") {
-            deleteDeliveryOrder();
+          if (currentStatus !== "DONE") {
+            // deleteDeliveryOrder();
             // doneStatusCount();
-          } else {
+            // } else {
             let newDos: any = deliveryOrders;
             newDos[selected] = {
               ...deliveryOrders[selected],
@@ -978,7 +978,7 @@ const DeliveryOrders: React.FC = () => {
             backdrop="static"
             keyboard={false}
             size="lg"
-          //onExit={() => closeModal()}
+            //onExit={() => closeModal()}
           >
             <ModalHeader
               className="p-4"
@@ -1055,8 +1055,8 @@ const DeliveryOrders: React.FC = () => {
               toggle={() => setShowModal(!showModal)}
             >
               {deliveryOrders[selected].status === "PENDING" ||
-                deliveryOrders[selected].status === "INCOMPLETE" ||
-                deliveryOrders[selected].status === "DO_CREATED"
+              deliveryOrders[selected].status === "INCOMPLETE" ||
+              deliveryOrders[selected].status === "DO_CREATED"
                 ? "Delivery Order"
                 : "Invoice"}
             </ModalHeader>
@@ -1115,17 +1115,16 @@ const DeliveryOrders: React.FC = () => {
                       <>
                         <Button
                           className="small-button-width my-2"
-                          color={"danger"}
+                          color={"success"}
                           disabled={loading}
                           onClick={deleteDeliveryOrder}
                           size="sm"
                         >
-                          Delete
+                          Mark Done
                         </Button>
                         {selected !== undefined && (
-
                           <>
-                            {deliveryOrders[selected].status === "INCOMPLETE" && (
+                            {/* {deliveryOrders[selected].status === "INCOMPLETE" && (
                               <Button
                                 className="my-2"
                                 color={"primary"}
@@ -1136,7 +1135,7 @@ const DeliveryOrders: React.FC = () => {
                               >
                                 <i className="fas fa-pencil-alt" />
                               </Button>
-                            )}
+                            )} */}
                             <>
                               {user.role === "subdealer" ? (
                                 <>
@@ -1146,7 +1145,11 @@ const DeliveryOrders: React.FC = () => {
                                     toggle={toggle}
                                   >
                                     <>
-                                      <DropdownToggle caret size="sm" color={"primary"}>
+                                      <DropdownToggle
+                                        caret
+                                        size="sm"
+                                        color={"primary"}
+                                      >
                                         Create Insurance
                                       </DropdownToggle>
                                       <DropdownMenu>
@@ -1167,7 +1170,8 @@ const DeliveryOrders: React.FC = () => {
                                       </DropdownMenu>
                                     </>
                                   </ButtonDropdown>
-                                  {deliveryOrders[selected].status === "INSURANCE_CREATED" && (
+                                  {deliveryOrders[selected].status ===
+                                    "INSURANCE_CREATED" && (
                                     <Button
                                       className="small-button-width my-2"
                                       color={"primary"}
@@ -1252,7 +1256,11 @@ const DeliveryOrders: React.FC = () => {
                                         toggle={toggle}
                                       >
                                         <>
-                                          <DropdownToggle caret size="sm" color={"primary"}>
+                                          <DropdownToggle
+                                            caret
+                                            size="sm"
+                                            color={"primary"}
+                                          >
                                             Create Insurance
                                           </DropdownToggle>
                                           <DropdownMenu>
@@ -1273,7 +1281,8 @@ const DeliveryOrders: React.FC = () => {
                                           </DropdownMenu>
                                         </>
                                       </ButtonDropdown>
-                                      {deliveryOrders[selected].status === "INSURANCE_CREATED" && (
+                                      {deliveryOrders[selected].status ===
+                                        "INSURANCE_CREATED" && (
                                         <Button
                                           className="small-button-width my-2"
                                           color={"primary"}
@@ -1309,9 +1318,7 @@ const DeliveryOrders: React.FC = () => {
                                       >
                                         <i className="fas fa-pencil-alt" />
                                       </Button>
-
                                     </>
-
                                   )}
                                 </>
                               )}
@@ -1320,9 +1327,7 @@ const DeliveryOrders: React.FC = () => {
                             {/* {getActionButton()} */}
                           </>
                         )}
-
                       </>
-
                     )}
                     <Button
                       className="my-2"
