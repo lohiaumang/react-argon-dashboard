@@ -77,6 +77,8 @@ const DeliveryOrders: React.FC = () => {
   const [deliveryOrders, setDeliveryOrders] = useState<DeliveryOrders>({});
   const [selected, setSelected] = useState<string>();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [showInvoice, setShowInvoice] = useState<boolean>(false);
+  const [showDO, setShowDO] = useState<boolean>(false);
   const [showModalForInvoiceNo, setShowModalForInvoiceNo] =
     useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -396,8 +398,16 @@ const DeliveryOrders: React.FC = () => {
   useEffect(() => {
     if (!showModal) {
       setShowEditDo(showModal);
+      setShowInvoice(showModal);
+      setShowDO(showModal);
     }
   }, [showModal]);
+
+  useEffect(() => {
+    if (showDO || showInvoice) {
+      setShowModal(true);
+    }
+  }, [showDO, showInvoice]);
 
   // const getActionButton = () => {
   //   if (selected !== undefined) {
@@ -521,7 +531,8 @@ const DeliveryOrders: React.FC = () => {
     try {
       const status: any = await fetchDeliveryOrder();
       if (status) {
-        setShowModal(!showModal);
+        // setShowModal(!showModal);
+        setShowDO(!showDO);
         setLoading(true);
       }
     } catch (err) {
@@ -537,7 +548,8 @@ const DeliveryOrders: React.FC = () => {
     } else {
       const status: any = await fetchDeliveryOrder();
       if (status) {
-        setShowModal(!showModal);
+        // setShowModal(!showModal);
+        setShowInvoice(!showInvoice);
       }
     }
     setLoading(false);
@@ -551,7 +563,8 @@ const DeliveryOrders: React.FC = () => {
     setShowModalForInvoiceNo(!showModalForInvoiceNo);
     const status: any = await fetchDeliveryOrder();
     if (status) {
-      setShowModal(!showModal);
+      // setShowModal(!showModal);
+      setShowInvoice(!showInvoice);
     }
   };
   //create invoice
@@ -1054,19 +1067,16 @@ const DeliveryOrders: React.FC = () => {
               tag="h3"
               toggle={() => setShowModal(!showModal)}
             >
-              {deliveryOrders[selected].status === "PENDING" ||
-              deliveryOrders[selected].status === "INCOMPLETE" ||
-              deliveryOrders[selected].status === "DO_CREATED"
-                ? "Delivery Order"
-                : "Invoice"}
+              {showEditDo || showDO ? "Delivery Order" : "Invoice"}
             </ModalHeader>
             <ModalBody className="pb-4 px-4 py-0">
-              {showEditDo ? (
+              {showEditDo && (
                 <EditDo
                   deliveryOrder={deliveryOrders[selected]}
                   onCreate={onCreate}
                 />
-              ) : deliveryOrders[selected].status === "PENDING" ? (
+              )}
+              {showDO && (
                 <DeliveryOrderTable
                   ref={deliveryOrderTableRef}
                   deliveryOrder={{
@@ -1074,7 +1084,8 @@ const DeliveryOrders: React.FC = () => {
                     dealerInfo,
                   }}
                 />
-              ) : (
+              )}
+              {showInvoice && (
                 <InvoiceTable
                   ref={deliveryOrderTableRef}
                   deliveryOrder={{
