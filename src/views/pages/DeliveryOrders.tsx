@@ -578,7 +578,6 @@ const DeliveryOrders: React.FC = () => {
             type: "CREATE_INVOICE",
             data: {
               ...deliveryOrders[selected],
-              user,
             },
           });
         }
@@ -660,6 +659,7 @@ const DeliveryOrders: React.FC = () => {
           });
           setDeliveryOrders(dOs);
           setLoadingPage(false);
+          setSelected(undefined);
         });
     }
     if (selected !== undefined) {
@@ -991,7 +991,7 @@ const DeliveryOrders: React.FC = () => {
             backdrop="static"
             keyboard={false}
             size="lg"
-            //onExit={() => closeModal()}
+          //onExit={() => closeModal()}
           >
             <ModalHeader
               className="p-4"

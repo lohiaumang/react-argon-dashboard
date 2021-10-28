@@ -695,18 +695,18 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           page,
           'table > tbody > tr > td > .siebui-popup-button > button[aria-label="Pick Assigned To:Query"]'
         );
-        const firstName = data.user.name.split(" ");
+        const salesExName = data.salesEx.split(" ");
         await typeText(
           page,
           "input[name='Last_Name']",
-          firstName[0].toUpperCase()
+          salesExName[0].toUpperCase()
         );
         await click(page, '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] ');
 
         await typeText(
           page,
           '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] > input[name="First_Name"]',
-          firstName[1].toUpperCase()
+          salesExName[1].toUpperCase()
         );
         await click(
           page,

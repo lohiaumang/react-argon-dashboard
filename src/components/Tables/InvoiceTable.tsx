@@ -360,7 +360,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
             <tbody>
               <tr>
                 <th>{props.deliveryOrder.vehicleInfo.modelName}</th>
-                <td>{props.hsnCode}</td>
+                <td>{props.hsnCode || props.deliveryOrder.vehicleInfo.hsnCode}</td>
                 <td>
                   <NumberFormat
                     value={props.deliveryOrder.additionalInfo.price}
@@ -490,7 +490,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
             <tbody>
               <tr>
                 <th>Handling & Logistics Charge</th>
-                <td>{props.hsnCode}</td>
+                <td>{props.hsnCode || props.deliveryOrder.vehicleInfo.hsnCode}</td>
                 <td>
                   <NumberFormat
                     value={1627}

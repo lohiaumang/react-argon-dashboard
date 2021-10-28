@@ -289,7 +289,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
             ? "google_form"
             : currDo.initiatedBy || user.uid,
         createdOn: currDo.createdOn || new Date().toString(),
-        createdBy: user.uid,
+       // createdBy: user.uid,
         name: customerInfo.lastName
           ? `${customerInfo.firstName} ${customerInfo.lastName}`
           : customerInfo.firstName,
