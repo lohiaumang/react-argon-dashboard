@@ -992,7 +992,7 @@ const DeliveryOrders: React.FC = () => {
             backdrop="static"
             keyboard={false}
             size="lg"
-            //onExit={() => closeModal()}
+          //onExit={() => closeModal()}
           >
             <ModalHeader
               className="p-4"
@@ -1239,7 +1239,7 @@ const DeliveryOrders: React.FC = () => {
                                     </>
                                   ) : (
                                     deliveryOrders[selected].status !==
-                                      "INCOMPLETE" && (
+                                    "INCOMPLETE" && (
                                       <>
                                         <Button
                                           className="small-button-width my-2"
