@@ -432,6 +432,7 @@ const DeliveryOrders: React.FC = () => {
       db.collection("deliveryOrders").doc(selected).set(
         {
           active: false,
+          status: "DONE",
         },
         { merge: true }
       );
@@ -991,7 +992,7 @@ const DeliveryOrders: React.FC = () => {
             backdrop="static"
             keyboard={false}
             size="lg"
-          //onExit={() => closeModal()}
+            //onExit={() => closeModal()}
           >
             <ModalHeader
               className="p-4"
