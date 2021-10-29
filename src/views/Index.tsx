@@ -198,7 +198,7 @@ const Index: React.FC = () => {
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">Month wise order details</h3>
+                    <h3 className="mb-0">At a glance</h3>
                   </div>
                 </Row>
               </CardHeader>
@@ -206,9 +206,18 @@ const Index: React.FC = () => {
                 ref={weekWiseRef}
                 monthWiseDeliveryOrder={monthWiseSale}
               />
+              <WeekWiseDelevery ref={weekWiseRef} weekWiseData={weekWiseSale} />
+              <ModelWiseDelevery
+                ref={weekWiseRef}
+                modelWiseData={modelWiseSale}
+              />
+              <SalesManWiseSale
+                ref={weekWiseRef}
+                salesManWise={salesManWiseSale}
+              />
             </Card>
           </Col>
-          <Col className="mb-5 mb-xl-0" xl="12">
+          {/* <Col className="mb-5 mb-xl-0" xl="12">
             <Card className="shadow weektable">
               <CardHeader className="border-0">
                 <Row className="align-items-center">
@@ -251,7 +260,7 @@ const Index: React.FC = () => {
                 salesManWise={salesManWiseSale}
               />
             </Card>
-          </Col>
+          </Col> */}
         </Row>
       </Container>
     </>

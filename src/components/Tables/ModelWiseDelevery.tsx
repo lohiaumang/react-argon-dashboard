@@ -17,7 +17,7 @@ const ModelWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
             <thead className="thead-light">
               <tr>
                 <th style={{ width: "40%" }} scope="col">
-                  Model Name
+                  By Model
                 </th>
                 <th style={{ width: "40%" }} scope="col">
                   Total Sale

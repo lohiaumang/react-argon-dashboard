@@ -17,7 +17,7 @@ const MonthWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
             <thead className="thead-light">
               <tr>
                 <th style={{ width: "40%" }} scope="col">
-                  Month Name
+                  By Month
                 </th>
                 <th style={{ width: "40%" }} scope="col">
                   Total Sale

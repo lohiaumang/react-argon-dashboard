@@ -17,7 +17,7 @@ const SalesManWiseSale = React.forwardRef<HTMLDivElement, Props>(
             <thead className="thead-light">
               <tr>
                 <th style={{ width: "40%" }} scope="col">
-                  Sales Man Name
+                  By Sales Exec
                 </th>
                 <th style={{ width: "40%" }} scope="col">
                   Total Sale

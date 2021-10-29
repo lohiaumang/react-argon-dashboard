@@ -17,7 +17,7 @@ const WeekWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
             <thead className="thead-light">
               <tr>
                 <th style={{ width: "40%" }} scope="col">
-                  Week Number
+                  By Week
                 </th>
                 <th style={{ width: "40%" }} scope="col">
                   Total Sale
@@ -35,7 +35,7 @@ const WeekWiseDelevery = React.forwardRef<HTMLDivElement, Props>(
                 }).format(weekData[currWeekData].totalSaleValue);
                 return (
                   <tr key={index}>
-                    <th scope="row">{currWeekData}</th>
+                    <th scope="row">Current Week</th>
                     <td>{weekData[currWeekData].totalSaleNo}</td>
                     <td>{saleValue}</td>
                   </tr>

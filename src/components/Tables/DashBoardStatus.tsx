@@ -27,7 +27,7 @@ const DashBoardStatus = React.forwardRef<HTMLDivElement, Props>(
                 <Row>
                   <div className="col">
                     <h6 className="text-uppercase text-muted ls-1 mb-1">
-                      Performance
+                      Metrics
                     </h6>
                     {/* <p>{dataCount}</p> */}
                   </div>
@@ -40,7 +40,7 @@ const DashBoardStatus = React.forwardRef<HTMLDivElement, Props>(
                       <CardTitle style={{ color: "white" }} tag="h5">
                         DONE
                       </CardTitle>
-                      <CardText>{dashBoardStatus.DONE}</CardText>
+                      <CardText>{dashBoardStatus.DONE || 0}</CardText>
                     </Card>
                   </Col>
                   <Col xl="4">
@@ -55,7 +55,7 @@ const DashBoardStatus = React.forwardRef<HTMLDivElement, Props>(
                       <CardTitle style={{ color: "white" }} tag="h5">
                         INCOMPLETE
                       </CardTitle>
-                      <CardText>{dashBoardStatus.INCOMPLETE}</CardText>
+                      <CardText>{dashBoardStatus.INCOMPLETE || 0}</CardText>
                     </Card>
                   </Col>
                   <Col xl="4">
@@ -63,11 +63,11 @@ const DashBoardStatus = React.forwardRef<HTMLDivElement, Props>(
                       <CardTitle style={{ color: "white" }} tag="h5">
                         PENDING
                       </CardTitle>
-                      <CardText>{dashBoardStatus.PENDING}</CardText>
+                      <CardText>{dashBoardStatus.PENDING || 0}</CardText>
                     </Card>
                   </Col>
                 </Row>
-                <Row>
+                {/* <Row>
                   <Col xl="4">
                     <Card body inverse color="info">
                       <CardTitle style={{ color: "white" }} tag="h5">
@@ -99,7 +99,7 @@ const DashBoardStatus = React.forwardRef<HTMLDivElement, Props>(
                       <CardText>{dashBoardStatus.INSURENCE_CREATED}</CardText>
                     </Card>
                   </Col>
-                </Row>
+                </Row> */}
               </CardBody>
             </Card>
           </Col>
