@@ -1135,20 +1135,8 @@ const DeliveryOrders: React.FC = () => {
                         </Button>
                         {selected !== undefined && (
                           <>
-                            {/* {deliveryOrders[selected].status === "INCOMPLETE" && (
-                              <Button
-                                className="my-2"
-                                color={"primary"}
-                                disabled={loading}
-                                onClick={editDO}
-                                size="sm"
-                                title="Edit"
-                              >
-                                <i className="fas fa-pencil-alt" />
-                              </Button>
-                            )} */}
                             <>
-                              {user.dealerId || user.role === "subdealer" ? (
+                              {user.dealerId ? (
                                 <>
                                   <ButtonDropdown
                                     className="mr-2"
@@ -1249,82 +1237,75 @@ const DeliveryOrders: React.FC = () => {
                                       </Button>
                                     </>
                                   ) : (
-                                    <>
-                                      <Button
-                                        className="small-button-width my-2"
-                                        color={"primary"}
-                                        onClick={createInvoice}
-                                        size="sm"
-                                      >
-                                        Create Invoice
-                                      </Button>
-                                      <ButtonDropdown
-                                        className="mr-2"
-                                        isOpen={dropdownButton}
-                                        toggle={toggle}
-                                      >
-                                        <>
-                                          <DropdownToggle
-                                            caret
-                                            size="sm"
-                                            color={"primary"}
-                                          >
-                                            Create Insurance
-                                          </DropdownToggle>
-                                          <DropdownMenu>
-                                            <DropdownItem
-                                              onClick={() => {
-                                                createInsurance("HDFC");
-                                              }}
+                                    deliveryOrders[selected].status !==
+                                      "INCOMPLETE" && (
+                                      <>
+                                        <Button
+                                          className="small-button-width my-2"
+                                          color={"primary"}
+                                          onClick={createInvoice}
+                                          size="sm"
+                                        >
+                                          Create Invoice
+                                        </Button>
+                                        <ButtonDropdown
+                                          className="mr-2"
+                                          isOpen={dropdownButton}
+                                          toggle={toggle}
+                                        >
+                                          <>
+                                            <DropdownToggle
+                                              caret
+                                              size="sm"
+                                              color={"primary"}
                                             >
-                                              HDFC
-                                            </DropdownItem>
-                                            <DropdownItem
-                                              onClick={() => {
-                                                createInsurance("ICICI");
-                                              }}
-                                            >
-                                              ICICI
-                                            </DropdownItem>
-                                          </DropdownMenu>
-                                        </>
-                                      </ButtonDropdown>
-                                      <Button
-                                        className="small-button-width my-2"
-                                        color={"primary"}
-                                        onClick={createRegistration}
-                                        size="sm"
-                                      >
-                                        Create Registration
-                                      </Button>
+                                              Create Insurance
+                                            </DropdownToggle>
+                                            <DropdownMenu>
+                                              <DropdownItem
+                                                onClick={() => {
+                                                  createInsurance("HDFC");
+                                                }}
+                                              >
+                                                HDFC
+                                              </DropdownItem>
+                                              <DropdownItem
+                                                onClick={() => {
+                                                  createInsurance("ICICI");
+                                                }}
+                                              >
+                                                ICICI
+                                              </DropdownItem>
+                                            </DropdownMenu>
+                                          </>
+                                        </ButtonDropdown>
+                                        <Button
+                                          className="small-button-width my-2"
+                                          color={"primary"}
+                                          onClick={createRegistration}
+                                          size="sm"
+                                        >
+                                          Create Registration
+                                        </Button>
 
-                                      <Button
-                                        className="small-button-width my-2"
-                                        color={"primary"}
-                                        onClick={printInvoice}
-                                        size="sm"
-                                      >
-                                        Print Invoice
-                                      </Button>
-                                      <Button
-                                        className="small-button-width my-2"
-                                        color={"primary"}
-                                        onClick={createDO}
-                                        size="sm"
-                                      >
-                                        Print DO
-                                      </Button>
-                                      <Button
-                                        className="my-2"
-                                        color={"primary"}
-                                        disabled={loading}
-                                        onClick={editDO}
-                                        size="sm"
-                                        title="Edit"
-                                      >
-                                        <i className="fas fa-pencil-alt" />
-                                      </Button>
-                                    </>
+                                        <Button
+                                          className="small-button-width my-2"
+                                          color={"primary"}
+                                          onClick={printInvoice}
+                                          size="sm"
+                                        >
+                                          Print Invoice
+                                        </Button>
+                                        <Button
+                                          className="small-button-width my-2"
+                                          color={"primary"}
+                                          onClick={createDO}
+                                          size="sm"
+                                        >
+                                          Print DO
+                                        </Button>
+                                      </>
+                                    )
                                   )}
                                 </>
                               )}
@@ -1333,6 +1314,16 @@ const DeliveryOrders: React.FC = () => {
                             {/* {getActionButton()} */}
                           </>
                         )}
+                        <Button
+                          className="my-2"
+                          color={"primary"}
+                          disabled={loading}
+                          onClick={editDO}
+                          size="sm"
+                          title="Edit"
+                        >
+                          <i className="fas fa-pencil-alt" />
+                        </Button>
                       </>
                     )}
                     <Button
