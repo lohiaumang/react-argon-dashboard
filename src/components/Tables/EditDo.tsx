@@ -289,7 +289,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
             ? "google_form"
             : currDo.initiatedBy || user.uid,
         createdOn: currDo.createdOn || new Date().toString(),
-       // createdBy: user.uid,
+        // createdBy: user.uid,
         name: customerInfo.lastName
           ? `${customerInfo.firstName} ${customerInfo.lastName}`
           : customerInfo.firstName,
@@ -928,10 +928,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }
                           height="auto"
                           width="200px"
-                          // onclick={enlargeImg()}
-                          // onClick={() => {
-                          //   enlargeImg();
-                          // }}
+                        // onclick={enlargeImg()}
+                        // onClick={() => {
+                        //   enlargeImg();
+                        // }}
                         ></img>
                       </Media>
                       {/* <Button
@@ -968,10 +968,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }
                           height="auto"
                           width="200px"
-                          // onclick={enlargeImg()}
-                          // onClick={() => {
-                          //   enlargeImg();
-                          // }}
+                        // onclick={enlargeImg()}
+                        // onClick={() => {
+                        //   enlargeImg();
+                        // }}
                         ></img>
                       </Media>
                     </Col>
@@ -1002,10 +1002,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }
                           height="auto"
                           width="200px"
-                          // onclick={enlargeImg()}
-                          // onClick={() => {
-                          //   enlargeImg();
-                          // }}
+                        // onclick={enlargeImg()}
+                        // onClick={() => {
+                        //   enlargeImg();
+                        // }}
                         ></img>
                       </Media>
                     </Col>
@@ -1172,9 +1172,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           DISTRICT
                         </label>
                         {states &&
-                        customerInfo.currState &&
-                        states[customerInfo.currState] &&
-                        states[customerInfo.currState].districts ? (
+                          customerInfo.currState &&
+                          states[customerInfo.currState] &&
+                          states[customerInfo.currState].districts ? (
                           <Input
                             required
                             type="select"
@@ -1464,9 +1464,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               DISTRICT
                             </label>
                             {states &&
-                            customerInfo.permState &&
-                            states[customerInfo.permState] &&
-                            states[customerInfo.permState].districts ? (
+                              customerInfo.permState &&
+                              states[customerInfo.permState] &&
+                              states[customerInfo.permState].districts ? (
                               <Input
                                 required
                                 type="select"
@@ -1959,6 +1959,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             });
                           }}
                         >
+                          <option value="none">None</option>
                           <option value="extWarrantyFourYears">4</option>
                           <option value="extWarrantySixYears">6</option>
                         </Input>
@@ -2263,7 +2264,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                                         currDo.additionalInfo &&
                                         currDo.additionalInfo.accessoriesList &&
                                         currDo.additionalInfo.accessoriesList[
-                                          accessory
+                                        accessory
                                         ]
                                       )
                                     }

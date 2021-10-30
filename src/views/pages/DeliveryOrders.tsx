@@ -1195,16 +1195,7 @@ const DeliveryOrders: React.FC = () => {
                                   >
                                     Print DO
                                   </Button>
-                                  <Button
-                                    className="my-2"
-                                    color={"primary"}
-                                    disabled={loading}
-                                    onClick={editDO}
-                                    size="sm"
-                                    title="Edit"
-                                  >
-                                    <i className="fas fa-pencil-alt" />
-                                  </Button>
+                               
                                 </>
                               ) : (
                                 <>
@@ -1226,16 +1217,7 @@ const DeliveryOrders: React.FC = () => {
                                       >
                                         Print Invoice
                                       </Button>
-                                      <Button
-                                        className="my-2"
-                                        color={"primary"}
-                                        disabled={loading}
-                                        onClick={editDO}
-                                        size="sm"
-                                        title="Edit"
-                                      >
-                                        <i className="fas fa-pencil-alt" />
-                                      </Button>
+                        
                                     </>
                                   ) : (
                                     deliveryOrders[selected].status !==
