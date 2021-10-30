@@ -451,16 +451,20 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       const enquiryExists = await page.evaluate(
         () => !!document.querySelector('table[summary="Enquiries"] td a')
       );
+      console.log(enquiryExists);
       //if enquiry exiat then not create new enquiry
       if (enquiryExists) {
+        await page.evaluate(() => document.querySelector("#s_1_l_TMI_Enquiry_Date div"))
         await click(page, "#s_1_l_TMI_Enquiry_Date div");
+        await page.evaluate(() => document.querySelector("div[title='Enquiries List Applet'] li#SortDesc > a"))
         await click(page, "div[title='Enquiries List Applet'] li#SortDesc > a");
-        await waitForNetworkIdle(page, timeout, 0);
+        await waitForNetworkIdle(page, timeout, 2);
+        await page.evaluate(() => document.querySelector('table[summary="Enquiries"] td a'))
         await click(page, 'table[summary="Enquiries"] td a');
         //end
       } else {
         //if enquiry not exiat then create new enquiry
-        await waitForNetworkIdle(page, timeout, 0);
+        await waitForNetworkIdle(page, timeout, 2);
         await click(page, 'button[title="Enquiries:New"]');
 
         //Enquiry Type
