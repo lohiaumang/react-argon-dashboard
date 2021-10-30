@@ -270,7 +270,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await typeText(
           page,
           'input[aria-label="Address 2"]',
-          data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
+          data.customerInfo.currLineTwo
         );
 
         //select state
@@ -300,6 +300,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           page,
           'input[aria-label="Zip/Pin Code"]',
           data.customerInfo.currPostal
+        );
+
+        await typeText(
+          'input[aria-label="Locality"]',
+          data.customerInfo.currPS
         );
 
         if (data.customerInfo.email) {
@@ -420,7 +425,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
           await fillData(
             'input[aria-label="Address 2"]',
-            data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
+            data.customerInfo.currLineTwo
           );
 
           await fillData(
@@ -433,6 +438,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             data.customerInfo.currPostal
           );
 
+          await fillData(
+            'input[aria-label="Locality"]',
+            data.customerInfo.currPS
+          );
+
           await fillData('input[aria-label="Email', data.customerInfo.email);
         }
         //end
@@ -443,6 +453,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
       //if enquiry exiat then not create new enquiry
       if (enquiryExists) {
+        await click(page, "#s_1_l_TMI_Enquiry_Date div");
+        await click(page, "div[title='Enquiries List Applet'] li#SortDesc > a");
+        await waitForNetworkIdle(page, timeout, 0);
         await click(page, 'table[summary="Enquiries"] td a');
         //end
       } else {
