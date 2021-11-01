@@ -6,6 +6,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
     credentials: { username, password },
   } = data;
 
+  const stateCodes = {
+    ASSAM: "AS",
+    BIHAR: "BR",
+    // TODO: Add all states codes here
+  };
+
   let timeout = systemConfig.erpTimeOut;
 
   //start network idel code
@@ -891,10 +897,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             };
           })
       );
-      const stateButton = state.find(
-        (item) =>
-          item.name === data.customerInfo.permState.slice(0, 2).toUpperCase()
-      );
+
+      const stateCode =
+        stateCodes[data.customerInfo.permState.toUpperCase()] || "AS";
+
+      const stateButton = state.find((item) => item.name === stateCode);
       await page.waitForSelector(`#${stateButton.id}`, { visible: true });
       await page.$eval(`#${stateButton.id}`, (el) => el.click());
 
