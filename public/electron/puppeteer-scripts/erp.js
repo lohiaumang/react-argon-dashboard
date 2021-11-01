@@ -270,7 +270,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await typeText(
           page,
           'input[aria-label="Address 2"]',
-          data.customerInfo.currLineTwo
+          data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
         );
 
         //select state
@@ -302,10 +302,10 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           data.customerInfo.currPostal
         );
 
-        await typeText(
-          'input[aria-label="Locality"]',
-          data.customerInfo.currPS
-        );
+        // await typeText(
+        //   'input[aria-label="Locality"]',
+        //   data.customerInfo.currPS
+        // );
 
         if (data.customerInfo.email) {
           await typeText(
@@ -425,7 +425,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
           await fillData(
             'input[aria-label="Address 2"]',
-            data.customerInfo.currLineTwo
+            data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
           );
 
           await fillData(
@@ -438,10 +438,10 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             data.customerInfo.currPostal
           );
 
-          await fillData(
-            'input[aria-label="Locality"]',
-            data.customerInfo.currPS
-          );
+          // await fillData(
+          //   'input[aria-label="Locality"]',
+          //   data.customerInfo.currPS
+          // );
 
           await fillData('input[aria-label="Email', data.customerInfo.email);
         }
