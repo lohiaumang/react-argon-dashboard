@@ -7,8 +7,42 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
   } = data;
 
   const stateCodes = {
-    ASSAM: "AS",
-    BIHAR: "BR",
+    "ANDAMAN AND NICOBAR": "AN",
+    "ARUNACHAL PRADESH": "AR",
+    "ASSAM": "AS",
+    "ANDHRA PRADESH": "AP",
+    "BIHAR": "BR",
+    "DELHI": "Delhi",
+    "CHANDIGARH": "CG",
+    "CHHATTISGARH": "CH",
+    "DAMAN AND DIU": "DD",
+    "GOA": "Goa",
+    "GUJARAT": "Gujarat",
+    "HIMACHAL PRADESH": "HP",
+    "HARYANA": "Haryana",
+    "JHARKHAND": "Jharkhand",
+    "JAMMU AND KASHMIR": "JK",
+    "KARNATAKA": "Karnataka",
+    "KERALA": "Kerala",
+    "LAKSHADWEEP": "LD",
+    "DADRA AND NAGAR HAVELI": "DN",
+    "MAHARASHTRA": "MH",
+    "MANIPUR": "Manipur",
+    "MADHYA PRADESH": "MP",
+    "TAMIL NADU": "Tamil Nadu",
+    "MIZORAM": "MZ",
+    "NAGALAND": "Nagaland",
+    "ORISSA": "Odisha",
+    "PUNJAB": "Punjab",
+    "PUDUCHERRY": "PY",
+    "RAJASTHAN": "Rajasthan",
+    "SIKKIM": "SK",
+    "MEGHALAYA": "ML",
+    "TELANGANA": "Telangana",
+    "TRIPURA": "Tripura",
+    "UTTARAKHAND": "UK",
+    "UTTAR PRADESH": "UP",
+    "WEST BENGAL": "WB",
     // TODO: Add all states codes here
   };
 
@@ -295,10 +329,10 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
               };
             })
         );
-        const stateButton = state.find(
-          (item) =>
-            item.name === data.customerInfo.currState.slice(0, 2).toUpperCase()
-        );
+        const stateCode =
+          stateCodes[data.customerInfo.currState.toUpperCase()] || "AS";
+
+        const stateButton = state.find((item) => item.name === stateCode);
         await page.waitForSelector(`#${stateButton.id}`, { visible: true });
         await page.$eval(`#${stateButton.id}`, (el) => el.click());
 
@@ -814,114 +848,120 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.$eval(`#${expressBookingButton.id}`, (el) => el.click());
       //end
       //customer details  click
-      await page.waitForSelector(
-        '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
-        { visible: true }
+      ////////////////////
+      ///////////////////
+      //////////////////////
+      const btnStatus = await page.evaluate(
+        () => document.querySelector('button[aria-label="Orders:Create Booking"]').disabled
       );
-      await page.$eval(
-        '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
-        (el) => el.click()
-      );
+      console.log(btnStatus, "print button status");
+      if (btnStatus === false) {
+        await page.waitForSelector(
+          '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
+          { visible: true }
+        );
+        await page.$eval(
+          '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
+          (el) => el.click()
+        );
 
-      await page.waitForSelector('button[name="s_2_1_27_0"]', {
-        visible: true,
-      });
+        //////////////////////////////////
+        //get price button
+        await page.waitForSelector('button[name="s_2_1_27_0"]', {
+          visible: true,
+        });
 
-      await waitForNetworkIdle(page, timeout, 0);
+        await waitForNetworkIdle(page, timeout, 0);
 
-      console.log("click cumsomer detalis");
-      await page.waitForSelector("div[title='Third Level View Bar']", {
-        visible: true,
-      });
+        console.log("click cumsomer detalis");
+        await page.waitForSelector("div[title='Third Level View Bar']", {
+          visible: true,
+        });
 
-      const customerDetailsTabs = await page.$$eval(
-        "div[title='Third Level View Bar'] a",
-        (tabs) => {
-          console.log(tabs);
-          return tabs.map((tab) => {
-            return {
-              name: tab.textContent,
-              id: tab.id,
-            };
-          });
-        }
-      );
+        const customerDetailsTabs = await page.$$eval(
+          "div[title='Third Level View Bar'] a",
+          (tabs) => {
+            console.log(tabs);
+            return tabs.map((tab) => {
+              return {
+                name: tab.textContent,
+                id: tab.id,
+              };
+            });
+          }
+        );
+        const customerDetailsButton = customerDetailsTabs.find((item) =>
+          item.name.includes("Customer Details")
+        );
 
-      console.log(
-        JSON.stringify(customerDetailsTabs),
-        "print customer details"
-      );
+        await page.$eval(`#${customerDetailsButton.id}`, (el) => el.click());
 
-      const customerDetailsButton = customerDetailsTabs.find((item) =>
-        item.name.includes("Customer Details")
-      );
+        await page.waitForSelector('input[aria-label="Temporary Address"]+span', {
+          visible: true,
+        });
+        await click(page, 'input[aria-label="Temporary Address"]+span');
+        await page.waitForSelector('button[aria-label="Contact Addresses:New"]', {
+          visible: true,
+        });
+        await click(page, 'button[aria-label="Contact Addresses:New"]');
+        await page.waitForSelector('input[aria-label="Address Line 1"]', {
+          visible: true,
+        });
+        await typeText(
+          page,
+          'input[aria-label="Address Line 1"]',
+          data.customerInfo.permLineOne
+        );
+        await typeText(
+          page,
+          'input[aria-label="Address Line 2"]',
+          data.customerInfo.permLineTwo
+        );
+        //select state
+        await click(page, 'input[aria-label="State"] + span');
+        await page.waitForSelector(
+          "ul[role='combobox']:not([style*='display: none'])",
+          { visible: true }
+        );
+        let state = await page.$$eval(
+          "ul[role='combobox']:not([style*='display: none']) > li > div",
+          (listItems) =>
+            listItems.map((item) => {
+              return {
+                name: item.textContent,
+                id: item.id,
+              };
+            })
+        );
 
-      console.log(customerDetailsButton, "print customer details");
+        const stateCode =
+          stateCodes[data.customerInfo.permState.toUpperCase()];
+        console.log(stateCodes, "state Code");
 
-      await page.$eval(`#${customerDetailsButton.id}`, (el) => el.click());
+        const stateButton = state.find((item) => item.name === stateCode);
+        await page.waitForSelector(`#${stateButton.id}`, { visible: true });
+        await page.$eval(`#${stateButton.id}`, (el) => el.click());
 
-      await page.waitForSelector('input[aria-label="Temporary Address"]+span', {
-        visible: true,
-      });
-      await click(page, 'input[aria-label="Temporary Address"]+span');
-      await page.waitForSelector('button[aria-label="Contact Addresses:New"]', {
-        visible: true,
-      });
-      await click(page, 'button[aria-label="Contact Addresses:New"]');
-      await page.waitForSelector('input[aria-label="Address Line 1"]', {
-        visible: true,
-      });
-      await typeText(
-        page,
-        'input[aria-label="Address Line 1"]',
-        data.customerInfo.permLineOne
-      );
-      await typeText(
-        page,
-        'input[aria-label="Address Line 2"]',
-        data.customerInfo.permLineTwo
-      );
-      //select state
-      await click(page, 'input[aria-label="State"] + span');
-      await page.waitForSelector(
-        "ul[role='combobox']:not([style*='display: none'])",
-        { visible: true }
-      );
-      let state = await page.$$eval(
-        "ul[role='combobox']:not([style*='display: none']) > li > div",
-        (listItems) =>
-          listItems.map((item) => {
-            return {
-              name: item.textContent,
-              id: item.id,
-            };
-          })
-      );
+        await typeText(
+          page,
+          'input[aria-label="Zip Code"]',
+          data.customerInfo.permPostal
+        );
+        await page.waitForSelector(
+          'button[aria-label="Contact Addresses:Save"]',
+          { visible: true }
+        );
+        await click(page, 'button[aria-label="Contact Addresses:Save"]');
+        await page.waitForSelector('button[aria-label="Contact Addresses:OK"]', {
+          visible: true,
+        });
+        await click(page, 'button[aria-label="Contact Addresses:OK"]');
+      }
 
-      const stateCode =
-        stateCodes[data.customerInfo.permState.toUpperCase()] || "AS";
 
-      const stateButton = state.find((item) => item.name === stateCode);
-      await page.waitForSelector(`#${stateButton.id}`, { visible: true });
-      await page.$eval(`#${stateButton.id}`, (el) => el.click());
-
-      await typeText(
-        page,
-        'input[aria-label="Zip Code"]',
-        data.customerInfo.permPostal
-      );
-      await page.waitForSelector(
-        'button[aria-label="Contact Addresses:Save"]',
-        { visible: true }
-      );
-      await click(page, 'button[aria-label="Contact Addresses:Save"]');
-      await page.waitForSelector('button[aria-label="Contact Addresses:OK"]', {
-        visible: true,
-      });
-      await click(page, 'button[aria-label="Contact Addresses:OK"]');
 
       //customer details  click end
-      await page.waitForNavigation();
+
       //click create booking button
       await page.waitForSelector('div > button[data-display="Create Booking"]');
       await click(page, 'div > button[data-display="Create Booking"]');
@@ -940,6 +980,99 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
         (el) => el.click()
       );
+      console.log("print stap 2");
+      if (btnStatus === true || btnStatus === undefined || btnStatus === null) {
+        //get price button
+        await page.waitForSelector('button[name="s_2_1_27_0"]', {
+          visible: true,
+        });
+
+        await waitForNetworkIdle(page, timeout, 0);
+
+        console.log("click cumsomer detalis");
+        await page.waitForSelector("div[title='Third Level View Bar']", {
+          visible: true,
+        });
+
+        const customerDetailsTabs = await page.$$eval(
+          "div[title='Third Level View Bar'] a",
+          (tabs) => {
+            console.log(tabs);
+            return tabs.map((tab) => {
+              return {
+                name: tab.textContent,
+                id: tab.id,
+              };
+            });
+          }
+        );
+        const customerDetailsButton = customerDetailsTabs.find((item) =>
+          item.name.includes("Customer Details")
+        );
+
+        await page.$eval(`#${customerDetailsButton.id}`, (el) => el.click());
+
+        await page.waitForSelector('input[aria-label="Temporary Address"]+span', {
+          visible: true,
+        });
+        await click(page, 'input[aria-label="Temporary Address"]+span');
+        await page.waitForSelector('button[aria-label="Contact Addresses:New"]', {
+          visible: true,
+        });
+        await click(page, 'button[aria-label="Contact Addresses:New"]');
+        await page.waitForSelector('input[aria-label="Address Line 1"]', {
+          visible: true,
+        });
+        await typeText(
+          page,
+          'input[aria-label="Address Line 1"]',
+          data.customerInfo.permLineOne
+        );
+        await typeText(
+          page,
+          'input[aria-label="Address Line 2"]',
+          data.customerInfo.permLineTwo
+        );
+        //select state
+        await click(page, 'input[aria-label="State"] + span');
+        await page.waitForSelector(
+          "ul[role='combobox']:not([style*='display: none'])",
+          { visible: true }
+        );
+        let state = await page.$$eval(
+          "ul[role='combobox']:not([style*='display: none']) > li > div",
+          (listItems) =>
+            listItems.map((item) => {
+              return {
+                name: item.textContent,
+                id: item.id,
+              };
+            })
+        );
+
+        const stateCode =
+          stateCodes[data.customerInfo.permState.toUpperCase()];
+        console.log(stateCodes, "state Code");
+
+        const stateButton = state.find((item) => item.name === stateCode);
+        await page.waitForSelector(`#${stateButton.id}`, { visible: true });
+        await page.$eval(`#${stateButton.id}`, (el) => el.click());
+
+        await typeText(
+          page,
+          'input[aria-label="Zip Code"]',
+          data.customerInfo.permPostal
+        );
+        await page.waitForSelector(
+          'button[aria-label="Contact Addresses:Save"]',
+          { visible: true }
+        );
+        await click(page, 'button[aria-label="Contact Addresses:Save"]');
+        await page.waitForSelector('button[aria-label="Contact Addresses:OK"]', {
+          visible: true,
+        });
+        await click(page, 'button[aria-label="Contact Addresses:OK"]');
+      }
       //await typeText('.GridBack > tbody > tr > td[valign="middle"] input[name="s_1_1_41_0"]'); //finance select todo
       let deliveryDate = new Date()
         .toJSON()
