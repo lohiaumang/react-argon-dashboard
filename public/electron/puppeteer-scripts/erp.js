@@ -296,6 +296,10 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await page.waitForSelector(`#${stateButton.id}`, { visible: true });
         await page.$eval(`#${stateButton.id}`, (el) => el.click());
 
+        //rahul 1.11.2021
+        await click(page, 'input[aria-label="Zip/Pin Code"]+span');
+
+
         await typeText(
           page,
           'input[aria-label="Zip/Pin Code"]',
@@ -796,6 +800,28 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
       await page.$eval(`#${expressBookingButton.id}`, (el) => el.click());
       //end
+
+
+      // await page.waitForSelector("div[title='Third Level View Bar']", {
+      //   visible: true,
+      // });
+
+      // const customerTabs = await page.$$eval(
+      //   "div[title='Third Level View Bar'] a",
+      //   (tabs) =>
+      //     tabs.map((tab) => {
+      //       return {
+      //         name: tab.textContent,
+      //         id: tab.id,
+      //       };
+      //     })
+      // );
+      // const customerDetalisButton = customerTabs.find((item) =>
+      //   item.name.includes("Customer Details")
+      // );
+
+      // await page.$eval(`#${customerDetalisButton.id}`, (el) => el.click());
+
       await page.waitForNavigation();
       //click create booking button
       await page.waitForSelector('div > button[data-display="Create Booking"]');
