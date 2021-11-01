@@ -110,7 +110,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.waitForSelector("div[title='First Level View Bar']", {
         visible: true,
       });
-      const customerTabs = await page.$$eval(
+      let customerTabs = await page.$$eval(
         "div[title='First Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
         (tabs) =>
           tabs.map((tab) => {
@@ -299,7 +299,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         //rahul 1.11.2021
         await click(page, 'input[aria-label="Zip/Pin Code"]+span');
 
-
         await typeText(
           page,
           'input[aria-label="Zip/Pin Code"]',
@@ -458,12 +457,20 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       console.log(enquiryExists);
       //if enquiry exiat then not create new enquiry
       if (enquiryExists) {
-        await page.evaluate(() => document.querySelector("#s_1_l_TMI_Enquiry_Date div"))
+        await page.evaluate(() =>
+          document.querySelector("#s_1_l_TMI_Enquiry_Date div")
+        );
         await click(page, "#s_1_l_TMI_Enquiry_Date div");
-        await page.evaluate(() => document.querySelector("div[title='Enquiries List Applet'] li#SortDesc > a"))
+        await page.evaluate(() =>
+          document.querySelector(
+            "div[title='Enquiries List Applet'] li#SortDesc > a"
+          )
+        );
         await click(page, "div[title='Enquiries List Applet'] li#SortDesc > a");
         await waitForNetworkIdle(page, timeout, 2);
-        await page.evaluate(() => document.querySelector('table[summary="Enquiries"] td a'))
+        await page.evaluate(() =>
+          document.querySelector('table[summary="Enquiries"] td a')
+        );
         await click(page, 'table[summary="Enquiries"] td a');
         //end
       } else {
@@ -801,26 +808,25 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.$eval(`#${expressBookingButton.id}`, (el) => el.click());
       //end
 
+      await page.waitForSelector("div[title='Third Level View Bar']", {
+        visible: true,
+      });
 
-      // await page.waitForSelector("div[title='Third Level View Bar']", {
-      //   visible: true,
-      // });
+      customerTabs = await page.$$eval(
+        "div[title='Third Level View Bar'] a",
+        (tabs) =>
+          tabs.map((tab) => {
+            return {
+              name: tab.textContent,
+              id: tab.id,
+            };
+          })
+      );
+      const customerDetailsButton = customerTabs.find((item) =>
+        item.name.includes("Customer Details")
+      );
 
-      // const customerTabs = await page.$$eval(
-      //   "div[title='Third Level View Bar'] a",
-      //   (tabs) =>
-      //     tabs.map((tab) => {
-      //       return {
-      //         name: tab.textContent,
-      //         id: tab.id,
-      //       };
-      //     })
-      // );
-      // const customerDetalisButton = customerTabs.find((item) =>
-      //   item.name.includes("Customer Details")
-      // );
-
-      // await page.$eval(`#${customerDetalisButton.id}`, (el) => el.click());
+      await page.$eval(`#${customerDetailsButton.id}`, (el) => el.click());
 
       await page.waitForNavigation();
       //click create booking button
