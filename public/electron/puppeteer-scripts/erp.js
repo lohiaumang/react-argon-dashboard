@@ -807,12 +807,22 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
       await page.$eval(`#${expressBookingButton.id}`, (el) => el.click());
       //end
+      //customer details  click
+      await page.waitForSelector(
+        '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
+        { visible: true }
+      );
+      await page.$eval(
+        '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
+        (el) => el.click()
+      );
 
+      console.log("click cumsomer detalis");
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
       });
 
-      customerTabs = await page.$$eval(
+      customerDetailsTabs = await page.$$eval(
         "div[title='Third Level View Bar'] a",
         (tabs) =>
           tabs.map((tab) => {
@@ -822,16 +832,56 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             };
           })
       );
-      const customerDetailsButton = customerTabs.find((item) =>
+      console.log(customerDetailsTabs, "print customer details");
+      const customerDetailsButton = customerDetailsTabs.find((item) =>
         item.name.includes("Customer Details")
       );
-
+      console.log(customerDetailsButton, "print customer details");
       await page.$eval(`#${customerDetailsButton.id}`, (el) => el.click());
 
+      await page.waitForSelector('input[aria-label="Temporary Address"]+span', { visible: true });
+      await click(page, 'input[aria-label="Temporary Address"]+span');
+      await page.waitForSelector('button[aria-label="Contact Addresses:New"]', { visible: true });
+      await click(page, 'button[aria-label="Contact Addresses:New"]');
+      await page.waitForSelector('input[aria-label="Address Line 1"]', { visible: true });
+      await typeText(page, 'input[aria-label="Address Line 1"]', data.customerInfo.permLineOne);
+      await typeText(page, 'input[aria-label="Address Line 2"]', data.customerInfo.permLineTwo);
+      //select state
+      await click(page, 'input[aria-label="State"] + span');
+      await page.waitForSelector(
+        "ul[role='combobox']:not([style*='display: none'])",
+        { visible: true }
+      );
+      let state = await page.$$eval(
+        "ul[role='combobox']:not([style*='display: none']) > li > div",
+        (listItems) =>
+          listItems.map((item) => {
+            return {
+              name: item.textContent,
+              id: item.id,
+            };
+          })
+      );
+      const stateButton = state.find(
+        (item) =>
+          item.name === data.customerInfo.permState.slice(0, 2).toUpperCase()
+      );
+      await page.waitForSelector(`#${stateButton.id}`, { visible: true });
+      await page.$eval(`#${stateButton.id}`, (el) => el.click());
+
+      await typeText(page, 'input[aria-label="Zip Code"]', data.customerInfo.permPostal);
+      await page.waitForSelector('button[aria-label="Contact Addresses:Save"]', { visible: true });
+      await click(page, 'button[aria-label="Contact Addresses:Save"]');
+      await page.waitForSelector('button[aria-label="Contact Addresses:OK"]', { visible: true });
+      await click(page, 'button[aria-label="Contact Addresses:OK"]');
+
+      //customer details  click end
       await page.waitForNavigation();
       //click create booking button
       await page.waitForSelector('div > button[data-display="Create Booking"]');
       await click(page, 'div > button[data-display="Create Booking"]');
+
+
       //end
 
       await page.waitForSelector(
