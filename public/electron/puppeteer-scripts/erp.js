@@ -817,35 +817,64 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         (el) => el.click()
       );
 
+      await page.waitForSelector('button[name="s_2_1_27_0"]', {
+        visible: true,
+      });
+
+      await waitForNetworkIdle(page, timeout, 0);
+
       console.log("click cumsomer detalis");
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
       });
 
-      customerDetailsTabs = await page.$$eval(
+      const customerDetailsTabs = await page.$$eval(
         "div[title='Third Level View Bar'] a",
-        (tabs) =>
-          tabs.map((tab) => {
+        (tabs) => {
+          console.log(tabs);
+          return tabs.map((tab) => {
             return {
               name: tab.textContent,
               id: tab.id,
             };
-          })
+          });
+        }
       );
-      console.log(customerDetailsTabs, "print customer details");
+
+      console.log(
+        JSON.stringify(customerDetailsTabs),
+        "print customer details"
+      );
+
       const customerDetailsButton = customerDetailsTabs.find((item) =>
         item.name.includes("Customer Details")
       );
+
       console.log(customerDetailsButton, "print customer details");
+
       await page.$eval(`#${customerDetailsButton.id}`, (el) => el.click());
 
-      await page.waitForSelector('input[aria-label="Temporary Address"]+span', { visible: true });
+      await page.waitForSelector('input[aria-label="Temporary Address"]+span', {
+        visible: true,
+      });
       await click(page, 'input[aria-label="Temporary Address"]+span');
-      await page.waitForSelector('button[aria-label="Contact Addresses:New"]', { visible: true });
+      await page.waitForSelector('button[aria-label="Contact Addresses:New"]', {
+        visible: true,
+      });
       await click(page, 'button[aria-label="Contact Addresses:New"]');
-      await page.waitForSelector('input[aria-label="Address Line 1"]', { visible: true });
-      await typeText(page, 'input[aria-label="Address Line 1"]', data.customerInfo.permLineOne);
-      await typeText(page, 'input[aria-label="Address Line 2"]', data.customerInfo.permLineTwo);
+      await page.waitForSelector('input[aria-label="Address Line 1"]', {
+        visible: true,
+      });
+      await typeText(
+        page,
+        'input[aria-label="Address Line 1"]',
+        data.customerInfo.permLineOne
+      );
+      await typeText(
+        page,
+        'input[aria-label="Address Line 2"]',
+        data.customerInfo.permLineTwo
+      );
       //select state
       await click(page, 'input[aria-label="State"] + span');
       await page.waitForSelector(
@@ -869,10 +898,19 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.waitForSelector(`#${stateButton.id}`, { visible: true });
       await page.$eval(`#${stateButton.id}`, (el) => el.click());
 
-      await typeText(page, 'input[aria-label="Zip Code"]', data.customerInfo.permPostal);
-      await page.waitForSelector('button[aria-label="Contact Addresses:Save"]', { visible: true });
+      await typeText(
+        page,
+        'input[aria-label="Zip Code"]',
+        data.customerInfo.permPostal
+      );
+      await page.waitForSelector(
+        'button[aria-label="Contact Addresses:Save"]',
+        { visible: true }
+      );
       await click(page, 'button[aria-label="Contact Addresses:Save"]');
-      await page.waitForSelector('button[aria-label="Contact Addresses:OK"]', { visible: true });
+      await page.waitForSelector('button[aria-label="Contact Addresses:OK"]', {
+        visible: true,
+      });
       await click(page, 'button[aria-label="Contact Addresses:OK"]');
 
       //customer details  click end
@@ -880,7 +918,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       //click create booking button
       await page.waitForSelector('div > button[data-display="Create Booking"]');
       await click(page, 'div > button[data-display="Create Booking"]');
-
 
       //end
 
