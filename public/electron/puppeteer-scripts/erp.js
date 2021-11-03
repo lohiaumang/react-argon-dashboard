@@ -9,38 +9,38 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
   const stateCodes = {
     "ANDAMAN AND NICOBAR": "AN",
     "ARUNACHAL PRADESH": "AR",
-    "ASSAM": "AS",
+    ASSAM: "AS",
     "ANDHRA PRADESH": "AP",
-    "BIHAR": "BR",
-    "DELHI": "Delhi",
-    "CHANDIGARH": "CG",
-    "CHHATTISGARH": "CH",
+    BIHAR: "BR",
+    DELHI: "Delhi",
+    CHANDIGARH: "CG",
+    CHHATTISGARH: "CH",
     "DAMAN AND DIU": "DD",
-    "GOA": "Goa",
-    "GUJARAT": "Gujarat",
+    GOA: "Goa",
+    GUJARAT: "Gujarat",
     "HIMACHAL PRADESH": "HP",
-    "HARYANA": "Haryana",
-    "JHARKHAND": "Jharkhand",
+    HARYANA: "Haryana",
+    JHARKHAND: "Jharkhand",
     "JAMMU AND KASHMIR": "JK",
-    "KARNATAKA": "Karnataka",
-    "KERALA": "Kerala",
-    "LAKSHADWEEP": "LD",
+    KARNATAKA: "Karnataka",
+    KERALA: "Kerala",
+    LAKSHADWEEP: "LD",
     "DADRA AND NAGAR HAVELI": "DN",
-    "MAHARASHTRA": "MH",
-    "MANIPUR": "Manipur",
+    MAHARASHTRA: "MH",
+    MANIPUR: "Manipur",
     "MADHYA PRADESH": "MP",
     "TAMIL NADU": "Tamil Nadu",
-    "MIZORAM": "MZ",
-    "NAGALAND": "Nagaland",
-    "ORISSA": "Odisha",
-    "PUNJAB": "Punjab",
-    "PUDUCHERRY": "PY",
-    "RAJASTHAN": "Rajasthan",
-    "SIKKIM": "SK",
-    "MEGHALAYA": "ML",
-    "TELANGANA": "Telangana",
-    "TRIPURA": "Tripura",
-    "UTTARAKHAND": "UK",
+    MIZORAM: "MZ",
+    NAGALAND: "Nagaland",
+    ORISSA: "Odisha",
+    PUNJAB: "Punjab",
+    PUDUCHERRY: "PY",
+    RAJASTHAN: "Rajasthan",
+    SIKKIM: "SK",
+    MEGHALAYA: "ML",
+    TELANGANA: "Telangana",
+    TRIPURA: "Tripura",
+    UTTARAKHAND: "UK",
     "UTTAR PRADESH": "UP",
     "WEST BENGAL": "WB",
     // TODO: Add all states codes here
@@ -506,11 +506,14 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             "div[title='Enquiries List Applet'] li#SortDesc > a"
           )
         );
+
         await click(page, "div[title='Enquiries List Applet'] li#SortDesc > a");
+
         await waitForNetworkIdle(page, timeout, 2);
-        await page.evaluate(() =>
-          document.querySelector('table[summary="Enquiries"] td a')
-        );
+        // await page.waitForSelector('table[summary="Enquiries"] td a', { visible: true });
+        // await page.waitForSelector(() =>
+        //   document.querySelector('table[summary="Enquiries"] td a')
+        // );
         await click(page, 'table[summary="Enquiries"] td a');
         //end
       } else {
@@ -846,15 +849,19 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
 
       await page.$eval(`#${expressBookingButton.id}`, (el) => el.click());
-      //end
-      //customer details  click
-      ////////////////////
-      ///////////////////
-      //////////////////////
+
+      await page.waitForSelector('button[aria-label="Orders:Create Booking"]', {
+        visible: true,
+      });
+
       const btnStatus = await page.evaluate(
-        () => document.querySelector('button[aria-label="Orders:Create Booking"]').disabled
+        () =>
+          document.querySelector('button[aria-label="Orders:Create Booking"]')
+            .disabled
       );
+
       console.log(btnStatus, "print button status");
+
       if (btnStatus === false) {
         await page.waitForSelector(
           '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
@@ -896,13 +903,19 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
         await page.$eval(`#${customerDetailsButton.id}`, (el) => el.click());
 
-        await page.waitForSelector('input[aria-label="Temporary Address"]+span', {
-          visible: true,
-        });
+        await page.waitForSelector(
+          'input[aria-label="Temporary Address"]+span',
+          {
+            visible: true,
+          }
+        );
         await click(page, 'input[aria-label="Temporary Address"]+span');
-        await page.waitForSelector('button[aria-label="Contact Addresses:New"]', {
-          visible: true,
-        });
+        await page.waitForSelector(
+          'button[aria-label="Contact Addresses:New"]',
+          {
+            visible: true,
+          }
+        );
         await click(page, 'button[aria-label="Contact Addresses:New"]');
         await page.waitForSelector('input[aria-label="Address Line 1"]', {
           visible: true,
@@ -934,8 +947,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             })
         );
 
-        const stateCode =
-          stateCodes[data.customerInfo.permState.toUpperCase()];
+        const stateCode = stateCodes[data.customerInfo.permState.toUpperCase()];
         console.log(stateCodes, "state Code");
 
         const stateButton = state.find((item) => item.name === stateCode);
@@ -952,13 +964,14 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           { visible: true }
         );
         await click(page, 'button[aria-label="Contact Addresses:Save"]');
-        await page.waitForSelector('button[aria-label="Contact Addresses:OK"]', {
-          visible: true,
-        });
+        await page.waitForSelector(
+          'button[aria-label="Contact Addresses:OK"]',
+          {
+            visible: true,
+          }
+        );
         await click(page, 'button[aria-label="Contact Addresses:OK"]');
       }
-
-
 
       //customer details  click end
 
@@ -1012,13 +1025,19 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
         await page.$eval(`#${customerDetailsButton.id}`, (el) => el.click());
 
-        await page.waitForSelector('input[aria-label="Temporary Address"]+span', {
-          visible: true,
-        });
+        await page.waitForSelector(
+          'input[aria-label="Temporary Address"]+span',
+          {
+            visible: true,
+          }
+        );
         await click(page, 'input[aria-label="Temporary Address"]+span');
-        await page.waitForSelector('button[aria-label="Contact Addresses:New"]', {
-          visible: true,
-        });
+        await page.waitForSelector(
+          'button[aria-label="Contact Addresses:New"]',
+          {
+            visible: true,
+          }
+        );
         await click(page, 'button[aria-label="Contact Addresses:New"]');
         await page.waitForSelector('input[aria-label="Address Line 1"]', {
           visible: true,
@@ -1050,8 +1069,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             })
         );
 
-        const stateCode =
-          stateCodes[data.customerInfo.permState.toUpperCase()];
+        const stateCode = stateCodes[data.customerInfo.permState.toUpperCase()];
         console.log(stateCodes, "state Code");
 
         const stateButton = state.find((item) => item.name === stateCode);
@@ -1068,9 +1086,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           { visible: true }
         );
         await click(page, 'button[aria-label="Contact Addresses:Save"]');
-        await page.waitForSelector('button[aria-label="Contact Addresses:OK"]', {
-          visible: true,
-        });
+        await page.waitForSelector(
+          'button[aria-label="Contact Addresses:OK"]',
+          {
+            visible: true,
+          }
+        );
         await click(page, 'button[aria-label="Contact Addresses:OK"]');
       }
       //await typeText('.GridBack > tbody > tr > td[valign="middle"] input[name="s_1_1_41_0"]'); //finance select todo
