@@ -9,38 +9,38 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
   const stateCodes = {
     "ANDAMAN AND NICOBAR": "AN",
     "ARUNACHAL PRADESH": "AR",
-    ASSAM: "AS",
+    "ASSAM": "AS",
     "ANDHRA PRADESH": "AP",
-    BIHAR: "BR",
-    DELHI: "Delhi",
-    CHANDIGARH: "CG",
-    CHHATTISGARH: "CH",
+    "BIHAR": "BR",
+    "DELHI": "Delhi",
+    "CHANDIGARH": "CG",
+    "CHHATTISGARH": "CH",
     "DAMAN AND DIU": "DD",
-    GOA: "Goa",
-    GUJARAT: "Gujarat",
+    "GOA": "Goa",
+    "GUJARAT": "Gujarat",
     "HIMACHAL PRADESH": "HP",
-    HARYANA: "Haryana",
-    JHARKHAND: "Jharkhand",
+    "HARYANA": "Haryana",
+    "JHARKHAND": "Jharkhand",
     "JAMMU AND KASHMIR": "JK",
-    KARNATAKA: "Karnataka",
-    KERALA: "Kerala",
-    LAKSHADWEEP: "LD",
+    "KARNATAKA": "Karnataka",
+    "KERALA": "Kerala",
+    "LAKSHADWEEP": "LD",
     "DADRA AND NAGAR HAVELI": "DN",
-    MAHARASHTRA: "MH",
-    MANIPUR: "Manipur",
+    "MAHARASHTRA": "MH",
+    "MANIPUR": "Manipur",
     "MADHYA PRADESH": "MP",
     "TAMIL NADU": "Tamil Nadu",
-    MIZORAM: "MZ",
-    NAGALAND: "Nagaland",
-    ORISSA: "Odisha",
-    PUNJAB: "Punjab",
-    PUDUCHERRY: "PY",
-    RAJASTHAN: "Rajasthan",
-    SIKKIM: "SK",
-    MEGHALAYA: "ML",
-    TELANGANA: "Telangana",
-    TRIPURA: "Tripura",
-    UTTARAKHAND: "UK",
+    "MIZORAM": "MZ",
+    "NAGALAND": "Nagaland",
+    "ORISSA": "Odisha",
+    "PUNJAB": "Punjab",
+    "PUDUCHERRY": "PY",
+    "RAJASTHAN": "Rajasthan",
+    "SIKKIM": "SK",
+    "MEGHALAYA": "ML",
+    "TELANGANA": "Telangana",
+    "TRIPURA": "Tripura",
+    "UTTARAKHAND": "UK",
     "UTTAR PRADESH": "UP",
     "WEST BENGAL": "WB",
     // TODO: Add all states codes here
@@ -145,6 +145,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await click(page, "#s_swepi_22");
       }
       //end
+      await page.waitForSelector('div[class="Tier2ToolbarContainer"]', {
+        visible: true,
+      });
       await waitForNetworkIdle(page, timeout, 0);
       //search inquery
       await page.waitForSelector("div[title='First Level View Bar']", {
@@ -337,7 +340,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await page.$eval(`#${stateButton.id}`, (el) => el.click());
 
         //rahul 1.11.2021
-        await click(page, 'input[aria-label="Zip/Pin Code"]+span');
+        await click(page, 'input[aria-label="Zip/Pin Code"]');
 
         await typeText(
           page,
@@ -398,7 +401,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
           await waitForNetworkIdle(page, timeout, 0);
           const fillData = async (selector, value) => {
-            console.log(selector, value);
             if (selector && value) {
               await page.waitForFunction(
                 (selector) => !!document.querySelector(selector),
@@ -862,116 +864,116 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
       console.log(btnStatus, "print button status");
 
-      if (btnStatus === false) {
-        await page.waitForSelector(
-          '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
-          { visible: true }
-        );
-        await page.$eval(
-          '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
-          (el) => el.click()
-        );
+      // if (btnStatus === false) {
+      //   await page.waitForSelector(
+      //     '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
+      //     { visible: true }
+      //   );
+      //   await page.$eval(
+      //     '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
+      //     (el) => el.click()
+      //   );
 
-        //////////////////////////////////
-        //get price button
-        await page.waitForSelector('button[name="s_2_1_27_0"]', {
-          visible: true,
-        });
+      //   //////////////////////////////////
+      //   //get price button
+      //   await page.waitForSelector('button[name="s_2_1_27_0"]', {
+      //     visible: true,
+      //   });
 
-        await waitForNetworkIdle(page, timeout, 0);
+      //   await waitForNetworkIdle(page, timeout, 0);
 
-        console.log("click cumsomer detalis");
-        await page.waitForSelector("div[title='Third Level View Bar']", {
-          visible: true,
-        });
+      //   console.log("click cumsomer detalis");
+      //   await page.waitForSelector("div[title='Third Level View Bar']", {
+      //     visible: true,
+      //   });
 
-        const customerDetailsTabs = await page.$$eval(
-          "div[title='Third Level View Bar'] a",
-          (tabs) => {
-            console.log(tabs);
-            return tabs.map((tab) => {
-              return {
-                name: tab.textContent,
-                id: tab.id,
-              };
-            });
-          }
-        );
-        const customerDetailsButton = customerDetailsTabs.find((item) =>
-          item.name.includes("Customer Details")
-        );
+      //   const customerDetailsTabs = await page.$$eval(
+      //     "div[title='Third Level View Bar'] a",
+      //     (tabs) => {
+      //       console.log(tabs);
+      //       return tabs.map((tab) => {
+      //         return {
+      //           name: tab.textContent,
+      //           id: tab.id,
+      //         };
+      //       });
+      //     }
+      //   );
+      //   const customerDetailsButton = customerDetailsTabs.find((item) =>
+      //     item.name.includes("Customer Details")
+      //   );
 
-        await page.$eval(`#${customerDetailsButton.id}`, (el) => el.click());
+      //   await page.$eval(`#${customerDetailsButton.id}`, (el) => el.click());
 
-        await page.waitForSelector(
-          'input[aria-label="Temporary Address"]+span',
-          {
-            visible: true,
-          }
-        );
-        await click(page, 'input[aria-label="Temporary Address"]+span');
-        await page.waitForSelector(
-          'button[aria-label="Contact Addresses:New"]',
-          {
-            visible: true,
-          }
-        );
-        await click(page, 'button[aria-label="Contact Addresses:New"]');
-        await page.waitForSelector('input[aria-label="Address Line 1"]', {
-          visible: true,
-        });
-        await typeText(
-          page,
-          'input[aria-label="Address Line 1"]',
-          data.customerInfo.permLineOne
-        );
-        await typeText(
-          page,
-          'input[aria-label="Address Line 2"]',
-          data.customerInfo.permLineTwo
-        );
-        //select state
-        await click(page, 'input[aria-label="State"] + span');
-        await page.waitForSelector(
-          "ul[role='combobox']:not([style*='display: none'])",
-          { visible: true }
-        );
-        let state = await page.$$eval(
-          "ul[role='combobox']:not([style*='display: none']) > li > div",
-          (listItems) =>
-            listItems.map((item) => {
-              return {
-                name: item.textContent,
-                id: item.id,
-              };
-            })
-        );
+      //   await page.waitForSelector(
+      //     'input[aria-label="Temporary Address"]+span',
+      //     {
+      //       visible: true,
+      //     }
+      //   );
+      //   await click(page, 'input[aria-label="Temporary Address"]+span');
+      //   await page.waitForSelector(
+      //     'button[aria-label="Contact Addresses:New"]',
+      //     {
+      //       visible: true,
+      //     }
+      //   );
+      //   await click(page, 'button[aria-label="Contact Addresses:New"]');
+      //   await page.waitForSelector('input[aria-label="Address Line 1"]', {
+      //     visible: true,
+      //   });
+      //   await typeText(
+      //     page,
+      //     'input[aria-label="Address Line 1"]',
+      //     data.customerInfo.permLineOne
+      //   );
+      //   await typeText(
+      //     page,
+      //     'input[aria-label="Address Line 2"]',
+      //     data.customerInfo.permLineTwo
+      //   );
+      //   //select state
+      //   await click(page, 'input[aria-label="State"] + span');
+      //   await page.waitForSelector(
+      //     "ul[role='combobox']:not([style*='display: none'])",
+      //     { visible: true }
+      //   );
+      //   let state = await page.$$eval(
+      //     "ul[role='combobox']:not([style*='display: none']) > li > div",
+      //     (listItems) =>
+      //       listItems.map((item) => {
+      //         return {
+      //           name: item.textContent,
+      //           id: item.id,
+      //         };
+      //       })
+      //   );
 
-        const stateCode = stateCodes[data.customerInfo.permState.toUpperCase()];
-        console.log(stateCodes, "state Code");
+      //   const stateCode = stateCodes[data.customerInfo.permState.toUpperCase()];
+      //   console.log(stateCodes, "state Code");
 
-        const stateButton = state.find((item) => item.name === stateCode);
-        await page.waitForSelector(`#${stateButton.id}`, { visible: true });
-        await page.$eval(`#${stateButton.id}`, (el) => el.click());
+      //   const stateButton = state.find((item) => item.name === stateCode);
+      //   await page.waitForSelector(`#${stateButton.id}`, { visible: true });
+      //   await page.$eval(`#${stateButton.id}`, (el) => el.click());
 
-        await typeText(
-          page,
-          'input[aria-label="Zip Code"]',
-          data.customerInfo.permPostal
-        );
-        await page.waitForSelector(
-          'button[aria-label="Contact Addresses:Save"]',
-          { visible: true }
-        );
-        await click(page, 'button[aria-label="Contact Addresses:Save"]');
-        await page.waitForSelector(
-          'button[aria-label="Contact Addresses:OK"]',
-          {
-            visible: true,
-          }
-        );
-        await click(page, 'button[aria-label="Contact Addresses:OK"]');
-      }
+      //   await typeText(
+      //     page,
+      //     'input[aria-label="Zip Code"]',
+      //     data.customerInfo.permPostal
+      //   );
+      //   await page.waitForSelector(
+      //     'button[aria-label="Contact Addresses:Save"]',
+      //     { visible: true }
+      //   );
+      //   await click(page, 'button[aria-label="Contact Addresses:Save"]');
+      //   await page.waitForSelector(
+      //     'button[aria-label="Contact Addresses:OK"]',
+      //     {
+      //       visible: true,
+      //     }
+      //   );
+      //   await click(page, 'button[aria-label="Contact Addresses:OK"]');
+      // }
 
       //customer details  click end
 
@@ -994,107 +996,276 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         (el) => el.click()
       );
       console.log("print stap 2");
-      if (btnStatus === true || btnStatus === undefined || btnStatus === null) {
-        //get price button
-        await page.waitForSelector('button[name="s_2_1_27_0"]', {
-          visible: true,
-        });
+      // if (btnStatus === true || btnStatus === undefined || btnStatus === null || btnStatus === false) {
+      //   //get price button
+      //   await page.waitForSelector('button[name="s_2_1_27_0"]', {
+      //     visible: true,
+      //   });
 
-        await waitForNetworkIdle(page, timeout, 0);
+      //   await waitForNetworkIdle(page, timeout, 0);
 
-        console.log("click cumsomer detalis");
-        await page.waitForSelector("div[title='Third Level View Bar']", {
-          visible: true,
-        });
+      //   console.log("click cumsomer detalis");
+      //   await page.waitForSelector("div[title='Third Level View Bar']", {
+      //     visible: true,
+      //   });
 
-        const customerDetailsTabs = await page.$$eval(
-          "div[title='Third Level View Bar'] a",
-          (tabs) => {
-            console.log(tabs);
-            return tabs.map((tab) => {
-              return {
-                name: tab.textContent,
-                id: tab.id,
-              };
-            });
-          }
-        );
-        const customerDetailsButton = customerDetailsTabs.find((item) =>
-          item.name.includes("Customer Details")
-        );
+      //   const customerDetailsTabs = await page.$$eval(
+      //     "div[title='Third Level View Bar'] a",
+      //     (tabs) => {
+      //       console.log(tabs);
+      //       return tabs.map((tab) => {
+      //         return {
+      //           name: tab.textContent,
+      //           id: tab.id,
+      //         };
+      //       });
+      //     }
+      //   );
+      //   const customerDetailsButton = customerDetailsTabs.find((item) =>
+      //     item.name.includes("Customer Details")
+      //   );
 
-        await page.$eval(`#${customerDetailsButton.id}`, (el) => el.click());
+      //   await page.$eval(`#${customerDetailsButton.id}`, (el) => el.click());
 
-        await page.waitForSelector(
-          'input[aria-label="Temporary Address"]+span',
-          {
-            visible: true,
-          }
-        );
-        await click(page, 'input[aria-label="Temporary Address"]+span');
-        await page.waitForSelector(
-          'button[aria-label="Contact Addresses:New"]',
-          {
-            visible: true,
-          }
-        );
-        await click(page, 'button[aria-label="Contact Addresses:New"]');
-        await page.waitForSelector('input[aria-label="Address Line 1"]', {
-          visible: true,
-        });
-        await typeText(
-          page,
-          'input[aria-label="Address Line 1"]',
-          data.customerInfo.permLineOne
-        );
-        await typeText(
-          page,
-          'input[aria-label="Address Line 2"]',
-          data.customerInfo.permLineTwo
-        );
-        //select state
-        await click(page, 'input[aria-label="State"] + span');
-        await page.waitForSelector(
-          "ul[role='combobox']:not([style*='display: none'])",
-          { visible: true }
-        );
-        let state = await page.$$eval(
-          "ul[role='combobox']:not([style*='display: none']) > li > div",
-          (listItems) =>
-            listItems.map((item) => {
-              return {
-                name: item.textContent,
-                id: item.id,
-              };
-            })
-        );
+      //   await page.waitForSelector(
+      //     'input[aria-label="Temporary Address"]+span',
+      //     {
+      //       visible: true,
+      //     }
+      //   );
+      //   await click(page, 'input[aria-label="Temporary Address"]+span');
+      //   await page.waitForSelector(
+      //     'button[aria-label="Contact Addresses:New"]',
+      //     {
+      //       visible: true,
+      //     }
+      //   );
+      //   await click(page, 'button[aria-label="Contact Addresses:New"]');
+      //   await page.waitForSelector('input[aria-label="Address Line 1"]', {
+      //     visible: true,
+      //   });
+      //   await typeText(
+      //     page,
+      //     'input[aria-label="Address Line 1"]',
+      //     data.customerInfo.permLineOne
+      //   );
+      //   await typeText(
+      //     page,
+      //     'input[aria-label="Address Line 2"]',
+      //     data.customerInfo.permLineTwo
+      //   );
+      //   //select state
+      //   await click(page, 'input[aria-label="State"] + span');
+      //   await page.waitForSelector(
+      //     "ul[role='combobox']:not([style*='display: none'])",
+      //     { visible: true }
+      //   );
+      //   let state = await page.$$eval(
+      //     "ul[role='combobox']:not([style*='display: none']) > li > div",
+      //     (listItems) =>
+      //       listItems.map((item) => {
+      //         return {
+      //           name: item.textContent,
+      //           id: item.id,
+      //         };
+      //       })
+      //   );
 
-        const stateCode = stateCodes[data.customerInfo.permState.toUpperCase()];
-        console.log(stateCodes, "state Code");
+      //   const stateCode = stateCodes[data.customerInfo.permState.toUpperCase()];
+      //   console.log(stateCodes, "state Code");
 
-        const stateButton = state.find((item) => item.name === stateCode);
-        await page.waitForSelector(`#${stateButton.id}`, { visible: true });
-        await page.$eval(`#${stateButton.id}`, (el) => el.click());
+      //   const stateButton = state.find((item) => item.name === stateCode);
+      //   await page.waitForSelector(`#${stateButton.id}`, { visible: true });
+      //   await page.$eval(`#${stateButton.id}`, (el) => el.click());
 
-        await typeText(
-          page,
-          'input[aria-label="Zip Code"]',
-          data.customerInfo.permPostal
-        );
-        await page.waitForSelector(
-          'button[aria-label="Contact Addresses:Save"]',
-          { visible: true }
-        );
-        await click(page, 'button[aria-label="Contact Addresses:Save"]');
-        await page.waitForSelector(
-          'button[aria-label="Contact Addresses:OK"]',
-          {
-            visible: true,
-          }
-        );
-        await click(page, 'button[aria-label="Contact Addresses:OK"]');
-      }
+      //   await typeText(
+      //     page,
+      //     'input[aria-label="Zip Code"]',
+      //     data.customerInfo.permPostal
+      //   );
+      //   await page.waitForSelector(
+      //     'button[aria-label="Contact Addresses:Save"]',
+      //     { visible: true }
+      //   );
+      //   await click(page, 'button[aria-label="Contact Addresses:Save"]');
+      //   await page.waitForSelector(
+      //     'button[aria-label="Contact Addresses:OK"]',
+      //     {
+      //       visible: true,
+      //     }
+      //   );
+      //   await click(page, 'button[aria-label="Contact Addresses:OK"]');
+      // }
       //await typeText('.GridBack > tbody > tr > td[valign="middle"] input[name="s_1_1_41_0"]'); //finance select todo
+      // await page.waitForSelector('button[name="s_2_1_27_0"]', {
+      //   visible: true,
+      // });
+
+      // let deliveryDate = new Date()
+      //   .toJSON()
+      //   .slice(0, 10)
+      //   .split("-")
+      //   .reverse()
+      //   .join("/");
+      // console.log(deliveryDate);
+      // //fill delivery date
+      // await page.waitForSelector('input[name="s_1_1_38_0"]', {
+      //   visible: true,
+      // });
+
+      // const dDate = await page.evaluate(
+      //   () => document.querySelector('input[name="s_1_1_38_0"]').value
+      // );
+      // if (!dDate) {
+      //   await typeText(page, 'input[name="s_1_1_38_0"]', deliveryDate);
+      //   console.log(dDate, "d date print");
+      // }
+      //end
+      //todo
+      // await page.waitForResponse(
+      //   "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
+      // );
+      // await waitForNetworkIdle(page, timeout, 0);
+      // await page.waitForSelector(
+      //   ".AppletButtons.siebui-applet-buttons > button",
+      //   {
+      //     visible: true,
+      //   }
+      // );
+
+      //click get price button
+
+
+      //await page.waitForNavigation()
+
+      //second address automation rahul
+      //get price button
+      await page.waitForSelector('button[name="s_2_1_27_0"]', {
+        visible: true,
+      });
+
+      await waitForNetworkIdle(page, timeout, 0);
+      await page.waitForSelector("div[title='Third Level View Bar']", {
+        visible: true,
+      });
+
+      const customerDetailsTabs = await page.$$eval(
+        "div[title='Third Level View Bar'] a",
+        (tabs) => {
+          console.log(tabs);
+          return tabs.map((tab) => {
+            return {
+              name: tab.textContent,
+              id: tab.id,
+            };
+          });
+        }
+      );
+      const customerDetailsButton = customerDetailsTabs.find((item) =>
+        item.name.includes("Customer Details")
+      );
+
+      await page.$eval(`#${customerDetailsButton.id}`, (el) => el.click());
+
+      await page.waitForSelector(
+        'input[aria-label="Temporary Address"]+span',
+        {
+          visible: true,
+        }
+      );
+      await click(page, 'input[aria-label="Temporary Address"]+span');
+      await page.waitForSelector(
+        'button[aria-label="Contact Addresses:New"]',
+        {
+          visible: true,
+        }
+      );
+      await click(page, 'button[aria-label="Contact Addresses:New"]');
+      await page.waitForSelector('input[aria-label="Address Line 1"]', {
+        visible: true,
+      });
+      await typeText(
+        page,
+        'input[aria-label="Address Line 1"]',
+        data.customerInfo.permLineOne
+      );
+      await typeText(
+        page,
+        'input[aria-label="Address Line 2"]',
+        data.customerInfo.permLineTwo
+      );
+      //select state
+      await click(page, 'input[aria-label="State"] + span');
+      await page.waitForSelector(
+        "ul[role='combobox']:not([style*='display: none'])",
+        { visible: true }
+      );
+      let state = await page.$$eval(
+        "ul[role='combobox']:not([style*='display: none']) > li > div",
+        (listItems) =>
+          listItems.map((item) => {
+            return {
+              name: item.textContent,
+              id: item.id,
+            };
+          })
+      );
+
+      const stateCode = stateCodes[data.customerInfo.permState.toUpperCase()];
+      console.log(stateCodes, "state Code");
+
+      const stateButton = state.find((item) => item.name === stateCode);
+      await page.waitForSelector(`#${stateButton.id}`, { visible: true });
+      await page.$eval(`#${stateButton.id}`, (el) => el.click());
+
+      await typeText(
+        page,
+        'input[aria-label="Zip Code"]',
+        data.customerInfo.permPostal
+      );
+      await page.waitForSelector(
+        'button[aria-label="Contact Addresses:Save"]',
+        { visible: true }
+      );
+      await click(page, 'button[aria-label="Contact Addresses:Save"]');
+      await page.waitForSelector(
+        'button[aria-label="Contact Addresses:OK"]',
+        {
+          visible: true,
+        }
+      );
+      await click(page, 'button[aria-label="Contact Addresses:OK"]');
+
+
+
+      await page.waitForSelector("div[title='Third Level View Bar']", {
+        visible: true,
+      });
+
+      const bookingDetailsTabs = await page.$$eval(
+        "div[title='Third Level View Bar'] a",
+        (tabs) => {
+          console.log(tabs);
+          return tabs.map((tab) => {
+            return {
+              name: tab.textContent,
+              id: tab.id,
+            };
+          });
+        }
+      );
+      const bookingDetailsButton = bookingDetailsTabs.find((item) =>
+        item.name.includes("Booking Details & Vehicle Allotment")
+      );
+
+      await page.$eval(`#${bookingDetailsButton.id}`, (el) => el.click());
+
+
+
+      await page.waitForSelector('button[name="s_2_1_27_0"]', {
+        visible: true,
+      });
+
       let deliveryDate = new Date()
         .toJSON()
         .slice(0, 10)
@@ -1112,21 +1283,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
       if (!dDate) {
         await typeText(page, 'input[name="s_1_1_38_0"]', deliveryDate);
+        console.log(dDate, "d date print");
       }
-      //end
-      //todo
-      // await page.waitForResponse(
-      //   "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
-      // );
-      // await waitForNetworkIdle(page, timeout, 0);
-      // await page.waitForSelector(
-      //   ".AppletButtons.siebui-applet-buttons > button",
-      //   {
-      //     visible: true,
-      //   }
-      // );
 
-      //click get price button
+      //end by rahul
+
+
 
       await click(page, 'button[name="s_2_1_27_0"]'); //get price clcik
       await page.waitForFunction(
