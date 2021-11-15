@@ -856,13 +856,13 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         visible: true,
       });
 
-      const btnStatus = await page.evaluate(
-        () =>
-          document.querySelector('button[aria-label="Orders:Create Booking"]')
-            .disabled
-      );
+      // const btnStatus = await page.evaluate(
+      //   () =>
+      //     document.querySelector('button[aria-label="Orders:Create Booking"]')
+      //       .disabled
+      // );
 
-      console.log(btnStatus, "print button status");
+      // console.log(btnStatus, "print button status");
 
       // if (btnStatus === false) {
       //   await page.waitForSelector(
@@ -995,7 +995,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
         (el) => el.click()
       );
-      console.log("print stap 2");
+     // console.log("print stap 2");
       // if (btnStatus === true || btnStatus === undefined || btnStatus === null || btnStatus === false) {
       //   //get price button
       //   await page.waitForSelector('button[name="s_2_1_27_0"]', {
