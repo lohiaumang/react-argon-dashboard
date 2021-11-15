@@ -995,7 +995,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
         (el) => el.click()
       );
-     // console.log("print stap 2");
+      // console.log("print stap 2");
       // if (btnStatus === true || btnStatus === undefined || btnStatus === null || btnStatus === false) {
       //   //get price button
       //   await page.waitForSelector('button[name="s_2_1_27_0"]', {
@@ -1212,8 +1212,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
 
       const stateCode = stateCodes[data.customerInfo.permState.toUpperCase()];
-      console.log(stateCodes, "state Code");
-
       const stateButton = state.find((item) => item.name === stateCode);
       await page.waitForSelector(`#${stateButton.id}`, { visible: true });
       await page.$eval(`#${stateButton.id}`, (el) => el.click());
@@ -1285,6 +1283,76 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await typeText(page, 'input[name="s_1_1_38_0"]', deliveryDate);
         console.log(dDate, "d date print");
       }
+
+      //other hypothecation automation
+      if (data.additionalInfo.financier === "OTHERS") {
+        await page.waitForSelector('input[aria-labelledby="Hypothecation_Label"]+span', {
+          visible: true,
+        });
+        await click(page, 'input[aria-labelledby="Hypothecation_Label"]+span');
+        await page.waitForSelector('button[aria-label="Hypothecation Pick Applet:Query"]', {
+          visible: true,
+        });
+        await click(page, 'button[aria-label="Hypothecation Pick Applet:Query"]');
+        // await page.waitForSelector('input[aria-labelledby="s_4_l_JLR_Financier_Name s_4_l_altCombo"]', {
+        //   visible: true,
+        // });
+
+        await page.waitForSelector('input[aria-labelledby="s_4_l_JLR_Financier_Name s_4_l_altCombo"]', {
+          visible: true,
+        });
+        await typeText(page, 'input[aria-labelledby="s_4_l_JLR_Financier_Name s_4_l_altCombo"]', data.additionalInfo.financier);
+        await page.waitForSelector('input[aria-labelledby="s_4_l_JLR_Financier_Name s_4_l_altCombo"]+span', {
+          visible: true,
+        });
+        const hypothecationDetailsTabs = await page.$$eval(
+          'ul[class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front"]>li>div',
+          (tabs) => {
+            console.log(tabs);
+            return tabs.map((tab) => {
+              return {
+                name: tab.textContent,
+                id: tab.id,
+              };
+            });
+          }
+        );
+        const hypothecationDetailsButton = hypothecationDetailsTabs.find((item) =>
+          item.name.includes("OTHERS")
+        );
+        await page.$eval(`#${hypothecationDetailsButton.id}`, (el) => el.click());
+        console.log("step 1 hypothecation");
+
+        //  await page.waitForSelector('input[aria-labelledby="s_4_l_Name "]');
+        // await click(page, 'input[aria-labelledby="s_4_l_Name "]');
+        // await page.evaluate(() => document.querySelector('input[aria-labelledby="s_4_l_Name "]').click());
+        await page.$eval('td[id="1_s_4_l_Name"]', (el) => el.click());
+        await typeText(page, 'input[aria-labelledby="s_4_l_Name "]', data.additionalInfo.hypothecation);
+
+        console.log("step 2 hypothecation");
+        await page.waitForSelector('button[aria-label="Hypothecation Pick Applet:Go"]', {
+          visible: true,
+        });
+        await click(page, 'button[aria-label="Hypothecation Pick Applet:Go"]');
+        await page.waitForSelector('button[aria-label="Hypothecation Pick Applet:OK"]', {
+          visible: true,
+        });
+        await click(page, 'button[aria-label="Hypothecation Pick Applet:OK"]');
+
+        await page.waitForSelector('input[aria-labelledby="Hypothecation_Label"]', {
+          visible: true,
+        });
+        const hypothecationName = await page.evaluate(
+          () => document.querySelector('input[aria-labelledby="Hypothecation_Label"]').value
+        );
+        console.log(hypothecationName, "print hypothecation");
+        // await page.waitForSelector('input[aria-label="Financier (Manual)"]', {
+        //   visible: true,
+        // });
+        await typeText(page, 'input[aria-label="Financier (Manual)"]', hypothecationName);
+      }
+
+
 
       //end by rahul
 

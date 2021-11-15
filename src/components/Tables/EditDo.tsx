@@ -2226,6 +2226,36 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           </FormGroup>
                         </Col>
                       </Row>
+                      {additionalInfo.financier==="OTHERS" && (
+                      <Row>
+                      <Col lg="6">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="input-executive "
+                            >
+                              Hypothecation
+                            </label>
+                            <Input
+                              required
+                              className="form-control-alternative"
+                              id="input-executive "
+                              value={additionalInfo && additionalInfo.hypothecation}
+                              onChange={(ev) => {
+                                additionalInfo.hypothecation =
+                                  ev.target.value.toLocaleUpperCase()!;
+                                setCurrDo({
+                                  ...currDo,
+                                  additionalInfo,
+                                });
+                              }}
+                              placeholder="Enter hypothecation name"
+                              type="text"
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      )}
                     </>
                   )}
 

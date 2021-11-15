@@ -104,6 +104,7 @@ export interface DeliveryOrder {
     downPayment?: string;
     accessoriesList?: string;
     executive?: string;
+    hypothecation?:string;
   };
   dealerInfo: DealerInfo;
 }
