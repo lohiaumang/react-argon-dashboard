@@ -1281,7 +1281,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
       if (!dDate) {
         await typeText(page, 'input[name="s_1_1_38_0"]', deliveryDate);
-        console.log(dDate, "d date print");
+
       }
 
       //other hypothecation automation
@@ -1294,9 +1294,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           visible: true,
         });
         await click(page, 'button[aria-label="Hypothecation Pick Applet:Query"]');
-        // await page.waitForSelector('input[aria-labelledby="s_4_l_JLR_Financier_Name s_4_l_altCombo"]', {
-        //   visible: true,
-        // });
 
         await page.waitForSelector('input[aria-labelledby="s_4_l_JLR_Financier_Name s_4_l_altCombo"]', {
           visible: true,
@@ -1322,10 +1319,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         );
         await page.$eval(`#${hypothecationDetailsButton.id}`, (el) => el.click());
         console.log("step 1 hypothecation");
-
-        //  await page.waitForSelector('input[aria-labelledby="s_4_l_Name "]');
-        // await click(page, 'input[aria-labelledby="s_4_l_Name "]');
-        // await page.evaluate(() => document.querySelector('input[aria-labelledby="s_4_l_Name "]').click());
         await page.$eval('td[id="1_s_4_l_Name"]', (el) => el.click());
         await typeText(page, 'input[aria-labelledby="s_4_l_Name "]', data.additionalInfo.hypothecation);
 
@@ -1339,17 +1332,20 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         });
         await click(page, 'button[aria-label="Hypothecation Pick Applet:OK"]');
 
-        await page.waitForSelector('input[aria-labelledby="Hypothecation_Label"]', {
-          visible: true,
-        });
-        const hypothecationName = await page.evaluate(
-          () => document.querySelector('input[aria-labelledby="Hypothecation_Label"]').value
-        );
-        console.log(hypothecationName, "print hypothecation");
+        //  await page.waitForSelector('input[aria-describedby=" s_1_1_13_0_icon"]', {
+        //   visible: true,
+        // });
+        //const hypothecationName = await page.evaluate(
+        //  () => document.querySelector('input[aria-labelledby="Hypothecation_Label"]').value
+        //);
+        //console.log(hypothecationName, "print hypothecation");
+        // await page.waitForSelector('button[name="s_2_1_27_0"]', { visible: true });
         // await page.waitForSelector('input[aria-label="Financier (Manual)"]', {
         //   visible: true,
         // });
-        await typeText(page, 'input[aria-label="Financier (Manual)"]', hypothecationName);
+        // await click(page, 'input[aria-label="Financier (Manual)"]');
+        //await typeText(page, 'input[aria-label="Financier (Manual)"]', hypothecationName);
+        console.log("Hello");
       }
 
 
@@ -1357,7 +1353,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       //end by rahul
 
 
-
+      await page.waitForSelector('button[name="s_2_1_27_0"]', { visible: true });
       await click(page, 'button[name="s_2_1_27_0"]'); //get price clcik
       await page.waitForFunction(
         () =>
@@ -1398,6 +1394,24 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         page,
         '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]'
       );
+
+      // TODO: vvvvvvvvvv
+      await page.waitForSelector('input[aria-describedby=" s_1_1_13_0_icon"]', {
+        visible: true,
+      });
+      const hypothecationName = await page.evaluate(
+        () => document.querySelector('input[aria-labelledby="Hypothecation_Label"]').value
+      );
+      page.on('dialog', async dialog => {
+        if (data.additionalInfo.financier === "OTHERS") {
+          await dialog.dismiss();
+          await page.type(
+            'input[aria-label="Financier (Manual)"]',
+            data.additionalInfo.hypothecation
+          );
+          // Click new button
+        }
+      });
       await click(
         page,
         'input[aria-labelledby="1_s_2_l_Payment_Profile_Name s_2_l_Transaction_Type s_2_l_altCombo"] + span'
