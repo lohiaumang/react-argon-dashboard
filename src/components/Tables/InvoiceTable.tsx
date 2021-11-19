@@ -42,7 +42,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
           <Row className="row-header">
             <Col>
               <h4 className="m-0" style={{ color: "white" }}>
-                {props.deliveryOrder.dealerInfo.name}
+                {props.deliveryOrder.dealerInfo.name.toUpperCase()}
               </h4>
             </Col>
             <Col className="text-right">

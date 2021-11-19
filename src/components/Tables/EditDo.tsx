@@ -2025,7 +2025,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             }
 
                             setPurchaseType(
-                              ev.target.value.toLocaleUpperCase()!
+                              ev.target.value!
                             );
                           }}
                         >
