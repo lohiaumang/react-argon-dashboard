@@ -1031,8 +1031,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         () => document.querySelector('input[name="s_1_1_38_0"]').value
       );
       if (!dDate) {
-        await typeText(page, 'input[name="s_1_1_38_0"]', deliveryDate);
-
+        await click(page, 'input[name="s_1_1_38_0"]+span');
+        await page.keyboard.press('Enter');
       }
 
       //other hypothecation automation
@@ -1118,9 +1118,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         page,
         '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]'
       );
-      page.on('dialog', async dialog => {
-        await dialog.dismiss();
-      });
+      // page.on('dialog', async dialog => {
+      //   await dialog.dismiss();
+      // });
       // // TODO: vvvvvvvvvv
       // await page.waitForSelector('input[aria-describedby=" s_1_1_13_0_icon"]', {
       //   visible: true,

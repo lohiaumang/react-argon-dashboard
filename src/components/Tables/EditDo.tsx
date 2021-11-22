@@ -2187,22 +2187,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             >
                               SALE TYPE
                             </label>
-                            {/* <Input
-                              required
-                              className="form-control-alternative"
-                              id="input-financier"
-                              value={additionalInfo && additionalInfo.financier}
-                              onChange={(ev) => {
-                                additionalInfo.financier = ev.target.value.toLocaleUpperCase()!;
-                                setCurrDo({
-                                  ...currDo,
-                                  additionalInfo,
-                                });
-                              }}
-                              placeholder="Enter Financier Name"
-                              type="text"
-                            /> */}
-
                             <Input
                               required
                               type="select"

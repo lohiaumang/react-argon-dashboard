@@ -1195,7 +1195,7 @@ const DeliveryOrders: React.FC = () => {
                                   >
                                     Print DO
                                   </Button>
-                               
+
                                 </>
                               ) : (
                                 <>
@@ -1217,7 +1217,7 @@ const DeliveryOrders: React.FC = () => {
                                       >
                                         Print Invoice
                                       </Button>
-                        
+
                                     </>
                                   ) : (
                                     deliveryOrders[selected].status !==
