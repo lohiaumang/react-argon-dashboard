@@ -92,6 +92,11 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
       });
     });
 
+    vahanWindow.on("new-window", (e) => {
+      console.log("\n\n\n\n\n\n Will Open New Window \n\n\n\n\n\n", e.url);
+      vahanWindow.webContents.send("navigate-to-url", [e.url]);
+    });
+
     try {
       if (username && password && otp) {
         await page.waitForSelector("#user_id", { visible: true });
@@ -127,9 +132,14 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
       await page.click("#pending_action");
 
       //new automaton for bh
-      await page.waitForSelector('div[aria-describedby="j_idt75_content"]>div>a[aria-label="Close"]', { visible: true });
+      await page.waitForSelector(
+        'div[aria-describedby="j_idt75_content"]>div>a[aria-label="Close"]',
+        { visible: true }
+      );
       await waitForRandom();
-      await page.click('div[aria-describedby="j_idt75_content"]>div>a[aria-label="Close"]');
+      await page.click(
+        'div[aria-describedby="j_idt75_content"]>div>a[aria-label="Close"]'
+      );
 
       await page.waitForSelector("#chasi_no_new_entry", { visible: true });
       await waitForRandom();
@@ -191,7 +201,7 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
         (dateIndex) =>
           document
             .querySelectorAll(`#ui-datepicker-div tbody td a`)
-          [dateIndex].click(),
+            [dateIndex].click(),
         dateIndex
       );
       await page.waitForSelector("#ui-datepicker-div", { hidden: true });
