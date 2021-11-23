@@ -126,6 +126,11 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
       await waitForRandom();
       await page.click("#pending_action");
 
+      //new automaton for bh
+      await page.waitForSelector('div[aria-describedby="j_idt75_content"]>div>a[aria-label="Close"]', { visible: true });
+      await waitForRandom();
+      await page.click('div[aria-describedby="j_idt75_content"]>div>a[aria-label="Close"]');
+
       await page.waitForSelector("#chasi_no_new_entry", { visible: true });
       await waitForRandom();
       await page.type("#chasi_no_new_entry", data.vehicleInfo.frameNumber, {
@@ -186,7 +191,7 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
         (dateIndex) =>
           document
             .querySelectorAll(`#ui-datepicker-div tbody td a`)
-            [dateIndex].click(),
+          [dateIndex].click(),
         dateIndex
       );
       await page.waitForSelector("#ui-datepicker-div", { hidden: true });

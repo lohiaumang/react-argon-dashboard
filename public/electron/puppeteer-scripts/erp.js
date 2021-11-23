@@ -1031,7 +1031,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         () => document.querySelector('input[name="s_1_1_38_0"]').value
       );
       if (!dDate) {
+        //await click(page, 'input[name="s_1_1_38_0"]');
         await click(page, 'input[name="s_1_1_38_0"]+span');
+        await page.waitForSelector('div[id="ui-datepicker-div"]', {
+          visible: true,
+        });
         await page.keyboard.press('Enter');
       }
 
@@ -1084,10 +1088,13 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await click(page, 'button[aria-label="Hypothecation Pick Applet:OK"]');
       }
 
-      //price select
-      await page.waitForResponse(
-        "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
-      );
+      //if hypothecation exist then run otherwise not run
+      if (data.additionalInfo.hypothecation) {
+        await page.waitForResponse(
+          "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
+        );
+      }
+
 
       //click payment button
       await page.waitForSelector("div[title='Third Level View Bar']", {
