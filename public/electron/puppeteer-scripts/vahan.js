@@ -92,9 +92,12 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
       });
     });
 
-    vahanWindow.on("new-window", (e) => {
-      console.log("\n\n\n\n\n\n Will Open New Window \n\n\n\n\n\n", e.url);
-      vahanWindow.webContents.send("navigate-to-url", [e.url]);
+    vahanWindow.webContents.on("new-window", (event, url) => {
+      event.preventDefault();
+
+      if (url) {
+        vahanWindow.webContents.send("navigate-to-url", [url]);
+      }
     });
 
     try {
