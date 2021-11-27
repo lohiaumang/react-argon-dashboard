@@ -39,8 +39,7 @@ import {
 } from "reactstrap";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import "react-bootstrap-table/dist/react-bootstrap-table-all.min.css";
-
-// core components
+//core components
 import Header from "../../components/Headers/Header";
 import DeliveryOrderTable, {
   DeliveryOrder,

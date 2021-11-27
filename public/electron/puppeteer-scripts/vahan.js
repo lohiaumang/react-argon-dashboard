@@ -94,7 +94,6 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
 
     vahanWindow.webContents.on("new-window", (event, url) => {
       event.preventDefault();
-
       if (url) {
         vahanWindow.webContents.send("navigate-to-url", [url]);
       }

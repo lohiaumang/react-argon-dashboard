@@ -1220,61 +1220,64 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         () => document.querySelector('td[id="1_s_1_l_TMI_HSN"]').textContent
       );
       await click(page, 'div > button[aria-label="Vehicles:New"]');
-      // await page.waitForTimeout(3000);
-      // let hsnCode = await page.evaluate(
-      //   () => document.querySelector('td[id="1_s_1_l_TMI_HSN"]').textContent
-      // );
-      //enter frame no
-      await click(
-        page,
-        '#s_3_l > tbody > tr[role="row"] > td[data-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
-        { visible: true }
+      //await page.waitForTimeout(3000);
+      let hsnCode = await page.evaluate(
+        () => document.querySelector('td[id="1_s_1_l_TMI_HSN"]').textContent
       );
-      if (data.vehicleInfo.frameNumber) {
-        await typeText(
-          page,
-          'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
-          data.vehicleInfo.frameNumber
-        ); //todo not fill
-        await click(page, 'div > button[aria-label="Vehicles:New"]');
-        await page.goBack();
 
-        //Invoice Click
+      //enter frame no
+      // TODO date 25/11/21 comment for testing
+      // await click(
+      //   page,
+      //   '#s_3_l > tbody > tr[role="row"] > td[data-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
+      //   { visible: true }
+      // );
+      // if (data.vehicleInfo.frameNumber) {
+      //   await typeText(
+      //     page,
+      //     'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
+      //     data.vehicleInfo.frameNumber
+      //   ); //todo not fill
+      //   await click(page, 'div > button[aria-label="Vehicles:New"]');
+      //   await page.goBack();
 
-        await page.waitForSelector("div[title='Third Level View Bar']", {
-          visible: true,
-        });
-        const invoiceTabs = await page.$$eval(
-          "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
-          (tabs) =>
-            tabs.map((tab) => {
-              return {
-                name: tab.textContent,
-                id: tab.id,
-              };
-            })
-        );
-        const invoiceButton = invoiceTabs.find((item) =>
-          item.name.includes("Invoice")
-        );
-        await page.$eval(`#${invoiceButton.id}`, (el) => el.click());
+      //   //Invoice Click
 
-        await click(
-          page,
-          'div > button[aria-label="Sales Invoice:Generate Invoice"]'
-        );
-        //Invoice End
+      //   await page.waitForSelector("div[title='Third Level View Bar']", {
+      //     visible: true,
+      //   });
+      //   const invoiceTabs = await page.$$eval(
+      //     "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
+      //     (tabs) =>
+      //       tabs.map((tab) => {
+      //         return {
+      //           name: tab.textContent,
+      //           id: tab.id,
+      //         };
+      //       })
+      //   );
+      //   const invoiceButton = invoiceTabs.find((item) =>
+      //     item.name.includes("Invoice")
+      //   );
+      //   await page.$eval(`#${invoiceButton.id}`, (el) => el.click());
 
-        await page.waitForFunction(
-          () =>
-            !!document.querySelector("input[name='TMI_Invoice_Number']").value,
-          { timeout: 360000 }
-        );
+      //   await click(
+      //     page,
+      //     'div > button[aria-label="Sales Invoice:Generate Invoice"]'
+      //   );
+      //   //Invoice End
 
-        invoiceNo = await page.evaluate(
-          () => document.querySelector("input[name='TMI_Invoice_Number']").value
-        );
-      }
+      //   await page.waitForFunction(
+      //     () =>
+      //       !!document.querySelector("input[name='TMI_Invoice_Number']").value,
+      //     { timeout: 360000 }
+      //   );
+
+      //   invoiceNo = await page.evaluate(
+      //     () => document.querySelector("input[name='TMI_Invoice_Number']").value
+      //   );
+      // }
+      // end date 25/11/21
       // await page.goBack();
 
       // await page.waitForSelector("div[title='Third Level View Bar']", {

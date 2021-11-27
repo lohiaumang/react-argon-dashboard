@@ -214,11 +214,10 @@ module.exports = async function (
       }
 
       // This should wait till comtent is loaded on the page
-      console.log("step 1");
       // await waitForNetworkIdle(page, 500, 0);
       // await page.waitForNavigation({ waitUntil: "domcontentloaded" });
       // This should wait till loading has stopped
-      console.log("step 2");
+
       await waitForNetworkIdle(page, timeout, 0);
       await page.waitForSelector(
         "div[data-ng-if='loading'] > .LoadingModel:not([style*='display: none'])",
@@ -228,18 +227,21 @@ module.exports = async function (
       );
       // This should wait for an additional 3 secs
       // await page.waitForTimeout(3000);
-      console.log("step 3");
+
       // await waitForNetworkIdle(page, timeout, 0);
-      console.log("step 4");
+
       // This should wait for the link to be visible
+      await page.waitForSelector('.dayendreport-link', {
+        visible: true,
+      });
       await page.waitForSelector("div[ng-show='1 == 1'] a.tw-link", {
         visible: true,
       });
-      console.log("step 5");
+
       await waitForNetworkIdle(page, timeout, 0);
-      console.log("step 6");
+
       await page.click("div[ng-show='1 == 1'] a.tw-link");
-      console.log("step 7");
+
       //await waitForNetworkIdle(page, 500, 0);
       //
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -347,7 +349,7 @@ module.exports = async function (
           buttons.map((button) => {
             if (
               window.getComputedStyle(button).getPropertyValue("display") !==
-                "none" &&
+              "none" &&
               button.offsetHeight
             ) {
               button.click();
