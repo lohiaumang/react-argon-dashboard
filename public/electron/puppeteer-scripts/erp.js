@@ -81,6 +81,10 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         timeoutId = setTimeout(onTimeoutDone, tOut);
     }
   }
+  //waitForRandom 27-11-21
+  async function waitForRandom() {
+    await page.waitForTimeout((Math.random() + 1) * 1000);
+  }
   //end
   async function automate() {
     let done = false;
@@ -190,7 +194,10 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       //end
 
       await waitForNetworkIdle(page, timeout, 0);
-
+      //27-11-21
+      await page.waitForSelector('button[aria-label="Customer:Query"]', {
+        visible: true,
+      });
       await page.waitForSelector('select[title="Visibility"]', {
         visible: true,
       });
@@ -496,7 +503,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       const enquiryExists = await page.evaluate(
         () => !!document.querySelector('table[summary="Enquiries"] td a')
       );
-      console.log(enquiryExists);
       //if enquiry exiat then not create new enquiry
       if (enquiryExists) {
         await page.evaluate(() =>
@@ -772,14 +778,14 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await typeText(
           page,
           "input[name='Last_Name']",
-          salesExName[0].toUpperCase()
+          salesExName[1].toUpperCase()
         );
         await click(page, '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] ');
 
         await typeText(
           page,
           '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] > input[name="First_Name"]',
-          salesExName[1].toUpperCase()
+          salesExName[0].toUpperCase()
         );
         await click(
           page,
@@ -822,6 +828,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         );
         await click(page, `#${saveRecordButton.id}`);
 
+        //27-11-21
+        await page.waitForSelector('button[aria-label="Enquiries:New"]', {
+          visible: true,
+        });
+
         await page.waitForSelector("td[role='gridcell'] > a", {
           visible: true,
         });
@@ -832,6 +843,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
       await waitForNetworkIdle(page, timeout, 0);
       //click express booking button
+      //27-11-21
+      await waitForRandom();
+      await page.waitForSelector('button[aria-label="Products:New"]', {
+        visible: true,
+      });
+      await waitForRandom();
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
       });
@@ -1211,7 +1228,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         'div > button[aria-label="Line Items:Vehicle Allotment"]'
       );
       //end
-      await page.waitForSelector("td[id='1_s_1_l_TMI_HSN']");
+      await page.waitForSelector("td[id='1_s_1_l_TMI_HSN']", { visible: true });
       //Here get hsn code
       await page.waitForFunction(
         () => !!document.querySelector('td[id="1_s_1_l_TMI_HSN"]').textContent
@@ -1221,63 +1238,70 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
       await click(page, 'div > button[aria-label="Vehicles:New"]');
       //await page.waitForTimeout(3000);
-      let hsnCode = await page.evaluate(
-        () => document.querySelector('td[id="1_s_1_l_TMI_HSN"]').textContent
-      );
+      //  let hsnCode = await page.evaluate(
+      //   () => document.querySelector('td[id="1_s_1_l_TMI_HSN"]').textContent
+      // );
 
       //enter frame no
       // TODO date 25/11/21 comment for testing
-      // await click(
-      //   page,
-      //   '#s_3_l > tbody > tr[role="row"] > td[data-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
-      //   { visible: true }
-      // );
-      // if (data.vehicleInfo.frameNumber) {
-      //   await typeText(
-      //     page,
-      //     'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
-      //     data.vehicleInfo.frameNumber
-      //   ); //todo not fill
-      //   await click(page, 'div > button[aria-label="Vehicles:New"]');
-      //   await page.goBack();
+      await click(
+        page,
+        '#s_3_l > tbody > tr[role="row"] > td[data-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
+        { visible: true }
+      );
+      if (data.vehicleInfo.frameNumber) {
+        await waitForRandom();
+        let frameNo = data.vehicleInfo.frameNumber.slice(12, 17);
+        await page.waitForSelector('input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]', { visible: true });
+        await typeText(
+          page,
+          'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
+          "*" + frameNo
+        ); //todo not fill
+        await page.keyboard.press('Enter');
+        //30-11-21
+        await page.waitForSelector('#s_3_l > tbody > tr[role="row"] > td[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]', { visible: true });
+        await click(page, 'div > button[aria-label="Vehicles:New"]');
 
-      //   //Invoice Click
+        await page.goBack();
 
-      //   await page.waitForSelector("div[title='Third Level View Bar']", {
-      //     visible: true,
-      //   });
-      //   const invoiceTabs = await page.$$eval(
-      //     "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
-      //     (tabs) =>
-      //       tabs.map((tab) => {
-      //         return {
-      //           name: tab.textContent,
-      //           id: tab.id,
-      //         };
-      //       })
-      //   );
-      //   const invoiceButton = invoiceTabs.find((item) =>
-      //     item.name.includes("Invoice")
-      //   );
-      //   await page.$eval(`#${invoiceButton.id}`, (el) => el.click());
+        //Invoice Click
 
-      //   await click(
-      //     page,
-      //     'div > button[aria-label="Sales Invoice:Generate Invoice"]'
-      //   );
-      //   //Invoice End
+        await page.waitForSelector("div[title='Third Level View Bar']", {
+          visible: true,
+        });
+        const invoiceTabs = await page.$$eval(
+          "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
+          (tabs) =>
+            tabs.map((tab) => {
+              return {
+                name: tab.textContent,
+                id: tab.id,
+              };
+            })
+        );
+        const invoiceButton = invoiceTabs.find((item) =>
+          item.name.includes("Invoice")
+        );
+        await page.$eval(`#${invoiceButton.id}`, (el) => el.click());
 
-      //   await page.waitForFunction(
-      //     () =>
-      //       !!document.querySelector("input[name='TMI_Invoice_Number']").value,
-      //     { timeout: 360000 }
-      //   );
+        await click(
+          page,
+          'div > button[aria-label="Sales Invoice:Generate Invoice"]'
+        );
+        //Invoice End
 
-      //   invoiceNo = await page.evaluate(
-      //     () => document.querySelector("input[name='TMI_Invoice_Number']").value
-      //   );
-      // }
-      // end date 25/11/21
+        await page.waitForFunction(
+          () =>
+            !!document.querySelector("input[name='TMI_Invoice_Number']").value,
+          { timeout: 360000 }
+        );
+
+        invoiceNo = await page.evaluate(
+          () => document.querySelector("input[name='TMI_Invoice_Number']").value
+        );
+      }
+      //end date 25/11/21
       // await page.goBack();
 
       // await page.waitForSelector("div[title='Third Level View Bar']", {

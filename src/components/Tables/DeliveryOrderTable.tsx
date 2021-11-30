@@ -104,7 +104,7 @@ export interface DeliveryOrder {
     downPayment?: string;
     accessoriesList?: string;
     executive?: string;
-    hypothecation?:string;
+    hypothecation?: string;
   };
   dealerInfo: DealerInfo;
 }
@@ -382,6 +382,28 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                       </Col>
                     </Row>
                   </>
+                )}
+                {/* Add Sales executive name */}
+                {deliveryOrder.salesEx && (
+                  <Row>
+                    <Col xs="4" className="px-1">
+                      <h5>Sales Executive</h5>
+                    </Col>
+                    <Col xs="8" className="px-1">
+                      <small>{deliveryOrder.salesEx}</small>
+                    </Col>
+                  </Row>
+                )}
+                {/* add downpayment */}
+                {additionalInfo.downPayment && (
+                  <Row>
+                    <Col xs="4" className="px-1">
+                      <h5>Down Payment</h5>
+                    </Col>
+                    <Col xs="8" className="px-1">
+                      <small>{additionalInfo.downPayment}</small>
+                    </Col>
+                  </Row>
                 )}
               </Col>
             </Row>
