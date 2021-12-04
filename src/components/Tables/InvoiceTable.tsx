@@ -644,7 +644,6 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </tr>
             </tbody>
           </Table>
-
           <Row
             style={{ height: "80px" }}
             className="w-100 align-items-end border border-right-0 border-left-0 border-primary"

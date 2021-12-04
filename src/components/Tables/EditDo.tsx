@@ -95,7 +95,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
     if (deliveryOrder && deliveryOrder.modelName) {
       updateAccessories(deliveryOrder.modelName);
     }
-
     setCurrDo({
       ...deliveryOrder,
       additionalInfo: {
@@ -144,7 +143,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
       if (aInfo.financier) {
         setPurchaseType("finance");
       }
-
       setCurrDo({
         ...currDo,
         additionalInfo: aInfo,
@@ -194,10 +192,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
               .then((doc) => {
                 if (doc.exists) {
                   const accessoriesConfig = doc.data() || {};
-
                   const accessories =
                     accessoriesConfig[accessoriesMap[modelName]];
-
                   setAccessories(accessories);
                 }
               });
@@ -219,7 +215,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
 
     const getDeliveryOrder = async (status: string) => {
       setEditDoLoading(true);
-
       let vehicleId: string = currDo.vehicleId || "";
       let customerId: string = currDo.customerId || "";
       let additionalId: string = currDo.additionalId || "";
@@ -367,7 +362,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
       //       );
       //     });
       // }
-
       //dashboard status End
       setEditDoLoading(false);
       return [order, { vehicleInfo, customerInfo, additionalInfo }];
@@ -387,7 +381,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
     const updateCurrModel = (event: React.ChangeEvent<HTMLInputElement>) => {
       // TODO: Update pricing, etc.
       let newModelName = event.target.value!;
-
       if (newModelName && priceConfig[newModelName]) {
         let keys = Object.keys(priceConfig[newModelName]);
         keys.map((x) => {
@@ -438,7 +431,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
         fileReader.onload = () => {
           resolve(fileReader.result);
         };
-
         fileReader.onerror = (error) => {
           reject(error);
         };
@@ -448,7 +440,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
     if (additionalInfo) {
       console.log(additionalInfo.accessories, additionalInfo.accessoriesList);
     }
-
     return (
       <div>
         {editDoLoading && (
@@ -545,9 +536,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             if (ev.target.value! !== "individual") {
                               delete customerInfo.lastName;
                             }
-
                             customerInfo.type = ev.target.value!;
-
                             setCurrDo({
                               ...currDo,
                               customerInfo,
@@ -892,7 +881,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           onChange={(ev) => {
                             let dO = currDo;
                             dO.salesEx = ev.target.value.toLocaleUpperCase()!;
-
                             setCurrDo({ ...dO });
                           }}
                           placeholder="Sales Executive"
@@ -1669,7 +1657,91 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                       </FormGroup>
                     </Col>
                   </Row>
+                  {/* Add battery number key no sr no 02/12/21 */}
+                  <Row>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-battery-number"
+                        >
+                          BATTERY NUMBER
+                        </label>
+                        <Input
+                          required
+                          className="form-control-alternative"
+                          id="input-battery-number"
+                          value={vehicleInfo && vehicleInfo.batteryNO}
+                          onChange={(ev) => {
+                            vehicleInfo.batteryNO =
+                              ev.target.value.toLocaleUpperCase()!;
+                            setCurrDo({
+                              ...currDo,
+                              vehicleInfo,
+                            });
+                          }}
+                          placeholder="Enter Battery Number"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-key-number"
+                        >
+                          KEY NUMBER
+                        </label>
+                        <Input
+                          required
+                          className="form-control-alternative"
+                          id="input-key-number"
+                          value={vehicleInfo && vehicleInfo.keyNo}
+                          onChange={(ev) => {
+                            vehicleInfo.keyNo =
+                              ev.target.value.toLocaleUpperCase()!;
+                            setCurrDo({
+                              ...currDo,
+                              vehicleInfo,
+                            });
+                          }}
+                          placeholder="Enter Key Number"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
 
+                  <Row>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-sr-number"
+                        >
+                          SR NUMBER
+                        </label>
+                        <Input
+                          required
+                          className="form-control-alternative"
+                          id="input-sr-number"
+                          value={vehicleInfo && vehicleInfo.srNo}
+                          onChange={(ev) => {
+                            vehicleInfo.srNo =
+                              ev.target.value.toLocaleUpperCase()!;
+                            setCurrDo({
+                              ...currDo,
+                              vehicleInfo,
+                            });
+                          }}
+                          placeholder="Enter Sr Number"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  {/* end 12/12/21 */}
                   <Row>
                     <Col lg="6">
                       <FormGroup>
@@ -2017,13 +2089,11 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               delete info.financier;
                               // delete info.executive;
                               delete info.downPayment;
-
                               setCurrDo({
                                 ...currDo,
                                 additionalInfo: info,
                               });
                             }
-
                             setPurchaseType(
                               ev.target.value!
                             );
@@ -2210,35 +2280,35 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           </FormGroup>
                         </Col>
                       </Row>
-                      {additionalInfo.financier==="OTHERS" && (
-                      <Row>
-                      <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-executive "
-                            >
-                              Hypothecation
-                            </label>
-                            <Input
-                              required
-                              className="form-control-alternative"
-                              id="input-executive "
-                              value={additionalInfo && additionalInfo.hypothecation}
-                              onChange={(ev) => {
-                                additionalInfo.hypothecation =
-                                  ev.target.value.toLocaleUpperCase()!;
-                                setCurrDo({
-                                  ...currDo,
-                                  additionalInfo,
-                                });
-                              }}
-                              placeholder="Enter hypothecation name"
-                              type="text"
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
+                      {additionalInfo.financier === "OTHERS" && (
+                        <Row>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label
+                                className="form-control-label"
+                                htmlFor="input-executive "
+                              >
+                                Hypothecation
+                              </label>
+                              <Input
+                                required
+                                className="form-control-alternative"
+                                id="input-executive "
+                                value={additionalInfo && additionalInfo.hypothecation}
+                                onChange={(ev) => {
+                                  additionalInfo.hypothecation =
+                                    ev.target.value.toLocaleUpperCase()!;
+                                  setCurrDo({
+                                    ...currDo,
+                                    additionalInfo,
+                                  });
+                                }}
+                                placeholder="Enter hypothecation name"
+                                type="text"
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
                       )}
                     </>
                   )}
@@ -2260,7 +2330,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             </th>
                             <th scope="col">NAME</th>
                             <th scope="col">PRICE</th>
-
                             {/* <th scope="col">Status</th> */}
                             {/* <th scope="col">Action</th> */}
                           </tr>

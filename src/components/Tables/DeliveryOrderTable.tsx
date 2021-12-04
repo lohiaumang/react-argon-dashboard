@@ -87,7 +87,6 @@ export interface DeliveryOrder {
   stateInfo?: {
     districts: string;
   };
-
   additionalInfo?: {
     hra: string;
     joyClub: string;
@@ -112,7 +111,6 @@ export interface DeliveryOrder {
 type Props = {
   deliveryOrder: DeliveryOrder;
 };
-
 const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
   (props, ref) => {
     const {
@@ -164,7 +162,6 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
       let refTwo: any = customerInfo.refTwo || {};
       let accessoriesList: any = additionalInfo.accessoriesList;
       const [user] = useContext(UserContext);
-
 
       useEffect(() => {
         const dealerId = user.createdBy || user.uid || "";
@@ -589,7 +586,6 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
               <Col xs="6" className="px-1 text-center">
                 <h5>Sales Executive Signature</h5>
               </Col>
-
               <Col xs="6" className="px-1 text-center">
                 <h5>Customer Signature</h5>
               </Col>
