@@ -1331,8 +1331,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       //   page,
       //   'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="1_s_2_l_TMI_Ref_Number s_2_l_TMI_Invoice_Key_No "]'
       // );
-      // await page.waitForSelector('td[aria-labelledby="s_2_l_TMI_Invoice_Key_No "]', { visible: true });
-      await click(page, 'td[aria-labelledby="s_2_l_TMI_Invoice_Key_No "]');
+      await page.waitForSelector('td[id="1_s_2_l_TMI_Invoice_Key_No"]', { visible: true });
+      await click(page, 'td[id="1_s_2_l_TMI_Invoice_Key_No"]');
       await page.waitForSelector('input[name="TMI_Invoice_Key_No"]', { visible: true });
       await typeText(page, 'input[name="TMI_Invoice_Key_No"]', data.vehicleInfo.keyNo); //todo add key no mobile app and db
       // await click(
@@ -1348,7 +1348,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await click(page, 'td[id="1_s_2_l_TMI_Booklet_Number"]');
       await page.waitForSelector('input[name="TMI_Booklet_Number"]', { visible: true });
       await typeText(page, 'input[name="TMI_Booklet_Number"]', "0"); //todo add Booklet number mobile app and db
-      await click(page, 'td[aria-labelledby="s_2_l_TMI_Riding_Trainer_Flag s_2_l_altCombo"]'); //todo add riding number mobile app and db
+      await click(page, 'td[id="1_s_2_l_TMI_Riding_Trainer_Flag"]'); //todo add riding number mobile app and db
+      await click(page, 'input[aria-labelledby="s_2_l_TMI_Riding_Trainer_Flag s_2_l_altCombo"]+span'); //todo add riding number mobile app and db
       await page.waitForSelector(
         "ul[role='combobox']:not([style*='display: none'])",
         { visible: true }
@@ -1369,8 +1370,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.$eval(`#${ridingTypeButton.id}`, (el) => el.click());
       await click(
         page,
-        'td[data-labelledby="s_2_l_TMI_PDSA_Flag s_2_l_altCombo"]'
+        'td[id="1_s_2_l_TMI_PDSA_Flag"]'
       ); //todo add pdsaGiven  mobile app and db
+      await click(page, 'input[aria-labelledby="s_2_l_TMI_PDSA_Flag s_2_l_altCombo"]+span');
       await page.waitForSelector(
         "ul[role='combobox']:not([style*='display: none'])",
         { visible: true }
@@ -1395,15 +1397,27 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.$eval("td[role='gridcell'] > a", (el) => el.click());
       await click(page, 'div > button[data-display="Permanent Invoice"]');
 
-      await page.waitForFunction(
-        () =>
-          !!document.querySelector("input[name='TMI_Invoice_Number']").value,
-        { timeout: 360000 }
-      );
+      // await page.waitForFunction(
+      //   () =>
+      //     !!document.querySelector("input[name='TMI_Invoice_Number']").value,
+      //   { timeout: 360000 }
+      // );
 
-      invoiceNo = await page.evaluate(
-        () => document.querySelector("input[name='TMI_Invoice_Number']").value
+      // await page.waitForSelector("input[name='TMI_Invoice_Number']", { visible: true });
+      // invoiceNo = await page.evaluate(
+      //   () => document.querySelector("input[name='TMI_Invoice_Number']").value
+      // );
+
+      await waitForRandom();
+      await page.waitForSelector('td[id="1_s_1_l_TMI_Invoice_Number"]', { visible: true });
+      await page.waitForFunction(
+        () => !!document.querySelector('td[id="1_s_1_l_TMI_Invoice_Number"]').textContent
       );
+      invoiceNo = await page.evaluate(
+        () => document.querySelector('td[id="1_s_1_l_TMI_Invoice_Number"]').textContent
+      );
+      console.log(invoiceNo, "print invoice no");
+      console.log("Automation Don");
       // await browser.close();
       done = true;
     } catch (err) {
