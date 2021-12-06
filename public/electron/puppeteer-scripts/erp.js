@@ -654,7 +654,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
               id: item.id,
             }))
         );
-        console.log(data.additionalInfo.financier);
         const purchaseType = !!data.additionalInfo.financier //("HDFC")
           ? "Finance"
           : "Cash";
@@ -832,10 +831,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await page.waitForSelector('button[aria-label="Enquiries:New"]', {
           visible: true,
         });
-
+        await waitForRandom();
         await page.waitForSelector("td[role='gridcell'] > a", {
           visible: true,
         });
+        await waitForRandom();
         await page.$eval("td[role='gridcell'] > a", (el) => el.click());
       }
 
@@ -1291,15 +1291,15 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         );
         //Invoice End
 
-        await page.waitForFunction(
-          () =>
-            !!document.querySelector("input[name='TMI_Invoice_Number']").value,
-          { timeout: 360000 }
-        );
+        // await page.waitForFunction(
+        //   () =>
+        //     !!document.querySelector("input[name='TMI_Invoice_Number']").value,
+        //   { timeout: 360000 }
+        // );
 
-        invoiceNo = await page.evaluate(
-          () => document.querySelector("input[name='TMI_Invoice_Number']").value
-        );
+        // invoiceNo = await page.evaluate(
+        //   () => document.querySelector("input[name='TMI_Invoice_Number']").value
+        // );
       }
       //end date 25/11/21
       // await page.goBack();
@@ -1331,70 +1331,79 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       //   page,
       //   'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="1_s_2_l_TMI_Ref_Number s_2_l_TMI_Invoice_Key_No "]'
       // );
-      // await typeText(page, 'input[name="TMI_Invoice_Key_No"]', "7078"); //todo add key no mobile app and db
+      // await page.waitForSelector('td[aria-labelledby="s_2_l_TMI_Invoice_Key_No "]', { visible: true });
+      await click(page, 'td[aria-labelledby="s_2_l_TMI_Invoice_Key_No "]');
+      await page.waitForSelector('input[name="TMI_Invoice_Key_No"]', { visible: true });
+      await typeText(page, 'input[name="TMI_Invoice_Key_No"]', data.vehicleInfo.keyNo); //todo add key no mobile app and db
       // await click(
       //   page,
       //   'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Faktur_Number "]'
       // );
-      // await typeText(
-      //   page,
-      //   'input[name="TMI_Faktur_Number"]',
-      //   "M7C1P6588237C13"
-      // ); //todo add battery number mobile app and db
-      // await click(
-      //   page,
-      //   'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Booklet_Number "]'
-      // );
-      // await typeText(page, 'input[name="TMI_Booklet_Number"]', "0"); //todo add Booklet number mobile app and db
-      // await click(
-      //   page,
-      //   'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Riding_Trainer_Flag s_2_l_altCombo"]'
-      // ); //todo add riding number mobile app and db
-      // await page.waitForSelector(
-      //   "ul[role='combobox']:not([style*='display: none'])",
-      //   { visible: true }
-      // );
-      // let ridingType = await page.$$eval(
-      //   "ul[role='combobox']:not([style*='display: none']) > li > div",
-      //   (listItems) =>
-      //     listItems.map((item) => {
-      //       return {
-      //         name: item.textContent,
-      //         id: item.id,
-      //       };
-      //     })
-      // );
-      // const ridingTypeButton = ridingType.find((item) => item.name === "N");
+      //await page.waitForSelector('td[id="1_s_2_l_TMI_Faktur_Number"]', { visible: true });
+      await click(page, 'td[id="1_s_2_l_TMI_Faktur_Number"]');
+      await page.waitForSelector('input[name="TMI_Faktur_Number"]', { visible: true });
+      await typeText(page, 'input[name="TMI_Faktur_Number"]', data.vehicleInfo.batteryNO); //todo add battery number mobile app and db
+      // await click(page,'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Booklet_Number "]');
+      // await page.waitForSelector('td[id="1_s_2_l_TMI_Booklet_Number"]', { visible: true });
+      await click(page, 'td[id="1_s_2_l_TMI_Booklet_Number"]');
+      await page.waitForSelector('input[name="TMI_Booklet_Number"]', { visible: true });
+      await typeText(page, 'input[name="TMI_Booklet_Number"]', "0"); //todo add Booklet number mobile app and db
+      await click(page, 'td[aria-labelledby="s_2_l_TMI_Riding_Trainer_Flag s_2_l_altCombo"]'); //todo add riding number mobile app and db
+      await page.waitForSelector(
+        "ul[role='combobox']:not([style*='display: none'])",
+        { visible: true }
+      );
+      let ridingType = await page.$$eval(
+        "ul[role='combobox']:not([style*='display: none']) > li > div",
+        (listItems) =>
+          listItems.map((item) => {
+            return {
+              name: item.textContent,
+              id: item.id,
+            };
+          })
+      );
+      const ridingTypeButton = ridingType.find((item) => item.name === "N");
 
-      // await page.waitForSelector(`#${ridingTypeButton.id}`, { visible: true });
-      // await page.$eval(`#${ridingTypeButton.id}`, (el) => el.click());
-      // await click(
-      //   page,
-      //   'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_PDSA_Flag s_2_l_altCombo"]'
-      // ); //todo add pdsaGiven  mobile app and db
-      // await page.waitForSelector(
-      //   "ul[role='combobox']:not([style*='display: none'])",
-      //   { visible: true }
-      // );
-      // let pdsaGiven = await page.$$eval(
-      //   "ul[role='combobox']:not([style*='display: none']) > li > div",
-      //   (listItems) =>
-      //     listItems.map((item) => {
-      //       return {
-      //         name: item.textContent,
-      //         id: item.id,
-      //       };
-      //     })
-      // );
-      // const pdsaGivenpdsaGiven = pdsaGiven.find((item) => item.name === "N");
+      await page.waitForSelector(`#${ridingTypeButton.id}`, { visible: true });
+      await page.$eval(`#${ridingTypeButton.id}`, (el) => el.click());
+      await click(
+        page,
+        'td[data-labelledby="s_2_l_TMI_PDSA_Flag s_2_l_altCombo"]'
+      ); //todo add pdsaGiven  mobile app and db
+      await page.waitForSelector(
+        "ul[role='combobox']:not([style*='display: none'])",
+        { visible: true }
+      );
+      let pdsaGiven = await page.$$eval(
+        "ul[role='combobox']:not([style*='display: none']) > li > div",
+        (listItems) =>
+          listItems.map((item) => {
+            return {
+              name: item.textContent,
+              id: item.id,
+            };
+          })
+      );
+      const pdsaGivenpdsaGiven = pdsaGiven.find((item) => item.name === "N");
 
-      // await page.waitForSelector(`#${pdsaGivenpdsaGiven.id}`, {
-      //   visible: true,
-      // });
-      // await page.$eval(`#${pdsaGivenpdsaGiven.id}`, (el) => el.click());
-      // await page.waitForSelector("td[role='gridcell'] > a", { visible: true });
-      // await page.$eval("td[role='gridcell'] > a", (el) => el.click());
-      // await click(page, 'div > button[data-display="Permanent Invoice"]');
+      await page.waitForSelector(`#${pdsaGivenpdsaGiven.id}`, {
+        visible: true,
+      });
+      await page.$eval(`#${pdsaGivenpdsaGiven.id}`, (el) => el.click());
+      await page.waitForSelector("td[role='gridcell'] > a", { visible: true });
+      await page.$eval("td[role='gridcell'] > a", (el) => el.click());
+      await click(page, 'div > button[data-display="Permanent Invoice"]');
+
+      await page.waitForFunction(
+        () =>
+          !!document.querySelector("input[name='TMI_Invoice_Number']").value,
+        { timeout: 360000 }
+      );
+
+      invoiceNo = await page.evaluate(
+        () => document.querySelector("input[name='TMI_Invoice_Number']").value
+      );
       // await browser.close();
       done = true;
     } catch (err) {
