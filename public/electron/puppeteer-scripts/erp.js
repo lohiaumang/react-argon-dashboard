@@ -1409,13 +1409,16 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       // );
 
       await waitForRandom();
+      console.log("step 1");
       await page.waitForSelector('td[id="1_s_1_l_TMI_Invoice_Number"]', { visible: true });
+      console.log("step 2");
       await page.waitForFunction(
-        () => !!document.querySelector('td[id="1_s_1_l_TMI_Invoice_Number"]').textContent
-      );
+        () => !!document.querySelector('td[id="1_s_1_l_TMI_Invoice_Number"]').textContent);
+      console.log("step 3");
       invoiceNo = await page.evaluate(
         () => document.querySelector('td[id="1_s_1_l_TMI_Invoice_Number"]').textContent
       );
+      console.log("step 4");
       console.log(invoiceNo, "print invoice no");
       console.log("Automation Don");
       // await browser.close();

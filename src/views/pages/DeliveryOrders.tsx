@@ -153,6 +153,7 @@ const DeliveryOrders: React.FC = () => {
           case "INVOICE_CREATED": {
             setHsnCode(statusData.data.hsnCode);
             setInvoiceNo(statusData.data.invoiceNo);
+            setCurrentStatus(statusData.type);
             setShowModal(!showModal);
             break;
           }
