@@ -82,9 +82,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
     }
   }
   //waitForRandom 27-11-21
-  async function waitForRandom() {
-    await page.waitForTimeout((Math.random() + 1) * 1000);
-  }
+  // async function waitForRandom() {
+  //   await page.waitForTimeout((Math.random() + 1) * 1000);
+  // }
   //end
   async function automate() {
     let done = false;
@@ -442,7 +442,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             data.customerInfo.swdo
           );
 
-          // Gender vvvvvv
+          // Gender
+          await page.waitForSelector('table[summary="Enquiries"] td a', { visible: true, });
           await click(page, 'input[aria-label="Gender"] + span');
           await page.waitForSelector(
             "ul[role='combobox']:not([style*='display: none'])",
@@ -500,6 +501,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         //end
       }
       // TODO: ENQUIRY EXIST CHECK
+      await page.waitForSelector('table[summary="Enquiries"] td a', { visible: true, });
       const enquiryExists = await page.evaluate(
         () => !!document.querySelector('table[summary="Enquiries"] td a')
       );
@@ -522,6 +524,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         // await page.waitForSelector(() =>
         //   document.querySelector('table[summary="Enquiries"] td a')
         // );
+        await page.waitForSelector('table[summary="Enquiries"] td a', { visible: true, });
         await click(page, 'table[summary="Enquiries"] td a');
         //end
       } else {
@@ -831,11 +834,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await page.waitForSelector('button[aria-label="Enquiries:New"]', {
           visible: true,
         });
-        await waitForRandom();
+        // await waitForRandom();
         await page.waitForSelector("td[role='gridcell'] > a", {
           visible: true,
         });
-        await waitForRandom();
+        // await waitForRandom();
         await page.$eval("td[role='gridcell'] > a", (el) => el.click());
       }
 
@@ -844,11 +847,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await waitForNetworkIdle(page, timeout, 0);
       //click express booking button
       //27-11-21
-      await waitForRandom();
+      // await waitForRandom();
       await page.waitForSelector('button[aria-label="Products:New"]', {
         visible: true,
       });
-      await waitForRandom();
+      // await waitForRandom();
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
       });
@@ -891,10 +894,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
         (el) => el.click()
       );
-
+      // await waitForRandom();
       await page.waitForSelector('button[name="s_2_1_27_0"]', { visible: true });
       await click(page, 'button[name="s_2_1_27_0"]'); //get price clcik
       await page.waitForSelector('input[aria-label="Balance Payment"]', { visible: true });
+      // await waitForRandom();
       await page.waitForFunction(
         () =>
           document.querySelector('input[aria-label="Balance Payment"]')
@@ -1132,12 +1136,23 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
       await page.$eval(`#${paymentButton.id}`, (el) => el.click());
 
-      await page.waitForSelector('.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]', { visible: true });
-      const hypothecationName = await page.evaluate(
-        () => document.querySelector('input[aria-labelledby="Hypothecation_Label"]').value
-      );
-      await typeText(page, 'input[aria-label="Financier (Manual)"]', hypothecationName);
-
+      //16/12/21
+      if (data.additionalInfo.financier === "OTHERS") {
+        await page.waitForSelector('.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]', { visible: true });
+        const hypothecationName = await page.evaluate(
+          () => document.querySelector('input[aria-labelledby="Hypothecation_Label"]').value
+        );
+        await typeText(page, 'input[aria-label="Financier (Manual)"]', hypothecationName);
+      } else {
+        await page.waitForSelector('input[aria-labelledby="Hypothecation_Label"]+span', {
+          visible: true,
+        });
+        await click(page, 'input[aria-labelledby="Hypothecation_Label"]+span');
+        await page.waitForSelector('button[aria-label="Hypothecation Pick Applet:OK"]', {
+          visible: true,
+        });
+        await click(page, 'button[aria-label="Hypothecation Pick Applet:OK"]');
+      }
       await click(
         page,
         '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]'
@@ -1250,7 +1265,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         { visible: true }
       );
       if (data.vehicleInfo.frameNumber) {
-        await waitForRandom();
+        // await waitForRandom();
         let frameNo = data.vehicleInfo.frameNumber.slice(12, 17);
         await page.waitForSelector('input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]', { visible: true });
         await typeText(
@@ -1408,7 +1423,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       //   () => document.querySelector("input[name='TMI_Invoice_Number']").value
       // );
 
-      await waitForRandom();
+      // await waitForRandom();
       console.log("step 1");
       await page.waitForSelector('td[id="1_s_1_l_TMI_Invoice_Number"]', { visible: true });
       console.log("step 2");

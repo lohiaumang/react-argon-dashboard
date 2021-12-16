@@ -1645,7 +1645,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           required
                           className="form-control-alternative"
                           id="input-engine-number"
-                          value={vehicleInfo && vehicleInfo.engineNumber.replace(/\s/g, '')}
+                          value={vehicleInfo && vehicleInfo.engineNumber}
                           onChange={(ev) => {
                             vehicleInfo.engineNumber =
                               ev.target.value.toLocaleUpperCase();
@@ -2283,7 +2283,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           </FormGroup>
                         </Col>
                       </Row>
-                      {additionalInfo.financier === "OTHERS" && (
+                      {/* {additionalInfo.financier === "OTHERS" && ( */}
                         <Row>
                           <Col lg="6">
                             <FormGroup>
@@ -2312,7 +2312,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             </FormGroup>
                           </Col>
                         </Row>
-                      )}
+                       {/* )} */}
                     </>
                   )}
 

@@ -133,7 +133,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     await page.waitForSelector("#txtExShowroom", { visible: true });
     await page.$eval("#txtRequiredIDV", (el) => (el.value = ""));
     const idv = Math.round(new Number(data.priceDetails.price) * 0.95);
-    console.log(idv),"get idv price";
+    console.log(idv), "get idv price";
     await page.type("#txtRequiredIDV", idv.toString());
     await page.click("#imgbtnCalculateIDVtoExShowConv");
     await page.waitForFunction(
@@ -170,7 +170,12 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     if (data.additionalInfo.hasOwnProperty("financier")) {
       await page.click("label[for='rdbVehicleUnder_2']");
       await page.waitForSelector("#txtFinancierName", { visible: true });
-      await page.type("#txtFinancierName", data.additionalInfo.financier);
+      if (data.additionalInfo.financier === "OTHERS") {
+        await page.type("#txtFinancierName", data.additionalInfo.hypothecation);
+      } else {
+        await page.type("#txtFinancierName", data.additionalInfo.financier);
+      }
+
       await page.waitForSelector("#txtFinancierBranch", { visible: true });
       await page.type("#txtFinancierBranch", data.customerInfo.currCity);
     }
@@ -231,7 +236,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     await page.waitForSelector("#ctrlCustomerAddress_txtGSTIN", {
       visible: true,
     });
-  //  await page.type("#ctrlCustomerAddress_txtGSTIN", data.customerInfo.gst);
+    //  await page.type("#ctrlCustomerAddress_txtGSTIN", data.customerInfo.gst);
 
     done = true;
   } catch (err) {

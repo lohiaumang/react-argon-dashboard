@@ -128,9 +128,7 @@ const DeliveryOrders: React.FC = () => {
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
       setLoadingPage(true);
-
       let fetchBy: string = user.dealerId ? "subDealerId" : "dealerId";
-
       db.collection("deliveryOrders")
         .where(fetchBy, "==", user.createdBy || user.uid || "")
         .where("active", "==", true)
@@ -670,6 +668,7 @@ const DeliveryOrders: React.FC = () => {
 
   //edit do
   const editDO = async (ev: React.SyntheticEvent) => {
+    debugger;
     ev.stopPropagation();
     try {
       const status: any = await fetchDeliveryOrder();
