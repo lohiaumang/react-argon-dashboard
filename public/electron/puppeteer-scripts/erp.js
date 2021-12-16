@@ -443,12 +443,16 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           );
 
           // Gender
-          await page.waitForSelector('table[summary="Enquiries"] td a', { visible: true, });
+          console.log("click gender 1");
+          await page.waitForSelector('button[aria-label="Enquiries:Go"]', { visible: true, });
+          console.log("click gender 2");
           await click(page, 'input[aria-label="Gender"] + span');
+          console.log("click gender 3");
           await page.waitForSelector(
             "ul[role='combobox']:not([style*='display: none'])",
             { visible: true }
           );
+          console.log("click gender 4");
           let genderType = await page.$$eval(
             "ul[role='combobox']:not([style*='display: none']) > li > div",
             (listItems) =>
@@ -501,7 +505,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         //end
       }
       // TODO: ENQUIRY EXIST CHECK
-      await page.waitForSelector('table[summary="Enquiries"] td a', { visible: true, });
+      await page.waitForSelector('button[title="Enquiries:New"]', { visible: true, });
       const enquiryExists = await page.evaluate(
         () => !!document.querySelector('table[summary="Enquiries"] td a')
       );
@@ -516,19 +520,21 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             "div[title='Enquiries List Applet'] li#SortDesc > a"
           )
         );
-
+        await page.waitForSelector("div[title='Enquiries List Applet'] li#SortDesc > a", {
+          visible: true,
+        });
         await click(page, "div[title='Enquiries List Applet'] li#SortDesc > a");
 
         await waitForNetworkIdle(page, timeout, 2);
-        // await page.waitForSelector('table[summary="Enquiries"] td a', { visible: true });
-        // await page.waitForSelector(() =>
-        //   document.querySelector('table[summary="Enquiries"] td a')
-        // );
-        await page.waitForSelector('table[summary="Enquiries"] td a', { visible: true, });
-        await click(page, 'table[summary="Enquiries"] td a');
+        await page.waitForSelector("td[role='gridcell'] > a", {
+          visible: true,
+        });
+        // await waitForRandom();
+        await page.$eval("td[role='gridcell'] > a", (el) => el.click());
         //end
       } else {
         //if enquiry not exiat then create new enquiry
+        await page.waitForSelector('button[title="Enquiries:New"]', { visible: true, });
         await waitForNetworkIdle(page, timeout, 2);
         await click(page, 'button[title="Enquiries:New"]');
 
@@ -708,7 +714,10 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         const modelNameButton = modelName.find((item) =>
           data.modelName.includes(item.name)
         );
-        await click(page, `#${modelNameButton.id}`);
+        console.log(data.modelName, "print model name");
+        console.log(modelNameButton, "print model name");
+        // await click(page, `#${modelNameButton.id}`);
+        await page.$eval(`#${modelNameButton.id}`, (el) => el.click());
 
         //Model Variant
         await click(
@@ -1136,15 +1145,18 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
       await page.$eval(`#${paymentButton.id}`, (el) => el.click());
 
-      //16/12/21
+      //16/12/21 hypothecation fill if financier not others
       if (data.additionalInfo.financier === "OTHERS") {
         await page.waitForSelector('.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]', { visible: true });
         const hypothecationName = await page.evaluate(
           () => document.querySelector('input[aria-labelledby="Hypothecation_Label"]').value
         );
+        await page.waitForSelector('input[aria-label="Financier (Manual)"]', {
+          visible: true,
+        });
         await typeText(page, 'input[aria-label="Financier (Manual)"]', hypothecationName);
       } else {
-        await page.waitForSelector('input[aria-labelledby="Hypothecation_Label"]+span', {
+        await page.waitForSelector('.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]', {
           visible: true,
         });
         await click(page, 'input[aria-labelledby="Hypothecation_Label"]+span');
@@ -1153,30 +1165,15 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         });
         await click(page, 'button[aria-label="Hypothecation Pick Applet:OK"]');
       }
-      await click(
-        page,
-        '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]'
-      );
-      // page.on('dialog', async dialog => {
-      //   await dialog.dismiss();
-      // });
-      // // TODO: vvvvvvvvvv
-      // await page.waitForSelector('input[aria-describedby=" s_1_1_13_0_icon"]', {
-      //   visible: true,
-      // });
-      // const hypothecationName = await page.evaluate(
-      //   () => document.querySelector('input[aria-labelledby="Hypothecation_Label"]').value
-      // );
-      // page.on('dialog', async dialog => {
-      //   if (data.additionalInfo.financier === "OTHERS") {
-      //     await dialog.dismiss();
-      //     await page.type(
-      //       'input[aria-label="Financier (Manual)"]',
-      //       data.additionalInfo.hypothecation
-      //     );
-      //     // Click new button
-      //   }
-      // });
+      //end
+      console.log("payment not click");
+      await page.waitForSelector('.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]', {
+        visible: true,
+      });
+      console.log("payment not click 1");
+      await page.$eval('.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]', (el) => el.click());
+      console.log("payment click");
+
       await click(
         page,
         'input[aria-labelledby="1_s_2_l_Payment_Profile_Name s_2_l_Transaction_Type s_2_l_altCombo"] + span'

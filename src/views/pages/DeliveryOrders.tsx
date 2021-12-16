@@ -122,6 +122,7 @@ const DeliveryOrders: React.FC = () => {
         },
         { merge: true }
       );
+      setShowModal(!showModal);
     }
   }, [hsnCode, invoiceNo]);
 
@@ -152,7 +153,7 @@ const DeliveryOrders: React.FC = () => {
             setHsnCode(statusData.data.hsnCode);
             setInvoiceNo(statusData.data.invoiceNo);
             setCurrentStatus(statusData.type);
-            setShowModal(!showModal);
+
             break;
           }
           case "DISABLE_LOADER": {

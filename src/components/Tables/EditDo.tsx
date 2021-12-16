@@ -2283,7 +2283,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           </FormGroup>
                         </Col>
                       </Row>
-                      {/* {additionalInfo.financier === "OTHERS" && ( */}
+                      {additionalInfo.financier === "OTHERS" && (
                         <Row>
                           <Col lg="6">
                             <FormGroup>
@@ -2312,7 +2312,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             </FormGroup>
                           </Col>
                         </Row>
-                       {/* )} */}
+                      )}
                     </>
                   )}
 
