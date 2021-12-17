@@ -203,7 +203,7 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
         (dateIndex) =>
           document
             .querySelectorAll(`#ui-datepicker-div tbody td a`)
-            [dateIndex].click(),
+          [dateIndex].click(),
         dateIndex
       );
       await page.waitForSelector("#ui-datepicker-div", { hidden: true });
@@ -517,11 +517,20 @@ module.exports = function vahan(page, data, mainWindow, vahanWindow) {
         });
         await page.click("#workbench_tabview\\:hpa_hp_type_2");
         await waitForRandom();
-        await page.type(
-          "#workbench_tabview\\:hpa_fncr_name",
-          data.additionalInfo.financier,
-          { delay: randomTypeDelay() }
-        );
+        if (data.additionalInfo.financier === "OTHERS") {
+          await page.type(
+            "#workbench_tabview\\:hpa_fncr_name",
+            data.additionalInfo.hypothecation,
+            { delay: randomTypeDelay() }
+          );
+        } else {
+          await page.type(
+            "#workbench_tabview\\:hpa_fncr_name",
+            data.additionalInfo.financier,
+            { delay: randomTypeDelay() }
+          );
+        }
+
         await waitForRandom();
         await page.type(
           "#workbench_tabview\\:hpa_fncr_add1",

@@ -62,7 +62,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                 <Col xs="4" className="px-1">
                   <h6>Name</h6>
                 </Col>
-                <Col xs="8" className="px-1">
+                <Col xs="8" className="px-1 capitalize">
                   <small>{props.deliveryOrder.dealerInfo.name}</small>
                 </Col>
               </Row>
