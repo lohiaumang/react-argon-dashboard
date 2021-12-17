@@ -108,38 +108,50 @@ const DeliveryOrders: React.FC = () => {
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
   useEffect(() => {
-    debugger;
-    if (hsnCode && selected && invoiceNo) {
-      db.collection("vehicles").doc(deliveryOrders[selected].vehicleId).set(
-        {
-          hsnCode: hsnCode,
-        },
-        { merge: true }
-      ).then(() => {
-        let newDos: any = deliveryOrders;
-        newDos[selected] = {
-          ...deliveryOrders[selected],
-          hsnCode: hsnCode,
-        };
-        setDeliveryOrders(newDos);
-      })
-
-      db.collection("deliveryOrders").doc(deliveryOrders[selected].id).set(
-        {
-          invoiceNo: invoiceNo,
-        },
-        { merge: true }
-      ).then(() => {
-        let newDos: any = deliveryOrders;
-        newDos[selected] = {
-          ...deliveryOrders[selected],
-          invoiceNo: invoiceNo,
-        };
-        setDeliveryOrders(newDos);
-      })
-      setShowModal(!showModal);
+    if (hsnCode && selected) {
+      db.collection("vehicles")
+        .doc(deliveryOrders[selected].vehicleId)
+        .set(
+          {
+            hsnCode,
+          },
+          { merge: true }
+        )
+        .then(() => {
+          let newDos: any = deliveryOrders;
+          newDos[selected] = {
+            ...deliveryOrders[selected],
+            vehicleInfo: {
+              ...deliveryOrders[selected].vehicleInfo,
+              hsnCode,
+            },
+          };
+          setDeliveryOrders(newDos);
+        });
     }
-  }, [hsnCode, invoiceNo]);
+  }, [hsnCode]);
+
+  useEffect(() => {
+    if (invoiceNo && selected) {
+      debugger;
+      db.collection("deliveryOrders")
+        .doc(deliveryOrders[selected].id)
+        .set(
+          {
+            invoiceNo,
+          },
+          { merge: true }
+        )
+        .then(() => {
+          let newDos: any = deliveryOrders;
+          newDos[selected] = {
+            ...deliveryOrders[selected],
+            invoiceNo,
+          };
+          setDeliveryOrders(newDos);
+        });
+    }
+  }, [invoiceNo]);
 
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
@@ -1007,7 +1019,7 @@ const DeliveryOrders: React.FC = () => {
             backdrop="static"
             keyboard={false}
             size="lg"
-          //onExit={() => closeModal()}
+            //onExit={() => closeModal()}
           >
             <ModalHeader
               className="p-4"
@@ -1210,7 +1222,6 @@ const DeliveryOrders: React.FC = () => {
                                   >
                                     Print DO
                                   </Button>
-
                                 </>
                               ) : (
                                 <>
@@ -1232,11 +1243,10 @@ const DeliveryOrders: React.FC = () => {
                                       >
                                         Print Invoice
                                       </Button>
-
                                     </>
                                   ) : (
                                     deliveryOrders[selected].status !==
-                                    "INCOMPLETE" && (
+                                      "INCOMPLETE" && (
                                       <>
                                         <Button
                                           className="small-button-width my-2"

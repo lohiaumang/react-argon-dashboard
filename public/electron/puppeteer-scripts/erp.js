@@ -451,7 +451,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
           // Gender
           console.log("click gender 1");
-          await page.waitForSelector('button[aria-label="Enquiries:Go"]', { visible: true, });
+          await page.waitForSelector('button[aria-label="Enquiries:Go"]', {
+            visible: true,
+          });
           console.log("click gender 2");
           await click(page, 'input[aria-label="Gender"] + span');
           console.log("click gender 3");
@@ -512,7 +514,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         //end
       }
       // TODO: ENQUIRY EXIST CHECK
-      await page.waitForSelector('button[title="Enquiries:New"]', { visible: true, });
+      await page.waitForSelector('button[title="Enquiries:New"]', {
+        visible: true,
+      });
       const enquiryExists = await page.evaluate(
         () => !!document.querySelector('table[summary="Enquiries"] td a')
       );
@@ -527,9 +531,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             "div[title='Enquiries List Applet'] li#SortDesc > a"
           )
         );
-        await page.waitForSelector("div[title='Enquiries List Applet'] li#SortDesc > a", {
-          visible: true,
-        });
+        await page.waitForSelector(
+          "div[title='Enquiries List Applet'] li#SortDesc > a",
+          {
+            visible: true,
+          }
+        );
         await click(page, "div[title='Enquiries List Applet'] li#SortDesc > a");
 
         await waitForNetworkIdle(page, timeout, 2);
@@ -541,7 +548,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         //end
       } else {
         //if enquiry not exiat then create new enquiry
-        await page.waitForSelector('button[title="Enquiries:New"]', { visible: true, });
+        await page.waitForSelector('button[title="Enquiries:New"]', {
+          visible: true,
+        });
         await waitForNetworkIdle(page, timeout, 2);
         await click(page, 'button[title="Enquiries:New"]');
 
@@ -915,10 +924,14 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         (el) => el.click()
       );
       await waitForRandom();
-      await page.waitForSelector('button[name="s_2_1_27_0"]', { visible: true });
+      await page.waitForSelector('button[name="s_2_1_27_0"]', {
+        visible: true,
+      });
       await click(page, 'button[name="s_2_1_27_0"]'); //get price clcik
       // await page.$eval('button[name="s_2_1_27_0"]', (el) => el.click());
-      await page.waitForSelector('input[aria-label="Balance Payment"]', { visible: true });
+      await page.waitForSelector('input[aria-label="Balance Payment"]', {
+        visible: true,
+      });
       await waitForRandom();
       await page.waitForFunction(
         () =>
@@ -1196,7 +1209,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           visible: true,
         });
         console.log("hypothecationName, click 2");
-        await typeText(page, 'input[aria-label="Financier (Manual)"]', hypothecationName);
+        await typeText(
+          page,
+          'input[aria-label="Financier (Manual)"]',
+          hypothecationName
+        );
         console.log("hypothecationName, click 3");
         await page.waitForSelector('span[id="TMI_Financier_Manual_Label"]', {
           visible: true,
@@ -1205,9 +1222,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await click(page, 'span[id="TMI_Financier_Manual_Label"]');
         console.log("hypothecationName, click 5");
       } else {
-        await page.waitForSelector('.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]', {
-          visible: true,
-        });
+        await page.waitForSelector(
+          '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]',
+          {
+            visible: true,
+          }
+        );
         await click(page, 'input[aria-labelledby="Hypothecation_Label"]+span');
         await page.waitForSelector(
           'button[aria-label="Hypothecation Pick Applet:OK"]',
@@ -1218,11 +1238,17 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await click(page, 'button[aria-label="Hypothecation Pick Applet:OK"]');
       }
       //end
-      await page.waitForSelector('.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]', {
-        visible: true,
-      });
+      await page.waitForSelector(
+        '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]',
+        {
+          visible: true,
+        }
+      );
 
-      await page.$eval('.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]', (el) => el.click());
+      await page.$eval(
+        '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]',
+        (el) => el.click()
+      );
 
       await click(
         page,
@@ -1496,24 +1522,25 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
       // await waitForRandom();
       console.log("step 1");
-      await page.waitForSelector('td[id="1_s_1_l_TMI_Invoice_Number"]', {
+      await page.waitForSelector('td[id$="Invoice_Number"]', {
         visible: true,
       });
       console.log("step 2");
       await page.waitForFunction(
         () =>
-          !!document.querySelector('td[id="1_s_1_l_TMI_Invoice_Number"]')
-            .textContent
+          !!document.querySelector('td[id$="Invoice_Number"]').title &&
+          document.querySelector('td[id$="Invoice_Number"]').title !== " "
       );
       console.log("step 3");
       invoiceNo = await page.evaluate(
-        () =>
-          document.querySelector('td[id="1_s_1_l_TMI_Invoice_Number"]')
-            .textContent
+        () => document.querySelector('td[id$="Invoice_Number"]').title,
+        {
+          waitUntil: "networkidle2",
+        }
       );
       console.log("step 4");
-      console.log(invoiceNo, "print invoice no");
-      console.log("Automation Don");
+      console.log(invoiceNo, invoiceNo.length, "print invoice no");
+      console.log("Automation Done");
       // await browser.close();
       done = true;
     } catch (err) {
