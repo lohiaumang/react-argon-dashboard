@@ -108,20 +108,35 @@ const DeliveryOrders: React.FC = () => {
   const toggle = () => setDropdownButton((prevState) => !prevState);
 
   useEffect(() => {
+    debugger;
     if (hsnCode && selected && invoiceNo) {
       db.collection("vehicles").doc(deliveryOrders[selected].vehicleId).set(
         {
           hsnCode: hsnCode,
         },
         { merge: true }
-      );
+      ).then(() => {
+        let newDos: any = deliveryOrders;
+        newDos[selected] = {
+          ...deliveryOrders[selected],
+          hsnCode: hsnCode,
+        };
+        setDeliveryOrders(newDos);
+      })
 
       db.collection("deliveryOrders").doc(deliveryOrders[selected].id).set(
         {
           invoiceNo: invoiceNo,
         },
         { merge: true }
-      );
+      ).then(() => {
+        let newDos: any = deliveryOrders;
+        newDos[selected] = {
+          ...deliveryOrders[selected],
+          invoiceNo: invoiceNo,
+        };
+        setDeliveryOrders(newDos);
+      })
       setShowModal(!showModal);
     }
   }, [hsnCode, invoiceNo]);

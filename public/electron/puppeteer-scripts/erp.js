@@ -82,9 +82,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
     }
   }
   //waitForRandom 27-11-21
-  // async function waitForRandom() {
-  //   await page.waitForTimeout((Math.random() + 1) * 1000);
-  // }
+  async function waitForRandom() {
+    await page.waitForTimeout((Math.random() + 1) * 1000);
+  }
   //end
   async function automate() {
     let done = false;
@@ -903,11 +903,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
         (el) => el.click()
       );
-      // await waitForRandom();
+      await waitForRandom();
       await page.waitForSelector('button[name="s_2_1_27_0"]', { visible: true });
       await click(page, 'button[name="s_2_1_27_0"]'); //get price clcik
+      // await page.$eval('button[name="s_2_1_27_0"]', (el) => el.click());
       await page.waitForSelector('input[aria-label="Balance Payment"]', { visible: true });
-      // await waitForRandom();
+      await waitForRandom();
       await page.waitForFunction(
         () =>
           document.querySelector('input[aria-label="Balance Payment"]')
@@ -1151,10 +1152,19 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         const hypothecationName = await page.evaluate(
           () => document.querySelector('input[aria-labelledby="Hypothecation_Label"]').value
         );
+        console.log("hypothecationName, click ");
         await page.waitForSelector('input[aria-label="Financier (Manual)"]', {
           visible: true,
         });
+        console.log("hypothecationName, click 2");
         await typeText(page, 'input[aria-label="Financier (Manual)"]', hypothecationName);
+        console.log("hypothecationName, click 3");
+        await page.waitForSelector('span[id="TMI_Financier_Manual_Label"]', {
+          visible: true,
+        });
+        console.log("hypothecationName, click 4");
+        await click(page, 'span[id="TMI_Financier_Manual_Label"]');
+        console.log("hypothecationName, click 5");
       } else {
         await page.waitForSelector('.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]', {
           visible: true,
@@ -1166,13 +1176,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await click(page, 'button[aria-label="Hypothecation Pick Applet:OK"]');
       }
       //end
-      console.log("payment not click");
       await page.waitForSelector('.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]', {
         visible: true,
       });
-      console.log("payment not click 1");
+
       await page.$eval('.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]', (el) => el.click());
-      console.log("payment click");
 
       await click(
         page,
