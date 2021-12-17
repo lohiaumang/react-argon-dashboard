@@ -9,38 +9,38 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
   const stateCodes = {
     "ANDAMAN AND NICOBAR": "AN",
     "ARUNACHAL PRADESH": "AR",
-    "ASSAM": "AS",
+    ASSAM: "AS",
     "ANDHRA PRADESH": "AP",
-    "BIHAR": "BR",
-    "DELHI": "Delhi",
-    "CHANDIGARH": "CG",
-    "CHHATTISGARH": "CH",
+    BIHAR: "BR",
+    DELHI: "Delhi",
+    CHANDIGARH: "CG",
+    CHHATTISGARH: "CH",
     "DAMAN AND DIU": "DD",
-    "GOA": "Goa",
-    "GUJARAT": "Gujarat",
+    GOA: "Goa",
+    GUJARAT: "Gujarat",
     "HIMACHAL PRADESH": "HP",
-    "HARYANA": "Haryana",
-    "JHARKHAND": "Jharkhand",
+    HARYANA: "Haryana",
+    JHARKHAND: "Jharkhand",
     "JAMMU AND KASHMIR": "JK",
-    "KARNATAKA": "Karnataka",
-    "KERALA": "Kerala",
-    "LAKSHADWEEP": "LD",
+    KARNATAKA: "Karnataka",
+    KERALA: "Kerala",
+    LAKSHADWEEP: "LD",
     "DADRA AND NAGAR HAVELI": "DN",
-    "MAHARASHTRA": "MH",
-    "MANIPUR": "Manipur",
+    MAHARASHTRA: "MH",
+    MANIPUR: "Manipur",
     "MADHYA PRADESH": "MP",
     "TAMIL NADU": "Tamil Nadu",
-    "MIZORAM": "MZ",
-    "NAGALAND": "Nagaland",
-    "ORISSA": "Odisha",
-    "PUNJAB": "Punjab",
-    "PUDUCHERRY": "PY",
-    "RAJASTHAN": "Rajasthan",
-    "SIKKIM": "SK",
-    "MEGHALAYA": "ML",
-    "TELANGANA": "Telangana",
-    "TRIPURA": "Tripura",
-    "UTTARAKHAND": "UK",
+    MIZORAM: "MZ",
+    NAGALAND: "Nagaland",
+    ORISSA: "Odisha",
+    PUNJAB: "Punjab",
+    PUDUCHERRY: "PY",
+    RAJASTHAN: "Rajasthan",
+    SIKKIM: "SK",
+    MEGHALAYA: "ML",
+    TELANGANA: "Telangana",
+    TRIPURA: "Tripura",
+    UTTARAKHAND: "UK",
     "UTTAR PRADESH": "UP",
     "WEST BENGAL": "WB",
     // TODO: Add all states codes here
@@ -154,9 +154,15 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       });
       await waitForNetworkIdle(page, timeout, 0);
       //search inquery
-      await page.waitForSelector("div[title='First Level View Bar']", {
-        visible: true,
-      });
+      await page.waitForSelector(
+        "div[title='First Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
+        {
+          visible: true,
+        }
+      );
+
+      await waitForNetworkIdle(page, timeout, 0);
+
       let customerTabs = await page.$$eval(
         "div[title='First Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
         (tabs) =>
@@ -167,6 +173,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             };
           })
       );
+
       const customerButton = customerTabs.find((item) =>
         item.name.includes("Customer")
       );
@@ -509,7 +516,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       const enquiryExists = await page.evaluate(
         () => !!document.querySelector('table[summary="Enquiries"] td a')
       );
-      //if enquiry exiat then not create new enquiry
+      //if enquiry exists then do not create new enquiry
       if (enquiryExists) {
         await page.evaluate(() =>
           document.querySelector("#s_1_l_TMI_Enquiry_Date div")
@@ -843,12 +850,16 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await page.waitForSelector('button[aria-label="Enquiries:New"]', {
           visible: true,
         });
+        console.log("Hello");
         // await waitForRandom();
         await page.waitForSelector("td[role='gridcell'] > a", {
           visible: true,
         });
         // await waitForRandom();
+        // await click(page, "td[role='gridcell'] > a");
+
         await page.$eval("td[role='gridcell'] > a", (el) => el.click());
+        // await page.waitForNavigation();
       }
 
       //end
@@ -949,19 +960,13 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
       await page.$eval(`#${customerDetailsButton.id}`, (el) => el.click());
 
-      await page.waitForSelector(
-        'input[aria-label="Temporary Address"]+span',
-        {
-          visible: true,
-        }
-      );
+      await page.waitForSelector('input[aria-label="Temporary Address"]+span', {
+        visible: true,
+      });
       await click(page, 'input[aria-label="Temporary Address"]+span');
-      await page.waitForSelector(
-        'button[aria-label="Contact Addresses:New"]',
-        {
-          visible: true,
-        }
-      );
+      await page.waitForSelector('button[aria-label="Contact Addresses:New"]', {
+        visible: true,
+      });
       await click(page, 'button[aria-label="Contact Addresses:New"]');
       await page.waitForSelector('input[aria-label="Address Line 1"]', {
         visible: true,
@@ -1008,15 +1013,10 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         { visible: true }
       );
       await click(page, 'button[aria-label="Contact Addresses:Save"]');
-      await page.waitForSelector(
-        'button[aria-label="Contact Addresses:OK"]',
-        {
-          visible: true,
-        }
-      );
+      await page.waitForSelector('button[aria-label="Contact Addresses:OK"]', {
+        visible: true,
+      });
       await click(page, 'button[aria-label="Contact Addresses:OK"]');
-
-
 
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
@@ -1039,8 +1039,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
 
       await page.$eval(`#${bookingDetailsButton.id}`, (el) => el.click());
-
-
 
       await page.waitForSelector('button[name="s_2_1_27_0"]', {
         visible: true,
@@ -1067,27 +1065,46 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await page.waitForSelector('div[id="ui-datepicker-div"]', {
           visible: true,
         });
-        await page.keyboard.press('Enter');
+        await page.keyboard.press("Enter");
       }
 
       //other hypothecation automation
       if (data.additionalInfo.financier === "OTHERS") {
-        await page.waitForSelector('input[aria-labelledby="Hypothecation_Label"]+span', {
-          visible: true,
-        });
+        await page.waitForSelector(
+          'input[aria-labelledby="Hypothecation_Label"]+span',
+          {
+            visible: true,
+          }
+        );
         await click(page, 'input[aria-labelledby="Hypothecation_Label"]+span');
-        await page.waitForSelector('button[aria-label="Hypothecation Pick Applet:Query"]', {
-          visible: true,
-        });
-        await click(page, 'button[aria-label="Hypothecation Pick Applet:Query"]');
+        await page.waitForSelector(
+          'button[aria-label="Hypothecation Pick Applet:Query"]',
+          {
+            visible: true,
+          }
+        );
+        await click(
+          page,
+          'button[aria-label="Hypothecation Pick Applet:Query"]'
+        );
 
-        await page.waitForSelector('input[aria-labelledby="s_4_l_JLR_Financier_Name s_4_l_altCombo"]', {
-          visible: true,
-        });
-        await typeText(page, 'input[aria-labelledby="s_4_l_JLR_Financier_Name s_4_l_altCombo"]', data.additionalInfo.financier);
-        await page.waitForSelector('input[aria-labelledby="s_4_l_JLR_Financier_Name s_4_l_altCombo"]+span', {
-          visible: true,
-        });
+        await page.waitForSelector(
+          'input[aria-labelledby="s_4_l_JLR_Financier_Name s_4_l_altCombo"]',
+          {
+            visible: true,
+          }
+        );
+        await typeText(
+          page,
+          'input[aria-labelledby="s_4_l_JLR_Financier_Name s_4_l_altCombo"]',
+          data.additionalInfo.financier
+        );
+        await page.waitForSelector(
+          'input[aria-labelledby="s_4_l_JLR_Financier_Name s_4_l_altCombo"]+span',
+          {
+            visible: true,
+          }
+        );
         const hypothecationDetailsTabs = await page.$$eval(
           'ul[class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front"]>li>div',
           (tabs) => {
@@ -1100,22 +1117,34 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             });
           }
         );
-        const hypothecationDetailsButton = hypothecationDetailsTabs.find((item) =>
-          item.name.includes("OTHERS")
+        const hypothecationDetailsButton = hypothecationDetailsTabs.find(
+          (item) => item.name.includes("OTHERS")
         );
-        await page.$eval(`#${hypothecationDetailsButton.id}`, (el) => el.click());
+        await page.$eval(`#${hypothecationDetailsButton.id}`, (el) =>
+          el.click()
+        );
         console.log("step 1 hypothecation");
         await page.$eval('td[id="1_s_4_l_Name"]', (el) => el.click());
-        await typeText(page, 'input[aria-labelledby="s_4_l_Name "]', data.additionalInfo.hypothecation);
+        await typeText(
+          page,
+          'input[aria-labelledby="s_4_l_Name "]',
+          data.additionalInfo.hypothecation
+        );
 
         console.log("step 2 hypothecation");
-        await page.waitForSelector('button[aria-label="Hypothecation Pick Applet:Go"]', {
-          visible: true,
-        });
+        await page.waitForSelector(
+          'button[aria-label="Hypothecation Pick Applet:Go"]',
+          {
+            visible: true,
+          }
+        );
         await click(page, 'button[aria-label="Hypothecation Pick Applet:Go"]');
-        await page.waitForSelector('button[aria-label="Hypothecation Pick Applet:OK"]', {
-          visible: true,
-        });
+        await page.waitForSelector(
+          'button[aria-label="Hypothecation Pick Applet:OK"]',
+          {
+            visible: true,
+          }
+        );
         await click(page, 'button[aria-label="Hypothecation Pick Applet:OK"]');
       }
 
@@ -1125,7 +1154,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/"
         );
       }
-
 
       //click payment button
       await page.waitForSelector("div[title='Third Level View Bar']", {
@@ -1148,9 +1176,20 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
       //16/12/21 hypothecation fill if financier not others
       if (data.additionalInfo.financier === "OTHERS") {
-        await page.waitForSelector('.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]', { visible: true });
+        await page.waitForSelector(
+          '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]',
+          { visible: true }
+        );
         const hypothecationName = await page.evaluate(
-          () => document.querySelector('input[aria-labelledby="Hypothecation_Label"]').value
+          () =>
+            document.querySelector(
+              'input[aria-labelledby="Hypothecation_Label"]'
+            ).value
+        );
+        await typeText(
+          page,
+          'input[aria-label="Financier (Manual)"]',
+          hypothecationName
         );
         console.log("hypothecationName, click ");
         await page.waitForSelector('input[aria-label="Financier (Manual)"]', {
@@ -1170,9 +1209,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           visible: true,
         });
         await click(page, 'input[aria-labelledby="Hypothecation_Label"]+span');
-        await page.waitForSelector('button[aria-label="Hypothecation Pick Applet:OK"]', {
-          visible: true,
-        });
+        await page.waitForSelector(
+          'button[aria-label="Hypothecation Pick Applet:OK"]',
+          {
+            visible: true,
+          }
+        );
         await click(page, 'button[aria-label="Hypothecation Pick Applet:OK"]');
       }
       //end
@@ -1218,7 +1260,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         'input[aria-labelledby="s_2_l_Transaction_Amount s_2_l_altCalc"]',
         price
       );
-
 
       //end
       //Booking Details & Vehicle Allotment
@@ -1272,15 +1313,21 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       if (data.vehicleInfo.frameNumber) {
         // await waitForRandom();
         let frameNo = data.vehicleInfo.frameNumber.slice(12, 17);
-        await page.waitForSelector('input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]', { visible: true });
+        await page.waitForSelector(
+          'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
+          { visible: true }
+        );
         await typeText(
           page,
           'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
           "*" + frameNo
         ); //todo not fill
-        await page.keyboard.press('Enter');
+        await page.keyboard.press("Enter");
         //30-11-21
-        await page.waitForSelector('#s_3_l > tbody > tr[role="row"] > td[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]', { visible: true });
+        await page.waitForSelector(
+          '#s_3_l > tbody > tr[role="row"] > td[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
+          { visible: true }
+        );
         await click(page, 'div > button[aria-label="Vehicles:New"]');
 
         await page.goBack();
@@ -1351,25 +1398,44 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       //   page,
       //   'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="1_s_2_l_TMI_Ref_Number s_2_l_TMI_Invoice_Key_No "]'
       // );
-      await page.waitForSelector('td[id="1_s_2_l_TMI_Invoice_Key_No"]', { visible: true });
+      await page.waitForSelector('td[id="1_s_2_l_TMI_Invoice_Key_No"]', {
+        visible: true,
+      });
       await click(page, 'td[id="1_s_2_l_TMI_Invoice_Key_No"]');
-      await page.waitForSelector('input[name="TMI_Invoice_Key_No"]', { visible: true });
-      await typeText(page, 'input[name="TMI_Invoice_Key_No"]', data.vehicleInfo.keyNo); //todo add key no mobile app and db
+      await page.waitForSelector('input[name="TMI_Invoice_Key_No"]', {
+        visible: true,
+      });
+      await typeText(
+        page,
+        'input[name="TMI_Invoice_Key_No"]',
+        data.vehicleInfo.keyNo
+      ); //todo add key no mobile app and db
       // await click(
       //   page,
       //   'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Faktur_Number "]'
       // );
       //await page.waitForSelector('td[id="1_s_2_l_TMI_Faktur_Number"]', { visible: true });
       await click(page, 'td[id="1_s_2_l_TMI_Faktur_Number"]');
-      await page.waitForSelector('input[name="TMI_Faktur_Number"]', { visible: true });
-      await typeText(page, 'input[name="TMI_Faktur_Number"]', data.vehicleInfo.batteryNO); //todo add battery number mobile app and db
+      await page.waitForSelector('input[name="TMI_Faktur_Number"]', {
+        visible: true,
+      });
+      await typeText(
+        page,
+        'input[name="TMI_Faktur_Number"]',
+        data.vehicleInfo.batteryNO
+      ); //todo add battery number mobile app and db
       // await click(page,'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Booklet_Number "]');
       // await page.waitForSelector('td[id="1_s_2_l_TMI_Booklet_Number"]', { visible: true });
       await click(page, 'td[id="1_s_2_l_TMI_Booklet_Number"]');
-      await page.waitForSelector('input[name="TMI_Booklet_Number"]', { visible: true });
+      await page.waitForSelector('input[name="TMI_Booklet_Number"]', {
+        visible: true,
+      });
       await typeText(page, 'input[name="TMI_Booklet_Number"]', "0"); //todo add Booklet number mobile app and db
       await click(page, 'td[id="1_s_2_l_TMI_Riding_Trainer_Flag"]'); //todo add riding number mobile app and db
-      await click(page, 'input[aria-labelledby="s_2_l_TMI_Riding_Trainer_Flag s_2_l_altCombo"]+span'); //todo add riding number mobile app and db
+      await click(
+        page,
+        'input[aria-labelledby="s_2_l_TMI_Riding_Trainer_Flag s_2_l_altCombo"]+span'
+      ); //todo add riding number mobile app and db
       await page.waitForSelector(
         "ul[role='combobox']:not([style*='display: none'])",
         { visible: true }
@@ -1388,11 +1454,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
       await page.waitForSelector(`#${ridingTypeButton.id}`, { visible: true });
       await page.$eval(`#${ridingTypeButton.id}`, (el) => el.click());
+      await click(page, 'td[id="1_s_2_l_TMI_PDSA_Flag"]'); //todo add pdsaGiven  mobile app and db
       await click(
         page,
-        'td[id="1_s_2_l_TMI_PDSA_Flag"]'
-      ); //todo add pdsaGiven  mobile app and db
-      await click(page, 'input[aria-labelledby="s_2_l_TMI_PDSA_Flag s_2_l_altCombo"]+span');
+        'input[aria-labelledby="s_2_l_TMI_PDSA_Flag s_2_l_altCombo"]+span'
+      );
       await page.waitForSelector(
         "ul[role='combobox']:not([style*='display: none'])",
         { visible: true }
@@ -1430,13 +1496,20 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
       // await waitForRandom();
       console.log("step 1");
-      await page.waitForSelector('td[id="1_s_1_l_TMI_Invoice_Number"]', { visible: true });
+      await page.waitForSelector('td[id="1_s_1_l_TMI_Invoice_Number"]', {
+        visible: true,
+      });
       console.log("step 2");
       await page.waitForFunction(
-        () => !!document.querySelector('td[id="1_s_1_l_TMI_Invoice_Number"]').textContent);
+        () =>
+          !!document.querySelector('td[id="1_s_1_l_TMI_Invoice_Number"]')
+            .textContent
+      );
       console.log("step 3");
       invoiceNo = await page.evaluate(
-        () => document.querySelector('td[id="1_s_1_l_TMI_Invoice_Number"]').textContent
+        () =>
+          document.querySelector('td[id="1_s_1_l_TMI_Invoice_Number"]')
+            .textContent
       );
       console.log("step 4");
       console.log(invoiceNo, "print invoice no");
