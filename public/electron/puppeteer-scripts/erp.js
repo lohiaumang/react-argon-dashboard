@@ -859,7 +859,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await page.waitForSelector('button[aria-label="Enquiries:New"]', {
           visible: true,
         });
-        console.log("Hello");
         // await waitForRandom();
         await page.waitForSelector("td[role='gridcell'] > a", {
           visible: true,
@@ -1346,8 +1345,16 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await typeText(
           page,
           'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
-          "*" + frameNo
+          `*${frameNo}`
         ); //todo not fill
+
+        await page.waitForFunction(
+          () =>
+            document.querySelector(
+              'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]'
+            ).value === `*${frameNo}`
+        );
+
         await page.keyboard.press("Enter");
         //30-11-21
         await page.waitForSelector(
