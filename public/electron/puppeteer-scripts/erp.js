@@ -807,11 +807,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           "input[name='Last_Name']",
           salesExName[1].toUpperCase()
         );
-        await click(page, '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] ');
+        await click(page, '#s_3_l > tbody > tr > td[id$="First_Name"] ');
 
         await typeText(
           page,
-          '#s_3_l > tbody > tr > td[id="1_s_3_l_First_Name"] > input[name="First_Name"]',
+          '#s_3_l > tbody > tr > td[id$="First_Name"] > input[name="First_Name"]',
           salesExName[0].toUpperCase()
         );
         await click(
@@ -1137,7 +1137,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           el.click()
         );
         console.log("step 1 hypothecation");
-        await page.$eval('td[id="1_s_4_l_Name"]', (el) => el.click());
+        await page.$eval('td[id$="Name"]', (el) => el.click());
         await typeText(
           page,
           'input[aria-labelledby="s_4_l_Name "]',
@@ -1315,13 +1315,13 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         'div > button[aria-label="Line Items:Vehicle Allotment"]'
       );
       //end
-      await page.waitForSelector("td[id='1_s_1_l_TMI_HSN']", { visible: true });
+      await page.waitForSelector("td[id$='TMI_HSN']", { visible: true });
       //Here get hsn code
       await page.waitForFunction(
-        () => !!document.querySelector('td[id="1_s_1_l_TMI_HSN"]').textContent
+        () => !!document.querySelector('td[id$="TMI_HSN"]').textContent
       );
       hsnCode = await page.evaluate(
-        () => document.querySelector('td[id="1_s_1_l_TMI_HSN"]').textContent
+        () => document.querySelector('td[id$="TMI_HSN"]').textContent
       );
       await click(page, 'div > button[aria-label="Vehicles:New"]');
       //await page.waitForTimeout(3000);
@@ -1347,7 +1347,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           page,
           'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
           "*" + frameNo
-        ); //todo not fill
+        );
         await page.keyboard.press("Enter");
         //30-11-21
         await page.waitForSelector(
@@ -1382,52 +1382,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           page,
           'div > button[aria-label="Sales Invoice:Generate Invoice"]'
         );
-        //Invoice End
-
-        // await page.waitForFunction(
-        //   () =>
-        //     !!document.querySelector("input[name='TMI_Invoice_Number']").value,
-        //   { timeout: 360000 }
-        // );
-
-        // invoiceNo = await page.evaluate(
-        //   () => document.querySelector("input[name='TMI_Invoice_Number']").value
-        // );
       }
-      //end date 25/11/21
-      // await page.goBack();
-
-      // await page.waitForSelector("div[title='Third Level View Bar']", {
-      //   visible: true,
-      // });
-      // const invoiceTabs = await page.$$eval(
-      //   "div[title='Third Level View Bar'] .ui-tabs-tab.ui-corner-top.ui-state-default.ui-tab > a",
-      //   (tabs) =>
-      //     tabs.map((tab) => {
-      //       return {
-      //         name: tab.textContent,
-      //         id: tab.id,
-      //       };
-      //     })
-      // );
-      // const invoiceButton = invoiceTabs.find((item) =>
-      //   item.name.includes("Invoice")
-      // );
-      // await page.$eval(`#${invoiceButton.id}`, (el) => el.click());
-
-      // await click(
-      //   page,
-      //   'div > button[aria-label="Sales Invoice:Generate Invoice"]'
-      // );
-      // //date 10-07-2021
-      // await click(
-      //   page,
-      //   'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="1_s_2_l_TMI_Ref_Number s_2_l_TMI_Invoice_Key_No "]'
-      // );
-      await page.waitForSelector('td[id="1_s_2_l_TMI_Invoice_Key_No"]', {
+      //Invoice End
+      await page.waitForSelector('td[id$="TMI_Invoice_Key_No"]', {
         visible: true,
       });
-      await click(page, 'td[id="1_s_2_l_TMI_Invoice_Key_No"]');
+      await click(page, 'td[id$="TMI_Invoice_Key_No"]');
       await page.waitForSelector('input[name="TMI_Invoice_Key_No"]', {
         visible: true,
       });
@@ -1436,12 +1396,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         'input[name="TMI_Invoice_Key_No"]',
         data.vehicleInfo.keyNo
       ); //todo add key no mobile app and db
-      // await click(
-      //   page,
-      //   'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Faktur_Number "]'
-      // );
-      //await page.waitForSelector('td[id="1_s_2_l_TMI_Faktur_Number"]', { visible: true });
-      await click(page, 'td[id="1_s_2_l_TMI_Faktur_Number"]');
+
+      await click(page, 'td[id$="TMI_Faktur_Number"]');
       await page.waitForSelector('input[name="TMI_Faktur_Number"]', {
         visible: true,
       });
@@ -1450,14 +1406,13 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         'input[name="TMI_Faktur_Number"]',
         data.vehicleInfo.batteryNO
       ); //todo add battery number mobile app and db
-      // await click(page,'table[summary="Sales Invoice"] > tbody > tr[role="row"] > td[data-labelledby="s_2_l_TMI_Booklet_Number "]');
-      // await page.waitForSelector('td[id="1_s_2_l_TMI_Booklet_Number"]', { visible: true });
-      await click(page, 'td[id="1_s_2_l_TMI_Booklet_Number"]');
+
+      await click(page, 'td[id$="TMI_Booklet_Number"]');
       await page.waitForSelector('input[name="TMI_Booklet_Number"]', {
         visible: true,
       });
       await typeText(page, 'input[name="TMI_Booklet_Number"]', "0"); //todo add Booklet number mobile app and db
-      await click(page, 'td[id="1_s_2_l_TMI_Riding_Trainer_Flag"]'); //todo add riding number mobile app and db
+      await click(page, 'td[id$="TMI_Riding_Trainer_Flag"]'); //todo add riding number mobile app and db
       await click(
         page,
         'input[aria-labelledby="s_2_l_TMI_Riding_Trainer_Flag s_2_l_altCombo"]+span'
@@ -1480,7 +1435,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
       await page.waitForSelector(`#${ridingTypeButton.id}`, { visible: true });
       await page.$eval(`#${ridingTypeButton.id}`, (el) => el.click());
-      await click(page, 'td[id="1_s_2_l_TMI_PDSA_Flag"]'); //todo add pdsaGiven  mobile app and db
+      await click(page, 'td[id$="TMI_PDSA_Flag"]'); //todo add pdsaGiven  mobile app and db
       await click(
         page,
         'input[aria-labelledby="s_2_l_TMI_PDSA_Flag s_2_l_altCombo"]+span'
@@ -1509,16 +1464,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.$eval("td[role='gridcell'] > a", (el) => el.click());
       await click(page, 'div > button[data-display="Permanent Invoice"]');
 
-      // await page.waitForFunction(
-      //   () =>
-      //     !!document.querySelector("input[name='TMI_Invoice_Number']").value,
-      //   { timeout: 360000 }
-      // );
-
-      // await page.waitForSelector("input[name='TMI_Invoice_Number']", { visible: true });
-      // invoiceNo = await page.evaluate(
-      //   () => document.querySelector("input[name='TMI_Invoice_Number']").value
-      // );
 
       // await waitForRandom();
       console.log("step 1");
