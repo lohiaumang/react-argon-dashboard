@@ -1340,21 +1340,25 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         // await waitForRandom();
         let frameNo = data.vehicleInfo.frameNumber.slice(12, 17);
         await page.waitForSelector(
-          'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
+          'input[name="Serial_Number"]',
           { visible: true }
         );
-        await typeText(
-          page,
-          'input[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
-          "*" + frameNo
+        await typeText(page, 'input[name="Serial_Number"]', `*${frameNo}`);  //todo not fill
+
+        await page.waitForFunction(
+          (frameNo) =>
+            document.querySelector('input[name="Serial_Number"]').value ===
+            `*${frameNo}`,
+          {},
+          frameNo
         );
         await page.keyboard.press("Enter");
         //30-11-21
-        await page.waitForSelector(
-          '#s_3_l > tbody > tr[role="row"] > td[aria-labelledby=" s_3_l_Serial_Number s_3_l_altpick"]',
-          { visible: true }
-        );
-        await click(page, 'div > button[aria-label="Vehicles:New"]');
+        // await page.waitForSelector(
+        //   'table[summary="Pick Vehicle"]',
+        //   { visible: true }
+        // );
+        //await click(page, 'button[aria-label="Pick Vehicle:OK"]');
 
         await page.goBack();
 
@@ -1377,7 +1381,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           item.name.includes("Invoice")
         );
         await page.$eval(`#${invoiceButton.id}`, (el) => el.click());
-
         await click(
           page,
           'div > button[aria-label="Sales Invoice:Generate Invoice"]'
@@ -1432,7 +1435,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           })
       );
       const ridingTypeButton = ridingType.find((item) => item.name === "N");
-
       await page.waitForSelector(`#${ridingTypeButton.id}`, { visible: true });
       await page.$eval(`#${ridingTypeButton.id}`, (el) => el.click());
       await click(page, 'td[id$="TMI_PDSA_Flag"]'); //todo add pdsaGiven  mobile app and db
