@@ -859,7 +859,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await page.waitForSelector('button[aria-label="Enquiries:New"]', {
           visible: true,
         });
-        console.log("Hello");
         // await waitForRandom();
         await page.waitForSelector("td[role='gridcell'] > a", {
           visible: true,
