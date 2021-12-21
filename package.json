@@ -56,6 +56,19 @@
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
+  "build": {
+    "win": {
+      "icon": "./public/favicon.ico"
+    }
+  },
+  "files": [
+    "./build/**/*",
+    "./node_modules/**/*",
+    "./public/**/*"
+  ],
+  "directories": {
+    "buildResources": "public"
+  },
   "eslintConfig": {
     "extends": "react-app"
   },
