@@ -95,6 +95,7 @@
     "concurrently": "^6.1.0",
     "cross-env": "^7.0.3",
     "electron": "^13.1.2",
+    "electron-builder": "^22.14.5",
     "electron-wix-msi": "^3.2.0",
     "wait-on": "^5.3.0"
   },
