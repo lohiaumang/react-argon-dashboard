@@ -1029,7 +1029,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }}
                           placeholder="Enter Address Line 1"
                           type="text"
-                          maxlength="60"
+                          maxlength="36"
                         />
                       </FormGroup>
                     </Col>
@@ -1056,7 +1056,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }}
                           placeholder="Enter Address Line 2"
                           type="text"
-                          maxlength="40"
+                          maxlength="36"
                         />
                       </FormGroup>
                     </Col>
@@ -1085,7 +1085,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }}
                           placeholder="Enter Police Station"
                           type="text"
-                          maxlength="20"
+                          maxlength="36"
                         />
                       </FormGroup>
                     </Col>
@@ -1324,7 +1324,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               }}
                               placeholder="Enter Address Line 1"
                               type="text"
-                              maxlength="60"
+                              maxlength="36"
                             />
                           </FormGroup>
                         </Col>
@@ -1351,7 +1351,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               }}
                               placeholder="Enter Address Line 2"
                               type="text"
-                              maxlength="40"
+                              maxlength="36"
                             />
                           </FormGroup>
                         </Col>
@@ -1406,7 +1406,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               }}
                               placeholder="Enter Police Station"
                               type="text"
-                              maxlength="20"
+                              maxlength="36"
                             />
                           </FormGroup>
                         </Col>

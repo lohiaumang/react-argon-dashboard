@@ -1,5 +1,4 @@
 module.exports = async function (mainWindow, browser) {
-  require("dotenv").config({ path: __dirname + "/.env" });
   const path = require("path");
   const fs = require("fs");
   const { ipcMain: ipc, BrowserWindow } = require("electron");
@@ -244,7 +243,6 @@ module.exports = async function (mainWindow, browser) {
             height: 750,
             width: 1200,
             frame: true,
-            icon: path.join(__dirname, "../favicon.ico"),
           });
 
           // erpWindow.webContents.openDevTools({ mode: "undocked" });
@@ -285,7 +283,6 @@ module.exports = async function (mainWindow, browser) {
             height: 750,
             width: 1200,
             frame: true,
-            icon: path.join(__dirname, "../favicon.ico"),
             resizable: false,
           });
           await insuranceWindow.loadURL(
@@ -347,7 +344,6 @@ module.exports = async function (mainWindow, browser) {
             width: 1200,
             // TODO: Might want to change this to false
             frame: true,
-            icon: path.join(__dirname, "../favicon.ico"),
             webPreferences: {
               preload: path.join(__dirname, "./js/vahan.js"),
               backgroundThrottling: false,
