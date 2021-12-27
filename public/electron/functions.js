@@ -55,7 +55,9 @@ module.exports = async function (mainWindow, browser) {
       let { type = "", data = {} } = args;
 
       const getCredentials = () => {
-        let credentials = JSON.parse(localDataStore.get("credentials"));
+        let credentials = localDataStore.get("credentials")
+          ? JSON.parse(localDataStore.get("credentials"))
+          : null;
         console.log(credentials, "print get credentials");
 
         // try {
@@ -109,7 +111,9 @@ module.exports = async function (mainWindow, browser) {
         }
         case "GET_DEALER": {
           // let userData;
-          let userData = JSON.parse(localDataStore.get("delearData"));
+          let userData = localDataStore.get("delearData")
+            ? JSON.parse(localDataStore.get("delearData"))
+            : null;
           // try {
           //   userData =
           //     JSON.parse(
