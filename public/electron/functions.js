@@ -10,6 +10,9 @@ module.exports = async function (mainWindow, browser) {
   const devDbConfig = require("../dbConfig/devDbConfig.js");
   const productionDbConfig = require("../dbConfig/productionDbConfig.js");
   const isDev = require("electron-is-dev");
+  const Store = require('electron-store');
+
+  const cridancialData = new Store();
   var firebase = require("firebase/app");
   require("firebase/auth");
   require("firebase/functions");
@@ -52,18 +55,19 @@ module.exports = async function (mainWindow, browser) {
       let { type = "", data = {} } = args;
 
       const getCredentials = () => {
-        let credentials;
+        let credentials=JSON.parse(cridancialData.get('credentials'));
+        console.log(credentials,"print get credentials");
 
-        try {
-          credentials =
-            JSON.parse(
-              fs.readFileSync(
-                path.join(__dirname, "../dataStore/credentials.json")
-              )
-            ) || null;
-        } catch (err) {
-          credentials = null;
-        }
+        // try {
+        //   credentials =
+        //     JSON.parse(
+        //       fs.readFileSync(
+        //         path.join(__dirname, "../dataStore/credentials.json")
+        //       )
+        //     ) || null;
+        // } catch (err) {
+        //   credentials = null;
+        // }
 
         return credentials;
       };
@@ -77,13 +81,15 @@ module.exports = async function (mainWindow, browser) {
             .then((resp) => {
               const uid = resp.data.uid || "";
               delete data.password;
-              fs.writeFileSync(
-                path.join(__dirname, "../dataStore/user-info.json"),
-                JSON.stringify({
-                  ...data,
-                  uid,
-                })
-              );
+              cridancialData.delete('delearData');
+              cridancialData.set('delearData', JSON.stringify({...data,uid}));
+              // fs.writeFileSync(
+              //   path.join(__dirname, "../dataStore/user-info.json"),
+              //   JSON.stringify({
+              //     ...data,
+              //     uid,
+              //   })
+              // );
               mainWindow.webContents.send("fromMain", {
                 type: "CREATE_DEALER_SUCCESS",
                 resp,
@@ -99,17 +105,18 @@ module.exports = async function (mainWindow, browser) {
           break;
         }
         case "GET_DEALER": {
-          let userData;
-          try {
-            userData =
-              JSON.parse(
-                fs.readFileSync(
-                  path.join(__dirname, "../dataStore/user-info.json")
-                )
-              ) || null;
-          } catch (err) {
-            userData = null;
-          }
+         // let userData;
+          let userData=JSON.parse(cridancialData.get('delearData'));
+          // try {
+          //   userData =
+          //     JSON.parse(
+          //       fs.readFileSync(
+          //         path.join(__dirname, "../dataStore/user-info.json")
+          //       )
+          //     ) || null;
+          // } catch (err) {
+          //   userData = null;
+          // }
 
           if (userData === null || userData.uid !== data.uid) {
             firebase
@@ -152,10 +159,12 @@ module.exports = async function (mainWindow, browser) {
         }
         case "SET_DEALER": {
           try {
-            fs.writeFileSync(
-              path.join(__dirname, "../dataStore/user-info.json"),
-              JSON.stringify(data)
-            );
+            cridancialData.delete('delearData');
+            cridancialData.set('delearData', JSON.stringify({data}));
+            // fs.writeFileSync(
+            //   path.join(__dirname, "../dataStore/user-info.json"),
+            //   JSON.stringify(data)
+            // );
             mainWindow.webContents.send("fromMain", {
               type: "SET_DEALER_SUCCESS",
             });
@@ -211,12 +220,16 @@ module.exports = async function (mainWindow, browser) {
         //Creeate userid and password for automation
         case "SET_CREDENTIALS": {
           const credentials = data.config;
-          fs.writeFileSync(
-            path.join(__dirname, "../dataStore/credentials.json"),
-            JSON.stringify({
-              credentials,
-            })
-          );
+          //console.log(credentials,"print cridencial");
+          cridancialData.delete('credentials');
+          cridancialData.set('credentials', JSON.stringify({credentials}));
+          //console.log(cridancialData.get('credentials'));
+          // fs.writeFileSync(
+          //   path.join(__dirname, "../dataStore/credentials.json"),
+          //   JSON.stringify({
+          //     credentials,
+          //   })
+          // );
           break;
         }
         //get useid and password

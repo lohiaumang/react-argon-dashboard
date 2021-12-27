@@ -122,6 +122,7 @@ const Settings: React.FC = () => {
       switch (data.type) {
         case "GET_CREDENTIALS_SUCCESS": {
           setCredentialConfig(data.userData.credentials);
+          console.log(data.userData.credentials);
           return;
         }
         case "GET_CREDENTIALS_FAILURE": {
@@ -169,6 +170,7 @@ const Settings: React.FC = () => {
 
   //set userid and password
   const saveCredentialsConfig = (config: Config) => {
+    debugger;
     try {
       if (config) {
         window.api.send("toMain", {
