@@ -10,9 +10,9 @@ module.exports = async function (mainWindow, browser) {
   const devDbConfig = require("../dbConfig/devDbConfig.js");
   const productionDbConfig = require("../dbConfig/productionDbConfig.js");
   const isDev = require("electron-is-dev");
-  const Store = require('electron-store');
+  const Store = require("electron-store");
 
-  const cridancialData = new Store();
+  const localDataStore = new Store();
   var firebase = require("firebase/app");
   require("firebase/auth");
   require("firebase/functions");
@@ -55,8 +55,8 @@ module.exports = async function (mainWindow, browser) {
       let { type = "", data = {} } = args;
 
       const getCredentials = () => {
-        let credentials=JSON.parse(cridancialData.get('credentials'));
-        console.log(credentials,"print get credentials");
+        let credentials = JSON.parse(localDataStore.get("credentials"));
+        console.log(credentials, "print get credentials");
 
         // try {
         //   credentials =
@@ -81,8 +81,11 @@ module.exports = async function (mainWindow, browser) {
             .then((resp) => {
               const uid = resp.data.uid || "";
               delete data.password;
-              cridancialData.delete('delearData');
-              cridancialData.set('delearData', JSON.stringify({...data,uid}));
+              localDataStore.delete("delearData");
+              localDataStore.set(
+                "delearData",
+                JSON.stringify({ ...data, uid })
+              );
               // fs.writeFileSync(
               //   path.join(__dirname, "../dataStore/user-info.json"),
               //   JSON.stringify({
@@ -105,8 +108,8 @@ module.exports = async function (mainWindow, browser) {
           break;
         }
         case "GET_DEALER": {
-         // let userData;
-          let userData=JSON.parse(cridancialData.get('delearData'));
+          // let userData;
+          let userData = JSON.parse(localDataStore.get("delearData"));
           // try {
           //   userData =
           //     JSON.parse(
@@ -159,8 +162,8 @@ module.exports = async function (mainWindow, browser) {
         }
         case "SET_DEALER": {
           try {
-            cridancialData.delete('delearData');
-            cridancialData.set('delearData', JSON.stringify({data}));
+            localDataStore.delete("delearData");
+            localDataStore.set("delearData", JSON.stringify({ data }));
             // fs.writeFileSync(
             //   path.join(__dirname, "../dataStore/user-info.json"),
             //   JSON.stringify(data)
@@ -221,9 +224,9 @@ module.exports = async function (mainWindow, browser) {
         case "SET_CREDENTIALS": {
           const credentials = data.config;
           //console.log(credentials,"print cridencial");
-          cridancialData.delete('credentials');
-          cridancialData.set('credentials', JSON.stringify({credentials}));
-          //console.log(cridancialData.get('credentials'));
+          localDataStore.delete("credentials");
+          localDataStore.set("credentials", JSON.stringify({ credentials }));
+          //console.log(localDataStore.get('credentials'));
           // fs.writeFileSync(
           //   path.join(__dirname, "../dataStore/credentials.json"),
           //   JSON.stringify({
@@ -325,11 +328,11 @@ module.exports = async function (mainWindow, browser) {
                 insuranceDetails: {
                   modelName:
                     data.insuranceDetails[data.vehicleInfo.modelName][
-                    `${insuranceCompany.toLowerCase()}ModelName`
+                      `${insuranceCompany.toLowerCase()}ModelName`
                     ],
                   userRate:
                     data.insuranceDetails[data.vehicleInfo.modelName][
-                    "userRate"
+                      "userRate"
                     ],
                 },
                 // priceDetails: priceDetails[data.vehicleInfo.modelName],
