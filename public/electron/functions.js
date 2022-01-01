@@ -12,6 +12,7 @@ module.exports = async function (mainWindow, browser) {
   const isDev = require("electron-is-dev");
   const Store = require("electron-store");
 
+
   const localDataStore = new Store();
   var firebase = require("firebase/app");
   require("firebase/auth");
@@ -30,7 +31,7 @@ module.exports = async function (mainWindow, browser) {
   //   appId: "1:820359446551:web:548a78cbb34d4805839c52",
   //   measurementId: "G-G3NJR57E7H",
   // };
-
+  
   if (!firebase.apps.length) {
     // TODO: check dev or prod
     if (isDev) {
