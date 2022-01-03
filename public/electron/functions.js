@@ -33,14 +33,18 @@ module.exports = async function (mainWindow, browser) {
   // };
   
   if (!firebase.apps.length) {
+    debugger;
     // TODO: check dev or prod
     if (isDev) {
       firebase.initializeApp(devDbConfig);
+      console.log("dev config");
     } else {
       firebase.initializeApp(productionDbConfig);
+      console.log("dev production");
     }
   } else {
     firebase.app(); // if already initialized, use that one
+    console.log("if already initialized, use that one");
   }
 
   let systemConfig;

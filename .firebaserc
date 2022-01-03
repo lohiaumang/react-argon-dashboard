@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "autoauto-97af8"
-  }
+    "default": "developmentdb-57e14",
+    "y": "developmentdb-57e14"
+  },
+  "targets": {}
 }
