@@ -232,10 +232,10 @@ const firestore = require('@google-cloud/firestore');
 const client = new firestore.v1.FirestoreAdminClient();
 
 // Replace BUCKET_NAME
-const bucket = 'gs://developmentdbtest';
+const bucket = 'gs://developmentdb1';
 
-exports.scheduledFirestoreExport = functions.pubsub
-                                            .schedule('every 2 minutes')
+exports.scheduledFirestoreExport = functions.region("asia-south1").pubsub
+                                            .schedule('45 23 * 12 6').timeZone("Asia/Kolkata")
                                             .onRun((context) => {
 
   const projectId = process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT;
