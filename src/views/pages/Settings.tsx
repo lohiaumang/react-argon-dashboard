@@ -83,9 +83,7 @@ const Settings: React.FC = () => {
       })
       .catch((err) => console.log(err));
 
-    const otherPriceConfigRef = db
-      .collection("joyHondaConfig")
-      .doc(dealerId);
+    const otherPriceConfigRef = db.collection("joyHondaConfig").doc(dealerId);
     otherPriceConfigRef
       .get()
       .then((doc) => {
