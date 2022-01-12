@@ -15,7 +15,6 @@ export interface DealerInfo {
   address: string;
   temporaryCertificate: string;
   uid: string;
-
 }
 
 export interface DeliveryOrder {
@@ -83,6 +82,9 @@ export interface DeliveryOrder {
     modelName: string;
     modelCategory: string;
     hsnCode?: string;
+    srNo?: string;
+    batteryNO?: string;
+    keyNo?: string;
   };
   stateInfo?: {
     districts: string;
@@ -131,11 +133,11 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
       dealerInfo
     ) {
       const [otherConfig, setOtherConfig] = useState<any>();
-      const price = parseInt(additionalInfo.price);
-      const insurance = parseInt(additionalInfo.insuranceDeclaredValue);
-      const mvTax = parseInt(additionalInfo.roadTaxWithRc);
-      const postalCharge = parseInt(additionalInfo.postalCharge);
-      const accessories = parseInt(additionalInfo.accessories);
+      const price = parseInt(additionalInfo.price || "0");
+      const insurance = parseInt(additionalInfo.insuranceDeclaredValue || "0");
+      const mvTax = parseInt(additionalInfo.roadTaxWithRc || "0");
+      const postalCharge = parseInt(additionalInfo.postalCharge || "0");
+      const accessories = parseInt(additionalInfo.accessories || "0");
       const joyClub =
         additionalInfo.joyClub === "true" && otherConfig
           ? parseInt(otherConfig["joyClub"])
@@ -148,6 +150,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
         ? parseInt(otherConfig[additionalInfo.extendedWarranty] || "0")
         : 0;
       const ptfe = parseInt(additionalInfo.ptfePolish || "0");
+      debugger;
       let total =
         price +
         insurance +
@@ -292,14 +295,16 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
             </Row>
             <Row className="p-1 border border-right-0 border-left-0 border-primary w-100">
               <Col xs="6" className="p-0">
-                <Row>
-                  <Col xs="4" className="px-1">
-                    <h5 className="m-0">Model Name</h5>
-                  </Col>
-                  <Col xs="8" className="px-1">
-                    <small>{vehicleInfo.modelName}</small>
-                  </Col>
-                </Row>
+                {vehicleInfo.modelName && (
+                  <Row>
+                    <Col xs="4" className="px-1">
+                      <h5 className="m-0">Model Name</h5>
+                    </Col>
+                    <Col xs="8" className="px-1">
+                      <small>{vehicleInfo.modelName}</small>
+                    </Col>
+                  </Row>
+                )}
                 {additionalInfo.financier && (
                   <Row>
                     <Col xs="4" className="px-1">

@@ -146,7 +146,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                   <small>{props.deliveryOrder.customerInfo.email}</small>
                 </Col>
               </Row>
-              <Row>
+              {/* <Row>
                 <Col xs="4" className="px-1">
                   <h6>Ref 1</h6>
                 </Col>
@@ -161,7 +161,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                 <Col xs="8" className="px-1">
                   <small></small>
                 </Col>
-              </Row>
+              </Row> */}
 
               <Row>
                 <Col xs="4" className="px-1">
@@ -215,22 +215,24 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                   </Col>
                 </Row>
               )}
-              <Row>
-                <Col xs="4" className="px-1">
-                  <h6 className="m-0">Salesman</h6>
-                </Col>
-                <Col xs="8" className="px-1">
-                  <small></small>
-                </Col>
-              </Row>
-              <Row>
+              {props.deliveryOrder.salesEx && (
+                <Row>
+                  <Col xs="4" className="px-1">
+                    <h6 className="m-0">Salesman</h6>
+                  </Col>
+                  <Col xs="8" className="px-1">
+                    <small>{props.deliveryOrder.salesEx}</small>
+                  </Col>
+                </Row>
+              )}
+              {/* <Row>
                 <Col xs="4" className="px-1">
                   <h6 className="m-0">Mobile No</h6>
                 </Col>
                 <Col xs="8" className="px-1">
                   <small></small>
                 </Col>
-              </Row>
+              </Row> */}
               <Row>
                 <Col xs="4" className="px-1">
                   <h6 className="m-0">State of supply</h6>
@@ -249,32 +251,42 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
               </Row>
             </Col>
             <Col xs="6" className="p-0">
-              <Row>
-                <Col xs="4" className="px-1">
-                  <h6 className="m-0">Booking No</h6>
-                </Col>
-                <Col xs="8" className="px-1">
-                  <small></small>
-                </Col>
-              </Row>
-
-              <Row>
-                <Col xs="4" className="px-1">
-                  <h6>Battery No</h6>
-                </Col>
-                <Col xs="8" className="px-1">
-                  <small></small>
-                </Col>
-              </Row>
-
-              <Row>
-                <Col xs="4" className="px-1">
-                  <h6 className="m-0">Key No</h6>
-                </Col>
-                <Col xs="8" className="px-1">
-                  <small></small>
-                </Col>
-              </Row>
+              {props.deliveryOrder.vehicleInfo.srNo && (
+                <Row>
+                  <Col xs="4" className="px-1">
+                    <h6 className="m-0">Booking No</h6>
+                  </Col>
+                  <Col xs="8" className="px-1">
+                    <small>
+                      {props.deliveryOrder.vehicleInfo.srNo.toUpperCase()}
+                    </small>
+                  </Col>
+                </Row>
+              )}
+              {props.deliveryOrder.vehicleInfo.batteryNO && (
+                <Row>
+                  <Col xs="4" className="px-1">
+                    <h6>Battery No</h6>
+                  </Col>
+                  <Col xs="8" className="px-1">
+                    <small>
+                      {props.deliveryOrder.vehicleInfo.batteryNO.toUpperCase()}
+                    </small>
+                  </Col>
+                </Row>
+              )}
+              {props.deliveryOrder.vehicleInfo.keyNo && (
+                <Row>
+                  <Col xs="4" className="px-1">
+                    <h6 className="m-0">Key No</h6>
+                  </Col>
+                  <Col xs="8" className="px-1">
+                    <small>
+                      {props.deliveryOrder.vehicleInfo.keyNo.toUpperCase()}
+                    </small>
+                  </Col>
+                </Row>
+              )}
               <Row>
                 <Col xs="4" className="px-1">
                   <h6 className="m-0">Purchase Type</h6>
@@ -360,7 +372,9 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
             <tbody>
               <tr>
                 <th>{props.deliveryOrder.vehicleInfo.modelName}</th>
-                <td>{props.hsnCode || props.deliveryOrder.vehicleInfo.hsnCode}</td>
+                <td>
+                  {props.hsnCode || props.deliveryOrder.vehicleInfo.hsnCode}
+                </td>
                 <td>
                   <NumberFormat
                     value={props.deliveryOrder.additionalInfo.price}
@@ -490,7 +504,9 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
             <tbody>
               <tr>
                 <th>Handling & Logistics Charge</th>
-                <td>{props.hsnCode || props.deliveryOrder.vehicleInfo.hsnCode}</td>
+                <td>
+                  {props.hsnCode || props.deliveryOrder.vehicleInfo.hsnCode}
+                </td>
                 <td>
                   <NumberFormat
                     value={1627}

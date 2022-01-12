@@ -1,3 +1,5 @@
+const { padEnd } = require("lodash");
+
 module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
   const { click, typeText } = require("./helper");
   const { enquiryType, customerCategory } = require("../enums");
@@ -9,38 +11,38 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
   const stateCodes = {
     "ANDAMAN AND NICOBAR": "AN",
     "ARUNACHAL PRADESH": "AR",
-    "ASSAM": "AS",
+    ASSAM: "AS",
     "ANDHRA PRADESH": "AP",
-    "BIHAR": "BR",
-    "DELHI": "Delhi",
-    "CHANDIGARH": "CG",
-    "CHHATTISGARH": "CH",
+    BIHAR: "BR",
+    DELHI: "Delhi",
+    CHANDIGARH: "CG",
+    CHHATTISGARH: "CH",
     "DAMAN AND DIU": "DD",
-    "GOA": "Goa",
-    "GUJARAT": "Gujarat",
+    GOA: "Goa",
+    GUJARAT: "Gujarat",
     "HIMACHAL PRADESH": "HP",
-    "HARYANA": "Haryana",
-    "JHARKHAND": "Jharkhand",
+    HARYANA: "Haryana",
+    JHARKHAND: "Jharkhand",
     "JAMMU AND KASHMIR": "JK",
-    "KARNATAKA": "Karnataka",
-    "KERALA": "Kerala",
-    "LAKSHADWEEP": "LD",
+    KARNATAKA: "Karnataka",
+    KERALA: "Kerala",
+    LAKSHADWEEP: "LD",
     "DADRA AND NAGAR HAVELI": "DN",
-    "MAHARASHTRA": "MH",
-    "MANIPUR": "Manipur",
+    MAHARASHTRA: "MH",
+    MANIPUR: "Manipur",
     "MADHYA PRADESH": "MP",
     "TAMIL NADU": "Tamil Nadu",
-    "MIZORAM": "MZ",
-    "NAGALAND": "Nagaland",
-    "ORISSA": "Odisha",
-    "PUNJAB": "Punjab",
-    "PUDUCHERRY": "PY",
-    "RAJASTHAN": "Rajasthan",
-    "SIKKIM": "SK",
-    "MEGHALAYA": "ML",
-    "TELANGANA": "Telangana",
-    "TRIPURA": "Tripura",
-    "UTTARAKHAND": "UK",
+    MIZORAM: "MZ",
+    NAGALAND: "Nagaland",
+    ORISSA: "Odisha",
+    PUNJAB: "Punjab",
+    PUDUCHERRY: "PY",
+    RAJASTHAN: "Rajasthan",
+    SIKKIM: "SK",
+    MEGHALAYA: "ML",
+    TELANGANA: "Telangana",
+    TRIPURA: "Tripura",
+    UTTARAKHAND: "UK",
     "UTTAR PRADESH": "UP",
     "WEST BENGAL": "WB",
     // TODO: Add all states codes here
@@ -86,6 +88,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
     await page.waitForTimeout((Math.random() + 1) * 1000);
   }
   //end
+
   async function automate() {
     let done = false;
     let hsnCode = "";
@@ -453,18 +456,18 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           );
 
           // Gender
-          console.log("click gender 1");
+
           await page.waitForSelector('button[aria-label="Enquiries:Go"]', {
             visible: true,
           });
-          console.log("click gender 2");
+
           await click(page, 'input[aria-label="Gender"] + span');
-          console.log("click gender 3");
+
           await page.waitForSelector(
             "ul[role='combobox']:not([style*='display: none'])",
             { visible: true }
           );
-          console.log("click gender 4");
+
           let genderType = await page.$$eval(
             "ul[role='combobox']:not([style*='display: none']) > li > div",
             (listItems) =>
@@ -925,7 +928,13 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
         (el) => el.click()
       );
-      await waitForRandom();
+
+      await page.waitForSelector(
+        'button[aria-label="Line Items:Vehicle Allotment"]',
+        {
+          visible: true,
+        }
+      );
       await page.waitForSelector('button[name="s_2_1_27_0"]', {
         visible: true,
       });
@@ -978,61 +987,94 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.waitForSelector('input[aria-label="Temporary Address"]+span', {
         visible: true,
       });
-      await click(page, 'input[aria-label="Temporary Address"]+span');
-      await page.waitForSelector('button[aria-label="Contact Addresses:New"]', {
-        visible: true,
-      });
-      await click(page, 'button[aria-label="Contact Addresses:New"]');
-      await page.waitForSelector('input[aria-label="Address Line 1"]', {
-        visible: true,
-      });
-      await typeText(
-        page,
-        'input[aria-label="Address Line 1"]',
-        data.customerInfo.permLineOne
+      const addressPermLineOne = await page.evaluate(
+        () =>
+          document.querySelector('input[aria-label="Temporary Address"]').value
       );
-      await typeText(
-        page,
-        'input[aria-label="Address Line 2"]',
-        data.customerInfo.permLineTwo
-      );
-      //select state
-      await click(page, 'input[aria-label="State"] + span');
-      await page.waitForSelector(
-        "ul[role='combobox']:not([style*='display: none'])",
-        { visible: true }
-      );
-      let state = await page.$$eval(
-        "ul[role='combobox']:not([style*='display: none']) > li > div",
-        (listItems) =>
-          listItems.map((item) => {
-            return {
-              name: item.textContent,
-              id: item.id,
-            };
-          })
-      );
+      console.log(addressPermLineOne, "erp adddress");
+      console.log(data.customerInfo.permLineOne, "db address");
+      if (addressPermLineOne !== data.customerInfo.permLineOne) {
+        await click(page, 'input[aria-label="Temporary Address"]+span');
+        await page.waitForSelector(
+          'button[aria-label="Contact Addresses:New"]',
+          {
+            visible: true,
+          }
+        );
+        await click(page, 'button[aria-label="Contact Addresses:New"]');
+        await page.waitForSelector('input[aria-label="Address Line 1"]', {
+          visible: true,
+        });
 
-      const stateCode = stateCodes[data.customerInfo.permState.toUpperCase()];
-      const stateButton = state.find((item) => item.name === stateCode);
-      await page.waitForSelector(`#${stateButton.id}`, { visible: true });
-      await page.$eval(`#${stateButton.id}`, (el) => el.click());
+        await typeText(
+          page,
+          'input[aria-label="Address Line 1"]',
+          data.customerInfo.permLineOne
+        );
+        await typeText(
+          page,
+          'input[aria-label="Address Line 2"]',
+          data.customerInfo.permLineTwo
+        );
+        //select state
+        await click(page, 'input[aria-label="State"] + span');
+        await page.waitForSelector(
+          "ul[role='combobox']:not([style*='display: none'])",
+          { visible: true }
+        );
+        let state = await page.$$eval(
+          "ul[role='combobox']:not([style*='display: none']) > li > div",
+          (listItems) =>
+            listItems.map((item) => {
+              return {
+                name: item.textContent,
+                id: item.id,
+              };
+            })
+        );
 
-      await typeText(
-        page,
-        'input[aria-label="Zip Code"]',
-        data.customerInfo.permPostal
-      );
-      await page.waitForSelector(
-        'button[aria-label="Contact Addresses:Save"]',
-        { visible: true }
-      );
-      await click(page, 'button[aria-label="Contact Addresses:Save"]');
-      await page.waitForSelector('button[aria-label="Contact Addresses:OK"]', {
-        visible: true,
-      });
-      await click(page, 'button[aria-label="Contact Addresses:OK"]');
+        const stateCode = stateCodes[data.customerInfo.permState.toUpperCase()];
+        const stateButton = state.find((item) => item.name === stateCode);
+        await page.waitForSelector(`#${stateButton.id}`, { visible: true });
+        await page.$eval(`#${stateButton.id}`, (el) => el.click());
 
+        await typeText(
+          page,
+          'input[aria-label="Zip Code"]',
+          data.customerInfo.permPostal
+        );
+        await page.waitForSelector(
+          'button[aria-label="Contact Addresses:Save"]',
+          { visible: true }
+        );
+        await click(page, 'button[aria-label="Contact Addresses:Save"]');
+
+        /////testing alert box
+
+        // const handleDialog = async (dialog) => {
+        //   page.removeListener("dialog", handleDialog);
+
+        //   console.log(dialog.message(), dialog.type());
+        //   // await page.waitFor(5000);
+        //   // await dialog.dismiss();
+
+        //   // await page.keyboard.press("Enter");
+        // };
+        //page.on("dialog", handleDialog);
+        // page.keyboard.press("Enter");
+
+        //await page.evaluate(`window.confirm = () => true`);
+        // await page.waitForNavigation();
+        await page.waitForSelector(
+          'button[aria-label="Contact Addresses:OK"]',
+          {
+            visible: true,
+          }
+        );
+        await click(page, 'button[aria-label="Contact Addresses:OK"]');
+        //await page.waitForNavigation();
+      }
+      //await page.waitForNavigation();
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
       });
@@ -1341,20 +1383,51 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       if (data.vehicleInfo.frameNumber) {
         // await waitForRandom();
         let frameNo = data.vehicleInfo.frameNumber.slice(12, 17);
-        await page.waitForSelector(
-          'input[name="Serial_Number"]',
-          { visible: true }
-        );
-        await typeText(page, 'input[name="Serial_Number"]', `*${frameNo}`);  //todo not fill
+        await page.waitForSelector('input[name="Serial_Number"]', {
+          visible: true,
+        });
 
-        await page.waitForFunction(
-          (frameNo) =>
-            document.querySelector('input[name="Serial_Number"]').value ===
-            `*${frameNo}`,
-          {},
-          frameNo
+        const enterFrameNo = async (frameNo) => {
+          await typeText(page, 'input[name="Serial_Number"]', `*${frameNo}`); //todo not fill
+          await page.keyboard.press("Enter");
+          const hasInputField = await page.evaluate(
+            () => !!document.querySelector('input[name="Serial_Number"]'),
+            {
+              waitUntil: "networkidle2",
+            }
+          );
+
+          if (hasInputField) {
+            const typedFrameNo = await page.evaluate(
+              () => document.querySelector('input[name="Serial_Number"]').value,
+              {
+                waitUntil: "networkidle2",
+              }
+            );
+
+            if (typedFrameNo !== frameNo) {
+              return await enterFrameNo(frameNo);
+            }
+          }
+          return;
+        };
+
+        await enterFrameNo(frameNo);
+        ////checl dialogbox value
+        const dialogbox = await page.evaluate(
+          () =>
+            !!document.querySelector(
+              'div[class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable ui-resizable"]'
+            ),
+          {
+            waitUntil: "networkidle2",
+          }
         );
-        await page.keyboard.press("Enter");
+        console.log(dialogbox, "print dilogbox value");
+        if (dialogbox === false) {
+          process.exit();
+        }
+        await page.waitForNavigation();
         //30-11-21
         // await page.waitForSelector(
         //   'table[summary="Pick Vehicle"]',
@@ -1467,7 +1540,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.waitForSelector("td[role='gridcell'] > a", { visible: true });
       await page.$eval("td[role='gridcell'] > a", (el) => el.click());
       await click(page, 'div > button[data-display="Permanent Invoice"]');
-
 
       // await waitForRandom();
       console.log("step 1");

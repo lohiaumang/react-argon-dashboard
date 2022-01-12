@@ -119,6 +119,7 @@ const ConfigTable: React.FC<TableProps> = (props) => {
   };
 
   const readFile = (ev: React.SyntheticEvent) => {
+    debugger;
     const target = ev.target as HTMLInputElement;
     const files = target.files!;
     Papa.parse(files[0], {
@@ -129,6 +130,7 @@ const ConfigTable: React.FC<TableProps> = (props) => {
 
         try {
           results.data.forEach((entry: any) => {
+            // let trimmedEntry = entry.trim();
             if (Object.keys(entry).length !== headers.length) {
               return;
               // throw "Incorrect format";
@@ -138,7 +140,7 @@ const ConfigTable: React.FC<TableProps> = (props) => {
               (header: string, index: number) =>
                 !!index &&
                 (tempCurrConfig[entry["MODEL NAME"]][header] =
-                  entry[camelCaseToReadable(header).toUpperCase()])
+                  entry[camelCaseToReadable(header).toUpperCase().trim()])
             );
           });
         } catch (err) {

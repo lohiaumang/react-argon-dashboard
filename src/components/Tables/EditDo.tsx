@@ -386,10 +386,12 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
         keys.map((x) => {
           additionalInfo[x] = priceConfig[newModelName][x];
         });
+        vehicleInfo.modelName = newModelName;
 
         setCurrDo({
           ...currDo,
           additionalInfo,
+          vehicleInfo,
           modelName: event.target.value!,
         });
       }
@@ -916,10 +918,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }
                           height="auto"
                           width="200px"
-                        // onclick={enlargeImg()}
-                        // onClick={() => {
-                        //   enlargeImg();
-                        // }}
+                          // onclick={enlargeImg()}
+                          // onClick={() => {
+                          //   enlargeImg();
+                          // }}
                         ></img>
                       </Media>
                       {/* <Button
@@ -956,10 +958,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }
                           height="auto"
                           width="200px"
-                        // onclick={enlargeImg()}
-                        // onClick={() => {
-                        //   enlargeImg();
-                        // }}
+                          // onclick={enlargeImg()}
+                          // onClick={() => {
+                          //   enlargeImg();
+                          // }}
                         ></img>
                       </Media>
                     </Col>
@@ -990,10 +992,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }
                           height="auto"
                           width="200px"
-                        // onclick={enlargeImg()}
-                        // onClick={() => {
-                        //   enlargeImg();
-                        // }}
+                          // onclick={enlargeImg()}
+                          // onClick={() => {
+                          //   enlargeImg();
+                          // }}
                         ></img>
                       </Media>
                     </Col>
@@ -1029,7 +1031,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }}
                           placeholder="Enter Address Line 1"
                           type="text"
-                          maxlength="36"
+                          maxLength={36}
                         />
                       </FormGroup>
                     </Col>
@@ -1056,7 +1058,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }}
                           placeholder="Enter Address Line 2"
                           type="text"
-                          maxlength="36"
+                          maxLength={36}
                         />
                       </FormGroup>
                     </Col>
@@ -1085,7 +1087,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }}
                           placeholder="Enter Police Station"
                           type="text"
-                          maxlength="36"
+                          maxLength={36}
                         />
                       </FormGroup>
                     </Col>
@@ -1163,9 +1165,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           DISTRICT
                         </label>
                         {states &&
-                          customerInfo.currState &&
-                          states[customerInfo.currState] &&
-                          states[customerInfo.currState].districts ? (
+                        customerInfo.currState &&
+                        states[customerInfo.currState] &&
+                        states[customerInfo.currState].districts ? (
                           <Input
                             required
                             type="select"
@@ -1324,7 +1326,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               }}
                               placeholder="Enter Address Line 1"
                               type="text"
-                              maxlength="36"
+                              maxLength={36}
                             />
                           </FormGroup>
                         </Col>
@@ -1351,7 +1353,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               }}
                               placeholder="Enter Address Line 2"
                               type="text"
-                              maxlength="36"
+                              maxLength={36}
                             />
                           </FormGroup>
                         </Col>
@@ -1406,7 +1408,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               }}
                               placeholder="Enter Police Station"
                               type="text"
-                              maxlength="36"
+                              maxLength={36}
                             />
                           </FormGroup>
                         </Col>
@@ -1458,9 +1460,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               DISTRICT
                             </label>
                             {states &&
-                              customerInfo.permState &&
-                              states[customerInfo.permState] &&
-                              states[customerInfo.permState].districts ? (
+                            customerInfo.permState &&
+                            states[customerInfo.permState] &&
+                            states[customerInfo.permState].districts ? (
                               <Input
                                 required
                                 type="select"
@@ -1566,7 +1568,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           onChange={updateCurrModel}
                         >
                           {Object.keys(insuranceConfig).map((name) => (
-                            <option key={name} value={name}>
+                            <option key={name} value={name.trim()}>
                               {name}
                             </option>
                           ))}
@@ -2100,9 +2102,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                                 additionalInfo: info,
                               });
                             }
-                            setPurchaseType(
-                              ev.target.value!
-                            );
+                            setPurchaseType(ev.target.value!);
                           }}
                         >
                           <option value="cash">Cash</option>
@@ -2300,7 +2300,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                                 required
                                 className="form-control-alternative"
                                 id="input-executive "
-                                value={additionalInfo && additionalInfo.hypothecation}
+                                value={
+                                  additionalInfo && additionalInfo.hypothecation
+                                }
                                 onChange={(ev) => {
                                   additionalInfo.hypothecation =
                                     ev.target.value.toLocaleUpperCase()!;
@@ -2353,7 +2355,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                                         currDo.additionalInfo &&
                                         currDo.additionalInfo.accessoriesList &&
                                         currDo.additionalInfo.accessoriesList[
-                                        accessory
+                                          accessory
                                         ]
                                       )
                                     }
