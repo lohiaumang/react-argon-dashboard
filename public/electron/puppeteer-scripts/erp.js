@@ -1414,20 +1414,20 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
         await enterFrameNo(frameNo);
         ////checl dialogbox value
-        const dialogbox = await page.evaluate(
+        const dialogBox = await page.evaluate(
           () =>
             !!document.querySelector(
               'div[class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable ui-resizable"]'
-            ),
+            ).offsetParent,
           {
             waitUntil: "networkidle2",
           }
         );
-        console.log(dialogbox, "print dilogbox value");
-        if (dialogbox === false) {
+        console.log("Is dialog visible? ", dialogBox);
+        if (dialogBox) {
           process.exit();
         }
-        await page.waitForNavigation();
+        // await page.waitForNavigation();
         //30-11-21
         // await page.waitForSelector(
         //   'table[summary="Pick Vehicle"]',
