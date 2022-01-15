@@ -83,6 +83,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         timeoutId = setTimeout(onTimeoutDone, tOut);
     }
   }
+  const stopExecution = (errorMessage) => {
+    return new Promise((resolve, reject) => {
+      reject(new Error(errorMessage));
+    });
+  };
   //waitForRandom 27-11-21
   async function waitForRandom() {
     await page.waitForTimeout((Math.random() + 1) * 1000);
@@ -940,14 +945,14 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       });
       await click(page, 'button[name="s_2_1_27_0"]'); //get price clcik
       // await page.$eval('button[name="s_2_1_27_0"]', (el) => el.click());
-      await page.waitForSelector('input[aria-label="Balance Payment"]', {
+      await page.waitForSelector('input[aria-label="Booking Total"]', {
         visible: true,
       });
-      await waitForRandom();
+      //await waitForRandom();
       await page.waitForFunction(
         () =>
-          document.querySelector('input[aria-label="Balance Payment"]')
-            .value !== "Rs.0.00"
+          document.querySelector('input[aria-label="Booking Total"]').value !==
+          "Rs.0.00"
       );
       //get balnce price
       let price = await page.evaluate(
@@ -1049,22 +1054,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         );
         await click(page, 'button[aria-label="Contact Addresses:Save"]');
 
-        /////testing alert box
-
-        // const handleDialog = async (dialog) => {
-        //   page.removeListener("dialog", handleDialog);
-
-        //   console.log(dialog.message(), dialog.type());
-        //   // await page.waitFor(5000);
-        //   // await dialog.dismiss();
-
-        //   // await page.keyboard.press("Enter");
-        // };
-        //page.on("dialog", handleDialog);
-        // page.keyboard.press("Enter");
-
-        //await page.evaluate(`window.confirm = () => true`);
-        // await page.waitForNavigation();
         await page.waitForSelector(
           'button[aria-label="Contact Addresses:OK"]',
           {
@@ -1072,9 +1061,17 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           }
         );
         await click(page, 'button[aria-label="Contact Addresses:OK"]');
+        const addressLineOne = data.customerInfo.permLineOne;
+        await page.waitForFunction(
+          (addressLineOne) =>
+            document.querySelector('input[aria-label="Temporary Address"]')
+              .value === addressLineOne,
+          {},
+          addressLineOne
+        );
         //await page.waitForNavigation();
       }
-      //await page.waitForNavigation();
+      // await page.waitForNavigation();
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
       });
@@ -1180,7 +1177,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await page.$eval(`#${hypothecationDetailsButton.id}`, (el) =>
           el.click()
         );
-        console.log("step 1 hypothecation");
+
         await page.$eval('td[id$="Name"]', (el) => el.click());
         await typeText(
           page,
@@ -1188,7 +1185,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           data.additionalInfo.hypothecation
         );
 
-        console.log("step 2 hypothecation");
         await page.waitForSelector(
           'button[aria-label="Hypothecation Pick Applet:Go"]',
           {
@@ -1248,23 +1244,22 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           'input[aria-label="Financier (Manual)"]',
           hypothecationName
         );
-        console.log("hypothecationName, click ");
+
         await page.waitForSelector('input[aria-label="Financier (Manual)"]', {
           visible: true,
         });
-        console.log("hypothecationName, click 2");
+
         await typeText(
           page,
           'input[aria-label="Financier (Manual)"]',
           hypothecationName
         );
-        console.log("hypothecationName, click 3");
+
         await page.waitForSelector('span[id="TMI_Financier_Manual_Label"]', {
           visible: true,
         });
-        console.log("hypothecationName, click 4");
+
         await click(page, 'span[id="TMI_Financier_Manual_Label"]');
-        console.log("hypothecationName, click 5");
       } else {
         await page.waitForSelector(
           '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]',
@@ -1282,55 +1277,64 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await click(page, 'button[aria-label="Hypothecation Pick Applet:OK"]');
       }
       //end
-      await page.waitForSelector(
-        '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]',
-        {
+      const balancePayment = await page.evaluate(
+        () =>
+          document.querySelector('input[aria-label="Balance Payment"]').value
+      );
+      console.log(balancePayment, "balance payment");
+      if (balancePayment !== "(Rs.0.00)") {
+        console.log(balancePayment, "balance payment 1");
+        await page.waitForSelector(
+          '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]',
+          {
+            visible: true,
+          }
+        );
+
+        await page.$eval(
+          '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]',
+          (el) => el.click()
+        );
+
+        await click(
+          page,
+          'input[aria-labelledby="1_s_2_l_Payment_Profile_Name s_2_l_Transaction_Type s_2_l_altCombo"] + span'
+        );
+        await page.waitForSelector(
+          "ul[role='combobox']:not([style*='display: none'])",
+          { visible: true }
+        );
+        let paymentType = await page.$$eval(
+          "ul[role='combobox']:not([style*='display: none']) > li > div",
+          (listItems) =>
+            listItems.map((item) => {
+              return {
+                name: item.textContent,
+                id: item.id,
+              };
+            })
+        );
+        const paymentTypeButton = paymentType.find(
+          (item) => item.name === "Advance/Final Payment"
+        );
+        await page.waitForSelector(`#${paymentTypeButton.id}`, {
           visible: true,
-        }
-      );
+        });
+        await page.$eval(`#${paymentTypeButton.id}`, (el) => el.click());
+        //end
 
-      await page.$eval(
-        '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]',
-        (el) => el.click()
-      );
-
-      await click(
-        page,
-        'input[aria-labelledby="1_s_2_l_Payment_Profile_Name s_2_l_Transaction_Type s_2_l_altCombo"] + span'
-      );
-      await page.waitForSelector(
-        "ul[role='combobox']:not([style*='display: none'])",
-        { visible: true }
-      );
-      let paymentType = await page.$$eval(
-        "ul[role='combobox']:not([style*='display: none']) > li > div",
-        (listItems) =>
-          listItems.map((item) => {
-            return {
-              name: item.textContent,
-              id: item.id,
-            };
-          })
-      );
-      const paymentTypeButton = paymentType.find(
-        (item) => item.name === "Advance/Final Payment"
-      );
-      await page.waitForSelector(`#${paymentTypeButton.id}`, { visible: true });
-      await page.$eval(`#${paymentTypeButton.id}`, (el) => el.click());
-      //end
-
-      //fill price
-      await click(
-        page,
-        '#s_2_l > tbody > tr[role="row"] > td[aria-labelledby="s_2_l_altCalc"]',
-        { visible: true }
-      );
-      await typeText(
-        page,
-        'input[aria-labelledby="s_2_l_Transaction_Amount s_2_l_altCalc"]',
-        price
-      );
-
+        //fill price
+        await click(
+          page,
+          '#s_2_l > tbody > tr[role="row"] > td[aria-labelledby="s_2_l_altCalc"]',
+          { visible: true }
+        );
+        await typeText(
+          page,
+          'input[aria-labelledby="s_2_l_Transaction_Amount s_2_l_altCalc"]',
+          price
+        );
+      }
       //end
       //Booking Details & Vehicle Allotment
       await page.waitForSelector("div[title='Third Level View Bar']", {
@@ -1350,10 +1354,16 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         item.name.includes("Booking Details & Vehicle Allotment")
       );
       await page.$eval(`#${vehicleAllotment.id}`, (el) => el.click());
-      await click(
-        page,
-        '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]'
+
+      // await click(
+      //   page,
+      //   '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]'
+      // );
+      await page.waitForSelector(
+        'div > button[aria-label="Line Items:Vehicle Allotment"]',
+        { visible: true }
       );
+      // await page.waitForNavigation();
       await click(
         page,
         'div > button[aria-label="Line Items:Vehicle Allotment"]'
@@ -1423,9 +1433,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             waitUntil: "networkidle2",
           }
         );
+
         console.log("Is dialog visible? ", dialogBox);
         if (dialogBox) {
-          process.exit();
+          //page.setJavaScriptEnabled(false);
+          await stopExecution("frame no already book another do");
         }
         // await page.waitForNavigation();
         //30-11-21
@@ -1434,7 +1446,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         //   { visible: true }
         // );
         //await click(page, 'button[aria-label="Pick Vehicle:OK"]');
-
         await page.goBack();
 
         //Invoice Click
