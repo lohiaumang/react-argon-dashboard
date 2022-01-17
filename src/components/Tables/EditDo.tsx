@@ -213,66 +213,95 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
       vehicleInfo?: any;
     } = currDo;
 
+    const sanitizeData = (data: any) => {
+      let sanitizedData = data;
+
+      Object.keys(sanitizedData).map((key) => {
+        if (typeof sanitizedData[key] === "string") {
+          sanitizedData[key] = sanitizedData[key].trim();
+        }
+      });
+
+      return sanitizedData;
+    };
+
     const getDeliveryOrder = async (status: string) => {
       setEditDoLoading(true);
+      debugger;
       let vehicleId: string = currDo.vehicleId || "";
       let customerId: string = currDo.customerId || "";
       let additionalId: string = currDo.additionalId || "";
       let id: string = currDo.id || "";
 
-      if (customerInfo.sameAddress === "true") {
-        customerInfo = {
-          ...customerInfo,
-          permLineOne: customerInfo.currLineOne || "",
-          permLineTwo: customerInfo.currLineTwo || "",
-          permCity: customerInfo.currCity || "",
-          permPS: customerInfo.currPS || "",
-          permState: customerInfo.currState || "",
-          permDistrict: customerInfo.currDistrict || "",
-          permPostal: customerInfo.currPostal || "",
+      let sanitizedCustomerInfo = sanitizeData(customerInfo);
+      let sanitizedVehicleInfo = sanitizeData(vehicleInfo);
+      let sanitizedAdditionalInfo = sanitizeData(additionalInfo);
+
+      if (sanitizedCustomerInfo.sameAddress === "true") {
+        sanitizedCustomerInfo = {
+          ...sanitizedCustomerInfo,
+          permLineOne: sanitizedCustomerInfo.currLineOne || "",
+          permLineTwo: sanitizedCustomerInfo.currLineTwo || "",
+          permCity: sanitizedCustomerInfo.currCity || "",
+          permPS: sanitizedCustomerInfo.currPS || "",
+          permState: sanitizedCustomerInfo.currState || "",
+          permDistrict: sanitizedCustomerInfo.currDistrict || "",
+          permPostal: sanitizedCustomerInfo.currPostal || "",
         };
       }
 
-      if (!vehicleId && vehicleInfo && !isEmpty(vehicleInfo)) {
+      if (
+        !vehicleId &&
+        sanitizedVehicleInfo &&
+        !isEmpty(sanitizedVehicleInfo)
+      ) {
         const data = await firebase
           .firestore()
           .collection("vehicles")
-          .add(vehicleInfo);
+          .add(sanitizedVehicleInfo);
         vehicleId = data.id;
-      } else if (vehicleId && vehicleInfo) {
+      } else if (vehicleId && sanitizedVehicleInfo) {
         const data = await firebase
           .firestore()
           .collection("vehicles")
           .doc(vehicleId)
-          .set(vehicleInfo, { merge: true });
+          .set(sanitizedVehicleInfo, { merge: true });
       }
 
-      if (!customerId && customerInfo && !isEmpty(customerInfo)) {
+      if (
+        !customerId &&
+        sanitizedCustomerInfo &&
+        !isEmpty(sanitizedCustomerInfo)
+      ) {
         const data = await firebase
           .firestore()
           .collection("customers")
-          .add(customerInfo);
+          .add(sanitizedCustomerInfo);
         customerId = data.id;
-      } else if (customerId && customerInfo) {
+      } else if (customerId && sanitizedCustomerInfo) {
         const data = await firebase
           .firestore()
           .collection("customers")
           .doc(customerId)
-          .set(customerInfo, { merge: true });
+          .set(sanitizedCustomerInfo, { merge: true });
       }
 
-      if (!additionalId && additionalInfo && !isEmpty(additionalInfo)) {
+      if (
+        !additionalId &&
+        sanitizedAdditionalInfo &&
+        !isEmpty(sanitizedAdditionalInfo)
+      ) {
         const data = await firebase
           .firestore()
           .collection("additionals")
-          .add(additionalInfo);
+          .add(sanitizedAdditionalInfo);
         additionalId = data.id;
-      } else if (additionalId && additionalInfo) {
+      } else if (additionalId && sanitizedAdditionalInfo) {
         const data = await firebase
           .firestore()
           .collection("additionals")
           .doc(additionalId)
-          .set(additionalInfo, { merge: true });
+          .set(sanitizedAdditionalInfo, { merge: true });
       }
 
       let order: any = {
@@ -285,11 +314,11 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
             : currDo.initiatedBy || user.uid,
         createdOn: currDo.createdOn || new Date().toString(),
         // createdBy: user.uid,
-        name: customerInfo.lastName
-          ? `${customerInfo.firstName} ${customerInfo.lastName}`
-          : customerInfo.firstName,
-        modelName: vehicleInfo.modelName,
-        color: vehicleInfo.color,
+        name: sanitizedCustomerInfo.lastName
+          ? `${sanitizedCustomerInfo.firstName} ${sanitizedCustomerInfo.lastName}`
+          : sanitizedCustomerInfo.firstName,
+        modelName: sanitizedVehicleInfo.modelName,
+        color: sanitizedVehicleInfo.color,
       };
 
       if (customerId) {
@@ -304,16 +333,25 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
         order.additionalId = additionalId;
       }
 
-      if (order.vehicleInfo) {
-        delete order.vehicleInfo;
+      if (order.sanitizedVehicleInfo) {
+        delete order.sanitizedVehicleInfo;
       }
 
+      if (order.sanitizedCustomerInfo) {
+        delete order.sanitizedCustomerInfo;
+      }
+
+      if (order.sanitizedAdditionalInfo) {
+        delete order.sanitizedAdditionalInfo;
+      }
+      if (order.additionalInfo) {
+        delete order.additionalInfo;
+      }
       if (order.customerInfo) {
         delete order.customerInfo;
       }
-
-      if (order.additionalInfo) {
-        delete order.additionalInfo;
+      if (order.vehicleInfo) {
+        delete order.vehicleInfo;
       }
 
       if (!id && order && !isEmpty(order)) {
@@ -364,7 +402,14 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
       // }
       //dashboard status End
       setEditDoLoading(false);
-      return [order, { vehicleInfo, customerInfo, additionalInfo }];
+      return [
+        order,
+        {
+          sanitizedVehicleInfo,
+          sanitizedCustomerInfo,
+          sanitizedAdditionalInfo,
+        },
+      ];
     };
 
     //save  function

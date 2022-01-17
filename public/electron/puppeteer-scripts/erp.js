@@ -365,6 +365,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await page.$eval(`#${stateButton.id}`, (el) => el.click());
 
         //rahul 1.11.2021
+        await page.waitForSelector('input[aria-label="Zip/Pin Code"]', {
+          visible: true,
+        });
         await click(page, 'input[aria-label="Zip/Pin Code"]');
 
         await typeText(
