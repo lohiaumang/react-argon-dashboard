@@ -34,6 +34,7 @@ import "firebase/firestore";
 import Header from "../../components/Headers/Header";
 import ConfigTable, { Config } from "../../components/Tables/ConfigTable";
 import AccessoriesConfig from "../../components/Tables/AccessoriesConfig";
+import ModelDescription from "../../components/Tables/ModelDescription";
 import { UserContext } from "../../Context";
 
 const Settings: React.FC = () => {
@@ -267,6 +268,7 @@ const Settings: React.FC = () => {
                   formatDownloadLink={require("../../assets/docs/financerConfigFormat.csv")}
                 />
                 <AccessoriesConfig />
+                <ModelDescription />
               </CardBody>
             </Card>
           </Col>
