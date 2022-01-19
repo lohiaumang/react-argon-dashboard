@@ -49,10 +49,11 @@ const ModelDescription: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [newKey, setNewKey] = useState<string>();
   const [currConfig, setCurrConfig] = useState<Config>({});
-  const [tempDescription, setTempDescription] = useState<any>({});
+  const [tempColourInputByModel, setTempColourInputByModel] = useState<any>({});
   const [success, setSuccess] = useState<{ message: string }>();
   const [userInfoLoading, setUserInfoLoading] = useState<boolean>(false);
   const [user] = useContext(UserContext);
+
   useEffect(() => {
     if (success) {
       setTimeout(() => setSuccess(undefined), 1500);
@@ -91,12 +92,11 @@ const ModelDescription: React.FC = () => {
     );
   };
   const addRow = (ev: React.SyntheticEvent) => {
-    debugger;
     ev.preventDefault();
     ev.stopPropagation();
     if (newKey) {
       const tempCurrConfig: any = currConfig;
-      tempCurrConfig[newKey] = {};
+      tempCurrConfig[newKey] = [];
 
       setNewKey("");
       setCurrConfig(tempCurrConfig);
@@ -109,7 +109,7 @@ const ModelDescription: React.FC = () => {
     setCurrConfig(tempCurrConfig);
   };
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     setUserInfoLoading(true);
     const dealerId = user.createdBy || user.uid || "";
@@ -122,7 +122,14 @@ const ModelDescription: React.FC = () => {
       message: "Update successful",
     });
     setUserInfoLoading(false);
-    console.log("Description", setCurrConfig);
+  };
+
+  const setInputStateByModel = (ev: any, modelName: string) => {
+    let currTempColourInputByModel = tempColourInputByModel
+      ? { ...tempColourInputByModel }
+      : {};
+    currTempColourInputByModel[modelName] = ev.target.value! || "";
+    setTempColourInputByModel(currTempColourInputByModel);
   };
 
   // const handleChangeInput = (
@@ -141,23 +148,24 @@ const ModelDescription: React.FC = () => {
   //   setInputFields(newInputFields);
   // };
 
-  const handleAddFields = () => {
-    debugger;
-    if (tempDescription) {
+  const handleAddDescriptionsToModel = (modelName: string) => {
+    if (tempColourInputByModel) {
       let tempCurrConfig: any = { ...currConfig };
-      Object.keys(tempDescription).map((model) => {
-        const description: string[] = tempDescription[model];
-        tempCurrConfig[model] = tempCurrConfig[model]
-          ? tempCurrConfig[model]
-          : [];
-        tempCurrConfig[model].push(description);
-        let descriptions = tempDescription;
-        descriptions[model] = {};
-        setTempDescription(descriptions);
-      });
+      // Object.keys(tempColourInputByModel).map((model) => {
+      const colour: string[] = tempColourInputByModel[modelName];
+      tempCurrConfig[modelName] = tempCurrConfig[modelName]
+        ? tempCurrConfig[modelName]
+        : [];
+      tempCurrConfig[modelName].push(colour);
+      // let descriptions = tempDescription;
+      // descriptions[model] = {};
+      // setTempDescription(descriptions);
+      // });
 
+      let temp = tempColourInputByModel;
+      temp[modelName] = "";
+      setTempColourInputByModel(temp);
       setCurrConfig(tempCurrConfig);
-      setTempDescription("");
     }
   };
 
@@ -170,16 +178,15 @@ const ModelDescription: React.FC = () => {
   //   setInputFields(values);
   // };
 
-  const adddescriptions = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    modelName: string,
-    key: string
-  ) => {
-    let temp: any = { ...tempDescription };
-    temp[modelName] = temp[modelName] ? temp[modelName] : {};
-    temp[modelName][key] = event.target.value;
-    setTempDescription(temp);
-  };
+  // const addTempDescriptionsToModel = (
+  //   event: React.ChangeEvent<HTMLInputElement>,
+  //   modelName: string
+  // ) => {
+  //   let temp: any = { ...tempDescription };
+  //   temp[modelName] = temp[modelName] ? temp[modelName] : [];
+  //   temp[modelName].push(event.target.value);
+  //   setTempDescription(temp);
+  // };
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -245,23 +252,20 @@ const ModelDescription: React.FC = () => {
                 <thead className="thead-light">
                   <tr>
                     <th scope="col">Model Name</th>
-                    <th scope="col">Description Name</th>
-                    {/* <th>Price</th> */}
-                    <th></th>
-
-                    {/* <th></th> */}
+                    <th scope="col">Colour Description</th>
+                    <th />
                   </tr>
                 </thead>
                 <tbody>
                   {Object.keys(currConfig).map((modelName: string) => {
-                    let adddescriptionList = Object.keys(currConfig[modelName]);
+                    let colourDescriptions: any = currConfig[modelName];
 
                     //  console.log(accessoriesList, !!accessoriesList.length);
 
                     return (
                       <>
-                        {!!adddescriptionList.length &&
-                          adddescriptionList.map((item, index) => (
+                        {!!colourDescriptions.length &&
+                          colourDescriptions.map((colour: any, index: any) => (
                             <tr>
                               {!!index ? (
                                 <th></th>
@@ -269,25 +273,14 @@ const ModelDescription: React.FC = () => {
                                 <th scope="row">{modelName}</th>
                               )}
                               <td>
-                                {/* <Input
-                                  name="itemName"
-                                  variant="filled"
-                                  value={item || ""}
-                                  // onChange={(event) =>
-                                  //   handleChangeInput(item.id, event)
-                                  // }
-                                /> */}
-                                <small>{item}</small>
+                                <small>{colour}</small>
                               </td>
-                              {/* <td>
-                                <small>{currConfig[modelName][item]}</small>
-                              </td> */}
                               <td>
                                 <Button
                                   size="sm"
                                   color="danger"
                                   // disabled={item.length === 1}
-                                  onClick={() => removeRow(item, modelName)}
+                                  onClick={() => removeRow(colour, modelName)}
                                 >
                                   Delete
                                 </Button>
@@ -295,7 +288,7 @@ const ModelDescription: React.FC = () => {
                             </tr>
                           ))}
                         <tr>
-                          {!!adddescriptionList.length ? (
+                          {!!colourDescriptions.length ? (
                             <th />
                           ) : (
                             <th>{modelName}</th>
@@ -304,13 +297,9 @@ const ModelDescription: React.FC = () => {
                             <Input
                               name="itemName"
                               label="Item name"
-                              value={
-                                (tempDescription[modelName] &&
-                                  tempDescription[modelName].description) ||
-                                ""
-                              }
+                              value={tempColourInputByModel[modelName]}
                               onChange={(ev) =>
-                                adddescriptions(ev, modelName, "description")
+                                setInputStateByModel(ev, modelName)
                               }
                             />
                           </td>
@@ -320,7 +309,9 @@ const ModelDescription: React.FC = () => {
                               className="small-button-width my-2"
                               color={"success"}
                               size="sm"
-                              onClick={handleAddFields}
+                              onClick={() =>
+                                handleAddDescriptionsToModel(modelName)
+                              }
                             >
                               Add
                             </Button>
