@@ -369,13 +369,13 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           visible: true,
         });
         await click(page, 'input[aria-label="Zip/Pin Code"]');
-
+        console.log(data.customerInfo.currPostal, "current postal print");
         await typeText(
           page,
           'input[aria-label="Zip/Pin Code"]',
           data.customerInfo.currPostal
         );
-
+        console.log(data.customerInfo.currPostal, "current postal print 1");
         // await typeText(
         //   'input[aria-label="Locality"]',
         //   data.customerInfo.currPS
@@ -744,8 +744,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         const modelNameButton = modelName.find((item) =>
           data.modelName.includes(item.name)
         );
-        console.log(data.modelName, "print model name");
-        console.log(modelNameButton, "print model name");
         // await click(page, `#${modelNameButton.id}`);
         await page.$eval(`#${modelNameButton.id}`, (el) => el.click());
 
@@ -1402,46 +1400,66 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
         const enterFrameNo = async (frameNo) => {
           await typeText(page, 'input[name="Serial_Number"]', `*${frameNo}`); //todo not fill
+          await stopExecution("frame no already book another do");
+          console.log(`*${frameNo}`, "print frame no");
           await page.keyboard.press("Enter");
-          const hasInputField = await page.evaluate(
-            () => !!document.querySelector('input[name="Serial_Number"]'),
+
+          const dialogBox = await page.evaluate(
+            () =>
+              !!document.querySelector(
+                'div[class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable ui-resizable"]'
+              ).offsetParent,
             {
               waitUntil: "networkidle2",
             }
           );
 
+          console.log("Is dialog visible? ", dialogBox);
+          if (dialogBox) {
+            await stopExecution("frame no already book another do");
+          }
+
+          const hasInputField = await page.evaluate(
+            () => {
+              console.log(
+                'input[name="Serial_Number"]',
+                document.querySelector('input[name="Serial_Number"]')
+              );
+              return !!document.querySelector('input[name="Serial_Number"]');
+            },
+            {
+              waitUntil: "networkidle2",
+            }
+          );
+
+          console.log("hasInputField: ", hasInputField);
           if (hasInputField) {
             const typedFrameNo = await page.evaluate(
-              () => document.querySelector('input[name="Serial_Number"]').value,
+              () => {
+                console.log(
+                  "Frame number input field content and selector - ",
+                  'input[name="Serial_Number"]',
+                  document.querySelector('input[name="Serial_Number"]'),
+                  document.querySelector('input[name="Serial_Number"]').value
+                );
+                return document.querySelector('input[name="Serial_Number"]')
+                  .value;
+              },
               {
                 waitUntil: "networkidle2",
               }
             );
-
-            if (typedFrameNo !== frameNo) {
-              return await enterFrameNo(frameNo);
-            }
+            console.log(typedFrameNo, "type frame no");
+            // if (typedFrameNo !== `*${frameNo}`) {
+            //   return await enterFrameNo(frameNo);
+            // }
           }
           return;
         };
 
         await enterFrameNo(frameNo);
         ////checl dialogbox value
-        const dialogBox = await page.evaluate(
-          () =>
-            !!document.querySelector(
-              'div[class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable ui-resizable"]'
-            ).offsetParent,
-          {
-            waitUntil: "networkidle2",
-          }
-        );
 
-        console.log("Is dialog visible? ", dialogBox);
-        if (dialogBox) {
-          //page.setJavaScriptEnabled(false);
-          await stopExecution("frame no already book another do");
-        }
         // await page.waitForNavigation();
         //30-11-21
         // await page.waitForSelector(
