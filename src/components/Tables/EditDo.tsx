@@ -1840,13 +1840,27 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             });
                           }}
                         >
-                          {Object.values(modelWiseColorDescription || "").map(
+                          {Object.keys(modelWiseColorDescription || "").map(
+                            (colorMTOC: string) => {
+                              let modelColorList: any =
+                                modelWiseColorDescription[colorMTOC];
+                              return (
+                                <>
+                                  <option key={colorMTOC} value={colorMTOC}>
+                                    {modelColorList}
+                                  </option>
+                                </>
+                              );
+                            }
+                          )}
+
+                          {/* {Object.values(modelWiseColorDescription || "").map(
                             (name: any) => (
                               <option key={name} value={name}>
                                 {name}
                               </option>
                             )
-                          )}
+                          )} */}
                         </Input>
                       </FormGroup>
                     </Col>

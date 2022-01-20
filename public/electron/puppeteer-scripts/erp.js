@@ -934,7 +934,32 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
         (el) => el.click()
       );
-
+      //20/01/2021 automation for modell wise color select
+      await page.waitForSelector('td[id$="Product"]', {
+        visible: true,
+      });
+      await click(page, 'td[id$="Product"]');
+      await page.waitForSelector('input[name="Product"]+span', {
+        visible: true,
+      });
+      await click(page, 'input[name="Product"]+span');
+      await page.waitForSelector(
+        'input[aria-labelledby="PopupQuerySrchspec_Label"]',
+        {
+          visible: true,
+        }
+      );
+      await typeText(
+        page,
+        'input[aria-labelledby="PopupQuerySrchspec_Label"]',
+        data.vehicleInfo.color
+      );
+      console.log(data.vehicleInfo.color, "print color");
+      await page.waitForSelector('button[title="Pick Product:Go"]', {
+        visible: true,
+      });
+      await click(page, 'button[title="Pick Product:Go"]');
+      ///////////////////////////////////////////////////////////////////
       await page.waitForSelector(
         'button[aria-label="Line Items:Vehicle Allotment"]',
         {
@@ -944,6 +969,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.waitForSelector('button[name="s_2_1_27_0"]', {
         visible: true,
       });
+      await page.waitForNavigation();
       await click(page, 'button[name="s_2_1_27_0"]'); //get price clcik
       // await page.$eval('button[name="s_2_1_27_0"]', (el) => el.click());
       await page.waitForSelector('input[aria-label="Booking Total"]', {
