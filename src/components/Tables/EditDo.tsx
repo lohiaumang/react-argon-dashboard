@@ -131,7 +131,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
 
   useEffect(() => {
     debugger;
-    let colorInfo;
+    let colorInfo: any;
     firebase
       .firestore()
       .collection("modelWiseColorDescription")
@@ -140,9 +140,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
       .then(async (doc: any) => {
         if (doc.exists) {
           colorInfo = await doc.data();
-          setModelWiseColorDescription(colorInfo[currDo.modelName]);
+          setModelWiseColorDescription(colorInfo[currDo.modelName] || "");
           // setModelWiseColorDescription(colorInfo[vehicleInfo.modelName]);
-          console.log(modelWiseColorDescription);
+          //  console.log(modelWiseColorDescription);
         }
       });
   }, [currDo.modelName]);
@@ -1840,9 +1840,9 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             });
                           }}
                         >
-                          {Object.keys(modelWiseColorDescription || "").map(
-                            (name) => (
-                              <option key={name} value={name.trim()}>
+                          {Object.values(modelWiseColorDescription || "").map(
+                            (name: any) => (
+                              <option key={name} value={name}>
                                 {name}
                               </option>
                             )

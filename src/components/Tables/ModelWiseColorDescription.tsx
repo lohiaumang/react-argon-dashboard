@@ -127,11 +127,11 @@ const ModelWiseColorDescription: React.FC = () => {
     if (tempModelColorInput) {
       let tempCurrConfig: any = { ...currConfig };
       Object.keys(tempModelColorInput).map((model) => {
-        const { modelColorDescription, mtoc } = tempModelColorInput[model];
+        const { mtoc, modelColorDescription } = tempModelColorInput[model];
         tempCurrConfig[model] = tempCurrConfig[model]
           ? tempCurrConfig[model]
           : {};
-        tempCurrConfig[model][modelColorDescription] = mtoc;
+        tempCurrConfig[model][mtoc] = modelColorDescription;
         let modelWiseColorDescription = tempModelColorInput;
         modelWiseColorDescription[model] = {};
         setTempModelColorInput(modelWiseColorDescription);
@@ -219,8 +219,8 @@ const ModelWiseColorDescription: React.FC = () => {
                 <thead className="thead-light">
                   <tr>
                     <th scope="col">Model Name</th>
-                    <th scope="col">Colour Description</th>
-                    <th>MTOC</th>
+                    <th scope="col">MTOC</th>
+                    <th>Colour Description</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -267,15 +267,14 @@ const ModelWiseColorDescription: React.FC = () => {
                               label="Item name"
                               value={
                                 (tempModelColorInput[modelName] &&
-                                  tempModelColorInput[modelName]
-                                    .modelColorDescription) ||
+                                  tempModelColorInput[modelName].mtoc) ||
                                 ""
                               }
                               onChange={(ev) =>
                                 addModelWiseColorDescription(
                                   ev,
                                   modelName,
-                                  "modelColorDescription"
+                                  "mtoc"
                                 )
                               }
                             />
@@ -286,14 +285,15 @@ const ModelWiseColorDescription: React.FC = () => {
                               label="mtoc"
                               value={
                                 (tempModelColorInput[modelName] &&
-                                  tempModelColorInput[modelName].mtoc) ||
+                                  tempModelColorInput[modelName]
+                                    .modelColorDescription) ||
                                 ""
                               }
                               onChange={(ev) =>
                                 addModelWiseColorDescription(
                                   ev,
                                   modelName,
-                                  "mtoc"
+                                  "modelColorDescription"
                                 )
                               }
                             />

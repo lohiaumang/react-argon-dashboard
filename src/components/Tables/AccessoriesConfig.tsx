@@ -371,7 +371,7 @@ const AccessoriesConfig1: React.FC = () => {
                 value={newKey || ""}
                 //   placeholder={camelCaseToReadable(headers[0])}
                 onChange={(ev) => setNewKey(ev.target.value!.toUpperCase())}
-              //disabled={disabled}
+                //disabled={disabled}
               />
               <InputGroupAddon addonType="append">
                 <Button color="primary" onClick={addRow}>
