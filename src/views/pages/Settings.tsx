@@ -34,7 +34,7 @@ import "firebase/firestore";
 import Header from "../../components/Headers/Header";
 import ConfigTable, { Config } from "../../components/Tables/ConfigTable";
 import AccessoriesConfig from "../../components/Tables/AccessoriesConfig";
-import ModelDescription from "../../components/Tables/ModelDescription";
+import ModelDescription from "../../components/Tables/ModelWiseColorDescription";
 import { UserContext } from "../../Context";
 
 const Settings: React.FC = () => {

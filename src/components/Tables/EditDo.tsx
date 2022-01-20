@@ -59,6 +59,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   const [catogryType, setCatogryType] = useState<string>("individual");
   const [postalCharge, setPostalCharge] = useState<any>({});
   const [ptefCharge, setptefCharge] = useState<any>({});
+  const [modelWiseColorDescription, setModelWiseColorDescription] =
+    useState<any>({});
 
   const [userInfoUpdateError, setDoInfoUpdateError] = useState<{
     code: string;
@@ -125,6 +127,24 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
     if (currDo.modelName) {
       updateAccessories(currDo.modelName);
     }
+  }, [currDo.modelName]);
+
+  useEffect(() => {
+    debugger;
+    let colorInfo;
+    firebase
+      .firestore()
+      .collection("modelWiseColorDescription")
+      .doc("modelWiseColorConfig")
+      .get()
+      .then(async (doc: any) => {
+        if (doc.exists) {
+          colorInfo = await doc.data();
+          setModelWiseColorDescription(colorInfo[currDo.modelName]);
+          // setModelWiseColorDescription(colorInfo[vehicleInfo.modelName]);
+          console.log(modelWiseColorDescription);
+        }
+      });
   }, [currDo.modelName]);
 
   useEffect(() => {
@@ -1612,7 +1632,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           value={currDo.modelName}
                           onChange={updateCurrModel}
                         >
-                          {Object.keys(insuranceConfig).map((name) => (
+                          {Object.keys(priceConfig).map((name) => (
                             <option key={name} value={name.trim()}>
                               {name}
                             </option>
@@ -1800,6 +1820,41 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                       <FormGroup>
                         <label
                           className="form-control-label"
+                          htmlFor="input-role"
+                        >
+                          COLOUR
+                        </label>
+                        <Input
+                          type="select"
+                          name="select-model"
+                          required
+                          placeholder="Model Name"
+                          value={vehicleInfo && vehicleInfo.color}
+                          onChange={(ev) => {
+                            vehicleInfo.color =
+                              ev.target.value.toLocaleUpperCase()!;
+                            currDo.color = ev.target.value.toLocaleUpperCase()!;
+                            setCurrDo({
+                              ...currDo,
+                              vehicleInfo,
+                            });
+                          }}
+                        >
+                          {Object.keys(modelWiseColorDescription || "").map(
+                            (name) => (
+                              <option key={name} value={name.trim()}>
+                                {name}
+                              </option>
+                            )
+                          )}
+                        </Input>
+                      </FormGroup>
+                    </Col>
+
+                    {/* <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
                           htmlFor="input-colour"
                         >
                           COLOUR
@@ -1822,7 +1877,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           type="text"
                         />
                       </FormGroup>
-                    </Col>
+                    </Col> */}
                   </Row>
 
                   <Row>
