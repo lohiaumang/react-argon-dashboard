@@ -97,6 +97,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
     if (deliveryOrder && deliveryOrder.modelName) {
       updateAccessories(deliveryOrder.modelName);
     }
+
     setCurrDo({
       ...deliveryOrder,
       additionalInfo: {
@@ -124,27 +125,24 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   }, []);
 
   useEffect(() => {
+    debugger;
     if (currDo.modelName) {
+      let colorInfo: any;
+      firebase
+        .firestore()
+        .collection("modelWiseColorDescription")
+        .doc("modelWiseColorConfig")
+        .get()
+        .then(async (doc: any) => {
+          if (doc.exists) {
+            colorInfo = await doc.data();
+            setModelWiseColorDescription(colorInfo[currDo.modelName] || "");
+            // setModelWiseColorDescription(colorInfo[vehicleInfo.modelName]);
+            //  console.log(modelWiseColorDescription);
+          }
+        });
       updateAccessories(currDo.modelName);
     }
-  }, [currDo.modelName]);
-
-  useEffect(() => {
-    debugger;
-    let colorInfo: any;
-    firebase
-      .firestore()
-      .collection("modelWiseColorDescription")
-      .doc("modelWiseColorConfig")
-      .get()
-      .then(async (doc: any) => {
-        if (doc.exists) {
-          colorInfo = await doc.data();
-          setModelWiseColorDescription(colorInfo[currDo.modelName] || "");
-          // setModelWiseColorDescription(colorInfo[vehicleInfo.modelName]);
-          //  console.log(modelWiseColorDescription);
-        }
-      });
   }, [currDo.modelName]);
 
   useEffect(() => {
@@ -455,9 +453,13 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
 
         setCurrDo({
           ...currDo,
-          additionalInfo,
-          vehicleInfo,
+          color: "",
           modelName: event.target.value!,
+          vehicleInfo: {
+            ...currDo.vehicleInfo!,
+            color: "",
+          },
+          additionalInfo,
         });
       }
     };
@@ -1840,19 +1842,20 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             });
                           }}
                         >
+                          <option value={""}>Select a colour</option>
                           {Object.keys(modelWiseColorDescription || "").map(
                             (colorMTOC: string) => {
                               let modelColorList: any =
                                 modelWiseColorDescription[colorMTOC];
                               return (
-                                <>
-                                  <option key={colorMTOC} value={colorMTOC}>
+                                <React.Fragment key={colorMTOC}>
+                                  <option value={colorMTOC}>
                                     {modelColorList}
                                   </option>
                                   <option disabled className="small">
                                     {colorMTOC}
                                   </option>
-                                </>
+                                </React.Fragment>
                               );
                             }
                           )}
