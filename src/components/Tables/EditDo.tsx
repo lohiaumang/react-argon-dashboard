@@ -1850,7 +1850,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                                     {modelColorList}
                                   </option>
                                   <option disabled className="small">
-                                    &nbsp;&nbsp;&nbsp;{colorMTOC}
+                                    {colorMTOC}
                                   </option>
                                 </>
                               );
