@@ -25,6 +25,7 @@ import {
   InsuranceConfigContext,
   PriceConfigContext,
   UserContext,
+  ModelWiseColorDescription,
 } from "../../Context";
 
 type Props = {
@@ -69,6 +70,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
 
   const priceConfig = useContext(PriceConfigContext);
   const insuranceConfig = useContext(InsuranceConfigContext);
+  const modelColorDescription = useContext(ModelWiseColorDescription);
   const [user] = useContext(UserContext);
 
   useEffect(() => {
@@ -125,22 +127,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   }, []);
 
   useEffect(() => {
-    debugger;
     if (currDo.modelName) {
-      let colorInfo: any;
-      firebase
-        .firestore()
-        .collection("modelWiseColorDescription")
-        .doc("modelWiseColorConfig")
-        .get()
-        .then(async (doc: any) => {
-          if (doc.exists) {
-            colorInfo = await doc.data();
-            setModelWiseColorDescription(colorInfo[currDo.modelName] || "");
-            // setModelWiseColorDescription(colorInfo[vehicleInfo.modelName]);
-            //  console.log(modelWiseColorDescription);
-          }
-        });
+      setModelWiseColorDescription(
+        modelColorDescription[currDo.modelName] || ""
+      );
       updateAccessories(currDo.modelName);
     }
   }, [currDo.modelName]);

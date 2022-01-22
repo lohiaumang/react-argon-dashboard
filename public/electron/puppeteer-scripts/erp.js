@@ -885,6 +885,34 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       //end
 
       await waitForNetworkIdle(page, timeout, 0);
+      //22-01-2022 fill model wise color
+
+      await page.waitForSelector('td[id$="Product"]', {
+        visible: true,
+      });
+      await click(page, 'td[id$="Product"]');
+      await page.waitForSelector('input[name="Product"]+span', {
+        visible: true,
+      });
+      await click(page, 'input[name="Product"]+span');
+      await page.waitForSelector(
+        'input[aria-labelledby="PopupQuerySrchspec_Label"]',
+        {
+          visible: true,
+        }
+      );
+      await typeText(
+        page,
+        'input[aria-labelledby="PopupQuerySrchspec_Label"]',
+        data.vehicleInfo.color
+      );
+
+      await page.waitForSelector('button[id="s_4_1_2_0_Ctrl"]', {
+        visible: true,
+      });
+      await click(page, 'button[id="s_4_1_2_0_Ctrl"]');
+      ////////////////////////
+
       //click express booking button
       //27-11-21
       // await waitForRandom();
@@ -934,112 +962,42 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
         (el) => el.click()
       );
-      //20/01/2021 automation for modell wise color select
+      // //20/01/2021 automation for modell wise color select
 
-      //model catagory
-      await page.waitForSelector('input[aria-label="Model Category"]', {
-        visible: true,
-      });
-      await click(page, 'input[aria-label="Model Category"] + span');
-      await page.waitForSelector(
-        "ul[role='combobox']:not([style*='display: none'])",
-        { visible: true }
-      );
-      let modelCategory = await page.$$eval(
-        "ul[role='combobox']:not([style*='display: none']) > li > div",
-        (listItems) =>
-          listItems.map((item) => ({
-            name: item.textContent,
-            id: item.id,
-          }))
-      );
-      const modelCategoryButton = modelCategory.find(
-        (item) => item.name === data.vehicleInfo.modelCategory
-      );
-      await click(page, `#${modelCategoryButton.id}`);
-
-      //Model Name
-      await page.waitForSelector('input[aria-label="Model Name"] + span', {
-        visible: true,
-      });
-      await click(page, 'input[aria-label="Model Name"] + span');
-      await page.waitForSelector(
-        "ul[role='combobox']:not([style*='display: none'])",
-        { visible: true }
-      );
-      let modelName = await page.$$eval(
-        "ul[role='combobox']:not([style*='display: none']) > li > div",
-        (listItems) =>
-          listItems.map((item) => ({
-            name: item.textContent,
-            id: item.id,
-          }))
-      );
-      console.log(modelName, "print model name");
-      const modelNameButton = modelName.find((item) =>
-        data.modelName.includes(item.name)
-      );
-      console.log(modelNameButton, "print model name 1");
-      // await click(page, `#${modelNameButton.id}`);
-      await page.$eval(`#${modelNameButton.id}`, (el) => el.click());
-
-      //Model Variant
-      await page.waitForSelector('input[aria-label="Model Variant"] + span', {
-        visible: true,
-      });
-      await click(page, 'input[aria-label="Model Variant"] + span');
-      await page.waitForSelector(
-        "ul[role='combobox']:not([style*='display: none'])",
-        { visible: true }
-      );
-      let modelVariant = await page.$$eval(
-        "ul[role='combobox']:not([style*='display: none']) > li > div",
-        (listItems) =>
-          listItems.map((item) => ({
-            name: item.textContent,
-            id: item.id,
-          }))
-      );
-      const modelVariantButton = modelVariant.find(
-        (item) => item.name === data.modelName
-      );
-      await click(page, `#${modelVariantButton.id}`);
-
-      await page.waitForSelector('td[id$="Product"]', {
-        visible: true,
-      });
-      await click(page, 'td[id$="Product"]');
-      await page.waitForSelector('input[name="Product"]+span', {
-        visible: true,
-      });
-      await click(page, 'input[name="Product"]+span');
-      await page.waitForSelector(
-        'input[aria-labelledby="PopupQuerySrchspec_Label"]',
-        {
-          visible: true,
-        }
-      );
-      await typeText(
-        page,
-        'input[aria-labelledby="PopupQuerySrchspec_Label"]',
-        data.vehicleInfo.color
-      );
-      console.log(data.vehicleInfo.color, "print color");
-      await page.waitForSelector('button[id="s_4_1_2_0_Ctrl"]', {
-        visible: true,
-      });
-      await click(page, 'button[id="s_4_1_2_0_Ctrl"]');
+      // await page.waitForSelector('td[id$="Product"]', {
+      //   visible: true,
+      // });
+      // await click(page, 'td[id$="Product"]');
+      // await page.waitForSelector('input[name="Product"]+span', {
+      //   visible: true,
+      // });
+      // await click(page, 'input[name="Product"]+span');
+      // await page.waitForSelector(
+      //   'input[aria-labelledby="PopupQuerySrchspec_Label"]',
+      //   {
+      //     visible: true,
+      //   }
+      // );
+      // await typeText(
+      //   page,
+      //   'input[aria-labelledby="PopupQuerySrchspec_Label"]',
+      //   data.vehicleInfo.color
+      // );
+      // console.log(data.vehicleInfo.color, "print color");
+      // await page.waitForSelector('button[id="s_4_1_2_0_Ctrl"]', {
+      //   visible: true,
+      // });
+      // await click(page, 'button[id="s_4_1_2_0_Ctrl"]');
       ///////////////////////////////////////////////////////////////////
-      await page.waitForSelector(
-        'button[aria-label="Line Items:Vehicle Allotment"]',
-        {
-          visible: true,
-        }
-      );
+      // await page.waitForSelector(
+      //   'button[aria-label="Line Items:Vehicle Allotment"]',
+      //   {
+      //     visible: true,
+      //   }
+      // );
       await page.waitForSelector('button[name="s_2_1_27_0"]', {
         visible: true,
       });
-      await page.waitForNavigation();
       await click(page, 'button[name="s_2_1_27_0"]'); //get price clcik
       // await page.$eval('button[name="s_2_1_27_0"]', (el) => el.click());
       await page.waitForSelector('input[aria-label="Booking Total"]', {

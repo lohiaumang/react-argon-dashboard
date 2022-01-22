@@ -133,7 +133,6 @@ const DeliveryOrders: React.FC = () => {
 
   useEffect(() => {
     if (invoiceNo && selected) {
-      debugger;
       db.collection("deliveryOrders")
         .doc(deliveryOrders[selected].id)
         .set(

@@ -61,13 +61,16 @@ const Index: React.FC = () => {
   // const pageSize = 10;
 
   useEffect(() => {
+    let isCancelled = false;
     const dealerId = user.createdBy || user.uid || "";
     //Get Week
     const docRef = firebase.firestore().collection("byWeek").doc(dealerId);
     docRef.get().then((doc) => {
       if (doc.exists) {
         let tempData: any = doc.data();
-        setWeekWiseSale(tempData);
+        if (!isCancelled) {
+          setWeekWiseSale(tempData);
+        }
       }
     });
 
@@ -76,7 +79,9 @@ const Index: React.FC = () => {
     docRef1.get().then((doc) => {
       if (doc.exists) {
         let tempData: any = doc.data();
-        setMonthWiseSale(tempData);
+        if (!isCancelled) {
+          setMonthWiseSale(tempData);
+        }
       }
     });
 
@@ -85,7 +90,9 @@ const Index: React.FC = () => {
     docRef2.get().then((doc) => {
       if (doc.exists) {
         let tempData: any = doc.data();
-        setSalesManWiseSale(tempData);
+        if (!isCancelled) {
+          setSalesManWiseSale(tempData);
+        }
       }
     });
     //status count
@@ -93,7 +100,9 @@ const Index: React.FC = () => {
     docRef3.get().then((doc) => {
       if (doc.exists) {
         let tempData: any = doc.data();
-        setDashBoardStatus(tempData);
+        if (!isCancelled) {
+          setDashBoardStatus(tempData);
+        }
       }
     });
 
@@ -102,17 +111,26 @@ const Index: React.FC = () => {
     docRef4.get().then((doc) => {
       if (doc.exists) {
         let tempData: any = doc.data();
-        setModelWiseSale(tempData);
+        if (!isCancelled) {
+          setModelWiseSale(tempData);
+        }
       }
     });
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   useEffect(() => {
-    if (selectedPeriod === "M") {
+    let isCancelled = false;
+    if (selectedPeriod === "M" || !isCancelled) {
       monthTotalSale();
     } else if (selectedPeriod === "W") {
       weekTotalSale();
     }
+    return () => {
+      isCancelled = true;
+    };
   }, [monthWiseSale, weekWiseSale, selectedPeriod]);
 
   const weekTotalSale = () => {

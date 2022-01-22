@@ -10,6 +10,7 @@ import {
   UserContext,
   PriceConfigContext,
   InsuranceConfigContext,
+  ModelWiseColorDescription,
 } from "../Context";
 
 const App: React.FC = () => {
@@ -21,7 +22,7 @@ const App: React.FC = () => {
   const [currentUserDetails, setCurrentUserDetails] = useState<any>();
   const [priceConfigDetails, setPriceConfigDetails] = useState<any>();
   const [insuranceConfigDetails, setInsuranceConfigDetails] = useState<any>();
-  let userDetalis: any;
+  const [modelColorDescription, setModelColorDescription] = useState<any>();
 
   // console.log(currentUser,"We get current user");
   useEffect(() => {
@@ -61,6 +62,16 @@ const App: React.FC = () => {
                       setInsuranceConfigDetails(doc.data());
                     }
                   });
+                firebase
+                  .firestore()
+                  .collection("modelWiseColorDescription")
+                  .doc("modelWiseColorConfig")
+                  .get()
+                  .then((doc: any) => {
+                    if (doc.exists) {
+                      setModelColorDescription(doc.data());
+                    }
+                  });
               } else {
                 setSignInError(
                   "You don't have permission to access the dashboard."
@@ -82,14 +93,16 @@ const App: React.FC = () => {
       <UserContext.Provider value={[currentUserDetails, setCurrentUserDetails]}>
         <PriceConfigContext.Provider value={priceConfigDetails}>
           <InsuranceConfigContext.Provider value={insuranceConfigDetails}>
-            <Switch>
-              <Redirect exact from="/admin" to="/admin/index" />
-              <Route
-                path="/admin"
-                render={(props) => <AdminLayout {...props} />}
-              />
-              <Redirect from="/" to="/admin/index" />
-            </Switch>
+            <ModelWiseColorDescription.Provider value={modelColorDescription}>
+              <Switch>
+                <Redirect exact from="/admin" to="/admin/index" />
+                <Route
+                  path="/admin"
+                  render={(props) => <AdminLayout {...props} />}
+                />
+                <Redirect from="/" to="/admin/index" />
+              </Switch>
+            </ModelWiseColorDescription.Provider>
           </InsuranceConfigContext.Provider>
         </PriceConfigContext.Provider>
       </UserContext.Provider>
