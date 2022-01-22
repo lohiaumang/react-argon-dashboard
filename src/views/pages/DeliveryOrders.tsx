@@ -153,8 +153,12 @@ const DeliveryOrders: React.FC = () => {
   }, [invoiceNo]);
 
   useEffect(() => {
+    let isCancelled = false;
+
     if (user && (user.createdBy || user.uid)) {
-      setLoadingPage(true);
+      if (!isCancelled) {
+        setLoadingPage(true);
+      }
       let fetchBy: string = user.dealerId ? "subDealerId" : "dealerId";
       db.collection("deliveryOrders")
         .where(fetchBy, "==", user.createdBy || user.uid || "")
@@ -168,38 +172,49 @@ const DeliveryOrders: React.FC = () => {
               id: doc.id,
             };
           });
-          setDeliveryOrders(dOs);
-
-          setLoadingPage(false);
+          if (!isCancelled) {
+            setDeliveryOrders(dOs);
+            setLoadingPage(false);
+          }
         });
 
       window.api.receive("fromMain", (statusData: any) => {
         switch (statusData.type) {
           case "INVOICE_CREATED": {
-            setHsnCode(statusData.data.hsnCode);
-            setInvoiceNo(statusData.data.invoiceNo);
-            setCurrentStatus(statusData.type);
+            if (!isCancelled) {
+              setHsnCode(statusData.data.hsnCode);
+              setInvoiceNo(statusData.data.invoiceNo);
+              setCurrentStatus(statusData.type);
+            }
 
             break;
           }
           case "DISABLE_LOADER": {
-            setLoading(false);
+            if (!isCancelled) {
+              setLoading(false);
+            }
             break;
           }
           case "DO_CREATED": {
-            if (statusData.data) {
-              setHsnCode(statusData.data.hsnCode);
-              setInvoiceNo(statusData.data.invoiceNo);
+            if (!isCancelled) {
+              if (statusData.data) {
+                setHsnCode(statusData.data.hsnCode);
+                setInvoiceNo(statusData.data.invoiceNo);
+              }
+              setLoading(false);
             }
-            setLoading(false);
             break;
           }
           case "INSURANCE_CREATED": {
-            setCurrentStatus(statusData.type);
+            if (!isCancelled) {
+              setCurrentStatus(statusData.type);
+            }
             break;
           }
           case "DONE": {
-            setCurrentStatus(statusData.type);
+            if (!isCancelled) {
+              setCurrentStatus(statusData.type);
+            }
 
             break;
           }
@@ -209,11 +224,17 @@ const DeliveryOrders: React.FC = () => {
             // weekWiseSale(statusData.data);
             // modelWiseSale(statusData.data);
             // salerCount(statusData.data);
-            setLoading(false);
+            if (!isCancelled) {
+              setLoading(false);
+            }
           }
         }
       });
     }
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   useEffect(() => {
