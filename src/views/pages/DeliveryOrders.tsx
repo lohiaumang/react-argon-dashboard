@@ -767,37 +767,28 @@ const DeliveryOrders: React.FC = () => {
   };
 
   const rows = Object.values(deliveryOrders).map((currElem: any) => {
-    const {
-      name,
-      modelName,
-      color,
-      status,
-      createdOn,
-      id,
-      dealerId,
-      subDealerId,
-    } = currElem;
-    const originId = subDealerId || dealerId;
+    const { name, modelName, color, status, createdOn, id, origin } = currElem;
+    // const originId = subDealerId || dealerId;
 
-    if (!origins[originId]) {
-      const parent = firebase
-        .firestore()
-        .collection("users")
-        .doc(originId)
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            const data = doc.data();
+    // if (!origins[originId]) {
+    //   const parent = firebase
+    //     .firestore()
+    //     .collection("users")
+    //     .doc(originId)
+    //     .get()
+    //     .then((doc) => {
+    //       if (doc.exists) {
+    //         const data = doc.data();
 
-            if (data) {
-              setOrigins({
-                ...origins,
-                [originId]: data.name,
-              });
-            }
-          }
-        });
-    }
+    //         if (data) {
+    //           setOrigins({
+    //             ...origins,
+    //             [originId]: data.name,
+    //           });
+    //         }
+    //       }
+    //     });
+    // }
 
     let date = new Date(createdOn)
       .toJSON()
@@ -812,7 +803,7 @@ const DeliveryOrders: React.FC = () => {
       color,
       status: status.split("_").join(" "),
       date,
-      origin: origins[originId],
+      origin,
     };
   });
 

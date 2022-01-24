@@ -907,10 +907,13 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         data.vehicleInfo.color
       );
 
-      await page.waitForSelector('button[id="s_4_1_2_0_Ctrl"]', {
-        visible: true,
-      });
-      await click(page, 'button[id="s_4_1_2_0_Ctrl"]');
+      // await page.waitForSelector('button[aria-label="Pick Product:Go"]', {
+      //   visible: true,
+      // });
+      await page.$eval('button[aria-label="Pick Product:Go"]', (el) =>
+        el.click()
+      );
+      // await click(page, 'button[aria-label="Pick Product:Go"]');
       ////////////////////////
 
       //click express booking button

@@ -80,6 +80,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   }, [success]);
 
   useEffect(() => {
+    let isCancelled = false;
     firebase
       .firestore()
       .collection("states")
@@ -92,25 +93,29 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
             tempStates[doc.id] = doc.data();
           }
         });
-
-        setStates(tempStates);
+        if (!isCancelled) {
+          setStates(tempStates);
+        }
       });
 
     if (deliveryOrder && deliveryOrder.modelName) {
-      updateAccessories(deliveryOrder.modelName);
+      if (!isCancelled) {
+        updateAccessories(deliveryOrder.modelName);
+      }
     }
-
-    setCurrDo({
-      ...deliveryOrder,
-      additionalInfo: {
-        ...initialAdditionalInfo,
-        ...deliveryOrder.additionalInfo,
-      },
-      customerInfo: {
-        ...initialCustomerInfo,
-        ...deliveryOrder.customerInfo,
-      },
-    });
+    if (!isCancelled) {
+      setCurrDo({
+        ...deliveryOrder,
+        additionalInfo: {
+          ...initialAdditionalInfo,
+          ...deliveryOrder.additionalInfo,
+        },
+        customerInfo: {
+          ...initialCustomerInfo,
+          ...deliveryOrder.customerInfo,
+        },
+      });
+    }
 
     const docRef = firebase
       .firestore()
@@ -119,11 +124,16 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
     docRef.get().then((doc) => {
       if (doc.exists) {
         let otherPriceDetails: any = doc.data();
-        setPostalCharge(Object.values(otherPriceDetails.postalCharge));
-        setptefCharge(Object.values(otherPriceDetails.ptfe));
+        if (!isCancelled) {
+          setPostalCharge(Object.values(otherPriceDetails.postalCharge));
+          setptefCharge(Object.values(otherPriceDetails.ptfe));
+        }
         //console.log(Object.values(otherPriceDetails.postalCharge), "get postal charge");
       }
     });
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   useEffect(() => {
