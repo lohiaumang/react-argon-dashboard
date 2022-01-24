@@ -910,18 +910,29 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       // await page.waitForSelector('button[aria-label="Pick Product:Go"]', {
       //   visible: true,
       // });
+      let vehicleColor = data.vehicleInfo.color;
+      await page.waitForFunction(
+        (vehicleColor) =>
+          document.querySelector(
+            'input[aria-labelledby="PopupQuerySrchspec_Label"]'
+          ).value === vehicleColor,
+        {},
+        vehicleColor
+      );
       await page.$eval('button[aria-label="Pick Product:Go"]', (el) =>
         el.click()
       );
-      // await click(page, 'button[aria-label="Pick Product:Go"]');
+
       ////////////////////////
 
       //click express booking button
       //27-11-21
       // await waitForRandom();
+
       await page.waitForSelector('button[aria-label="Products:New"]', {
         visible: true,
       });
+      // await stopExecution("frame no already book another do");
       // await waitForRandom();
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
@@ -1457,8 +1468,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
         const enterFrameNo = async (frameNo) => {
           await typeText(page, 'input[name="Serial_Number"]', `*${frameNo}`); //todo not fill
-          await stopExecution("frame no already book another do");
-          console.log(`*${frameNo}`, "print frame no");
           await page.keyboard.press("Enter");
 
           const dialogBox = await page.evaluate(
