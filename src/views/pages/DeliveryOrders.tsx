@@ -58,6 +58,7 @@ import {
 import firebase from "firebase/app";
 import "firebase/firestore";
 import { rejects } from "assert";
+import { useCancellablePromise } from "../../hooks/useCancellablePromise";
 
 declare global {
   interface Window {
@@ -85,6 +86,7 @@ const DeliveryOrders: React.FC = () => {
   const [dropdownButton, setDropdownButton] = useState(false);
   const priceConfig = useContext(PriceConfigContext);
   const insuranceConfig = useContext(InsuranceConfigContext);
+
   const db = firebase.firestore();
 
   const [dealerInfo, setDealerInfo] = useState<DealerInfo>({
@@ -104,9 +106,79 @@ const DeliveryOrders: React.FC = () => {
   const [invoiceNo, setInvoiceNo] = useState<string>("");
   const [inputHsnCode, setInputHsnCode] = useState<string>("");
   const [inputInvoiceNo, setInputInvoiceNo] = useState<string>("");
-  const [origins, setOrigins] = useState<{ [key: string]: string }>({});
   const toggle = () => setDropdownButton((prevState) => !prevState);
+  const { cancellablePromise } = useCancellablePromise();
 
+  useEffect(() => {
+    if (user && (user.createdBy || user.uid)) {
+      setLoadingPage(true);
+
+      let fetchBy: string = user.dealerId ? "subDealerId" : "dealerId";
+      cancellablePromise(
+        db
+          .collection("deliveryOrders")
+          .where(fetchBy, "==", user.createdBy || user.uid || "")
+          .where("active", "==", true)
+          .get()
+      ).then((querySnapshot: any) => {
+        let dOs: any = {};
+        querySnapshot.docs.forEach((doc: any) => {
+          dOs[doc.id] = {
+            ...doc.data(),
+            id: doc.id,
+          };
+        });
+
+        setDeliveryOrders(dOs);
+        setLoadingPage(false);
+      });
+
+      window.api.receive("fromMain", (statusData: any) => {
+        switch (statusData.type) {
+          case "INVOICE_CREATED": {
+            setHsnCode(statusData.data.hsnCode);
+            setInvoiceNo(statusData.data.invoiceNo);
+            setCurrentStatus(statusData.type);
+
+            break;
+          }
+          case "DISABLE_LOADER": {
+            setLoading(false);
+
+            break;
+          }
+          case "DO_CREATED": {
+            if (statusData.data) {
+              setHsnCode(statusData.data.hsnCode);
+              setInvoiceNo(statusData.data.invoiceNo);
+            }
+            setLoading(false);
+
+            break;
+          }
+          case "INSURANCE_CREATED": {
+            setCurrentStatus(statusData.type);
+
+            break;
+          }
+          case "DONE": {
+            setCurrentStatus(statusData.type);
+
+            break;
+          }
+          case "RESET": {
+            // monthWiseSale(statusData.data);
+            // // TODO: implement the same as above below vvv
+            // weekWiseSale(statusData.data);
+            // modelWiseSale(statusData.data);
+            // salerCount(statusData.data);
+
+            setLoading(false);
+          }
+        }
+      });
+    }
+  }, []);
   useEffect(() => {
     if (hsnCode && selected) {
       db.collection("vehicles")
@@ -151,91 +223,6 @@ const DeliveryOrders: React.FC = () => {
         });
     }
   }, [invoiceNo]);
-
-  useEffect(() => {
-    let isCancelled = false;
-
-    if (user && (user.createdBy || user.uid)) {
-      if (!isCancelled) {
-        setLoadingPage(true);
-      }
-      let fetchBy: string = user.dealerId ? "subDealerId" : "dealerId";
-      db.collection("deliveryOrders")
-        .where(fetchBy, "==", user.createdBy || user.uid || "")
-        .where("active", "==", true)
-        .get()
-        .then((querySnapshot) => {
-          let dOs: any = {};
-          querySnapshot.docs.forEach((doc) => {
-            dOs[doc.id] = {
-              ...doc.data(),
-              id: doc.id,
-            };
-          });
-          if (!isCancelled) {
-            setDeliveryOrders(dOs);
-            setLoadingPage(false);
-          }
-        });
-
-      window.api.receive("fromMain", (statusData: any) => {
-        switch (statusData.type) {
-          case "INVOICE_CREATED": {
-            if (!isCancelled) {
-              setHsnCode(statusData.data.hsnCode);
-              setInvoiceNo(statusData.data.invoiceNo);
-              setCurrentStatus(statusData.type);
-            }
-
-            break;
-          }
-          case "DISABLE_LOADER": {
-            if (!isCancelled) {
-              setLoading(false);
-            }
-            break;
-          }
-          case "DO_CREATED": {
-            if (!isCancelled) {
-              if (statusData.data) {
-                setHsnCode(statusData.data.hsnCode);
-                setInvoiceNo(statusData.data.invoiceNo);
-              }
-              setLoading(false);
-            }
-            break;
-          }
-          case "INSURANCE_CREATED": {
-            if (!isCancelled) {
-              setCurrentStatus(statusData.type);
-            }
-            break;
-          }
-          case "DONE": {
-            if (!isCancelled) {
-              setCurrentStatus(statusData.type);
-            }
-
-            break;
-          }
-          case "RESET": {
-            // monthWiseSale(statusData.data);
-            // // TODO: implement the same as above below vvv
-            // weekWiseSale(statusData.data);
-            // modelWiseSale(statusData.data);
-            // salerCount(statusData.data);
-            if (!isCancelled) {
-              setLoading(false);
-            }
-          }
-        }
-      });
-    }
-
-    return () => {
-      isCancelled = true;
-    };
-  }, []);
 
   useEffect(() => {
     if (
@@ -499,22 +486,25 @@ const DeliveryOrders: React.FC = () => {
         });
       } else {
         return new Promise<boolean>((resolve, reject) => {
-          db.collection("customers")
-            .doc(order.customerId)
-            .get()
-            .then((doc) => {
+          cancellablePromise(
+            db.collection("customers").doc(order.customerId).get()
+          )
+            .then((doc: any) => {
               if (doc.exists) {
                 customerInfo = doc.data();
-                db.collection("vehicles")
-                  .doc(order.vehicleId)
-                  .get()
-                  .then((doc) => {
+                cancellablePromise(
+                  db.collection("vehicles").doc(order.vehicleId).get()
+                )
+                  .then((doc: any) => {
                     if (doc.exists) {
                       vehicleInfo = doc.data();
-                      db.collection("additionals")
-                        .doc(order.additionalId)
-                        .get()
-                        .then((doc) => {
+                      cancellablePromise(
+                        db
+                          .collection("additionals")
+                          .doc(order.additionalId)
+                          .get()
+                      )
+                        .then((doc: any) => {
                           if (doc.exists) {
                             additionalInfo = doc.data();
                           }
@@ -683,31 +673,30 @@ const DeliveryOrders: React.FC = () => {
     if (user && (user.createdBy || user.uid)) {
       setLoadingPage(true);
       const dealerId = user.createdBy || user.uid || "";
-      db.collection("deliveryOrders")
-        .where("dealerId", "==", dealerId)
-        .get()
-        .then((querySnapshot) => {
-          let dOs: any = deliveryOrders;
-          querySnapshot.docChanges().forEach((change) => {
-            if (!(change.doc.id in dOs) && change.doc.data().active) {
-              dOs[change.doc.id] = {
-                ...change.doc.data(),
-                id: change.doc.id,
-              };
-            } else if (change.doc.id in dOs && !change.doc.data().active) {
-              delete dOs[change.doc.id];
-            } else if (change.doc.id in dOs && change.doc.data().active) {
-              dOs[change.doc.id] = {
-                ...dOs[change.doc.id],
-                ...change.doc.data(),
-                id: change.doc.id,
-              };
-            }
-          });
-          setDeliveryOrders(dOs);
-          setLoadingPage(false);
-          setSelected(undefined);
+      cancellablePromise(
+        db.collection("deliveryOrders").where("dealerId", "==", dealerId).get()
+      ).then((querySnapshot: any) => {
+        let dOs: any = deliveryOrders;
+        querySnapshot.docChanges().forEach((change: any) => {
+          if (!(change.doc.id in dOs) && change.doc.data().active) {
+            dOs[change.doc.id] = {
+              ...change.doc.data(),
+              id: change.doc.id,
+            };
+          } else if (change.doc.id in dOs && !change.doc.data().active) {
+            delete dOs[change.doc.id];
+          } else if (change.doc.id in dOs && change.doc.data().active) {
+            dOs[change.doc.id] = {
+              ...dOs[change.doc.id],
+              ...change.doc.data(),
+              id: change.doc.id,
+            };
+          }
         });
+        setDeliveryOrders(dOs);
+        setLoadingPage(false);
+        setSelected(undefined);
+      });
     }
     if (selected !== undefined) {
       setCurrentStatus(deliveryOrders[selected].status);

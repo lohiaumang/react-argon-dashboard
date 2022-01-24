@@ -41,7 +41,9 @@ export function useCancellablePromise() {
   function cancellablePromise(p: any) {
     const cPromise = makeCancelable(p);
     promises.current.push(cPromise);
+    console.log("call cancle promise");
     return cPromise.promise;
   }
+
   return { cancellablePromise };
 }
