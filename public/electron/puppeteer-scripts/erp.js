@@ -919,9 +919,18 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         {},
         vehicleColor
       );
-      await page.$eval('button[aria-label="Pick Product:Go"]', (el) =>
-        el.click()
+      await page.waitForSelector(
+        'button[aria-label="Pick Product:Go"]:not(.hidden)',
+        {
+          visible: true,
+        }
       );
+
+      await click(page, 'button[aria-label="Pick Product:Go"]:not(.hidden)');
+      // await page.$eval(
+      //   'button[aria-label="Pick Product:Go"]:not(.hidden)',
+      //   (el) => el.click()
+      // );
 
       ////////////////////////
 
@@ -932,7 +941,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.waitForSelector('button[aria-label="Products:New"]', {
         visible: true,
       });
-      // await stopExecution("frame no already book another do");
+      //await stopExecution("frame no already book another do");
       // await waitForRandom();
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
@@ -978,30 +987,43 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
       // //20/01/2021 automation for modell wise color select
 
-      // await page.waitForSelector('td[id$="Product"]', {
-      //   visible: true,
-      // });
-      // await click(page, 'td[id$="Product"]');
-      // await page.waitForSelector('input[name="Product"]+span', {
-      //   visible: true,
-      // });
-      // await click(page, 'input[name="Product"]+span');
-      // await page.waitForSelector(
-      //   'input[aria-labelledby="PopupQuerySrchspec_Label"]',
-      //   {
-      //     visible: true,
-      //   }
-      // );
-      // await typeText(
-      //   page,
-      //   'input[aria-labelledby="PopupQuerySrchspec_Label"]',
-      //   data.vehicleInfo.color
-      // );
-      // console.log(data.vehicleInfo.color, "print color");
-      // await page.waitForSelector('button[id="s_4_1_2_0_Ctrl"]', {
-      //   visible: true,
-      // });
-      // await click(page, 'button[id="s_4_1_2_0_Ctrl"]');
+      await page.waitForSelector('td[id$="Product"]', {
+        visible: true,
+      });
+      await click(page, 'td[id$="Product"]');
+      await page.waitForSelector('input[name="Product"]+span', {
+        visible: true,
+      });
+      await click(page, 'input[name="Product"]+span');
+      await page.waitForSelector(
+        'input[aria-labelledby="PopupQuerySrchspec_Label"]',
+        {
+          visible: true,
+        }
+      );
+      await typeText(
+        page,
+        'input[aria-labelledby="PopupQuerySrchspec_Label"]',
+        data.vehicleInfo.color
+      );
+      let vehicleColor1 = data.vehicleInfo.color;
+      await page.waitForFunction(
+        (vehicleColor1) =>
+          document.querySelector(
+            'input[aria-labelledby="PopupQuerySrchspec_Label"]'
+          ).value === vehicleColor1,
+        {},
+        vehicleColor1
+      );
+      await page.waitForSelector(
+        'button[aria-label="Pick Product:Go"]:not(.hidden)',
+        {
+          visible: true,
+        }
+      );
+
+      await click(page, 'button[aria-label="Pick Product:Go"]:not(.hidden)');
+
       ///////////////////////////////////////////////////////////////////
       // await page.waitForSelector(
       //   'button[aria-label="Line Items:Vehicle Allotment"]',
@@ -1009,11 +1031,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       //     visible: true,
       //   }
       // );
-      await page.waitForSelector('button[name="s_2_1_27_0"]', {
+      await page.waitForSelector("button[aria-label*='Get Price']", {
         visible: true,
       });
-      await click(page, 'button[name="s_2_1_27_0"]'); //get price clcik
-      // await page.$eval('button[name="s_2_1_27_0"]', (el) => el.click());
+      //await click(page, "button[aria-label*='Get Price']"); //get price clcik
+      await page.$eval("button[aria-label*='Get Price']", (el) => el.click());
       await page.waitForSelector('input[aria-label="Booking Total"]', {
         visible: true,
       });
