@@ -62,9 +62,9 @@ const Login: React.FC = () => {
         .then((userCredential) => {
           setLoading(false);
         })
-        .catch(function (error) {
-          console.log(error);
-          setSignInError(error);
+        .catch((err) => {
+          console.log(err);
+          setSignInError(err);
           setLoading(false);
         });
     }

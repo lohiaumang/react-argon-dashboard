@@ -111,6 +111,11 @@ const DeliveryOrders: React.FC = () => {
 
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
+      if (!dealerInfo.name) {
+        const dealerId = user.createdBy || user.uid || "";
+        getSetUserData(dealerId);
+      }
+
       setLoadingPage(true);
 
       let fetchBy: string = user.dealerId ? "subDealerId" : "dealerId";
@@ -178,7 +183,12 @@ const DeliveryOrders: React.FC = () => {
         }
       });
     }
+
+    return () => {
+      window.api.clear();
+    };
   }, []);
+
   useEffect(() => {
     if (hsnCode && selected) {
       db.collection("vehicles")
@@ -559,11 +569,6 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
-  if (!dealerInfo.name && user && (user.createdBy || user.uid)) {
-    const dealerId = user.createdBy || user.uid || "";
-    getSetUserData(dealerId);
-  }
-
   const createDO = async () => {
     try {
       const status: any = await fetchDeliveryOrder();
@@ -705,7 +710,6 @@ const DeliveryOrders: React.FC = () => {
 
   //edit do
   const editDO = async (ev: React.SyntheticEvent) => {
-    debugger;
     ev.stopPropagation();
     try {
       const status: any = await fetchDeliveryOrder();

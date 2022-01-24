@@ -93,7 +93,6 @@ const CreateAccount: React.FC = () => {
 
   useEffect(() => {
     if (type === "subdealer" && !dealerships.length) {
-      console.log("Fetch dealers");
       firebase
         .firestore()
         .collection("users")
@@ -146,9 +145,9 @@ const CreateAccount: React.FC = () => {
     user =
       type === "subdealer" && !!dealer
         ? {
-          ...user,
-          dealerId: dealer,
-        }
+            ...user,
+            dealerId: dealer,
+          }
         : user;
 
     if (window && window.api) {

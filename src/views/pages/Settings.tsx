@@ -36,6 +36,7 @@ import ConfigTable, { Config } from "../../components/Tables/ConfigTable";
 import AccessoriesConfig from "../../components/Tables/AccessoriesConfig";
 import ModelDescription from "../../components/Tables/ModelWiseColorDescription";
 import { UserContext } from "../../Context";
+import { useCancellablePromise } from "../../hooks/useCancellablePromise";
 
 const Settings: React.FC = () => {
   const [disabled, setDisabled] = useState<boolean>(true);
@@ -49,6 +50,7 @@ const Settings: React.FC = () => {
   const [success, setSuccess] = useState<{ message: string }>();
   const db = firebase.firestore();
   const [user] = useContext(UserContext);
+  const { cancellablePromise } = useCancellablePromise();
   // const currentUser = firebase.auth().currentUser;
   useEffect(() => {
     if (success) {
@@ -59,9 +61,8 @@ const Settings: React.FC = () => {
     const dealerId = user.createdBy || user.uid || "";
     const insuranceConfigRef = db.collection("insuranceConfig").doc(dealerId);
 
-    insuranceConfigRef
-      .get()
-      .then((doc) => {
+    cancellablePromise(insuranceConfigRef.get())
+      .then((doc: any) => {
         if (doc.exists) {
           setInsuranceConfig(doc.data());
         } else {
@@ -71,12 +72,10 @@ const Settings: React.FC = () => {
       .catch((err) => console.log(err));
 
     const priceConfigRef = db.collection("priceConfig").doc(dealerId);
-    priceConfigRef
-      .get()
-      .then((doc) => {
+    cancellablePromise(priceConfigRef.get())
+      .then((doc: any) => {
         if (doc.exists) {
           setPriceConfig(doc.data());
-          // console.log(doc.data());
         } else {
           setPriceConfig(null);
           console.log("No price config set yet!");
@@ -85,12 +84,10 @@ const Settings: React.FC = () => {
       .catch((err) => console.log(err));
 
     const otherPriceConfigRef = db.collection("joyHondaConfig").doc(dealerId);
-    otherPriceConfigRef
-      .get()
-      .then((doc) => {
+    cancellablePromise(otherPriceConfigRef.get())
+      .then((doc: any) => {
         if (doc.exists) {
           setOtherPriceConfig(doc.data());
-          // console.log(doc.data());
         } else {
           setOtherPriceConfig(null);
           console.log("No price config set yet!");
@@ -99,12 +96,10 @@ const Settings: React.FC = () => {
       .catch((err) => console.log(err));
 
     const financeConfigRef = db.collection("financer").doc(dealerId);
-    financeConfigRef
-      .get()
-      .then((doc) => {
+    cancellablePromise(financeConfigRef.get())
+      .then((doc: any) => {
         if (doc.exists) {
           setFinancerConfig(doc.data());
-          // console.log(doc.data());
         } else {
           setFinancerConfig(null);
           console.log("No finance config set yet!");
@@ -113,6 +108,9 @@ const Settings: React.FC = () => {
       .catch((err) => console.log(err));
 
     getCredentialsConfig();
+    return () => {
+      window.api.clear();
+    };
   }, []);
 
   //get userid and password
@@ -121,7 +119,6 @@ const Settings: React.FC = () => {
       switch (data.type) {
         case "GET_CREDENTIALS_SUCCESS": {
           setCredentialConfig(data.userData.credentials);
-          console.log(data.userData.credentials);
           return;
         }
         case "GET_CREDENTIALS_FAILURE": {
@@ -169,7 +166,6 @@ const Settings: React.FC = () => {
 
   //set userid and password
   const saveCredentialsConfig = (config: Config) => {
-    debugger;
     try {
       if (config) {
         window.api.send("toMain", {

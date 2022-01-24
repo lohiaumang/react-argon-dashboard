@@ -27,7 +27,6 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
     const totalPrice = Math.round(CGST + SGST + price);
     const totalPriceInword = converter.toWords(totalPrice);
     const grandTotalPriceInword = converter.toWords(totalPrice + 1920);
-    console.log(props.hsnCode, "hsncode invoice page");
 
     let invoiceDate = new Date()
       .toJSON()

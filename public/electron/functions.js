@@ -246,7 +246,7 @@ module.exports = async function (mainWindow, browser) {
         case "GET_CREDENTIALS": {
           const userData = getCredentials();
 
-          if (userData) {
+          if (userData && mainWindow.webContents) {
             mainWindow.webContents.send("fromMain", {
               type: "GET_CREDENTIALS_SUCCESS",
               userData,

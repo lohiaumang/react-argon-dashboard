@@ -5,7 +5,9 @@ export function makeCancelable(promise: any) {
   const wrappedPromise = new Promise((resolve, reject) => {
     // Suppress resolution and rejection if canceled
     promise
-      .then((val: any) => !isCanceled && resolve(val))
+      .then((val: any) => {
+        return !isCanceled && resolve(val);
+      })
       .catch((error: any) => !isCanceled && reject(error));
   });
   return {
@@ -41,7 +43,6 @@ export function useCancellablePromise() {
   function cancellablePromise(p: any) {
     const cPromise = makeCancelable(p);
     promises.current.push(cPromise);
-    console.log("call cancle promise");
     return cPromise.promise;
   }
 

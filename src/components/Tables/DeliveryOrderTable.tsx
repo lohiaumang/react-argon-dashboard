@@ -150,7 +150,6 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
         ? parseInt(otherConfig[additionalInfo.extendedWarranty] || "0")
         : 0;
       const ptfe = parseInt(additionalInfo.ptfePolish || "0");
-      debugger;
       let total =
         price +
         insurance +

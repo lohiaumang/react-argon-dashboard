@@ -128,7 +128,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
           setPostalCharge(Object.values(otherPriceDetails.postalCharge));
           setptefCharge(Object.values(otherPriceDetails.ptfe));
         }
-        //console.log(Object.values(otherPriceDetails.postalCharge), "get postal charge");
       }
     });
     return () => {
@@ -245,7 +244,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
 
     const getDeliveryOrder = async (status: string) => {
       setEditDoLoading(true);
-      debugger;
       let vehicleId: string = currDo.vehicleId || "";
       let customerId: string = currDo.customerId || "";
       let additionalId: string = currDo.additionalId || "";
@@ -489,7 +487,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
         ...currDo,
         customerInfo,
       });
-      //  console.log(base64);
       //setBaseImage(base64);
     };
 
@@ -506,9 +503,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
       });
     };
 
-    if (additionalInfo) {
-      console.log(additionalInfo.accessories, additionalInfo.accessoriesList);
-    }
     return (
       <div>
         {editDoLoading && (

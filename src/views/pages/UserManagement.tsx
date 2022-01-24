@@ -42,6 +42,8 @@ import { UserContext } from "../../Context";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
+import { useCancellablePromise } from "../../hooks/useCancellablePromise";
+
 export interface SignUpError {
   code: string;
   message: string;
@@ -82,6 +84,15 @@ const UserManagement: React.FC = () => {
   const db = firebase.firestore();
   // Getting user info from context
   const [user] = useContext(UserContext);
+  const { cancellablePromise } = useCancellablePromise();
+  let unsubscribe: any;
+
+  useEffect(() => {
+    return () => {
+      window.api.clear();
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     if (signUpError) {
@@ -103,7 +114,7 @@ const UserManagement: React.FC = () => {
 
   useEffect(() => {
     if (user && user.uid && !userData) {
-      firebase
+      unsubscribe = firebase
         .firestore()
         .collection("users")
         .where("createdBy", "==", user.uid)
@@ -211,8 +222,6 @@ const UserManagement: React.FC = () => {
 
               let newUserData: any = [...userData];
               setUserData(newUserData.push(newUser));
-
-              // console.log(JSON.stringify(data.resp));
 
               setSignUpSuccess({
                 code: "USER_SUCCESS",

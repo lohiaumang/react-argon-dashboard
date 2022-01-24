@@ -16,6 +16,7 @@
 
 */
 import React, { useState, useEffect, useContext } from "react";
+import { useCancellablePromise } from "../../hooks/useCancellablePromise";
 import Papa from "papaparse";
 
 // reactstrap components
@@ -44,7 +45,7 @@ export interface Config {
   [key: string]: ConfigRow;
 }
 
-const AccessoriesConfig1: React.FC = () => {
+const AccessoriesConfig: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [newKey, setNewKey] = useState<string>();
@@ -53,6 +54,8 @@ const AccessoriesConfig1: React.FC = () => {
   const [success, setSuccess] = useState<{ message: string }>();
   const [userInfoLoading, setUserInfoLoading] = useState<boolean>(false);
   const [user] = useContext(UserContext);
+  const { cancellablePromise } = useCancellablePromise();
+
   useEffect(() => {
     if (success) {
       setTimeout(() => setSuccess(undefined), 1500);
@@ -67,9 +70,8 @@ const AccessoriesConfig1: React.FC = () => {
       .collection("accessories")
       .doc(dealerId);
 
-    accessoriesConfigRef
-      .get()
-      .then((doc) => {
+    cancellablePromise(accessoriesConfigRef.get())
+      .then((doc: any) => {
         if (doc.exists) {
           let accessories: any = doc.data();
           setCurrConfig(accessories);
@@ -121,7 +123,6 @@ const AccessoriesConfig1: React.FC = () => {
       message: "Update successful",
     });
     setUserInfoLoading(false);
-    console.log("Accessories", setCurrConfig);
   };
 
   // const handleChangeInput = (
@@ -257,10 +258,10 @@ const AccessoriesConfig1: React.FC = () => {
                     //  console.log(accessoriesList, !!accessoriesList.length);
 
                     return (
-                      <>
+                      <React.Fragment key={modelName}>
                         {!!accessoriesList.length &&
                           accessoriesList.map((item, index) => (
-                            <tr>
+                            <tr key={`${modelName}-${item}`}>
                               {!!index ? (
                                 <th></th>
                               ) : (
@@ -346,7 +347,7 @@ const AccessoriesConfig1: React.FC = () => {
                             </Button>
                           </td>
                         </tr>
-                      </>
+                      </React.Fragment>
                     );
                   })}
                   {/* <Button
@@ -386,4 +387,4 @@ const AccessoriesConfig1: React.FC = () => {
   );
 };
 
-export default AccessoriesConfig1;
+export default AccessoriesConfig;

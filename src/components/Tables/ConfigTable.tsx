@@ -119,7 +119,6 @@ const ConfigTable: React.FC<TableProps> = (props) => {
   };
 
   const readFile = (ev: React.SyntheticEvent) => {
-    debugger;
     const target = ev.target as HTMLInputElement;
     const files = target.files!;
     Papa.parse(files[0], {

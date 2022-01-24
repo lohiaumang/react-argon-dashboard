@@ -16,6 +16,7 @@
 
 */
 import React, { useState, useEffect, useContext } from "react";
+import { useCancellablePromise } from "../../hooks/useCancellablePromise";
 import Papa from "papaparse";
 
 // reactstrap components
@@ -53,6 +54,8 @@ const ModelWiseColorDescription: React.FC = () => {
   const [success, setSuccess] = useState<{ message: string }>();
   const [userInfoLoading, setUserInfoLoading] = useState<boolean>(false);
   const [user] = useContext(UserContext);
+  const { cancellablePromise } = useCancellablePromise();
+
   useEffect(() => {
     if (success) {
       setTimeout(() => setSuccess(undefined), 1500);
@@ -67,9 +70,8 @@ const ModelWiseColorDescription: React.FC = () => {
       .collection("modelWiseColorDescription")
       .doc("modelWiseColorConfig");
 
-    modelWiseColorConfigRef
-      .get()
-      .then((doc) => {
+    cancellablePromise(modelWiseColorConfigRef.get())
+      .then((doc: any) => {
         if (doc.exists) {
           let modelWiseColorDescription: any = doc.data();
           setCurrConfig(modelWiseColorDescription);
@@ -229,10 +231,10 @@ const ModelWiseColorDescription: React.FC = () => {
                     let modelColorList = Object.keys(currConfig[modelName]);
 
                     return (
-                      <>
+                      <React.Fragment key={modelName}>
                         {!!modelColorList.length &&
                           modelColorList.map((item, index) => (
-                            <tr>
+                            <tr key={`${modelName}-${item}`}>
                               {!!index ? (
                                 <th></th>
                               ) : (
@@ -309,7 +311,7 @@ const ModelWiseColorDescription: React.FC = () => {
                             </Button>
                           </td>
                         </tr>
-                      </>
+                      </React.Fragment>
                     );
                   })}
                 </tbody>
