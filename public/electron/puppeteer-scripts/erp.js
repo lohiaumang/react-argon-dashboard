@@ -927,6 +927,47 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
 
       await click(page, 'button[aria-label="Pick Product:Go"]:not(.hidden)');
+      console.log("stap 1");
+      await page.waitForSelector('button[title="Products Menu"]', {
+        visible: true,
+      });
+      console.log("stap 2");
+
+      await page.waitForSelector('td[id$="TMI_HSN_Code"]', {
+        visible: true,
+      });
+      await click(page, 'td[id$="TMI_HSN_Code"]');
+      await page.waitForSelector('td[id$="Product"]', {
+        visible: true,
+      });
+      await page.waitForFunction(
+        (vehicleColor) =>
+          document.querySelector('td[id$="Product"]').textContent ===
+          vehicleColor,
+        {},
+        vehicleColor
+      );
+      //await click(page, 'button[title="Products Menu"]');
+      await page.$eval('button[title="Products Menu"]', (el) => el.click());
+      console.log("stap 3");
+      await page.waitForSelector(
+        ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
+        { visible: true }
+      );
+      const colorMenuOptions = await page.$$eval(
+        ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
+        (options) =>
+          options.map((option) => {
+            return {
+              name: option.textContent,
+              id: option.id,
+            };
+          })
+      );
+      const saveRecordButton1 = colorMenuOptions.find((option) =>
+        option.name.includes("[Ctrl+S]")
+      );
+      await click(page, `#${saveRecordButton1.id}`);
       // await page.$eval(
       //   'button[aria-label="Pick Product:Go"]:not(.hidden)',
       //   (el) => el.click()
@@ -963,13 +1004,24 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
       await page.$eval(`#${expressBookingButton.id}`, (el) => el.click());
 
+      //click create booking button
+      await page.waitForSelector('input[aria-label="Customer Last Name"]', {
+        visible: true,
+      });
+      let custLname = data.customerInfo.lastName;
+      await page.waitForFunction(
+        (custLname) =>
+          document.querySelector('input[aria-label="Customer Last Name"]')
+            .value === custLname,
+        {},
+        custLname
+      );
+
       await page.waitForSelector('button[aria-label="Orders:Create Booking"]', {
         visible: true,
       });
 
-      //click create booking button
-      await page.waitForSelector('div > button[data-display="Create Booking"]');
-      await click(page, 'div > button[data-display="Create Booking"]');
+      await click(page, 'button[aria-label="Orders:Create Booking"]');
 
       //end
 
@@ -1024,6 +1076,47 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
       await click(page, 'button[aria-label="Pick Product:Go"]:not(.hidden)');
 
+      await page.waitForSelector('td[id$="TMI_HSN_Code"]', {
+        visible: true,
+      });
+      await click(page, 'td[id$="TMI_HSN_Code"]');
+      await page.waitForSelector('td[id$="Product"]', {
+        visible: true,
+      });
+      await page.waitForFunction(
+        (vehicleColor1) =>
+          document.querySelector('td[id$="Product"]').textContent ===
+          vehicleColor1,
+        {},
+        vehicleColor1
+      );
+
+      await page.waitForSelector('button[title="Line Items Menu"]', {
+        visible: true,
+      });
+
+      //await click(page, 'button[title="Line Items Menu"]');
+      await page.$eval('button[title="Line Items Menu"]', (el) => el.click());
+
+      await page.waitForSelector(
+        ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
+        { visible: true }
+      );
+      const colorMenuOptions1 = await page.$$eval(
+        ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
+        (options) =>
+          options.map((option) => {
+            return {
+              name: option.textContent,
+              id: option.id,
+            };
+          })
+      );
+      const saveRecordButton2 = colorMenuOptions1.find((option) =>
+        option.name.includes("[Ctrl+S]")
+      );
+      await click(page, `#${saveRecordButton2.id}`);
+
       ///////////////////////////////////////////////////////////////////
       // await page.waitForSelector(
       //   'button[aria-label="Line Items:Vehicle Allotment"]',
@@ -1031,6 +1124,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       //     visible: true,
       //   }
       // );
+
       await page.waitForSelector("button[aria-label*='Get Price']", {
         visible: true,
       });
