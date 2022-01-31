@@ -845,72 +845,100 @@ const DeliveryOrders: React.FC = () => {
       let vehicleId: string = "";
       let customerId: string = "";
       let additionalId: string = "";
-      let id: string = "";
-      let currState: string = "";
-      let currDistrict: string = "";
-      let permState: string = "";
-      let permDistrict: string = "";
-      let currPostalCode;
+      //let id: string = "";
 
       for (let i = 0; i < data.length; i++) {
-        currPostalCode = data[i]["Zip Code"];
-        currPostalCode = currPostalCode.toString();
-        console.log(currPostalCode.toString());
-        fetch(`https://api.postalpincode.in/pincode/${data[i]["Zip Code"]}`)
-          .then((res) => res.json())
-          .then(
-            (result) => {
-              let currPostalCodeData = result;
-              currDistrict =
-                currPostalCodeData[0]["PostOffice"][0]["District"] || "";
-              currState = currPostalCodeData[0]["PostOffice"][0]["State"] || "";
-            },
-            (error) => {
-              console.log(error);
-            }
-          );
+        // fetch(`https://api.postalpincode.in/pincode/${data[i]["Zip Code"]}`)
+        //   .then((res) => res.json())
+        //   .then(
+        //     (result) => {
+        //       let currPostalCodeData = result;
+        //       currDistrict =
+        //         currPostalCodeData[0]["PostOffice"][0]["District"] || "";
+        //       currState = currPostalCodeData[0]["PostOffice"][0]["State"] || "";
+        //     },
+        //     (error) => {
+        //       console.log(error);
+        //     }
+        //   );
 
-        fetch(
-          `https://api.postalpincode.in/pincode/${data[i]["Temporary Postal Code"]}`
-        )
-          .then((res) => res.json())
-          .then(
-            (result) => {
-              let permPostalCodeData = result;
-              permDistrict =
-                permPostalCodeData[0]["PostOffice"][0]["District"] || "";
-              permState = permPostalCodeData[0]["PostOffice"][0]["State"] || "";
-            },
-            (error) => {
-              console.log(error);
-            }
-          );
+        const stateCodes: any = {
+          AN: "Andaman and Nicobar",
+          AR: "Arunachal Pradesh",
+          AS: "Assam",
+          AP: "Andhra Pradesh",
+          BR: "Bihar",
+          Delhi: "Delhi",
+          CG: "Chandigarh",
+          CH: "Chhattisgarh",
+          DD: "Daman and Diu",
+          GOA: "Goa",
+          Gujarat: "Gujarat",
+          HP: "Himachal Pradesh",
+          Haryana: "Haryana",
+          Jharkhand: "Jharkhand",
+          JK: "Jammu and kashmir",
+          Karnataka: "Karnataka",
+          Kerala: "Kerala",
+          LD: "Lakshadweep",
+          DN: "Dadra and Nagar Haveli",
+          MH: "Maharashtra",
+          Manipur: "Manipur",
+          MP: "Madhya Pradesh",
+          "Tamil Nadu": "Tamil Nadu",
+          MZ: "Mizoram",
+          Nagaland: "Nagaland",
+          Odisha: "Orissa",
+          Punjab: "Punjab",
+          PY: "Puducherry",
+          Rajasthan: "Rajasthan",
+          SK: "Sikkim",
+          ML: "Meghalaya",
+          Telangana: "Telangana",
+          Tripura: "Tripura",
+          UK: "Uttarakhand",
+          UP: "Uttar Pradesh",
+          WB: "West Bengal",
+          // TODO: Add all states codes here
+        };
+
+        let currStateCode = data[i]["State"];
+        currStateCode = stateCodes[currStateCode];
+        let permStateCode = data[i]["Temporary State"];
+        permStateCode = stateCodes[permStateCode];
+
+        const gender: any = {
+          M: "male",
+          F: "female",
+        };
+        let custGender = data[i]["Gender"];
+        custGender = gender[custGender];
 
         customerInfo = {
           firstName: data[i]["Customer First Name"] || "",
           lastName: data[i]["Customer Last Name"] || "",
           swdo: data[i]["Relative Name"] || "",
-          gender: data[i]["Gender"] || "",
+          gender: custGender || "",
           email: data[i]["Customer Email Address"] || "",
           phoneNo: data[i]["Mobile Phone #"] || "",
           dob: data[i]["Date of Birth"] || "",
           currLineOne: data[i]["Address Line 1"] || "",
           currLineTwo: data[i]["Address Line 2"] || "",
-          currPS: "TODO" || "",
-          currDistrict: currDistrict || "",
-          currState: currState || "",
+          currPS: "" || "",
+          currDistrict: "" || "",
+          currState: currStateCode || "",
           currCity: data[i]["City"] || "",
           currPostal: data[i]["Zip Code"] || "",
           permLineOne: data[i]["Temporary Address"] || "",
           permLineTwo: data[i]["Temporary Address2"] || "",
           permCity: data[i]["Temporary City"] || "",
-          permPS: "TODO" || "",
-          permDistrict: permDistrict || "",
-          permState: permState || "",
+          permPS: "" || "",
+          permDistrict: "" || "",
+          permState: permStateCode || "",
           permPostal: data[i]["Temporary Postal Code"] || "",
-          type: "TODO" || "",
+          type: "" || "",
           category: data[i]["Enquiry Category"] || "",
-          source: "TODO" || "",
+          source: "" || "",
         };
         let currcustomerId = await firebase
           .firestore()
@@ -927,7 +955,7 @@ const DeliveryOrders: React.FC = () => {
           modelName: data[i]["Model Variant"] || "",
           modelCategory: data[i]["Model Category"] || "",
           hsnCode: data[i]["HSN Code"] || "",
-          //srNo: "TODO" || "",
+          srNo: "" || "",
           batteryNO: data[i]["Battery Number"] || "",
           keyNo: data[i]["Key No"] || "",
         };
@@ -940,20 +968,20 @@ const DeliveryOrders: React.FC = () => {
         // vehicleId = "";
 
         additionalInfo = {
-          hra: "TODO" || "",
-          joyClub: "TODO" || "",
-          accessories: "TODO" || "",
-          postalCharge: "TODO" || "",
-          ptfePolish: "TODO" || "",
+          hra: "" || "",
+          joyClub: "" || "",
+          accessories: "" || "",
+          postalCharge: "" || "",
+          ptfePolish: "" || "",
           price: data[i]["ExShowroom Price"] || "",
-          roadTaxWithRc: "TODO" || "",
-          extendedWarranty: "TODO" || "",
-          insuranceDeclaredValue: "TODO" || "",
-          inquiryType: "TODO" || "",
+          roadTaxWithRc: "" || "",
+          extendedWarranty: "" || "",
+          insuranceDeclaredValue: "" || "",
+          inquiryType: "" || "",
           financier: data[i]["Financier"] || "",
-          saleType: "TODO" || "",
-          downPayment: "TODO" || "",
-          accessoriesList: "TODO" || "",
+          saleType: "" || "",
+          downPayment: "" || "",
+          accessoriesList: "" || "",
           hypothecation: data[i]["Hypothecation"] || "",
         };
         let curradditinalId = await firebase
@@ -967,7 +995,7 @@ const DeliveryOrders: React.FC = () => {
         excelDeliveryOrder = {
           createdOn: new Date().toString(),
           active: true,
-          status: "INVOICE_CREATED",
+          status: "INCOMPLETE",
           color: data[i]["Color"],
           name:
             data[i]["Customer First Name"] +
@@ -1492,66 +1520,67 @@ const DeliveryOrders: React.FC = () => {
                           </>
                         )}
 
-                        {deliveryOrders[selected].initiatedBy === "XLSX" && (
-                          <>
-                            <ButtonDropdown
-                              className="mr-2"
-                              isOpen={dropdownButton}
-                              toggle={toggle}
-                            >
-                              <>
-                                <DropdownToggle
-                                  caret
-                                  size="sm"
-                                  color={"primary"}
-                                >
-                                  Create Insurance
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                  <DropdownItem
-                                    onClick={() => {
-                                      createInsurance("HDFC");
-                                    }}
+                        {deliveryOrders[selected].initiatedBy === "XLSX" &&
+                          deliveryOrders[selected].status !== "INCOMPLETE" && (
+                            <>
+                              <ButtonDropdown
+                                className="mr-2"
+                                isOpen={dropdownButton}
+                                toggle={toggle}
+                              >
+                                <>
+                                  <DropdownToggle
+                                    caret
+                                    size="sm"
+                                    color={"primary"}
                                   >
-                                    HDFC
-                                  </DropdownItem>
-                                  <DropdownItem
-                                    onClick={() => {
-                                      createInsurance("ICICI");
-                                    }}
-                                  >
-                                    ICICI
-                                  </DropdownItem>
-                                </DropdownMenu>
-                              </>
-                            </ButtonDropdown>
-                            <Button
-                              className="small-button-width my-2"
-                              color={"primary"}
-                              onClick={createRegistration}
-                              size="sm"
-                            >
-                              Create Registration
-                            </Button>
+                                    Create Insurance
+                                  </DropdownToggle>
+                                  <DropdownMenu>
+                                    <DropdownItem
+                                      onClick={() => {
+                                        createInsurance("HDFC");
+                                      }}
+                                    >
+                                      HDFC
+                                    </DropdownItem>
+                                    <DropdownItem
+                                      onClick={() => {
+                                        createInsurance("ICICI");
+                                      }}
+                                    >
+                                      ICICI
+                                    </DropdownItem>
+                                  </DropdownMenu>
+                                </>
+                              </ButtonDropdown>
+                              <Button
+                                className="small-button-width my-2"
+                                color={"primary"}
+                                onClick={createRegistration}
+                                size="sm"
+                              >
+                                Create Registration
+                              </Button>
 
-                            <Button
-                              className="small-button-width my-2"
-                              color={"primary"}
-                              onClick={printInvoice}
-                              size="sm"
-                            >
-                              Print Invoice
-                            </Button>
-                            <Button
-                              className="small-button-width my-2"
-                              color={"primary"}
-                              onClick={createDO}
-                              size="sm"
-                            >
-                              Print DO
-                            </Button>
-                          </>
-                        )}
+                              <Button
+                                className="small-button-width my-2"
+                                color={"primary"}
+                                onClick={printInvoice}
+                                size="sm"
+                              >
+                                Print Invoice
+                              </Button>
+                              <Button
+                                className="small-button-width my-2"
+                                color={"primary"}
+                                onClick={createDO}
+                                size="sm"
+                              >
+                                Print DO
+                              </Button>
+                            </>
+                          )}
 
                         <Button
                           className="my-2"
