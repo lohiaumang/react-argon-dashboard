@@ -32,6 +32,7 @@ import {
   ModalBody,
   ModalFooter,
   FormGroup,
+  CustomInput,
   InputGroup,
   InputGroupAddon,
   InputGroupText,
@@ -49,6 +50,7 @@ import InvoiceTable from "../../components/Tables/InvoiceTable";
 import EditDo from "../../components/Tables/EditDo";
 import SmallLoading from "../../components/Share/SmallLoading";
 import Loading from "../../components/Share/Loading";
+import * as XLSX from "xlsx";
 
 import {
   UserContext,
@@ -761,28 +763,7 @@ const DeliveryOrders: React.FC = () => {
 
   const rows = Object.values(deliveryOrders).map((currElem: any) => {
     const { name, modelName, color, status, createdOn, id, origin } = currElem;
-    // const originId = subDealerId || dealerId;
-
-    // if (!origins[originId]) {
-    //   const parent = firebase
-    //     .firestore()
-    //     .collection("users")
-    //     .doc(originId)
-    //     .get()
-    //     .then((doc) => {
-    //       if (doc.exists) {
-    //         const data = doc.data();
-
-    //         if (data) {
-    //           setOrigins({
-    //             ...origins,
-    //             [originId]: data.name,
-    //           });
-    //         }
-    //       }
-    //     });
-    // }
-
+    debugger;
     let date = new Date(createdOn)
       .toJSON()
       .slice(0, 10)
@@ -834,6 +815,190 @@ const DeliveryOrders: React.FC = () => {
     if (isSelected) {
       toggleSelected(row.id);
     }
+  };
+
+  const readExcel = async (file: any) => {
+    const promise = new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+      fileReader.onload = (e: any) => {
+        const bufferArray = e.target.result;
+        const wb = XLSX.read(bufferArray, { type: "buffer" });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+        resolve(data);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+
+    promise.then(async (data: any) => {
+      let dealerId = user.createdBy || user.uid || "";
+      let excelDeliveryOrders: any,
+        customerInfo: any,
+        additionalInfo: any,
+        doData: any,
+        vehicleInfo: any = {};
+      let vehicleId: string = "";
+      let customerId: string = "";
+      let additionalId: string = "";
+      let id: string = "";
+      let currState: string = "";
+      let currDistrict: string = "";
+      let permState: string = "";
+      let permDistrict: string = "";
+      let currPostalCode;
+
+      for (let i = 0; i < data.length; i++) {
+        currPostalCode = data[i]["Zip Code"];
+        currPostalCode = currPostalCode.toString();
+        console.log(currPostalCode.toString());
+        fetch(`https://api.postalpincode.in/pincode/${data[i]["Zip Code"]}`)
+          .then((res) => res.json())
+          .then(
+            (result) => {
+              let currPostalCodeData = result;
+              currDistrict =
+                currPostalCodeData[0]["PostOffice"][0]["District"] || "";
+              currState = currPostalCodeData[0]["PostOffice"][0]["State"] || "";
+            },
+            (error) => {
+              console.log(error);
+            }
+          );
+
+        fetch(
+          `https://api.postalpincode.in/pincode/${data[i]["Temporary Postal Code"]}`
+        )
+          .then((res) => res.json())
+          .then(
+            (result) => {
+              let permPostalCodeData = result;
+              permDistrict =
+                permPostalCodeData[0]["PostOffice"][0]["District"] || "";
+              permState = permPostalCodeData[0]["PostOffice"][0]["State"] || "";
+            },
+            (error) => {
+              console.log(error);
+            }
+          );
+
+        customerInfo = {
+          firstName: data[i]["Customer First Name"] || "",
+          lastName: data[i]["Customer Last Name"] || "",
+          swdo: data[i]["Relative Name"] || "",
+          gender: data[i]["Gender"] || "",
+          email: data[i]["Customer Email Address"] || "",
+          phoneNo: data[i]["Mobile Phone #"] || "",
+          dob: data[i]["Date of Birth"] || "",
+          currLineOne: data[i]["Address Line 1"] || "",
+          currLineTwo: data[i]["Address Line 2"] || "",
+          currPS: "TODO" || "",
+          currDistrict: currDistrict || "",
+          currState: currState || "",
+          currCity: data[i]["City"] || "",
+          currPostal: data[i]["Zip Code"] || "",
+          permLineOne: data[i]["Temporary Address"] || "",
+          permLineTwo: data[i]["Temporary Address2"] || "",
+          permCity: data[i]["Temporary City"] || "",
+          permPS: "TODO" || "",
+          permDistrict: permDistrict || "",
+          permState: permState || "",
+          permPostal: data[i]["Temporary Postal Code"] || "",
+          type: "TODO" || "",
+          category: data[i]["Enquiry Category"] || "",
+          source: "TODO" || "",
+        };
+        let currcustomerId = await firebase
+          .firestore()
+          .collection("customers")
+          .add(customerInfo);
+        customerId = currcustomerId.id;
+        // customerInfo = {};
+        //customerId = "";
+
+        vehicleInfo = {
+          color: data[i]["Color"] || "",
+          frameNumber: data[i]["Frame #"] || "",
+          engineNumber: data[i]["Engine #"] || "",
+          modelName: data[i]["Model Variant"] || "",
+          modelCategory: data[i]["Model Category"] || "",
+          hsnCode: data[i]["HSN Code"] || "",
+          //srNo: "TODO" || "",
+          batteryNO: data[i]["Battery Number"] || "",
+          keyNo: data[i]["Key No"] || "",
+        };
+        let currvechicleId = await firebase
+          .firestore()
+          .collection("vehicles")
+          .add(vehicleInfo);
+        vehicleId = currvechicleId.id;
+        // vehicleInfo = {};
+        // vehicleId = "";
+
+        additionalInfo = {
+          hra: "TODO" || "",
+          joyClub: "TODO" || "",
+          accessories: "TODO" || "",
+          postalCharge: "TODO" || "",
+          ptfePolish: "TODO" || "",
+          price: data[i]["ExShowroom Price"] || "",
+          roadTaxWithRc: "TODO" || "",
+          extendedWarranty: "TODO" || "",
+          insuranceDeclaredValue: "TODO" || "",
+          inquiryType: "TODO" || "",
+          financier: data[i]["Financier"] || "",
+          saleType: "TODO" || "",
+          downPayment: "TODO" || "",
+          accessoriesList: "TODO" || "",
+          hypothecation: data[0]["Hypothecation"] || "",
+        };
+        let curradditinalId = await firebase
+          .firestore()
+          .collection("additionals")
+          .add(additionalInfo);
+        additionalId = curradditinalId.id;
+        //additionalInfo = {};
+        // additionalId = "";
+
+        excelDeliveryOrders = {
+          createdOn: new Date().toString(),
+          active: true,
+          status: "INVOICE_CREATED",
+          color: data[i]["Color"],
+          name:
+            data[i]["Customer First Name"] +
+              " " +
+              data[i]["Customer Last Name"] || "",
+          vehicleId: vehicleId || "",
+          dealerId: dealerId,
+          customerId: customerId || "",
+          modelName: data[i]["Model Variant"] || "",
+          additionalId: additionalId || "",
+          createdBy: user.uid,
+          initiatedBy: "XLSX",
+          salesEx: data[i]["Assigned To (DSE) Name"],
+          invoiceNo: data[i]["Invoice #"],
+          origin: data[i]["Main dealer name"],
+        };
+
+        let doId = await firebase
+          .firestore()
+          .collection("deliveryOrders")
+          .add(excelDeliveryOrders);
+        id = doId.id;
+        doData = {
+          [id]: {
+            ...excelDeliveryOrders,
+          },
+        };
+        setDeliveryOrders(doData);
+        //deliveryOrders = {};
+      }
+    });
   };
 
   // //dashboard status count
@@ -1167,69 +1332,91 @@ const DeliveryOrders: React.FC = () => {
                         </Button>
                         {selected !== undefined && (
                           <>
-                            <>
-                              {user.dealerId ? (
-                                <>
-                                  <ButtonDropdown
-                                    className="mr-2"
-                                    isOpen={dropdownButton}
-                                    toggle={toggle}
-                                  >
-                                    <>
-                                      <DropdownToggle
-                                        caret
-                                        size="sm"
-                                        color={"primary"}
+                            {user.dealerId ? (
+                              <>
+                                <ButtonDropdown
+                                  className="mr-2"
+                                  isOpen={dropdownButton}
+                                  toggle={toggle}
+                                >
+                                  <>
+                                    <DropdownToggle
+                                      caret
+                                      size="sm"
+                                      color={"primary"}
+                                    >
+                                      Create Insurance
+                                    </DropdownToggle>
+                                    <DropdownMenu>
+                                      <DropdownItem
+                                        onClick={() => {
+                                          createInsurance("HDFC");
+                                        }}
                                       >
-                                        Create Insurance
-                                      </DropdownToggle>
-                                      <DropdownMenu>
-                                        <DropdownItem
-                                          onClick={() => {
-                                            createInsurance("HDFC");
-                                          }}
-                                        >
-                                          HDFC
-                                        </DropdownItem>
-                                        <DropdownItem
-                                          onClick={() => {
-                                            createInsurance("ICICI");
-                                          }}
-                                        >
-                                          ICICI
-                                        </DropdownItem>
-                                      </DropdownMenu>
-                                    </>
-                                  </ButtonDropdown>
-                                  <Button
-                                    className="small-button-width my-2"
-                                    color={"primary"}
-                                    onClick={createRegistration}
-                                    size="sm"
-                                  >
-                                    Create Registration
-                                  </Button>
+                                        HDFC
+                                      </DropdownItem>
+                                      <DropdownItem
+                                        onClick={() => {
+                                          createInsurance("ICICI");
+                                        }}
+                                      >
+                                        ICICI
+                                      </DropdownItem>
+                                    </DropdownMenu>
+                                  </>
+                                </ButtonDropdown>
+                                <Button
+                                  className="small-button-width my-2"
+                                  color={"primary"}
+                                  onClick={createRegistration}
+                                  size="sm"
+                                >
+                                  Create Registration
+                                </Button>
 
-                                  <Button
-                                    className="small-button-width my-2"
-                                    color={"primary"}
-                                    onClick={printInvoice}
-                                    size="sm"
-                                  >
-                                    Print Invoice
-                                  </Button>
-                                  <Button
-                                    className="small-button-width my-2"
-                                    color={"primary"}
-                                    onClick={createDO}
-                                    size="sm"
-                                  >
-                                    Print DO
-                                  </Button>
-                                </>
-                              ) : (
-                                <>
-                                  {deliveryOrders[selected].subDealerId ? (
+                                <Button
+                                  className="small-button-width my-2"
+                                  color={"primary"}
+                                  onClick={printInvoice}
+                                  size="sm"
+                                >
+                                  Print Invoice
+                                </Button>
+                                <Button
+                                  className="small-button-width my-2"
+                                  color={"primary"}
+                                  onClick={createDO}
+                                  size="sm"
+                                >
+                                  Print DO
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                {deliveryOrders[selected].subDealerId ? (
+                                  <>
+                                    <Button
+                                      className="small-button-width my-2"
+                                      color={"primary"}
+                                      onClick={createInvoice}
+                                      size="sm"
+                                    >
+                                      Create Invoice
+                                    </Button>
+                                    <Button
+                                      className="small-button-width my-2"
+                                      color={"primary"}
+                                      onClick={printInvoice}
+                                      size="sm"
+                                    >
+                                      Print Invoice
+                                    </Button>
+                                  </>
+                                ) : (
+                                  deliveryOrders[selected].status !==
+                                    "INCOMPLETE" &&
+                                  deliveryOrders[selected].initiatedBy !==
+                                    "XLSX" && (
                                     <>
                                       <Button
                                         className="small-button-width my-2"
@@ -1239,6 +1426,46 @@ const DeliveryOrders: React.FC = () => {
                                       >
                                         Create Invoice
                                       </Button>
+                                      <ButtonDropdown
+                                        className="mr-2"
+                                        isOpen={dropdownButton}
+                                        toggle={toggle}
+                                      >
+                                        <>
+                                          <DropdownToggle
+                                            caret
+                                            size="sm"
+                                            color={"primary"}
+                                          >
+                                            Create Insurance
+                                          </DropdownToggle>
+                                          <DropdownMenu>
+                                            <DropdownItem
+                                              onClick={() => {
+                                                createInsurance("HDFC");
+                                              }}
+                                            >
+                                              HDFC
+                                            </DropdownItem>
+                                            <DropdownItem
+                                              onClick={() => {
+                                                createInsurance("ICICI");
+                                              }}
+                                            >
+                                              ICICI
+                                            </DropdownItem>
+                                          </DropdownMenu>
+                                        </>
+                                      </ButtonDropdown>
+                                      <Button
+                                        className="small-button-width my-2"
+                                        color={"primary"}
+                                        onClick={createRegistration}
+                                        size="sm"
+                                      >
+                                        Create Registration
+                                      </Button>
+
                                       <Button
                                         className="small-button-width my-2"
                                         color={"primary"}
@@ -1247,85 +1474,85 @@ const DeliveryOrders: React.FC = () => {
                                       >
                                         Print Invoice
                                       </Button>
+                                      <Button
+                                        className="small-button-width my-2"
+                                        color={"primary"}
+                                        onClick={createDO}
+                                        size="sm"
+                                      >
+                                        Print DO
+                                      </Button>
                                     </>
-                                  ) : (
-                                    deliveryOrders[selected].status !==
-                                      "INCOMPLETE" && (
-                                      <>
-                                        <Button
-                                          className="small-button-width my-2"
-                                          color={"primary"}
-                                          onClick={createInvoice}
-                                          size="sm"
-                                        >
-                                          Create Invoice
-                                        </Button>
-                                        <ButtonDropdown
-                                          className="mr-2"
-                                          isOpen={dropdownButton}
-                                          toggle={toggle}
-                                        >
-                                          <>
-                                            <DropdownToggle
-                                              caret
-                                              size="sm"
-                                              color={"primary"}
-                                            >
-                                              Create Insurance
-                                            </DropdownToggle>
-                                            <DropdownMenu>
-                                              <DropdownItem
-                                                onClick={() => {
-                                                  createInsurance("HDFC");
-                                                }}
-                                              >
-                                                HDFC
-                                              </DropdownItem>
-                                              <DropdownItem
-                                                onClick={() => {
-                                                  createInsurance("ICICI");
-                                                }}
-                                              >
-                                                ICICI
-                                              </DropdownItem>
-                                            </DropdownMenu>
-                                          </>
-                                        </ButtonDropdown>
-                                        <Button
-                                          className="small-button-width my-2"
-                                          color={"primary"}
-                                          onClick={createRegistration}
-                                          size="sm"
-                                        >
-                                          Create Registration
-                                        </Button>
-
-                                        <Button
-                                          className="small-button-width my-2"
-                                          color={"primary"}
-                                          onClick={printInvoice}
-                                          size="sm"
-                                        >
-                                          Print Invoice
-                                        </Button>
-                                        <Button
-                                          className="small-button-width my-2"
-                                          color={"primary"}
-                                          onClick={createDO}
-                                          size="sm"
-                                        >
-                                          Print DO
-                                        </Button>
-                                      </>
-                                    )
-                                  )}
-                                </>
-                              )}
-                            </>
+                                  )
+                                )}
+                              </>
+                            )}
 
                             {/* {getActionButton()} */}
                           </>
                         )}
+
+                        {deliveryOrders[selected].initiatedBy === "XLSX" && (
+                          <>
+                            <ButtonDropdown
+                              className="mr-2"
+                              isOpen={dropdownButton}
+                              toggle={toggle}
+                            >
+                              <>
+                                <DropdownToggle
+                                  caret
+                                  size="sm"
+                                  color={"primary"}
+                                >
+                                  Create Insurance
+                                </DropdownToggle>
+                                <DropdownMenu>
+                                  <DropdownItem
+                                    onClick={() => {
+                                      createInsurance("HDFC");
+                                    }}
+                                  >
+                                    HDFC
+                                  </DropdownItem>
+                                  <DropdownItem
+                                    onClick={() => {
+                                      createInsurance("ICICI");
+                                    }}
+                                  >
+                                    ICICI
+                                  </DropdownItem>
+                                </DropdownMenu>
+                              </>
+                            </ButtonDropdown>
+                            <Button
+                              className="small-button-width my-2"
+                              color={"primary"}
+                              onClick={createRegistration}
+                              size="sm"
+                            >
+                              Create Registration
+                            </Button>
+
+                            <Button
+                              className="small-button-width my-2"
+                              color={"primary"}
+                              onClick={printInvoice}
+                              size="sm"
+                            >
+                              Print Invoice
+                            </Button>
+                            <Button
+                              className="small-button-width my-2"
+                              color={"primary"}
+                              onClick={createDO}
+                              size="sm"
+                            >
+                              Print DO
+                            </Button>
+                          </>
+                        )}
+
                         <Button
                           className="my-2"
                           color={"primary"}
@@ -1400,6 +1627,27 @@ const DeliveryOrders: React.FC = () => {
                   )}
                 </div>
               )}
+
+              <Row>
+                <Col sm={{ size: 6, offset: 3 }} className="text-center">
+                  <FormGroup>
+                    <Label for="formatFile">Bulk upload config</Label>
+                    <CustomInput
+                      type="file"
+                      id="formatFile"
+                      name="formatFile"
+                      label="Choose file"
+                      onChange={(e: any) => {
+                        const file = e.target.files[0];
+                        readExcel(file);
+                      }}
+                    />
+                  </FormGroup>
+                  {/* {bulkUploadError && (
+              <small className="text-danger">{bulkUploadError}</small>
+            )} */}
+                </Col>
+              </Row>
             </Card>
           </div>
         </Row>
