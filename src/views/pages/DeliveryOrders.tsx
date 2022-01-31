@@ -837,7 +837,7 @@ const DeliveryOrders: React.FC = () => {
 
     promise.then(async (data: any) => {
       let dealerId = user.createdBy || user.uid || "";
-      let excelDeliveryOrders: any,
+      let excelDeliveryOrder: any,
         customerInfo: any,
         additionalInfo: any,
         doData: any,
@@ -964,7 +964,7 @@ const DeliveryOrders: React.FC = () => {
         //additionalInfo = {};
         // additionalId = "";
 
-        excelDeliveryOrders = {
+        excelDeliveryOrder = {
           createdOn: new Date().toString(),
           active: true,
           status: "INVOICE_CREATED",
@@ -985,16 +985,16 @@ const DeliveryOrders: React.FC = () => {
           origin: data[i]["Main dealer name"],
         };
 
-        let doId = await firebase
+        let { id } = await firebase
           .firestore()
           .collection("deliveryOrders")
-          .add(excelDeliveryOrders);
-        id = doId.id;
+          .add(excelDeliveryOrder);
+
         doData = {
-          [id]: {
-            ...excelDeliveryOrders,
-          },
+          ...deliveryOrders,
+          [id]: excelDeliveryOrder,
         };
+
         setDeliveryOrders(doData);
         //deliveryOrders = {};
       }
