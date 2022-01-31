@@ -1,4 +1,5 @@
 const { padEnd } = require("lodash");
+// const { ipcMain: ipc, BrowserWindow } = require("electron");
 
 module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
   const { click, typeText } = require("./helper");
@@ -7,6 +8,12 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
   const {
     credentials: { username, password },
   } = data;
+
+  // ipc.on("toErp", async (event, {
+  //   type: "alert",
+  //   message: "error message"
+  // }) => {
+  // });
 
   const stateCodes = {
     "ANDAMAN AND NICOBAR": "AN",
@@ -153,9 +160,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         );
 
         await typeText(page, "#s_captcha", captcha);
-        // await page.waitForNavigation();
         await click(page, "#s_swepi_22");
       }
+
       //end
       await page.waitForSelector('td[class="siebui-applet-title"]', {
         visible: true,
@@ -330,9 +337,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           'input[aria-label="Date Of Birth"]',
           data.customerInfo.dob
         );
-        // await page.evaluate(() => {
-        //   window.alert = console.log;
-        // });
+
+        await page.evaluate(
+          () => (window.alert = (message) => window.api.send("toErp", message))
+        );
+
         await typeText(
           page,
           'input[aria-label="Address 1"]',
@@ -499,6 +508,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           await fillData(
             'input[aria-label="Date Of Birth"]',
             data.customerInfo.dob
+          );
+
+          await page.evaluate(
+            () =>
+              (window.alert = (message) => window.api.send("toErp", message))
           );
 
           await fillData(

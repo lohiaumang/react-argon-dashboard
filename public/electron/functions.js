@@ -269,12 +269,17 @@ module.exports = async function (mainWindow, browser) {
             webPreferences: {
               preload: path.join(__dirname, "./js/erp.js"),
               nodeIntegration: true,
+              backgroundThrottling: false,
             },
           });
 
           // erpWindow.webContents.on("fromErp", (event, args) =>
           //   console.log(args)
           // );
+
+          ipc.on("toErp", async (event, args) => {
+            console.log("HERE: ", args);
+          });
 
           // erpWindow.webContents.openDevTools({ mode: "undocked" });
 
@@ -283,7 +288,7 @@ module.exports = async function (mainWindow, browser) {
           );
 
           // erpWindow.webContents.on("did-navigate", () => {
-          //   erpWindow.webContents.executeJavaScript("window.alert=console.log");
+          //   erpWindow.webContents.executeJavaScript("window.alert=customAlert");
           // });
           // "const { ipcRenderer } = require('electron'); window.alert = (message) => ipcRenderer.send('fromErp', message);"
           page = await pie.getPage(browser, erpWindow);
