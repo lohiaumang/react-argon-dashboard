@@ -954,7 +954,7 @@ const DeliveryOrders: React.FC = () => {
           saleType: "TODO" || "",
           downPayment: "TODO" || "",
           accessoriesList: "TODO" || "",
-          hypothecation: data[0]["Hypothecation"] || "",
+          hypothecation: data[i]["Hypothecation"] || "",
         };
         let curradditinalId = await firebase
           .firestore()
