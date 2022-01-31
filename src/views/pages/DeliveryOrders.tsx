@@ -818,6 +818,8 @@ const DeliveryOrders: React.FC = () => {
   };
 
   const readExcel = async (file: any) => {
+    let doData: any = deliveryOrders;
+
     const promise = new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsArrayBuffer(file);
@@ -840,7 +842,6 @@ const DeliveryOrders: React.FC = () => {
       let excelDeliveryOrder: any,
         customerInfo: any,
         additionalInfo: any,
-        doData: any,
         vehicleInfo: any = {};
       let vehicleId: string = "";
       let customerId: string = "";
@@ -1019,13 +1020,14 @@ const DeliveryOrders: React.FC = () => {
           .add(excelDeliveryOrder);
 
         doData = {
-          ...deliveryOrders,
+          ...doData,
           [id]: excelDeliveryOrder,
         };
 
-        setDeliveryOrders(doData);
         //deliveryOrders = {};
       }
+
+      setDeliveryOrders(doData);
     });
   };
 

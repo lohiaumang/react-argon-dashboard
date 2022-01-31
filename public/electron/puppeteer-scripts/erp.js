@@ -330,6 +330,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           'input[aria-label="Date Of Birth"]',
           data.customerInfo.dob
         );
+        // await page.evaluate(() => {
+        //   window.alert = console.log;
+        // });
         await typeText(
           page,
           'input[aria-label="Address 1"]',

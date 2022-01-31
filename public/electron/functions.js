@@ -266,7 +266,15 @@ module.exports = async function (mainWindow, browser) {
             height: 750,
             width: 1200,
             frame: true,
+            webPreferences: {
+              preload: path.join(__dirname, "./js/erp.js"),
+              nodeIntegration: true,
+            },
           });
+
+          // erpWindow.webContents.on("fromErp", (event, args) =>
+          //   console.log(args)
+          // );
 
           // erpWindow.webContents.openDevTools({ mode: "undocked" });
 
@@ -274,6 +282,10 @@ module.exports = async function (mainWindow, browser) {
             "https://hirise.honda2wheelersindia.com/siebel/app/edealer/enu/?SWECmd=Login&SWECM=S&SRN=&SWEHo=hirise.honda2wheelersindia.com"
           );
 
+          // erpWindow.webContents.on("did-navigate", () => {
+          //   erpWindow.webContents.executeJavaScript("window.alert=console.log");
+          // });
+          // "const { ipcRenderer } = require('electron'); window.alert = (message) => ipcRenderer.send('fromErp', message);"
           page = await pie.getPage(browser, erpWindow);
 
           const { credentials } = getCredentials();
