@@ -1,5 +1,5 @@
 const { padEnd } = require("lodash");
-// const { ipcMain: ipc, BrowserWindow } = require("electron");
+const { ipcMain: ipc } = require("electron");
 
 module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
   const { click, typeText } = require("./helper");
@@ -9,11 +9,14 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
     credentials: { username, password },
   } = data;
 
-  // ipc.on("toErp", async (event, {
-  //   type: "alert",
-  //   message: "error message"
-  // }) => {
-  // });
+  ipc.on(
+    "toErp",
+    async (event, { type = "alert", message = "error message" }) => {
+      console.log(type + ": " + message);
+
+      event.returnValue = true;
+    }
+  );
 
   const stateCodes = {
     "ANDAMAN AND NICOBAR": "AN",
@@ -231,6 +234,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         () => document.querySelector("input[aria-label='First Name']").value
       );
       //create new inquery if first name not exist
+      await page.evaluate(() => (window.alert = window.api.alert));
+
       if (!cName) {
         await page.waitForSelector("div[title='Second Level View Bar']", {
           visible: true,
@@ -338,10 +343,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           data.customerInfo.dob
         );
 
-        await page.evaluate(
-          () => (window.alert = (message) => window.api.send("toErp", message))
-        );
-
         await typeText(
           page,
           'input[aria-label="Address 1"]',
@@ -440,6 +441,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           await click(page, 'table[summary="View All Contacts"] td[title] a');
 
           await waitForNetworkIdle(page, timeout, 0);
+
           const fillData = async (selector, value) => {
             if (selector && value) {
               await page.waitForFunction(
@@ -459,6 +461,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
               await typeText(page, selector, value);
             }
           };
+
           await waitForNetworkIdle(page, timeout, 0);
           await fillData(
             'input[aria-label="First Name"]',
@@ -525,10 +528,24 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
           );
 
+          console.log("Here");
+
           await fillData(
             'input[aria-label="State"]',
             data.customerInfo.currState.slice(0, 2).toUpperCase()
           );
+
+          console.log("Here 2");
+
+          // if(alertMessage.startsWith("[1]Wrong field values or value types detected in field Address 1")) {
+
+          //   click on state input box here
+
+          //   await fillData(
+          //   'input[aria-label="State"]',
+          //   data.customerInfo.currState.slice(0, 2).toUpperCase()
+          // );
+          // }
 
           await fillData(
             'input[aria-label="Zip/Pin Code"]',
