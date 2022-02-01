@@ -56,6 +56,7 @@ import {
   UserContext,
   InsuranceConfigContext,
   PriceConfigContext,
+  ModelWiseColorDescription,
 } from "../../Context";
 import firebase from "firebase/app";
 import "firebase/firestore";
@@ -88,6 +89,9 @@ const DeliveryOrders: React.FC = () => {
   const [dropdownButton, setDropdownButton] = useState(false);
   const priceConfig = useContext(PriceConfigContext);
   const insuranceConfig = useContext(InsuranceConfigContext);
+  const colorConfig = useContext(ModelWiseColorDescription) || {};
+
+  debugger;
 
   const db = firebase.firestore();
 
@@ -763,7 +767,12 @@ const DeliveryOrders: React.FC = () => {
 
   const rows = Object.values(deliveryOrders).map((currElem: any) => {
     const { name, modelName, color, status, createdOn, id, origin } = currElem;
-    debugger;
+    let colorName =
+      colorConfig && colorConfig[modelName]
+        ? colorConfig[modelName][color]
+        : "";
+    // colorName =
+
     let date = new Date(createdOn)
       .toJSON()
       .slice(0, 10)
@@ -774,7 +783,7 @@ const DeliveryOrders: React.FC = () => {
       id,
       name,
       modelName,
-      color,
+      color: colorName,
       status: status.split("_").join(" "),
       date,
       origin,
