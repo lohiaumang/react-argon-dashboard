@@ -344,9 +344,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           'input[aria-label="Date Of Birth"]',
           data.customerInfo.dob
         );
-        await page.evaluate(
-          () => (window.alert = (message) => window.api.send("toErp", message))
-        );
+
         await typeText(
           page,
           'input[aria-label="Address 1"]',
@@ -358,34 +356,34 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           data.customerInfo.currLineTwo + " " + data.customerInfo.currPS
         );
 
-        console.log(alertMessage, "here print message");
         if (
           alertMessage.startsWith(
             "[1]Wrong field values or value types detected in field Address 2"
           )
         ) {
           //click on state input box here
-          console.log(alertMessage, "here print message");
+
           await page.waitForSelector('input[aria-label="Title"]', {
             visible: true,
           });
           await click(page, 'input[aria-label="Title"]');
-          console.log(alertMessage, "here print message 1");
           await page.waitForSelector('input[aria-label="Address 2"]', {
             visible: true,
           });
 
           await click(page, 'input[aria-label="Address 2"]');
-          console.log(alertMessage, "here print message 3");
-
-          await fillData(
+          await typeText(
+            page,
             'input[aria-label="Address 2"]',
             data.customerInfo.currLineTwo + " " + data.customerInfo.currPS
           );
-          console.log(alertMessage, "here print message 4");
         }
 
         //select state
+        await page.waitForSelector('input[aria-label="State"]', {
+          visible: true,
+        });
+        await click(page, 'input[aria-label="State"]');
         await click(page, 'input[aria-label="State"] + span');
         await page.waitForSelector(
           "ul[role='combobox']:not([style*='display: none'])",
@@ -544,11 +542,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             data.customerInfo.dob
           );
 
-          await page.evaluate(
-            () =>
-              (window.alert = (message) => window.api.send("toErp", message))
-          );
-
           await fillData(
             'input[aria-label="Address 1"]',
             data.customerInfo.currLineOne
@@ -560,60 +553,105 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           );
 
           console.log("Here");
+          // if (
+          //   alertMessage.startsWith(
+          //     "[1]Wrong field values or value types detected in field Address 2"
+          //   )
+          // ) {
+          //   //click on state input box here
+          //   console.log("here print message");
+          //   // await page.waitForSelector('input[aria-label="Title"]', {
+          //   //   visible: true,
+          //   // });
+          //   // await click(page, 'input[aria-label="Title"]');
+          //   await page.waitForSelector('input[aria-label="Address 2"]', {
+          //     visible: true,
+          //   });
+
+          //   await click(page, 'input[aria-label="Address 2"]');
+          //   await fillData(
+          //     'input[aria-label="Address 2"]',
+          //     data.customerInfo.currLineTwo + " " + data.customerInfo.currPS
+          //   );
+          // }
 
           await fillData(
             'input[aria-label="State"]',
             data.customerInfo.currState.slice(0, 2).toUpperCase()
           );
 
-          console.log(alertMessage, "here print message");
           if (
             alertMessage.startsWith(
               "[1]Wrong field values or value types detected in field Address 2"
             )
           ) {
             //click on state input box here
-            console.log(alertMessage, "here print message");
-            await page.waitForSelector('input[aria-label="Title"]', {
-              visible: true,
-            });
-            await click(page, 'input[aria-label="Title"]');
-            console.log(alertMessage, "here print message 1");
+            console.log("here print message");
             await page.waitForSelector('input[aria-label="Address 2"]', {
               visible: true,
             });
 
             await click(page, 'input[aria-label="Address 2"]');
-            console.log(alertMessage, "here print message 3");
-
             await fillData(
               'input[aria-label="Address 2"]',
               data.customerInfo.currLineTwo + " " + data.customerInfo.currPS
             );
-            console.log(alertMessage, "here print message 4");
+            await page.waitForSelector('input[aria-label="State"]', {
+              visible: true,
+            });
+
+            await click(page, 'input[aria-label="State"]');
+            await fillData(
+              'input[aria-label="State"]',
+              data.customerInfo.currState.slice(0, 2).toUpperCase()
+            );
           }
 
-          console.log("Here 2");
-
-          // if(alertMessage.startsWith("[1]Wrong field values or value types detected in field Address 2")) {
-
+          // if (
+          //   alertMessage.startsWith(
+          //     "[1]Wrong field values or value types detected in field State"
+          //   )
+          // ) {
           //   //click on state input box here
+          //   console.log("here print message");
+          //   // await page.waitForSelector('input[aria-label="Title"]', {
+          //   //   visible: true,
+          //   // });
+          //   // await click(page, 'input[aria-label="Title"]');
+          //   await page.waitForSelector('input[aria-label="State"]', {
+          //     visible: true,
+          //   });
 
+          //   await click(page, 'input[aria-label="State"]');
           //   await fillData(
-          //   'input[aria-label="State"]',
-          //   data.customerInfo.currState.slice(0, 2).toUpperCase()
-          // );
+          //     'input[aria-label="State"]',
+          //     data.customerInfo.currState.slice(0, 2).toUpperCase()
+          //   );
           // }
 
           await fillData(
             'input[aria-label="Zip/Pin Code"]',
             data.customerInfo.currPostal
           );
+          console.log(alertMessage, "not print alert message 2");
+          if (
+            alertMessage.startsWith(
+              "[1]Wrong field values or value types detected in field Zip/Pin Code"
+            )
+          ) {
+            //click on state input box here
+            console.log("not click postal code");
+            console.log(alertMessage, "not print alert message 3");
+            await page.waitForSelector('input[aria-label="Zip/Pin Code"]', {
+              visible: true,
+            });
 
-          // await fillData(
-          //   'input[aria-label="Locality"]',
-          //   data.customerInfo.currPS
-          // );
+            await click(page, 'input[aria-label="Zip/Pin Code"]');
+            await fillData(
+              'input[aria-label="Zip/Pin Code"]',
+              data.customerInfo.currPostal
+            );
+          }
 
           await fillData('input[aria-label="Email', data.customerInfo.email);
         }
