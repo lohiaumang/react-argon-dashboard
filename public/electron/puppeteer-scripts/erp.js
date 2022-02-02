@@ -204,21 +204,21 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await waitForNetworkIdle(page, timeout, 0);
       await typeText(
         page,
-        'input[name="s_5_1_12_0"]',
+        'input[aria-label="First Name"]',
         data.customerInfo.firstName
       );
       await typeText(
         page,
-        'input[name="s_5_1_8_0"]',
+        'input[aria-label="Last Name"]',
         data.customerInfo.lastName
       );
       await typeText(
         page,
-        'input[name="s_5_1_0_0"]',
+        'input[aria-label="Mobile Phone #"]',
         data.customerInfo.phoneNo
       );
       await waitForNetworkIdle(page, timeout, 0);
-      await click(page, 'button[name="s_5_1_10_0"]');
+      await click(page, 'button[aria-label="Search:Go"]');
 
       //end
 
@@ -238,6 +238,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.evaluate(() => (window.alert = window.api.alert));
 
       if (!cName) {
+        await waitForNetworkIdle(page, timeout, 0);
         await page.waitForSelector("div[title='Second Level View Bar']", {
           visible: true,
         });
@@ -282,13 +283,13 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           data.customerInfo.lastName
         );
 
-        await page.waitForSelector('input[name="s_2_1_0_0"]', {
+        await page.waitForSelector('input[aria-label="Mobile Phone #"]', {
           visible: true,
         });
 
         await typeText(
           page,
-          'input[name="s_2_1_0_0"]',
+          'input[aria-label="Mobile Phone #"]',
           data.customerInfo.phoneNo
         );
 
@@ -352,7 +353,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await typeText(
           page,
           'input[aria-label="Address 2"]',
-          data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
+          data.customerInfo.currLineTwo + " " + data.customerInfo.currPS
         );
 
         //select state
@@ -526,28 +527,41 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
           await fillData(
             'input[aria-label="Address 2"]',
-            data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
+            data.customerInfo.currLineTwo + " " + data.customerInfo.currPS
           );
 
           console.log("Here");
+          console.log(alertMessage, "here print message");
+
+          await fillData(
+            'input[aria-label="State"]',
+            data.customerInfo.currState.slice(0, 2).toUpperCase()
+          );
           if (
             alertMessage.startsWith(
               "[1]Wrong field values or value types detected in field Address 2"
             )
           ) {
             //click on state input box here
+            console.log(alertMessage, "here print message");
+            await page.waitForSelector('input[aria-label="Title"]', {
+              visible: true,
+            });
+            await click(page, 'input[aria-label="Title"]');
+            console.log(alertMessage, "here print message 1");
+            await page.waitForSelector('input[aria-label="Address 2"]', {
+              visible: true,
+            });
+
             await click(page, 'input[aria-label="Address 2"]');
+            console.log(alertMessage, "here print message 3");
 
             await fillData(
               'input[aria-label="Address 2"]',
-              data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
+              data.customerInfo.currLineTwo + " " + data.customerInfo.currPS
             );
+            console.log(alertMessage, "here print message 4");
           }
-
-          await fillData(
-            'input[aria-label="State"]',
-            data.customerInfo.currState.slice(0, 2).toUpperCase()
-          );
 
           console.log("Here 2");
 
@@ -1252,7 +1266,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await typeText(
           page,
           'input[aria-label="Address Line 2"]',
-          data.customerInfo.permLineTwo
+          data.customerInfo.permLineTwo + " " + data.customerInfo.permPS
         );
         //select state
         await click(page, 'input[aria-label="State"] + span');
