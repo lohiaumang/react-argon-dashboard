@@ -91,8 +91,6 @@ const DeliveryOrders: React.FC = () => {
   const insuranceConfig = useContext(InsuranceConfigContext);
   const colorConfig = useContext(ModelWiseColorDescription) || {};
 
-  debugger;
-
   const db = firebase.firestore();
 
   const [dealerInfo, setDealerInfo] = useState<DealerInfo>({
@@ -114,7 +112,6 @@ const DeliveryOrders: React.FC = () => {
   const [inputInvoiceNo, setInputInvoiceNo] = useState<string>("");
   const toggle = () => setDropdownButton((prevState) => !prevState);
   const { cancellablePromise } = useCancellablePromise();
-
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
       if (!dealerInfo.name) {
@@ -123,7 +120,6 @@ const DeliveryOrders: React.FC = () => {
       }
 
       setLoadingPage(true);
-
       let fetchBy: string = user.dealerId ? "subDealerId" : "dealerId";
       cancellablePromise(
         db
@@ -765,6 +761,22 @@ const DeliveryOrders: React.FC = () => {
     }
   };
 
+  // const findSharedStart = (array: string[]) => {
+  //   if (array.length <= 1) {
+  //     return;
+  //   }
+
+  //   let A = array.concat().sort();
+  //   let a1 = A[0];
+  //   let a2 = A[A.length - 1];
+  //   let L = a1.length;
+  //   let i = 0;
+
+  //   while (i < L && a1.charAt(i) === a2.charAt(i)) i++;
+
+  //   return a1.substring(0, i);
+  // };
+
   const rows = Object.values(deliveryOrders).map((currElem: any) => {
     const { name, modelName, color, status, createdOn, id, origin } = currElem;
     let colorName =
@@ -827,6 +839,7 @@ const DeliveryOrders: React.FC = () => {
   };
 
   const readExcel = async (file: any) => {
+    setLoadingPage(true);
     let doData: any = deliveryOrders;
 
     const promise = new Promise((resolve, reject) => {
@@ -858,6 +871,7 @@ const DeliveryOrders: React.FC = () => {
       //let id: string = "";
 
       for (let i = 0; i < data.length; i++) {
+        debugger;
         // fetch(`https://api.postalpincode.in/pincode/${data[i]["Zip Code"]}`)
         //   .then((res) => res.json())
         //   .then(
@@ -923,6 +937,15 @@ const DeliveryOrders: React.FC = () => {
         };
         let custGender = data[i]["Gender"];
         custGender = gender[custGender];
+        let currLineTwo: any = data[i]["Address Line 2"] || "";
+        let currLineTwo2 = currLineTwo.substr(0, currLineTwo.indexOf("PS") - 1);
+        let currPS: any = data[i]["Address Line 2"] || "";
+        let currPs2 = currPS.substr(currPS.indexOf("PS"));
+
+        let permLineTwo: any = data[i]["Temporary Address2"] || "";
+        let permLineTwo2 = permLineTwo.substr(0, permLineTwo.indexOf("PS") - 1);
+        let permPS: any = data[i]["Temporary Address2"] || "";
+        let permPS2 = permPS.substr(currPS.indexOf("PS"));
 
         customerInfo = {
           firstName: data[i]["Customer First Name"] || "",
@@ -930,22 +953,22 @@ const DeliveryOrders: React.FC = () => {
           swdo: data[i]["Relative Name"] || "",
           gender: custGender || "",
           email: data[i]["Customer Email Address"] || "",
-          phoneNo: data[i]["Mobile Phone #"] || "",
+          phoneNo: data[i]["Mobile Phone #"].toString() || "",
           dob: data[i]["Date of Birth"] || "",
           currLineOne: data[i]["Address Line 1"] || "",
-          currLineTwo: data[i]["Address Line 2"] || "",
-          currPS: "" || "",
+          currLineTwo: currLineTwo2 || "",
+          currPS: currPs2 || "",
           currDistrict: "" || "",
           currState: currStateCode || "",
           currCity: data[i]["City"] || "",
-          currPostal: data[i]["Zip Code"] || "",
+          currPostal: data[i]["Zip Code"].toString() || "",
           permLineOne: data[i]["Temporary Address"] || "",
-          permLineTwo: data[i]["Temporary Address2"] || "",
+          permLineTwo: permLineTwo2 || "",
           permCity: data[i]["Temporary City"] || "",
-          permPS: "" || "",
+          permPS: permPS2 || "",
           permDistrict: "" || "",
           permState: permStateCode || "",
-          permPostal: data[i]["Temporary Postal Code"] || "",
+          permPostal: data[i]["Temporary Postal Code"].toString() || "",
           type: "" || "",
           category: data[i]["Enquiry Category"] || "",
           source: "" || "",
@@ -959,15 +982,15 @@ const DeliveryOrders: React.FC = () => {
         //customerId = "";
 
         vehicleInfo = {
-          color: data[i]["Color"] || "",
+          color: data[i]["MTOC"] || "",
           frameNumber: data[i]["Frame #"] || "",
           engineNumber: data[i]["Engine #"] || "",
           modelName: data[i]["Model Variant"] || "",
           modelCategory: data[i]["Model Category"] || "",
-          hsnCode: data[i]["HSN Code"] || "",
+          hsnCode: data[i]["HSN Code"].toString() || "",
           srNo: "" || "",
-          batteryNO: data[i]["Battery Number"] || "",
-          keyNo: data[i]["Key No"] || "",
+          batteryNO: data[i]["Battery Number"].toString() || "",
+          keyNo: data[i]["Key No"].toString() || "",
         };
         let currvechicleId = await firebase
           .firestore()
@@ -983,7 +1006,7 @@ const DeliveryOrders: React.FC = () => {
           accessories: "" || "",
           postalCharge: "" || "",
           ptfePolish: "" || "",
-          price: data[i]["ExShowroom Price"] || "",
+          price: data[i]["ExShowroom Price"].toString() || "",
           roadTaxWithRc: "" || "",
           extendedWarranty: "" || "",
           insuranceDeclaredValue: "" || "",
@@ -1006,21 +1029,25 @@ const DeliveryOrders: React.FC = () => {
           createdOn: new Date().toString(),
           active: true,
           status: "INCOMPLETE",
-          color: data[i]["Color"],
+          color: data[i]["MTOC"] || "",
           name:
             data[i]["Customer First Name"] +
               " " +
               data[i]["Customer Last Name"] || "",
           vehicleId: vehicleId || "",
-          dealerId: dealerId,
+          dealerId: dealerId || "",
           customerId: customerId || "",
           modelName: data[i]["Model Variant"] || "",
           additionalId: additionalId || "",
-          createdBy: user.uid,
+          createdBy: user.uid || "",
           initiatedBy: "XLSX",
-          salesEx: data[i]["Assigned To (DSE) Name"],
-          invoiceNo: data[i]["Invoice #"],
-          origin: data[i]["Main dealer name"],
+          salesEx: data[i]["Assigned To (DSE) Name"] || "",
+          invoiceNo: data[i]["Invoice #"] || "",
+          origin:
+            data[i]["Main Dealer Name"] ||
+            data[i]["Requesting Dealer"] ||
+            data[i]["Network Name"] ||
+            "",
         };
 
         let { id } = await firebase
@@ -1037,6 +1064,7 @@ const DeliveryOrders: React.FC = () => {
       }
 
       setDeliveryOrders(doData);
+      setLoadingPage(false);
     });
   };
 

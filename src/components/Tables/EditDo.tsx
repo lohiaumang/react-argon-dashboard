@@ -47,7 +47,8 @@ let initialCustomerInfo: any = {
   category: "ftb",
   type: "individual",
 };
-
+let modelNames: string[];
+let commonModelName: string;
 const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   const [currDo, setCurrDo] = useState<DeliveryOrder>(deliveryOrder);
   const [disabled, setDisabled] = useState<boolean>(true);
@@ -62,6 +63,15 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   const [ptefCharge, setptefCharge] = useState<any>({});
   const [modelWiseColorDescription, setModelWiseColorDescription] =
     useState<any>({});
+  const [characterCountAddress1, setCharacterCountAddress1] = useState(0);
+  const [characterCountAddress2, setCharacterCountAddress2] = useState(0);
+  const [characterCountAddress3, setCharacterCountAddress3] = useState(0);
+  const [characterCountPermAddress1, setCharacterCountPermAddress1] =
+    useState(0);
+  const [characterCountPermAddress2, setCharacterCountPermAddress2] =
+    useState(0);
+  const [characterCountPermAddress3, setCharacterCountPermAddress3] =
+    useState(0);
 
   const [userInfoUpdateError, setDoInfoUpdateError] = useState<{
     code: string;
@@ -135,13 +145,26 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
     };
   }, []);
 
+  // useEffect(() => {
+  //   if (currDo.modelName) {
+  //     setModelWiseColorDescription(
+
+  //       modelColorDescription[currDo.modelName] || ""
+  //     );
+  //     updateAccessories(currDo.modelName);
+  //   }
+  // }, [currDo.modelName]);
+
   useEffect(() => {
-    if (currDo.modelName) {
-      setModelWiseColorDescription(
-        modelColorDescription[currDo.modelName] || ""
-      );
-      updateAccessories(currDo.modelName);
+    let isCancelled = false;
+    if (!isCancelled) {
+      modelNames = Object.values(modelColorDescription[currDo.modelName] || {});
+      commonModelName = findSharedStart(modelNames) || "";
+      setModelWiseColorDescription(modelColorDescription[currDo.modelName]);
     }
+    return () => {
+      isCancelled = true;
+    };
   }, [currDo.modelName]);
 
   useEffect(() => {
@@ -188,6 +211,21 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   //     });
   //   }
   // }, [currDo.customerInfo]);
+  const findSharedStart = (array: string[]) => {
+    if (array.length <= 1) {
+      return;
+    }
+
+    let A = array.concat().sort();
+    let a1 = A[0];
+    let a2 = A[A.length - 1];
+    let L = a1.length;
+    let i = 0;
+
+    while (i < L && a1.charAt(i) === a2.charAt(i)) i++;
+
+    return a1.substring(0, i);
+  };
 
   const updateAccessories = (modelName: string) => {
     if (user) {
@@ -503,6 +541,10 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
       });
     };
 
+    //  const handleChange = (e:any) => {
+    //     if(e.target.value.length > max) return;
+    //     this.setState({[e.target.name]: {value: e.target.value, count: e.target.value.length }});
+    //   }
     return (
       <div>
         {editDoLoading && (
@@ -1089,11 +1131,13 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               ...currDo,
                               customerInfo,
                             });
+                            setCharacterCountAddress1(ev.target.value.length);
                           }}
                           placeholder="Enter Address Line 1"
                           type="text"
                           maxLength={36}
                         />
+                        <small>{characterCountAddress1}</small>
                       </FormGroup>
                     </Col>
                     <Col lg="6">
@@ -1116,11 +1160,13 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               ...currDo,
                               customerInfo,
                             });
+                            setCharacterCountAddress2(ev.target.value.length);
                           }}
                           placeholder="Enter Address Line 2"
                           type="text"
-                          maxLength={30}
+                          maxLength={36}
                         />
+                        <small>{characterCountAddress2}</small>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -1145,11 +1191,13 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               ...currDo,
                               customerInfo,
                             });
+                            setCharacterCountAddress3(ev.target.value.length);
                           }}
                           placeholder="Enter Police Station"
                           type="text"
-                          maxLength={20}
+                          maxLength={36}
                         />
+                        <small>{characterCountAddress3}</small>
                       </FormGroup>
                     </Col>
                     <Col lg="6">
@@ -1384,11 +1432,15 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                                   ...currDo,
                                   customerInfo,
                                 });
+                                setCharacterCountPermAddress1(
+                                  ev.target.value.length
+                                );
                               }}
                               placeholder="Enter Address Line 1"
                               type="text"
                               maxLength={36}
                             />
+                            <small>{characterCountPermAddress1}</small>
                           </FormGroup>
                         </Col>
                         <Col lg="6">
@@ -1411,11 +1463,15 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                                   ...currDo,
                                   customerInfo,
                                 });
+                                setCharacterCountPermAddress2(
+                                  ev.target.value.length
+                                );
                               }}
                               placeholder="Enter Address Line 2"
                               type="text"
-                              maxLength={30}
+                              maxLength={36}
                             />
+                            <small>{characterCountPermAddress2}</small>
                           </FormGroup>
                         </Col>
                       </Row>
@@ -1466,11 +1522,15 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                                   ...currDo,
                                   customerInfo,
                                 });
+                                setCharacterCountPermAddress3(
+                                  ev.target.value.length
+                                );
                               }}
                               placeholder="Enter Police Station"
                               type="text"
-                              maxLength={20}
+                              maxLength={36}
                             />
+                            <small>{characterCountPermAddress3}</small>
                           </FormGroup>
                         </Col>
                       </Row>
@@ -1842,9 +1902,14 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               let modelColorList: any =
                                 modelWiseColorDescription[colorMTOC];
                               return (
-                                <React.Fragment key={colorMTOC}>
+                                <React.Fragment
+                                  key={`${commonModelName}-${colorMTOC}`}
+                                >
                                   <option value={colorMTOC}>
-                                    {modelColorList}
+                                    {modelColorList.replace(
+                                      commonModelName,
+                                      ""
+                                    )}
                                   </option>
                                   <option disabled className="small">
                                     {colorMTOC}

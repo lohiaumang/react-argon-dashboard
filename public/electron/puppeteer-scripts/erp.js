@@ -4,6 +4,7 @@ const { ipcMain: ipc } = require("electron");
 module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
   const { click, typeText } = require("./helper");
   const { enquiryType, customerCategory } = require("../enums");
+  let alertMessage = "";
 
   const {
     credentials: { username, password },
@@ -13,7 +14,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
     "toErp",
     async (event, { type = "alert", message = "error message" }) => {
       console.log(type + ": " + message);
-
+      alertMessage = message;
       event.returnValue = true;
     }
   );
@@ -529,6 +530,19 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           );
 
           console.log("Here");
+          if (
+            alertMessage.startsWith(
+              "[1]Wrong field values or value types detected in field Address 2"
+            )
+          ) {
+            //click on state input box here
+            await click(page, 'input[aria-label="Address 2"]');
+
+            await fillData(
+              'input[aria-label="Address 2"]',
+              data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
+            );
+          }
 
           await fillData(
             'input[aria-label="State"]',
@@ -537,9 +551,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
           console.log("Here 2");
 
-          // if(alertMessage.startsWith("[1]Wrong field values or value types detected in field Address 1")) {
+          // if(alertMessage.startsWith("[1]Wrong field values or value types detected in field Address 2")) {
 
-          //   click on state input box here
+          //   //click on state input box here
 
           //   await fillData(
           //   'input[aria-label="State"]',
