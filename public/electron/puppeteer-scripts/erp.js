@@ -1774,7 +1774,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
       console.log("step 3");
       invoiceNo = await page.evaluate(
-        () => document.querySelector('td[id$="Invoice_Number"]').title,
+        () => document.querySelector('td[id$="Invoice_Number"]').textContent,
         {
           waitUntil: "networkidle2",
         }

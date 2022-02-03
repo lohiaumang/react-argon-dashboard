@@ -126,6 +126,31 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
           ...deliveryOrder.customerInfo,
         },
       });
+      if (
+        deliveryOrder &&
+        deliveryOrder.customerInfo &&
+        deliveryOrder.customerInfo.currLineOne &&
+        deliveryOrder.customerInfo.currLineTwo &&
+        deliveryOrder.customerInfo.currPS &&
+        deliveryOrder.customerInfo.permLineOne &&
+        deliveryOrder.customerInfo.permLineTwo &&
+        deliveryOrder.customerInfo.permPS
+      ) {
+        setCharacterCountAddress1(
+          deliveryOrder.customerInfo.currLineOne.length
+        );
+        setCharacterCountAddress2(
+          deliveryOrder.customerInfo.currLineTwo.length
+        );
+        setCharacterCountAddress3(deliveryOrder.customerInfo.currPS.length);
+        setCharacterCountPermAddress1(
+          deliveryOrder.customerInfo.permLineOne.length
+        );
+        setCharacterCountPermAddress2(
+          deliveryOrder.customerInfo.permLineTwo.length
+        );
+        setCharacterCountPermAddress3(deliveryOrder.customerInfo.permPS.length);
+      }
     }
 
     const docRef = firebase
@@ -1137,7 +1162,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           type="text"
                           maxLength={36}
                         />
-                        <small>{characterCountAddress1}</small>
+                        <small>{characterCountAddress1}/36</small>
                       </FormGroup>
                     </Col>
                     <Col lg="6">
@@ -1166,7 +1191,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           type="text"
                           maxLength={36}
                         />
-                        <small>{characterCountAddress2}</small>
+                        <small>{characterCountAddress2}/36</small>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -1197,7 +1222,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           type="text"
                           maxLength={21}
                         />
-                        <small>{characterCountAddress3}</small>
+                        <small>{characterCountAddress3}/21</small>
                       </FormGroup>
                     </Col>
                     <Col lg="6">
@@ -1440,7 +1465,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               type="text"
                               maxLength={36}
                             />
-                            <small>{characterCountPermAddress1}</small>
+                            <small>{characterCountPermAddress1}/36</small>
                           </FormGroup>
                         </Col>
                         <Col lg="6">
@@ -1471,7 +1496,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               type="text"
                               maxLength={36}
                             />
-                            <small>{characterCountPermAddress2}</small>
+                            <small>{characterCountPermAddress2}/36</small>
                           </FormGroup>
                         </Col>
                       </Row>
@@ -1530,7 +1555,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               type="text"
                               maxLength={21}
                             />
-                            <small>{characterCountPermAddress3}</small>
+                            <small>{characterCountPermAddress3}/21</small>
                           </FormGroup>
                         </Col>
                       </Row>
