@@ -63,7 +63,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   const [ptefCharge, setptefCharge] = useState<any>({});
   const [modelWiseColorDescription, setModelWiseColorDescription] =
     useState<any>({});
-  const [characterCountAddress1, setCharacterCountAddress1] = useState(0);
+  const [characterCountAddress1, setCharacterCountAddress1] = useState<any>(0);
   const [characterCountAddress2, setCharacterCountAddress2] = useState(0);
   const [characterCountAddress3, setCharacterCountAddress3] = useState(0);
   const [characterCountPermAddress1, setCharacterCountPermAddress1] =
@@ -113,6 +113,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
         updateAccessories(deliveryOrder.modelName);
       }
     }
+
     if (!isCancelled) {
       setCurrDo({
         ...deliveryOrder,
@@ -140,20 +141,11 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
         }
       }
     });
+
     return () => {
       isCancelled = true;
     };
   }, []);
-
-  // useEffect(() => {
-  //   if (currDo.modelName) {
-  //     setModelWiseColorDescription(
-
-  //       modelColorDescription[currDo.modelName] || ""
-  //     );
-  //     updateAccessories(currDo.modelName);
-  //   }
-  // }, [currDo.modelName]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -267,6 +259,14 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
       additionalInfo?: any;
       vehicleInfo?: any;
     } = currDo;
+
+    // const countText = () => {
+    //   debugger;
+    //   setCharacterCountAddress1(customerInfo.currLineOne.length);
+    // };
+    // if (customerInfo) {
+    //   countText();
+    // }
 
     const sanitizeData = (data: any) => {
       let sanitizedData = data;

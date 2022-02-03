@@ -103,6 +103,23 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
     await page.waitForTimeout((Math.random() + 1) * 1000);
   }
   //end
+  async function fillCurrentZipCode() {
+    if (
+      alertMessage.startsWith(
+        "[1]Wrong field values or value types detected in field Zip/Pin Code"
+      )
+    ) {
+      await page.waitForSelector('input[aria-label="Zip/Pin Code"]', {
+        visible: true,
+      });
+      await click(page, 'input[aria-label="Zip/Pin Code"]');
+      await typeText(
+        page,
+        'input[aria-label="Zip/Pin Code"]',
+        data.customerInfo.currPostal
+      );
+    }
+  }
 
   async function automate() {
     let done = false;
@@ -351,7 +368,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await typeText(
           page,
           'input[aria-label="Address 2"]',
-          data.customerInfo.currLineTwo + ", " + data.customerInfo.currPS
+          data.customerInfo.currLineTwo + " " + data.customerInfo.currPS
         );
 
         //select state
@@ -382,18 +399,15 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           visible: true,
         });
         await click(page, 'input[aria-label="Zip/Pin Code"]');
-        console.log(data.customerInfo.currPostal, "current postal print");
+
         await typeText(
           page,
           'input[aria-label="Zip/Pin Code"]',
           data.customerInfo.currPostal
         );
-        console.log(data.customerInfo.currPostal, "current postal print 1");
-        // await typeText(
-        //   'input[aria-label="Locality"]',
-        //   data.customerInfo.currPS
-        // );
 
+        await click(page, 'input[aria-label="Email"]');
+        await fillCurrentZipCode();
         if (data.customerInfo.email) {
           await typeText(
             page,
@@ -523,24 +537,10 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             data.customerInfo.currLineTwo + " " + data.customerInfo.currPS
           );
 
-          console.log("Here");
-
           await fillData(
             'input[aria-label="State"]',
             data.customerInfo.currState.slice(0, 2).toUpperCase()
           );
-
-          console.log("Here 2");
-
-          // if(alertMessage.startsWith("[1]Wrong field values or value types detected in field Address 1")) {
-
-          //   click on state input box here
-
-          //   await fillData(
-          //   'input[aria-label="State"]',
-          //   data.customerInfo.currState.slice(0, 2).toUpperCase()
-          // );
-          // }
 
           await fillData(
             'input[aria-label="Zip/Pin Code"]',
@@ -548,20 +548,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           );
 
           await click(page, 'input[aria-label="Email');
-          if (
-            alertMessage.startsWith(
-              "[1]Wrong field values or value types detected in field Zip/Pin Code"
-            )
-          ) {
-            await page.waitForSelector('input[aria-label="Zip/Pin Code"]', {
-              visible: true,
-            });
-            await click(page, 'input[aria-label="Zip/Pin Code"]');
-            await fillData(
-              'input[aria-label="Zip/Pin Code"]',
-              data.customerInfo.currPostal
-            );
-          }
+
+          await fillCurrentZipCode();
 
           await fillData('input[aria-label="Email', data.customerInfo.email);
         }
@@ -967,11 +955,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
 
       await click(page, 'button[aria-label="Pick Product:Go"]:not(.hidden)');
-      console.log("stap 1");
       await page.waitForSelector('button[title="Products Menu"]', {
         visible: true,
       });
-      console.log("stap 2");
 
       await page.waitForSelector('td[id$="TMI_HSN_Code"]', {
         visible: true,
@@ -989,7 +975,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
       //await click(page, 'button[title="Products Menu"]');
       await page.$eval('button[title="Products Menu"]', (el) => el.click());
-      console.log("stap 3");
       await page.waitForSelector(
         ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
         { visible: true }
@@ -1008,22 +993,14 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         option.name.includes("[Ctrl+S]")
       );
       await click(page, `#${saveRecordButton1.id}`);
-      // await page.$eval(
-      //   'button[aria-label="Pick Product:Go"]:not(.hidden)',
-      //   (el) => el.click()
-      // );
-
-      ////////////////////////
 
       //click express booking button
       //27-11-21
-      // await waitForRandom();
 
       await page.waitForSelector('button[aria-label="Products:New"]', {
         visible: true,
       });
-      //await stopExecution("frame no already book another do");
-      // await waitForRandom();
+
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
       });
@@ -1157,14 +1134,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
       await click(page, `#${saveRecordButton2.id}`);
 
-      ///////////////////////////////////////////////////////////////////
-      // await page.waitForSelector(
-      //   'button[aria-label="Line Items:Vehicle Allotment"]',
-      //   {
-      //     visible: true,
-      //   }
-      // );
-
       await page.waitForSelector("button[aria-label*='Get Price']", {
         visible: true,
       });
@@ -1221,8 +1190,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         () =>
           document.querySelector('input[aria-label="Temporary Address"]').value
       );
-      console.log(addressPermLineOne, "erp adddress");
-      console.log(data.customerInfo.permLineOne, "db address");
       if (addressPermLineOne !== data.customerInfo.permLineOne) {
         await click(page, 'input[aria-label="Temporary Address"]+span');
         await page.waitForSelector(
@@ -1273,6 +1240,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           'input[aria-label="Zip Code"]',
           data.customerInfo.permPostal
         );
+
         await page.waitForSelector(
           'button[aria-label="Contact Addresses:Save"]',
           { visible: true }
@@ -1294,9 +1262,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           {},
           addressLineOne
         );
-        //await page.waitForNavigation();
       }
-      // await page.waitForNavigation();
+
       await page.waitForSelector("div[title='Third Level View Bar']", {
         visible: true,
       });
@@ -1339,7 +1306,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         () => document.querySelector('input[name="s_1_1_38_0"]').value
       );
       if (!dDate) {
-        //await click(page, 'input[name="s_1_1_38_0"]');
         await click(page, 'input[name="s_1_1_38_0"]+span');
         await page.waitForSelector('div[id="ui-datepicker-div"]', {
           visible: true,
