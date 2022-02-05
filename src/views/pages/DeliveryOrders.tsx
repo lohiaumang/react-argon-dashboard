@@ -779,10 +779,10 @@ const DeliveryOrders: React.FC = () => {
 
   const rows = Object.values(deliveryOrders).map((currElem: any) => {
     const { name, modelName, color, status, createdOn, id, origin } = currElem;
-    let colorName =
-      colorConfig && colorConfig[modelName]
-        ? colorConfig[modelName][color]
-        : "";
+    // let colorName =
+    //   colorConfig && colorConfig[modelName]
+    //     ? colorConfig[modelName][color]
+    //     : "";
     // colorName =
 
     let date = new Date(createdOn)
@@ -795,7 +795,7 @@ const DeliveryOrders: React.FC = () => {
       id,
       name,
       modelName,
-      color: colorName,
+      color,
       status: status.split("_").join(" "),
       date,
       origin,

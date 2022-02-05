@@ -525,6 +525,35 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
       }
     };
 
+    const updateFrameNumber = (ev: React.ChangeEvent<HTMLInputElement>) => {
+      debugger;
+      let newFrameNo: any = ev.target.value!;
+      const dealerId = user.dealerId || user.createdBy || user.uid || "";
+      let collectonName = "inv" + "-" + dealerId;
+      const docRef = firebase
+        .firestore()
+        .collection(collectonName)
+        .doc(newFrameNo);
+      docRef.get().then((doc) => {
+        if (doc.exists) {
+          let inventory: any = doc.data();
+          setCurrDo({
+            ...currDo,
+            color: inventory.color,
+            vehicleInfo: {
+              ...currDo.vehicleInfo!,
+              engineNumber: inventory.engineNumber,
+              color: inventory.color,
+            },
+            additionalInfo: {
+              ...currDo.additionalInfo!,
+              price: inventory.price,
+            },
+          });
+        }
+      });
+    };
+
     const uploadImage = async (ev: any) => {
       const file = ev.target.files[0];
       customerInfo.photoString = await convertBase64(file);
@@ -1771,6 +1800,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           className="form-control-alternative"
                           id="input-frame-number"
                           value={vehicleInfo && vehicleInfo.frameNumber}
+                          //onChange={updateFrameNumber}
                           onChange={(ev) => {
                             vehicleInfo.frameNumber =
                               ev.target.value.toLocaleUpperCase()!;
@@ -1778,6 +1808,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                               ...currDo,
                               vehicleInfo,
                             });
+                            updateFrameNumber(ev);
                           }}
                           placeholder="Enter Frame Number"
                           type="text"
@@ -1901,64 +1932,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                       <FormGroup>
                         <label
                           className="form-control-label"
-                          htmlFor="input-role"
-                        >
-                          COLOUR
-                        </label>
-                        <Input
-                          type="select"
-                          name="select-model"
-                          required
-                          placeholder="Model Name"
-                          value={vehicleInfo && vehicleInfo.color}
-                          onChange={(ev) => {
-                            vehicleInfo.color =
-                              ev.target.value.toLocaleUpperCase()!;
-                            currDo.color = ev.target.value.toLocaleUpperCase()!;
-                            setCurrDo({
-                              ...currDo,
-                              vehicleInfo,
-                            });
-                          }}
-                        >
-                          <option value={""}>Select a colour</option>
-                          {Object.keys(modelWiseColorDescription || "").map(
-                            (colorMTOC: string) => {
-                              let modelColorList: any =
-                                modelWiseColorDescription[colorMTOC];
-                              return (
-                                <React.Fragment
-                                  key={`${commonModelName}-${colorMTOC}`}
-                                >
-                                  <option value={colorMTOC}>
-                                    {modelColorList.replace(
-                                      commonModelName,
-                                      ""
-                                    )}
-                                  </option>
-                                  <option disabled className="small">
-                                    {colorMTOC}
-                                  </option>
-                                </React.Fragment>
-                              );
-                            }
-                          )}
-
-                          {/* {Object.values(modelWiseColorDescription || "").map(
-                            (name: any) => (
-                              <option key={name} value={name}>
-                                {name}
-                              </option>
-                            )
-                          )} */}
-                        </Input>
-                      </FormGroup>
-                    </Col>
-
-                    {/* <Col lg="6">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
                           htmlFor="input-colour"
                         >
                           COLOUR
@@ -1981,7 +1954,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           type="text"
                         />
                       </FormGroup>
-                    </Col> */}
+                    </Col>
                   </Row>
 
                   <Row>

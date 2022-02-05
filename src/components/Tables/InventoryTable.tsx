@@ -75,36 +75,43 @@ const InventoryTable: React.FC = () => {
 
     promise.then(async (data: any) => {
       console.log(data);
-
+      debugger;
       for (let i = 0; i < data.length; i++) {
-        let frameNo: any;
-        frameNo = data[i]["Frame #"];
-        db.collection(collectonName).doc(frameNo).set(
-          {
-            frameNo: data[i]["Frame #"],
-            color: data[i]["Color"],
-            engineNo: data[i]["Engine No"],
-            hsmiInvoiceAmount: data[i]["HMSI Invoice Amount"],
-            hSNCode: data[i]["HSN Code"],
-            modelCategory: data[i]["Model Category"],
-            modelCode: data[i]["Model Code"],
-            modelVariant: data[i]["Model Variant"],
-          },
-          { merge: true }
-        );
+        let frameNumber: any;
+        frameNumber = data[i]["Frame #"];
+        //let price: any = data[i]["HMSI Invoice Amount"];
+        let price = data[i]["HMSI Invoice Amount"].replace("Rs.", "") || "";
+        // price = data[i]["HMSI Invoice Amount"].split("Rs.");
+        price = parseFloat(price.replace(/,/g, ""));
+        //price = price.split("Rs.");
+        db.collection(collectonName)
+          .doc(frameNumber)
+          .set(
+            {
+              frameNumber: data[i]["Frame #"] || "",
+              color: data[i]["Color"] || "",
+              engineNumber: data[i]["Engine No"] || "",
+              price: price.toString() || "",
+              hsnCode: data[i]["HSN Code"].toString() || "",
+              modelCategory: data[i]["Model Category"] || "",
+              modelCode: data[i]["Model Code"] || "",
+              modelName: data[i]["Model Variant"] || "",
+            },
+            { merge: true }
+          );
       }
       setLoading(false);
     });
   };
 
   const rows = Object.values(inventory).map((currElem: any) => {
-    const { frameNo, engineNo, color, modelVariant, modelCode } = currElem;
+    const { frameNumber, engineNumber, color, modelName, modelCode } = currElem;
 
     return {
-      frameNo,
-      engineNo,
+      frameNumber,
+      engineNumber,
       color,
-      modelVariant,
+      modelName,
       modelCode,
     };
   });
@@ -164,16 +171,16 @@ const InventoryTable: React.FC = () => {
                     pagination
                     search={true}
                   >
-                    <TableHeaderColumn dataSort={true} dataField="frameNo">
+                    <TableHeaderColumn dataSort={true} dataField="frameNumber">
                       Frame No
                     </TableHeaderColumn>
-                    <TableHeaderColumn dataSort={true} dataField="engineNo">
+                    <TableHeaderColumn dataSort={true} dataField="engineNumber">
                       Engine No
                     </TableHeaderColumn>
                     <TableHeaderColumn dataSort={true} dataField="color">
                       Color
                     </TableHeaderColumn>
-                    <TableHeaderColumn dataSort={true} dataField="modelVariant">
+                    <TableHeaderColumn dataSort={true} dataField="modelName">
                       Model Name
                     </TableHeaderColumn>
                     <TableHeaderColumn dataSort={true} dataField="modelCode">
