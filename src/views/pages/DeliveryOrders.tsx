@@ -871,21 +871,6 @@ const DeliveryOrders: React.FC = () => {
       //let id: string = "";
 
       for (let i = 0; i < data.length; i++) {
-        debugger;
-        // fetch(`https://api.postalpincode.in/pincode/${data[i]["Zip Code"]}`)
-        //   .then((res) => res.json())
-        //   .then(
-        //     (result) => {
-        //       let currPostalCodeData = result;
-        //       currDistrict =
-        //         currPostalCodeData[0]["PostOffice"][0]["District"] || "";
-        //       currState = currPostalCodeData[0]["PostOffice"][0]["State"] || "";
-        //     },
-        //     (error) => {
-        //       console.log(error);
-        //     }
-        //   );
-
         const stateCodes: any = {
           AN: "Andaman and Nicobar",
           AR: "Arunachal Pradesh",
