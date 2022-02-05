@@ -35,6 +35,7 @@ import Header from "../../components/Headers/Header";
 import ConfigTable, { Config } from "../../components/Tables/ConfigTable";
 import AccessoriesConfig from "../../components/Tables/AccessoriesConfig";
 import ModelDescription from "../../components/Tables/ModelWiseColorDescription";
+import InventoryTable from "../../components/Tables/InventoryTable";
 import { UserContext } from "../../Context";
 import { useCancellablePromise } from "../../hooks/useCancellablePromise";
 
@@ -265,6 +266,7 @@ const Settings: React.FC = () => {
                 />
                 <AccessoriesConfig />
                 <ModelDescription />
+                <InventoryTable />
               </CardBody>
             </Card>
           </Col>

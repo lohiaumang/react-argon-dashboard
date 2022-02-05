@@ -776,6 +776,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await page.$eval(`#${modelNameButton.id}`, (el) => el.click());
 
         //Model Variant
+        await waitForNetworkIdle(page, timeout, 0);
         await click(
           page,
           'input[aria-label="Model Variant<Font size= 3 color=Red><b>*</b></Font>"] + span'
@@ -966,6 +967,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.waitForSelector('td[id$="Product"]', {
         visible: true,
       });
+      console.log(vehicleColor);
       await page.waitForFunction(
         (vehicleColor) =>
           document.querySelector('td[id$="Product"]').textContent ===
