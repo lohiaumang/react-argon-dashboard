@@ -93,7 +93,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         timeoutId = setTimeout(onTimeoutDone, tOut);
     }
   }
-  const stopExecution = (errorMessage) => {
+  const stopExecution = (errorMessage = "") => {
     return new Promise((resolve, reject) => {
       reject(new Error(errorMessage));
     });
@@ -1167,29 +1167,26 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
 
       await click(page, 'button[aria-label="Pick Product:Go"]:not(.hidden)');
-      await page.waitForSelector(
-        'button[aria-label="Pick Product:Go"]:not(.hidden)',
-        {
-          visible: true,
-        }
-      );
+      // await page.waitForSelector(
+      //   'button[aria-label="Pick Product:Go"]:not(.hidden)',
+      //   {
+      //     visible: true,
+      //   }
+      // );
+      // check if box opens
       let mtoc = await page.evaluate(
         () => document.querySelector('td[id$="Name"]').textContent
       );
       console.log(mtoc);
       if (mtoc) {
-        console.log(mtoc, "print mtoc");
-        await page.waitForSelector('td[id$="Name"]', {
-          visible: true,
-        });
-        console.log(mtoc, "print mtoc 1");
+        // console.log(mtoc, "print mtoc");
+        await page.waitForSelector('td[id$="Name"]', { visible: true });
         await page.$eval('td[id$="Name"]', (el) => el.click());
-        console.log(mtoc, "print mtoc 2");
-        //await click(page, 'td[id$="Name"]');
         await page.waitForSelector('button[aria-label="Pick Product:OK"]', {
           visible: true,
         });
         await click(page, 'button[aria-label="Pick Product:OK"]');
+        // await stopExecution();
         console.log(mtoc, "print mtoc 3");
       }
 
@@ -1211,7 +1208,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.waitForSelector('button[title="Line Items Menu"]', {
         visible: true,
       });
-      await stopExecution();
       //await click(page, 'button[title="Line Items Menu"]');
       await page.$eval('button[title="Line Items Menu"]', (el) => el.click());
 
