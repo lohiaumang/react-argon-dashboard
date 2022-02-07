@@ -1211,7 +1211,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.waitForSelector('button[title="Line Items Menu"]', {
         visible: true,
       });
-
+      await stopExecution();
       //await click(page, 'button[title="Line Items Menu"]');
       await page.$eval('button[title="Line Items Menu"]', (el) => el.click());
 
