@@ -545,10 +545,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
               engineNumber: inventory.engineNumber,
               color: inventory.color,
             },
-            additionalInfo: {
-              ...currDo.additionalInfo!,
-              price: inventory.price,
-            },
           });
         }
       });
@@ -1044,6 +1040,34 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           }}
                           placeholder="Sales Executive"
                         />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-source"
+                        >
+                          Exchange Flag
+                        </label>
+                        <Input
+                          required
+                          type="select"
+                          name="select-exchange-flag-type"
+                          id="input-exchange-flag-type"
+                          placeholder="Exchange Flag"
+                          value={additionalInfo && additionalInfo.exchangeFlag}
+                          onChange={(ev) => {
+                            additionalInfo.exchangeFlag = ev.target.value!;
+                            setCurrDo({
+                              ...currDo,
+                              additionalInfo,
+                            });
+                          }}
+                        >
+                          <option value="N">N</option>
+                          <option value="Y">Y</option>
+                        </Input>
                       </FormGroup>
                     </Col>
                   </Row>

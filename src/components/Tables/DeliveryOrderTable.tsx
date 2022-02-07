@@ -106,6 +106,7 @@ export interface DeliveryOrder {
     accessoriesList?: string;
     executive?: string;
     hypothecation?: string;
+    exchangeFlag?: String;
   };
   dealerInfo: DealerInfo;
 }

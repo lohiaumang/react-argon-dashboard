@@ -904,97 +904,134 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await page.waitForSelector("td[role='gridcell'] > a", {
           visible: true,
         });
-        // await waitForRandom();
-        // await click(page, "td[role='gridcell'] > a");
-
         await page.$eval("td[role='gridcell'] > a", (el) => el.click());
         // await page.waitForNavigation();
       }
 
       //end
+      //exchange value code
+      await page.waitForSelector(
+        'input[aria-labelledby="TMI_Exchange_Flg_Label"]',
+        {
+          visible: true,
+        }
+      );
+      await click(page, 'input[aria-labelledby="TMI_Exchange_Flg_Label"]');
+
+      await page.waitForSelector(
+        'input[aria-labelledby="TMI_Exchange_Flg_Label"]+span',
+        {
+          visible: true,
+        }
+      );
+      await click(page, 'input[aria-labelledby="TMI_Exchange_Flg_Label"]+span');
+
+      await page.waitForSelector(
+        "ul[role='combobox']:not([style*='display: none'])",
+        { visible: true }
+      );
+      let exchangeFlag = await page.$$eval(
+        "ul[role='combobox']:not([style*='display: none']) > li > div",
+        (listItems) =>
+          listItems.map((item) => {
+            return {
+              name: item.textContent,
+              id: item.id,
+            };
+          })
+      );
+      const exchangeFlagButton = exchangeFlag.find(
+        (item) => item.name === data.additionalInfo.exchangeFlag
+      );
+
+      await page.waitForSelector(`#${exchangeFlagButton.id}`, {
+        visible: true,
+      });
+      await page.$eval(`#${exchangeFlagButton.id}`, (el) => el.click());
 
       await waitForNetworkIdle(page, timeout, 0);
       //22-01-2022 fill model wise color
 
-      await page.waitForSelector('td[id$="Product"]', {
-        visible: true,
-      });
-      await click(page, 'td[id$="Product"]');
-      await page.waitForSelector('input[name="Product"]+span', {
-        visible: true,
-      });
-      await click(page, 'input[name="Product"]+span');
-      await page.waitForSelector(
-        'input[aria-labelledby="PopupQuerySrchspec_Label"]',
-        {
-          visible: true,
-        }
-      );
-      await typeText(
-        page,
-        'input[aria-labelledby="PopupQuerySrchspec_Label"]',
-        data.vehicleInfo.color
-      );
-
-      // await page.waitForSelector('button[aria-label="Pick Product:Go"]', {
+      // await page.waitForSelector('td[id$="Product"]', {
       //   visible: true,
       // });
-      let vehicleColor = data.vehicleInfo.color;
-      await page.waitForFunction(
-        (vehicleColor) =>
-          document.querySelector(
-            'input[aria-labelledby="PopupQuerySrchspec_Label"]'
-          ).value === vehicleColor,
-        {},
-        vehicleColor
-      );
-      await page.waitForSelector(
-        'button[aria-label="Pick Product:Go"]:not(.hidden)',
-        {
-          visible: true,
-        }
-      );
+      // await click(page, 'td[id$="Product"]');
+      // await page.waitForSelector('input[name="Product"]+span', {
+      //   visible: true,
+      // });
+      // await click(page, 'input[name="Product"]+span');
+      // await page.waitForSelector(
+      //   'input[aria-labelledby="PopupQuerySrchspec_Label"]',
+      //   {
+      //     visible: true,
+      //   }
+      // );
+      // await typeText(
+      //   page,
+      //   'input[aria-labelledby="PopupQuerySrchspec_Label"]',
+      //   data.vehicleInfo.color
+      // );
 
-      await click(page, 'button[aria-label="Pick Product:Go"]:not(.hidden)');
-      await page.waitForSelector('button[title="Products Menu"]', {
-        visible: true,
-      });
+      // // await page.waitForSelector('button[aria-label="Pick Product:Go"]', {
+      // //   visible: true,
+      // // });
+      // let vehicleColor = data.vehicleInfo.color;
+      // await page.waitForFunction(
+      //   (vehicleColor) =>
+      //     document.querySelector(
+      //       'input[aria-labelledby="PopupQuerySrchspec_Label"]'
+      //     ).value === vehicleColor,
+      //   {},
+      //   vehicleColor
+      // );
+      // await page.waitForSelector(
+      //   'button[aria-label="Pick Product:Go"]:not(.hidden)',
+      //   {
+      //     visible: true,
+      //   }
+      // );
 
-      await page.waitForSelector('td[id$="TMI_HSN_Code"]', {
-        visible: true,
-      });
-      await click(page, 'td[id$="TMI_HSN_Code"]');
-      await page.waitForSelector('td[id$="Product"]', {
-        visible: true,
-      });
-      console.log(vehicleColor);
-      await page.waitForFunction(
-        (vehicleColor) =>
-          document.querySelector('td[id$="Product"]').textContent ===
-          vehicleColor,
-        {},
-        vehicleColor
-      );
-      //await click(page, 'button[title="Products Menu"]');
-      await page.$eval('button[title="Products Menu"]', (el) => el.click());
-      await page.waitForSelector(
-        ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
-        { visible: true }
-      );
-      const colorMenuOptions = await page.$$eval(
-        ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
-        (options) =>
-          options.map((option) => {
-            return {
-              name: option.textContent,
-              id: option.id,
-            };
-          })
-      );
-      const saveRecordButton1 = colorMenuOptions.find((option) =>
-        option.name.includes("[Ctrl+S]")
-      );
-      await click(page, `#${saveRecordButton1.id}`);
+      // await click(page, 'button[aria-label="Pick Product:Go"]:not(.hidden)');
+
+      // await page.waitForSelector('button[title="Products Menu"]', {
+      //   visible: true,
+      // });
+
+      // await page.waitForSelector('td[id$="TMI_HSN_Code"]', {
+      //   visible: true,
+      // });
+      // await click(page, 'td[id$="TMI_HSN_Code"]');
+      // await page.waitForSelector('td[id$="Product"]', {
+      //   visible: true,
+      // });
+      // console.log(vehicleColor);
+      // await page.waitForFunction(
+      //   (vehicleColor) =>
+      //     document.querySelector('td[id$="Product"]').textContent ===
+      //     vehicleColor,
+      //   {},
+      //   vehicleColor
+      // );
+      // //await click(page, 'button[title="Products Menu"]');
+      // await page.$eval('button[title="Products Menu"]', (el) => el.click());
+      // await page.waitForSelector(
+      //   ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
+      //   { visible: true }
+      // );
+      // const colorMenuOptions = await page.$$eval(
+      //   ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
+      //   (options) =>
+      //     options.map((option) => {
+      //       return {
+      //         name: option.textContent,
+      //         id: option.id,
+      //       };
+      //     })
+      // );
+      // const saveRecordButton1 = colorMenuOptions.find((option) =>
+      //   option.name.includes("[Ctrl+S]")
+      // );
+      // await click(page, `#${saveRecordButton1.id}`);
 
       //click express booking button
       //27-11-21
@@ -1041,7 +1078,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       });
 
       await click(page, 'button[aria-label="Orders:Create Booking"]');
-
+      await waitForNetworkIdle(page, timeout, 0);
       //end
 
       await page.waitForSelector(
@@ -1066,6 +1103,41 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         visible: true,
       });
       await click(page, 'input[name="Product"]+span');
+      //07/02/21 color automation
+      await page.waitForSelector(
+        'input[aria-labelledby="PopupQueryCombobox_Label"]+span',
+        { visible: true }
+      );
+      await click(
+        page,
+        'input[aria-labelledby="PopupQueryCombobox_Label"]+span'
+      );
+      await page.waitForSelector(
+        "ul[role='combobox']:not([style*='display: none'])",
+        { visible: true }
+      );
+      let colorGiven = await page.$$eval(
+        "ul[role='combobox']:not([style*='display: none']) > li > div",
+        (listItems) =>
+          listItems.map((item) => {
+            return {
+              name: item.textContent,
+              id: item.id,
+            };
+          })
+      );
+      console.log(colorGiven, "print colorGiven");
+      const modelWiseColorGiven = colorGiven.find(
+        (item) => item.name === "Color Name"
+      );
+      console.log(modelWiseColorGiven, "modelWiseColorGiven");
+      await page.waitForSelector(`#${modelWiseColorGiven.id}`, {
+        visible: true,
+      });
+      //await page.$eval(`#${modelWiseColorGiven.id}`, (el) => el.click());
+      await click(page, `#${modelWiseColorGiven.id}`);
+      ///////
+
       await page.waitForSelector(
         'input[aria-labelledby="PopupQuerySrchspec_Label"]',
         {
@@ -1086,6 +1158,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         {},
         vehicleColor1
       );
+
       await page.waitForSelector(
         'button[aria-label="Pick Product:Go"]:not(.hidden)',
         {
@@ -1094,6 +1167,31 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
 
       await click(page, 'button[aria-label="Pick Product:Go"]:not(.hidden)');
+      await page.waitForSelector(
+        'button[aria-label="Pick Product:Go"]:not(.hidden)',
+        {
+          visible: true,
+        }
+      );
+      let mtoc = await page.evaluate(
+        () => document.querySelector('td[id$="Name"]').textContent
+      );
+      console.log(mtoc);
+      if (mtoc) {
+        console.log(mtoc, "print mtoc");
+        await page.waitForSelector('td[id$="Name"]', {
+          visible: true,
+        });
+        console.log(mtoc, "print mtoc 1");
+        await page.$eval('td[id$="Name"]', (el) => el.click());
+        console.log(mtoc, "print mtoc 2");
+        //await click(page, 'td[id$="Name"]');
+        await page.waitForSelector('button[aria-label="Pick Product:OK"]', {
+          visible: true,
+        });
+        await click(page, 'button[aria-label="Pick Product:OK"]');
+        console.log(mtoc, "print mtoc 3");
+      }
 
       await page.waitForSelector('td[id$="TMI_HSN_Code"]', {
         visible: true,
@@ -1759,6 +1857,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         visible: true,
       });
       await page.$eval(`#${pdsaGivenpdsaGiven.id}`, (el) => el.click());
+
       await page.waitForSelector("td[role='gridcell'] > a", { visible: true });
       await page.$eval("td[role='gridcell'] > a", (el) => el.click());
       await click(page, 'div > button[data-display="Permanent Invoice"]');
