@@ -125,6 +125,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
     let done = false;
     let hsnCode = "";
     let invoiceNo = "";
+    let frameNumber = data.vehicleInfo.frameNumber || "";
 
     erpWindow.on("close", async (e) => {
       e.preventDefault();
@@ -160,11 +161,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
       mainWindow.webContents.send("fromMain", {
         type: done ? "INVOICE_CREATED" : "DO_CREATED",
-        data: { hsnCode, invoiceNo },
+        data: { hsnCode, invoiceNo, frameNumber },
       });
     });
-
-    // Wait for navigation.
 
     //start login code
 
@@ -800,11 +799,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
         //Select Finencer
         if (data.additionalInfo.financier) {
-          // await click(page, 'span[aria-label="Selection Field"]');
-          // await click(page, 'button[aria-label="Pick Financier:Query"]');
-          // await typeText(page, 'input[aria-labelledby="s_6_l_Name "]', data.additionalInfo.financier);
-          // await click(page, 'button[aria-label="Pick Financier:Go"]');
-          // await click(page, 'button[aria-label="Pick Financier:OK"]');
           await typeText(
             page,
             'input[aria-label="Financier"]',
@@ -950,88 +944,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.$eval(`#${exchangeFlagButton.id}`, (el) => el.click());
 
       await waitForNetworkIdle(page, timeout, 0);
-      //22-01-2022 fill model wise color
-
-      // await page.waitForSelector('td[id$="Product"]', {
-      //   visible: true,
-      // });
-      // await click(page, 'td[id$="Product"]');
-      // await page.waitForSelector('input[name="Product"]+span', {
-      //   visible: true,
-      // });
-      // await click(page, 'input[name="Product"]+span');
-      // await page.waitForSelector(
-      //   'input[aria-labelledby="PopupQuerySrchspec_Label"]',
-      //   {
-      //     visible: true,
-      //   }
-      // );
-      // await typeText(
-      //   page,
-      //   'input[aria-labelledby="PopupQuerySrchspec_Label"]',
-      //   data.vehicleInfo.color
-      // );
-
-      // // await page.waitForSelector('button[aria-label="Pick Product:Go"]', {
-      // //   visible: true,
-      // // });
-      // let vehicleColor = data.vehicleInfo.color;
-      // await page.waitForFunction(
-      //   (vehicleColor) =>
-      //     document.querySelector(
-      //       'input[aria-labelledby="PopupQuerySrchspec_Label"]'
-      //     ).value === vehicleColor,
-      //   {},
-      //   vehicleColor
-      // );
-      // await page.waitForSelector(
-      //   'button[aria-label="Pick Product:Go"]:not(.hidden)',
-      //   {
-      //     visible: true,
-      //   }
-      // );
-
-      // await click(page, 'button[aria-label="Pick Product:Go"]:not(.hidden)');
-
-      // await page.waitForSelector('button[title="Products Menu"]', {
-      //   visible: true,
-      // });
-
-      // await page.waitForSelector('td[id$="TMI_HSN_Code"]', {
-      //   visible: true,
-      // });
-      // await click(page, 'td[id$="TMI_HSN_Code"]');
-      // await page.waitForSelector('td[id$="Product"]', {
-      //   visible: true,
-      // });
-      // console.log(vehicleColor);
-      // await page.waitForFunction(
-      //   (vehicleColor) =>
-      //     document.querySelector('td[id$="Product"]').textContent ===
-      //     vehicleColor,
-      //   {},
-      //   vehicleColor
-      // );
-      // //await click(page, 'button[title="Products Menu"]');
-      // await page.$eval('button[title="Products Menu"]', (el) => el.click());
-      // await page.waitForSelector(
-      //   ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
-      //   { visible: true }
-      // );
-      // const colorMenuOptions = await page.$$eval(
-      //   ".siebui-appletmenu-item.ui-menu-item > a.ui-menu-item-wrapper",
-      //   (options) =>
-      //     options.map((option) => {
-      //       return {
-      //         name: option.textContent,
-      //         id: option.id,
-      //       };
-      //     })
-      // );
-      // const saveRecordButton1 = colorMenuOptions.find((option) =>
-      //   option.name.includes("[Ctrl+S]")
-      // );
-      // await click(page, `#${saveRecordButton1.id}`);
 
       //click express booking button
       //27-11-21
@@ -1103,7 +1015,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         visible: true,
       });
       await click(page, 'input[name="Product"]+span');
-      //07/02/21 color automation
+
       await page.waitForSelector(
         'input[aria-labelledby="PopupQueryCombobox_Label"]+span',
         { visible: true }
@@ -1126,17 +1038,16 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             };
           })
       );
-      console.log(colorGiven, "print colorGiven");
+
       const modelWiseColorGiven = colorGiven.find(
         (item) => item.name === "Color Name"
       );
-      console.log(modelWiseColorGiven, "modelWiseColorGiven");
+
       await page.waitForSelector(`#${modelWiseColorGiven.id}`, {
         visible: true,
       });
-      //await page.$eval(`#${modelWiseColorGiven.id}`, (el) => el.click());
+
       await click(page, `#${modelWiseColorGiven.id}`);
-      ///////
 
       await page.waitForSelector(
         'input[aria-labelledby="PopupQuerySrchspec_Label"]',
@@ -1167,27 +1078,19 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       );
 
       await click(page, 'button[aria-label="Pick Product:Go"]:not(.hidden)');
-      // await page.waitForSelector(
-      //   'button[aria-label="Pick Product:Go"]:not(.hidden)',
-      //   {
-      //     visible: true,
-      //   }
-      // );
+
       // check if box opens
       let mtoc = await page.evaluate(
         () => document.querySelector('td[id$="Name"]').textContent
       );
-      console.log(mtoc);
+
       if (mtoc) {
-        // console.log(mtoc, "print mtoc");
         await page.waitForSelector('td[id$="Name"]', { visible: true });
         await page.$eval('td[id$="Name"]', (el) => el.click());
         await page.waitForSelector('button[aria-label="Pick Product:OK"]', {
           visible: true,
         });
         await click(page, 'button[aria-label="Pick Product:OK"]');
-        // await stopExecution();
-        console.log(mtoc, "print mtoc 3");
       }
 
       await page.waitForSelector('td[id$="TMI_HSN_Code"]', {
@@ -1197,18 +1100,11 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.waitForSelector('td[id$="Product"]', {
         visible: true,
       });
-      await page.waitForFunction(
-        (vehicleColor1) =>
-          document.querySelector('td[id$="Product"]').textContent ===
-          vehicleColor1,
-        {},
-        vehicleColor1
-      );
 
       await page.waitForSelector('button[title="Line Items Menu"]', {
         visible: true,
       });
-      //await click(page, 'button[title="Line Items Menu"]');
+
       await page.$eval('button[title="Line Items Menu"]', (el) => el.click());
 
       await page.waitForSelector(
@@ -1392,7 +1288,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         .split("-")
         .reverse()
         .join("/");
-      console.log(deliveryDate);
+
       //fill delivery date
       await page.waitForSelector('input[name="s_1_1_38_0"]', {
         visible: true,
@@ -1568,9 +1464,8 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         () =>
           document.querySelector('input[aria-label="Balance Payment"]').value
       );
-      console.log(balancePayment, "balance payment");
+
       if (balancePayment !== "(Rs.0.00)") {
-        console.log(balancePayment, "balance payment 1");
         await page.waitForSelector(
           '.siebui-btn-grp-applet > button[aria-label="Payment Lines:New"]',
           {
@@ -1698,7 +1593,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             }
           );
 
-          console.log("Is dialog visible? ", dialogBox);
           if (dialogBox) {
             await stopExecution("frame no already book another do");
           }
@@ -1716,7 +1610,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
             }
           );
 
-          console.log("hasInputField: ", hasInputField);
           if (hasInputField) {
             const typedFrameNo = await page.evaluate(
               () => {
@@ -1733,10 +1626,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
                 waitUntil: "networkidle2",
               }
             );
-            console.log(typedFrameNo, "type frame no");
-            // if (typedFrameNo !== `*${frameNo}`) {
-            //   return await enterFrameNo(frameNo);
-            // }
           }
           return;
         };
@@ -1858,25 +1747,23 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.$eval("td[role='gridcell'] > a", (el) => el.click());
       await click(page, 'div > button[data-display="Permanent Invoice"]');
 
-      // await waitForRandom();
-      console.log("step 1");
       await page.waitForSelector('td[id$="Invoice_Number"]', {
         visible: true,
       });
-      console.log("step 2");
+
       await page.waitForFunction(
         () =>
           !!document.querySelector('td[id$="Invoice_Number"]').title &&
           document.querySelector('td[id$="Invoice_Number"]').title !== " "
       );
-      console.log("step 3");
+
       invoiceNo = await page.evaluate(
         () => document.querySelector('td[id$="Invoice_Number"]').textContent,
         {
           waitUntil: "networkidle2",
         }
       );
-      console.log("step 4");
+
       console.log(invoiceNo, invoiceNo.length, "print invoice no");
       console.log("Automation Done");
       // await browser.close();

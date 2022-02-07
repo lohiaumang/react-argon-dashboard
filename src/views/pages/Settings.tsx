@@ -265,7 +265,7 @@ const Settings: React.FC = () => {
                   formatDownloadLink={require("../../assets/docs/financerConfigFormat.csv")}
                 />
                 <AccessoriesConfig />
-                <ModelDescription />
+                {/* <ModelDescription /> */}
                 <InventoryTable />
               </CardBody>
             </Card>

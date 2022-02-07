@@ -12,20 +12,18 @@ import {
   Table,
   InputGroup,
   InputGroupAddon,
-  InputGroupText,
 } from "reactstrap";
 
 import { DeliveryOrder } from "./DeliveryOrderTable";
 import firebase from "firebase/app";
 import "firebase/firestore";
-import SmallLoading from "../../components/Share/SmallLoading";
 import { isEmpty } from "lodash";
 
 import {
   InsuranceConfigContext,
   PriceConfigContext,
   UserContext,
-  ModelWiseColorDescription,
+  // ModelWiseColorDescription,
 } from "../../Context";
 
 type Props = {
@@ -47,8 +45,8 @@ let initialCustomerInfo: any = {
   category: "ftb",
   type: "individual",
 };
-let modelNames: string[];
-let commonModelName: string;
+// let modelNames: string[];
+// let commonModelName: string;
 const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   const [currDo, setCurrDo] = useState<DeliveryOrder>(deliveryOrder);
   const [disabled, setDisabled] = useState<boolean>(true);
@@ -61,8 +59,8 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   const [catogryType, setCatogryType] = useState<string>("individual");
   const [postalCharge, setPostalCharge] = useState<any>({});
   const [ptefCharge, setptefCharge] = useState<any>({});
-  const [modelWiseColorDescription, setModelWiseColorDescription] =
-    useState<any>({});
+  // const [modelWiseColorDescription, setModelWiseColorDescription] =
+  //   useState<any>({});
   const [characterCountAddress1, setCharacterCountAddress1] = useState<any>(0);
   const [characterCountAddress2, setCharacterCountAddress2] = useState(0);
   const [characterCountAddress3, setCharacterCountAddress3] = useState(0);
@@ -79,8 +77,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   }>();
 
   const priceConfig = useContext(PriceConfigContext);
-  const insuranceConfig = useContext(InsuranceConfigContext);
-  const modelColorDescription = useContext(ModelWiseColorDescription);
+  // const modelColorDescription = useContext(ModelWiseColorDescription);
   const [user] = useContext(UserContext);
 
   useEffect(() => {
@@ -172,17 +169,17 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
     };
   }, []);
 
-  useEffect(() => {
-    let isCancelled = false;
-    if (!isCancelled) {
-      modelNames = Object.values(modelColorDescription[currDo.modelName] || {});
-      commonModelName = findSharedStart(modelNames) || "";
-      setModelWiseColorDescription(modelColorDescription[currDo.modelName]);
-    }
-    return () => {
-      isCancelled = true;
-    };
-  }, [currDo.modelName]);
+  // useEffect(() => {
+  //   let isCancelled = false;
+  //   if (!isCancelled) {
+  //     modelNames = Object.values(modelColorDescription[currDo.modelName] || {});
+  //     commonModelName = findSharedStart(modelNames) || "";
+  //     setModelWiseColorDescription(modelColorDescription[currDo.modelName]);
+  //   }
+  //   return () => {
+  //     isCancelled = true;
+  //   };
+  // }, [currDo.modelName]);
 
   useEffect(() => {
     if (deliveryOrder) {
@@ -1964,6 +1961,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                           required
                           className="form-control-alternative"
                           id="input-colour"
+                          disabled={true}
                           value={vehicleInfo && vehicleInfo.color}
                           onChange={(ev) => {
                             vehicleInfo.color =

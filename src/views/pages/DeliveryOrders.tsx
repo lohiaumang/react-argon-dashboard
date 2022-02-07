@@ -56,7 +56,7 @@ import {
   UserContext,
   InsuranceConfigContext,
   PriceConfigContext,
-  ModelWiseColorDescription,
+  // ModelWiseColorDescription,
 } from "../../Context";
 import firebase from "firebase/app";
 import "firebase/firestore";
@@ -89,7 +89,7 @@ const DeliveryOrders: React.FC = () => {
   const [dropdownButton, setDropdownButton] = useState(false);
   const priceConfig = useContext(PriceConfigContext);
   const insuranceConfig = useContext(InsuranceConfigContext);
-  const colorConfig = useContext(ModelWiseColorDescription) || {};
+  // const colorConfig = useContext(ModelWiseColorDescription) || {};
 
   const db = firebase.firestore();
 
@@ -112,6 +112,8 @@ const DeliveryOrders: React.FC = () => {
   const [inputInvoiceNo, setInputInvoiceNo] = useState<string>("");
   const toggle = () => setDropdownButton((prevState) => !prevState);
   const { cancellablePromise } = useCancellablePromise();
+  const dealerId = user.dealerId || user.createdBy || user.uid || "";
+  let collectonName = "inv" + "-" + dealerId;
   useEffect(() => {
     if (user && (user.createdBy || user.uid)) {
       if (!dealerInfo.name) {
@@ -146,6 +148,9 @@ const DeliveryOrders: React.FC = () => {
             setHsnCode(statusData.data.hsnCode);
             setInvoiceNo(statusData.data.invoiceNo);
             setCurrentStatus(statusData.type);
+            db.collection(collectonName)
+              .doc(statusData.data.frameNumber)
+              .delete();
 
             break;
           }
