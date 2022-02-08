@@ -38,6 +38,7 @@ let initialAdditionalInfo: any = {
   joyClub: "false",
   postalCharge: "25",
   ptfePolish: "0",
+  exchangeFlag: "N",
 };
 
 let initialCustomerInfo: any = {
@@ -225,21 +226,21 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
   //     });
   //   }
   // }, [currDo.customerInfo]);
-  const findSharedStart = (array: string[]) => {
-    if (array.length <= 1) {
-      return;
-    }
+  // const findSharedStart = (array: string[]) => {
+  //   if (array.length <= 1) {
+  //     return;
+  //   }
 
-    let A = array.concat().sort();
-    let a1 = A[0];
-    let a2 = A[A.length - 1];
-    let L = a1.length;
-    let i = 0;
+  //   let A = array.concat().sort();
+  //   let a1 = A[0];
+  //   let a2 = A[A.length - 1];
+  //   let L = a1.length;
+  //   let i = 0;
 
-    while (i < L && a1.charAt(i) === a2.charAt(i)) i++;
+  //   while (i < L && a1.charAt(i) === a2.charAt(i)) i++;
 
-    return a1.substring(0, i);
-  };
+  //   return a1.substring(0, i);
+  // };
 
   const updateAccessories = (modelName: string) => {
     if (user) {
@@ -394,7 +395,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
           ? `${sanitizedCustomerInfo.firstName} ${sanitizedCustomerInfo.lastName}`
           : sanitizedCustomerInfo.firstName,
         modelName: sanitizedVehicleInfo.modelName,
-        color: sanitizedVehicleInfo.color,
+        color: sanitizedVehicleInfo.color || "",
       };
 
       if (customerId) {
@@ -500,6 +501,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
     };
 
     const updateCurrModel = (event: React.ChangeEvent<HTMLInputElement>) => {
+      debugger;
       // TODO: Update pricing, etc.
       let newModelName = event.target.value!;
       if (newModelName && priceConfig[newModelName]) {
@@ -527,24 +529,27 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
       let newFrameNo: any = ev.target.value!;
       const dealerId = user.dealerId || user.createdBy || user.uid || "";
       let collectonName = "inv" + "-" + dealerId;
-      const docRef = firebase
-        .firestore()
-        .collection(collectonName)
-        .doc(newFrameNo);
-      docRef.get().then((doc) => {
-        if (doc.exists) {
-          let inventory: any = doc.data();
-          setCurrDo({
-            ...currDo,
-            color: inventory.color,
-            vehicleInfo: {
-              ...currDo.vehicleInfo!,
-              engineNumber: inventory.engineNumber,
+      if (newFrameNo) {
+        const docRef = firebase
+          .firestore()
+          .collection(collectonName)
+          .doc(newFrameNo);
+        docRef.get().then((doc) => {
+          if (doc.exists) {
+            let inventory: any = doc.data();
+            setCurrDo({
+              ...currDo,
               color: inventory.color,
-            },
-          });
-        }
-      });
+              vehicleInfo: {
+                ...currDo.vehicleInfo!,
+                engineNumber: inventory.engineNumber,
+                color: inventory.color,
+                MTOC: inventory.MTOC,
+              },
+            });
+          }
+        });
+      }
     };
 
     const uploadImage = async (ev: any) => {
@@ -1942,6 +1947,33 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                             });
                           }}
                           placeholder="Enter Sr Number"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-MTOC"
+                        >
+                          MTOC
+                        </label>
+                        <Input
+                          required
+                          className="form-control-alternative"
+                          id="input-MTOC"
+                          disabled={true}
+                          value={vehicleInfo && vehicleInfo.MTOC}
+                          onChange={(ev) => {
+                            vehicleInfo.MTOC =
+                              ev.target.value.toLocaleUpperCase()!;
+                            setCurrDo({
+                              ...currDo,
+                              vehicleInfo,
+                            });
+                          }}
+                          placeholder="Enter MTOC"
                           type="text"
                         />
                       </FormGroup>

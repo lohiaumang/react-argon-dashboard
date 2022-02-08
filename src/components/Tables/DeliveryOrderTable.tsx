@@ -85,6 +85,7 @@ export interface DeliveryOrder {
     srNo?: string;
     batteryNO?: string;
     keyNo?: string;
+    MTOC?: string;
   };
   stateInfo?: {
     districts: string;

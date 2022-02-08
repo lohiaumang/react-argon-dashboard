@@ -95,6 +95,7 @@ const InventoryTable: React.FC = () => {
               modelCategory: data[i]["Model Category"] || "",
               modelCode: data[i]["Model Code"] || "",
               modelName: data[i]["Model Variant"] || "",
+              MTOC: data[i]["Product Name"] || "",
             },
             { merge: true }
           );
@@ -104,14 +105,14 @@ const InventoryTable: React.FC = () => {
   };
 
   const rows = Object.values(inventory).map((currElem: any) => {
-    const { frameNumber, engineNumber, color, modelName, modelCode } = currElem;
+    const { frameNumber, engineNumber, color, modelName, MTOC } = currElem;
 
     return {
       frameNumber,
       engineNumber,
       color,
       modelName,
-      modelCode,
+      MTOC,
     };
   });
   return (
@@ -182,8 +183,8 @@ const InventoryTable: React.FC = () => {
                     <TableHeaderColumn dataSort={true} dataField="modelName">
                       Model Name
                     </TableHeaderColumn>
-                    <TableHeaderColumn dataSort={true} dataField="modelCode">
-                      Model Code
+                    <TableHeaderColumn dataSort={true} dataField="MTOC">
+                      MTOC
                     </TableHeaderColumn>
                   </BootstrapTable>
                 ) : (

@@ -246,13 +246,16 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         visible: true,
       });
       //get first name for validation
+      console.log("print stape 1");
       const cName = await page.evaluate(
         () => document.querySelector("input[aria-label='First Name']").value
       );
+      console.log("print stape 2");
       //create new inquery if first name not exist
       await page.evaluate(() => (window.alert = window.api.alert));
 
       if (!cName) {
+        console.log("print stape 3");
         await page.waitForSelector("div[title='Second Level View Bar']", {
           visible: true,
         });
@@ -1020,34 +1023,34 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         'input[aria-labelledby="PopupQueryCombobox_Label"]+span',
         { visible: true }
       );
-      await click(
-        page,
-        'input[aria-labelledby="PopupQueryCombobox_Label"]+span'
-      );
-      await page.waitForSelector(
-        "ul[role='combobox']:not([style*='display: none'])",
-        { visible: true }
-      );
-      let colorGiven = await page.$$eval(
-        "ul[role='combobox']:not([style*='display: none']) > li > div",
-        (listItems) =>
-          listItems.map((item) => {
-            return {
-              name: item.textContent,
-              id: item.id,
-            };
-          })
-      );
+      // await click(
+      //   page,
+      //   'input[aria-labelledby="PopupQueryCombobox_Label"]+span'
+      // );
+      // await page.waitForSelector(
+      //   "ul[role='combobox']:not([style*='display: none'])",
+      //   { visible: true }
+      // );
+      // let colorGiven = await page.$$eval(
+      //   "ul[role='combobox']:not([style*='display: none']) > li > div",
+      //   (listItems) =>
+      //     listItems.map((item) => {
+      //       return {
+      //         name: item.textContent,
+      //         id: item.id,
+      //       };
+      //     })
+      // );
 
-      const modelWiseColorGiven = colorGiven.find(
-        (item) => item.name === "Color Name"
-      );
+      // const modelWiseColorGiven = colorGiven.find(
+      //   (item) => item.name === "Color Name"
+      // );
 
-      await page.waitForSelector(`#${modelWiseColorGiven.id}`, {
-        visible: true,
-      });
+      // await page.waitForSelector(`#${modelWiseColorGiven.id}`, {
+      //   visible: true,
+      // });
 
-      await click(page, `#${modelWiseColorGiven.id}`);
+      // await click(page, `#${modelWiseColorGiven.id}`);
 
       await page.waitForSelector(
         'input[aria-labelledby="PopupQuerySrchspec_Label"]',
@@ -1058,9 +1061,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await typeText(
         page,
         'input[aria-labelledby="PopupQuerySrchspec_Label"]',
-        data.vehicleInfo.color
+        data.vehicleInfo.MTOC
       );
-      let vehicleColor1 = data.vehicleInfo.color;
+      let vehicleColor1 = data.vehicleInfo.MTOC;
       await page.waitForFunction(
         (vehicleColor1) =>
           document.querySelector(
@@ -1080,18 +1083,18 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await click(page, 'button[aria-label="Pick Product:Go"]:not(.hidden)');
 
       // check if box opens
-      let mtoc = await page.evaluate(
-        () => document.querySelector('td[id$="Name"]').textContent
-      );
+      // let mtoc = await page.evaluate(
+      //   () => document.querySelector('td[id$="Name"]').textContent
+      // );
 
-      if (mtoc) {
-        await page.waitForSelector('td[id$="Name"]', { visible: true });
-        await page.$eval('td[id$="Name"]', (el) => el.click());
-        await page.waitForSelector('button[aria-label="Pick Product:OK"]', {
-          visible: true,
-        });
-        await click(page, 'button[aria-label="Pick Product:OK"]');
-      }
+      // if (mtoc) {
+      //   await page.waitForSelector('td[id$="Name"]', { visible: true });
+      //   await page.$eval('td[id$="Name"]', (el) => el.click());
+      //   await page.waitForSelector('button[aria-label="Pick Product:OK"]', {
+      //     visible: true,
+      //   });
+      //   await click(page, 'button[aria-label="Pick Product:OK"]');
+      // }
 
       await page.waitForSelector('td[id$="TMI_HSN_Code"]', {
         visible: true,
@@ -1100,6 +1103,16 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.waitForSelector('td[id$="Product"]', {
         visible: true,
       });
+
+      // let vehicleColor1 = data.vehicleInfo.MTOC;
+      // await page.waitForFunction(
+      //   (vehicleColor1) =>
+      //     document.querySelector(
+      //       'input[aria-labelledby="PopupQuerySrchspec_Label"]'
+      //     ).value === vehicleColor1,
+      //   {},
+      //   vehicleColor1
+      // );
 
       await page.waitForSelector('button[title="Line Items Menu"]', {
         visible: true,
