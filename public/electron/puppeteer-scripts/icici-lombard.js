@@ -221,8 +221,9 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
 
     await page.type(
       "#ctrlCustomerAddress_TxtCustEmail",
-      data.customerInfo.email
+      "cbr250r999@ggmail.com"
     ); //todo
+
     await page.type(
       "#ctrlCustomerAddress_TxtCustMobile",
       data.customerInfo.phoneNo

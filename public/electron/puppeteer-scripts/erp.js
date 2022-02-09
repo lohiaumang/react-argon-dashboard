@@ -1063,14 +1063,14 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         'input[aria-labelledby="PopupQuerySrchspec_Label"]',
         data.vehicleInfo.MTOC
       );
-      let vehicleColor1 = data.vehicleInfo.MTOC;
+      let vehicleMTOC = data.vehicleInfo.MTOC;
       await page.waitForFunction(
-        (vehicleColor1) =>
+        (vehicleMTOC) =>
           document.querySelector(
             'input[aria-labelledby="PopupQuerySrchspec_Label"]'
-          ).value === vehicleColor1,
+          ).value === vehicleMTOC,
         {},
-        vehicleColor1
+        vehicleMTOC
       );
 
       await page.waitForSelector(
@@ -1104,15 +1104,13 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         visible: true,
       });
 
-      // let vehicleColor1 = data.vehicleInfo.MTOC;
-      // await page.waitForFunction(
-      //   (vehicleColor1) =>
-      //     document.querySelector(
-      //       'input[aria-labelledby="PopupQuerySrchspec_Label"]'
-      //     ).value === vehicleColor1,
-      //   {},
-      //   vehicleColor1
-      // );
+      await page.waitForFunction(
+        (vehicleMTOC) =>
+          document.querySelector('td[id$="Product"]').textContent ===
+          vehicleMTOC,
+        {},
+        vehicleMTOC
+      );
 
       await page.waitForSelector('button[title="Line Items Menu"]', {
         visible: true,
@@ -1320,6 +1318,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
       //other hypothecation automation
       if (data.additionalInfo.financier === "OTHERS") {
+        console.log("print hypothentication 1");
         await page.waitForSelector(
           'input[aria-labelledby="Hypothecation_Label"]+span',
           {
@@ -1349,6 +1348,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
           'input[aria-labelledby="s_4_l_JLR_Financier_Name s_4_l_altCombo"]',
           data.additionalInfo.financier
         );
+        console.log("print hypothentication 2");
         await page.waitForSelector(
           'input[aria-labelledby="s_4_l_JLR_Financier_Name s_4_l_altCombo"]+span',
           {
@@ -1373,11 +1373,21 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await page.$eval(`#${hypothecationDetailsButton.id}`, (el) =>
           el.click()
         );
+        await page.evaluate(
+          () => document.querySelectorAll('td[id$="Name"]')[1],
+          {
+            visible: true,
+          }
+        );
+        const selectors = await page.$$('td[id$="Name"]');
+        await selectors[1].click();
 
-        await page.$eval('td[id$="Name"]', (el) => el.click());
+        await page.waitForSelector('input[aria-labelledby$="Name "]', {
+          visible: true,
+        });
         await typeText(
           page,
-          'input[aria-labelledby="s_4_l_Name "]',
+          'input[aria-labelledby$="Name "]',
           data.additionalInfo.hypothecation
         );
 
@@ -1396,7 +1406,6 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         );
         await click(page, 'button[aria-label="Hypothecation Pick Applet:OK"]');
       }
-
       //if hypothecation exist then run otherwise not run
       if (data.additionalInfo.hypothecation) {
         await page.waitForResponse(
