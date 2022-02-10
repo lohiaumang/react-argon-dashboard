@@ -1373,14 +1373,21 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
         await page.$eval(`#${hypothecationDetailsButton.id}`, (el) =>
           el.click()
         );
-        await page.evaluate(
-          () => document.querySelectorAll('td[id$="Name"]')[1],
+        // await page.evaluate(
+        //   () => document.querySelectorAll('td[id$="Name"]')[1],
+        //   {
+        //     visible: true,
+        //   }
+        // );
+        await page.waitForSelector(
+          'td[id$="Name"]:not([id$="Financier_Name"])',
           {
             visible: true,
           }
         );
-        const selectors = await page.$$('td[id$="Name"]');
-        await selectors[1].click();
+        // const selectors = await page.$$('td[id$="Name"]');
+        // await selectors[1].click();
+        await page.click('td[id$="Name"]:not([id$="Financier_Name"])');
 
         await page.waitForSelector('input[aria-labelledby$="Name "]', {
           visible: true,
