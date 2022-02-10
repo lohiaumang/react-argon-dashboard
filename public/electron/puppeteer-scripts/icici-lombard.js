@@ -199,7 +199,7 @@ module.exports = async function (page, data, mainWindow, insuranceWindow) {
     );
     await page.type(
       "#ctrlCustomerAddress_TxtCustAddressLine2",
-      data.customerInfo.currLineTwo
+      data.customerInfo.currLineTwo + " " + data.customerInfo.currPS
     );
     await page.type(
       "#ctrlCustomerAddress_TxtCustPincode",
