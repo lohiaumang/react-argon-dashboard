@@ -123,7 +123,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
   async function automate() {
     let done = false;
-    let hsnCode = "";
+    //let hsnCode = "";
     let invoiceNo = "";
     let frameNumber = data.vehicleInfo.frameNumber || "";
 
@@ -161,7 +161,7 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
 
       mainWindow.webContents.send("fromMain", {
         type: done ? "INVOICE_CREATED" : "DO_CREATED",
-        data: { hsnCode, invoiceNo, frameNumber },
+        data: { invoiceNo, frameNumber },
       });
     });
 
@@ -1585,9 +1585,9 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await page.waitForFunction(
         () => !!document.querySelector('td[id$="TMI_HSN"]').textContent
       );
-      hsnCode = await page.evaluate(
-        () => document.querySelector('td[id$="TMI_HSN"]').textContent
-      );
+      // hsnCode = await page.evaluate(
+      //   () => document.querySelector('td[id$="TMI_HSN"]').textContent
+      // );
       await click(page, 'div > button[aria-label="Vehicles:New"]');
       //await page.waitForTimeout(3000);
       //  let hsnCode = await page.evaluate(

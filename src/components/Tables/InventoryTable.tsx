@@ -74,8 +74,6 @@ const InventoryTable: React.FC = () => {
     });
 
     promise.then(async (data: any) => {
-      console.log(data);
-      debugger;
       for (let i = 0; i < data.length; i++) {
         let frameNumber: any;
         frameNumber = data[i]["Frame #"];
@@ -96,6 +94,7 @@ const InventoryTable: React.FC = () => {
               modelCode: data[i]["Model Code"] || "",
               modelName: data[i]["Model Variant"] || "",
               MTOC: data[i]["Product Name"] || "",
+              hsnCode: data[i]["HSN Code"] || "",
             },
             { merge: true }
           );

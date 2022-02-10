@@ -525,7 +525,6 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
     };
 
     const updateFrameNumber = (ev: React.ChangeEvent<HTMLInputElement>) => {
-      debugger;
       let newFrameNo: any = ev.target.value!;
       const dealerId = user.dealerId || user.createdBy || user.uid || "";
       let collectonName = "inv" + "-" + dealerId;
@@ -545,6 +544,7 @@ const EditDo: React.FC<Props> = ({ deliveryOrder, onCreate }) => {
                 engineNumber: inventory.engineNumber,
                 color: inventory.color,
                 MTOC: inventory.MTOC,
+                hsnCode: inventory.hsnCode,
               },
             });
           }

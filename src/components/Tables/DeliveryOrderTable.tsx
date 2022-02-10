@@ -108,6 +108,7 @@ export interface DeliveryOrder {
     executive?: string;
     hypothecation?: string;
     exchangeFlag?: String;
+    hsnCode?: String;
   };
   dealerInfo: DealerInfo;
 }

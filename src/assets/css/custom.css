@@ -142,16 +142,19 @@ body {
 
 .invoice-table .row {
   margin: 0;
+  color: black !important;
 }
 
 .invoice-table th {
   padding: 0.5em;
-  font-size: 9px !important;
+  color: black;
+  font-size: 10px !important;
 }
 
 .invoice-table td {
   padding: 0.5em;
-  font-size: 9px !important;
+  font-size: 10px !important;
+  color: black;
 }
 
 .weektable {
@@ -221,6 +224,11 @@ select.dealership-name {
 
 .capitalize {
   text-transform: capitalize;
+}
+
+h5,
+.h5 {
+  color: black;
 }
 
 /* data table button css */

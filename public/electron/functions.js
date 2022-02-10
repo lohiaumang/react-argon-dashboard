@@ -317,7 +317,7 @@ module.exports = async function (mainWindow, browser) {
             height: 750,
             width: 1200,
             frame: true,
-            resizable: false,
+            resizable: true,
           });
           await insuranceWindow.loadURL(
             insuranceLinks[insuranceCompany].loginPageUrl

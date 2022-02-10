@@ -106,7 +106,7 @@ const DeliveryOrders: React.FC = () => {
 
   const [currentStatus, setCurrentStatus] = useState<string>();
   const [showEditDo, setShowEditDo] = useState<boolean>(false);
-  const [hsnCode, setHsnCode] = useState<string>("");
+  //const [hsnCode, setHsnCode] = useState<string>("");
   const [invoiceNo, setInvoiceNo] = useState<string>("");
   const [inputHsnCode, setInputHsnCode] = useState<string>("");
   const [inputInvoiceNo, setInputInvoiceNo] = useState<string>("");
@@ -145,7 +145,7 @@ const DeliveryOrders: React.FC = () => {
       window.api.receive("fromMain", (statusData: any) => {
         switch (statusData.type) {
           case "INVOICE_CREATED": {
-            setHsnCode(statusData.data.hsnCode);
+            //setHsnCode(statusData.data.hsnCode);
             setInvoiceNo(statusData.data.invoiceNo);
             setCurrentStatus(statusData.type);
             db.collection(collectonName)
@@ -161,7 +161,7 @@ const DeliveryOrders: React.FC = () => {
           }
           case "DO_CREATED": {
             if (statusData.data) {
-              setHsnCode(statusData.data.hsnCode);
+              //setHsnCode(statusData.data.hsnCode);
               setInvoiceNo(statusData.data.invoiceNo);
             }
             setLoading(false);
@@ -196,29 +196,29 @@ const DeliveryOrders: React.FC = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (hsnCode && selected) {
-      db.collection("vehicles")
-        .doc(deliveryOrders[selected].vehicleId)
-        .set(
-          {
-            hsnCode,
-          },
-          { merge: true }
-        )
-        .then(() => {
-          let newDos: any = deliveryOrders;
-          newDos[selected] = {
-            ...deliveryOrders[selected],
-            vehicleInfo: {
-              ...deliveryOrders[selected].vehicleInfo,
-              hsnCode,
-            },
-          };
-          setDeliveryOrders(newDos);
-        });
-    }
-  }, [hsnCode]);
+  // useEffect(() => {
+  //   if (hsnCode && selected) {
+  //     db.collection("vehicles")
+  //       .doc(deliveryOrders[selected].vehicleId)
+  //       .set(
+  //         {
+  //           hsnCode,
+  //         },
+  //         { merge: true }
+  //       )
+  //       .then(() => {
+  //         let newDos: any = deliveryOrders;
+  //         newDos[selected] = {
+  //           ...deliveryOrders[selected],
+  //           vehicleInfo: {
+  //             ...deliveryOrders[selected].vehicleInfo,
+  //             hsnCode,
+  //           },
+  //         };
+  //         setDeliveryOrders(newDos);
+  //       });
+  //   }
+  // }, [hsnCode]);
 
   useEffect(() => {
     if (invoiceNo && selected) {
@@ -606,7 +606,7 @@ const DeliveryOrders: React.FC = () => {
 
   //save invoice no
   const saveInvoiceDetails = async () => {
-    setHsnCode(inputHsnCode);
+    // setHsnCode(inputHsnCode);
     setInvoiceNo(inputInvoiceNo);
 
     setShowModalForInvoiceNo(!showModalForInvoiceNo);
@@ -734,6 +734,9 @@ const DeliveryOrders: React.FC = () => {
   const printPage = useReactToPrint({
     content: () => deliveryOrderTableRef.current,
     copyStyles: true,
+    // documentTitle: "new document",
+    // pageStyle: "print",
+
     onAfterPrint: () => {
       if (selected !== undefined) {
         setShowModal(false);
@@ -1271,7 +1274,7 @@ const DeliveryOrders: React.FC = () => {
                   />
                 </Col>
               </FormGroup>
-              {!hsnCode && (
+              {/* {!hsnCode && (
                 <FormGroup row className="m-3">
                   <Label for="invoice-no" sm={4}>
                     Vehicle HSN code
@@ -1288,7 +1291,7 @@ const DeliveryOrders: React.FC = () => {
                     />
                   </Col>
                 </FormGroup>
-              )}
+              )} */}
             </ModalBody>
             {!showEditDo && (
               <ModalFooter>
@@ -1346,19 +1349,19 @@ const DeliveryOrders: React.FC = () => {
                     ...deliveryOrders[selected],
                     dealerInfo,
                   }}
-                  hsnCode={hsnCode}
+                  //hsnCode={hsnCode}
                   invoiceNo={invoiceNo}
                 />
               )}
             </ModalBody>
             {!showEditDo && (
               <ModalFooter>
-                <Button color="primary" onClick={printPage}>
-                  Print
-                </Button>{" "}
                 <Button color="secondary" onClick={() => closeModal()}>
                   Close
                 </Button>
+                <Button color="primary" onClick={printPage}>
+                  Print
+                </Button>{" "}
               </ModalFooter>
             )}
           </Modal>
