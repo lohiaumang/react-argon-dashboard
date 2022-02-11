@@ -417,7 +417,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                     value={props.deliveryOrder.additionalInfo.price}
                     displayType={"text"}
                     thousandSeparator={true}
-                    prefix={"₹"}
+                    prefix={"Rs"}
                   />
                 </td>
                 <td>
@@ -425,7 +425,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                     value={props.deliveryOrder.additionalInfo.price}
                     displayType={"text"}
                     thousandSeparator={true}
-                    prefix={"₹"}
+                    prefix={"Rs"}
                   />
                 </td>
               </tr>
@@ -438,7 +438,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                     value={CGST}
                     displayType={"text"}
                     thousandSeparator={true}
-                    prefix={"₹"}
+                    prefix={"Rs"}
                   />
                 </td>
               </tr>
@@ -451,7 +451,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                     value={SGST}
                     displayType={"text"}
                     thousandSeparator={true}
-                    prefix={"₹"}
+                    prefix={"Rs"}
                   />
                 </td>
               </tr>
@@ -472,7 +472,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                     value={totalPrice}
                     displayType={"text"}
                     thousandSeparator={true}
-                    prefix={"₹"}
+                    prefix={"Rs"}
                   />
                 </td>
               </tr>
@@ -549,7 +549,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                     value={1627}
                     displayType={"text"}
                     thousandSeparator={true}
-                    prefix={"₹"}
+                    prefix={"Rs"}
                   />
                 </td>
                 <td>
@@ -557,7 +557,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                     value={1627}
                     displayType={"text"}
                     thousandSeparator={true}
-                    prefix={"₹"}
+                    prefix={"Rs"}
                   />
                 </td>
               </tr>
@@ -570,7 +570,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                     value={146.43}
                     displayType={"text"}
                     thousandSeparator={true}
-                    prefix={"₹"}
+                    prefix={"Rs"}
                   />
                 </td>
               </tr>
@@ -583,7 +583,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                     value={146.43}
                     displayType={"text"}
                     thousandSeparator={true}
-                    prefix={"₹"}
+                    prefix={"Rs"}
                   />
                 </td>
               </tr>
@@ -604,7 +604,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                     value={1920}
                     displayType={"text"}
                     thousandSeparator={true}
-                    prefix={"₹"}
+                    prefix={"Rs"}
                   />
                 </td>
               </tr>
@@ -626,7 +626,7 @@ const InvoiceTable = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
                       value={totalPrice + 1920}
                       displayType={"text"}
                       thousandSeparator={true}
-                      prefix={"₹"}
+                      prefix={"Rs"}
                     />
                   </td>
                 </tr>
