@@ -996,18 +996,14 @@ module.exports = function erp(page, data, mainWindow, erpWindow, systemConfig) {
       await waitForNetworkIdle(page, timeout, 0);
       //end
 
-      await page.waitForSelector(
-        '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
-        { visible: true }
-      );
-      await click(
-        page,
-        '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown'
-      );
-      await page.$eval(
-        '#s_3_l > tbody > .jqgrow > td[style="text-align:left;"] > .drilldown',
-        (el) => el.click()
-      );
+      await page.waitForSelector('td[id$="Order_Number"]', {
+        visible: true,
+      });
+      await click(page, 'td[id$="Order_Number"]');
+      // await page.$eval(
+      //   'td[aria-labelledby$="altLink"]>.drilldown',
+      //   (el) => el.click()
+      // );
       // //20/01/2021 automation for modell wise color select
 
       await page.waitForSelector('td[id$="Product"]', {
