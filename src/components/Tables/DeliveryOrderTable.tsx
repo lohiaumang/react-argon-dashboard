@@ -422,7 +422,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                           value={additionalInfo.price}
                           displayType={"text"}
                           thousandSeparator={true}
-                          prefix={"Rs"}
+                          prefix={"Rs "}
                         />
                       </b>
                     </td>
@@ -437,7 +437,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                           value={additionalInfo.insuranceDeclaredValue}
                           displayType={"text"}
                           thousandSeparator={true}
-                          prefix={"Rs"}
+                          prefix={"Rs "}
                         />
                       </b>
                     </td>
@@ -452,7 +452,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                           value={additionalInfo.roadTaxWithRc}
                           displayType={"text"}
                           thousandSeparator={true}
-                          prefix={"Rs"}
+                          prefix={"Rs "}
                         />
                       </b>
                     </td>
@@ -467,7 +467,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                           value={additionalInfo.postalCharge}
                           displayType={"text"}
                           thousandSeparator={true}
-                          prefix={"Rs"}
+                          prefix={"Rs "}
                         />
                       </b>
                     </td>
@@ -488,7 +488,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                           value={extendedWarranty}
                           displayType={"text"}
                           thousandSeparator={true}
-                          prefix={"Rs"}
+                          prefix={"Rs "}
                         />
                       </b>
                     </td>
@@ -503,7 +503,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                           value={joyClub}
                           displayType={"text"}
                           thousandSeparator={true}
-                          prefix={"Rs"}
+                          prefix={"Rs "}
                         />
                       </b>
                     </td>
@@ -518,7 +518,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                           value={hra}
                           displayType={"text"}
                           thousandSeparator={true}
-                          prefix={"Rs"}
+                          prefix={"Rs "}
                         />
                       </b>
                     </td>
@@ -533,7 +533,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                           value={ptfe}
                           displayType={"text"}
                           thousandSeparator={true}
-                          prefix={"Rs"}
+                          prefix={"Rs "}
                         />
                       </b>
                     </td>
@@ -549,7 +549,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                             value={additionalInfo.accessories}
                             displayType={"text"}
                             thousandSeparator={true}
-                            prefix={"Rs"}
+                            prefix={"Rs "}
                           />
                         </b>
                       </td>
@@ -562,7 +562,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                             value={accessoriesList[accessory]}
                             displayType={"text"}
                             thousandSeparator={true}
-                            prefix={"Rs"}
+                            prefix={"Rs "}
                           />
                         </td>
                       </tr>
@@ -579,7 +579,7 @@ const DeliveryOrderTable = React.forwardRef<HTMLDivElement, Props>(
                         value={total}
                         displayType={"text"}
                         thousandSeparator={true}
-                        prefix={"Rs"}
+                        prefix={"Rs "}
                       />
                     </b>
                   </td>
