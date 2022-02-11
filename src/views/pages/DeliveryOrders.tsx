@@ -10,7 +10,8 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { useReactToPrint } from "react-to-print";
+// import { useReactToPrint } from "react-to-print";
+import ReactToPrint from "react-to-print";
 
 // reactstrap components
 import {
@@ -731,26 +732,71 @@ const DeliveryOrders: React.FC = () => {
   };
 
   //print DO
-  const printPage = useReactToPrint({
-    content: () => deliveryOrderTableRef.current,
-    copyStyles: true,
-    // documentTitle: "new document",
-    // pageStyle: "print",
+  // const printPage = useReactToPrint({
+  //   content: () => deliveryOrderTableRef.current,
+  //   copyStyles: true,
+  //   // documentTitle: "new document",
+  //   // pageStyle: "print",
 
-    onAfterPrint: () => {
-      if (selected !== undefined) {
-        setShowModal(false);
-        if (currentStatus === "PENDING") {
-          setCurrentStatus("DO_CREATED");
-          // doStatusCount();
-        } else {
-          setCurrentStatus("INVOICE_CREATED");
-          // invoiceStatusCount();
-        }
-      }
-    },
-  });
+  //   onAfterPrint: () => {
+  //     if (selected !== undefined) {
+  //       setShowModal(false);
+  //       if (currentStatus === "PENDING") {
+  //         setCurrentStatus("DO_CREATED");
+  //         // doStatusCount();
+  //       } else {
+  //         setCurrentStatus("INVOICE_CREATED");
+  //         // invoiceStatusCount();
+  //       }
+  //     }
+  //   },
+  // });
 
+  const previewTrigger = () => {
+    return (
+      <Button color="primary" style={{ marginLeft: "1rem" }}>
+        Preview{" "}
+      </Button>
+    );
+  };
+  const printTrigger = () => {
+    return (
+      <Button color="primary" style={{ marginLeft: "1rem" }}>
+        Print{" "}
+      </Button>
+    );
+  };
+  const handlePreview = function (target: any) {
+    return new Promise(() => {
+      console.log("forwarding print preview request...");
+
+      let data = target.contentWindow.document.documentElement.outerHTML;
+      //console.log(data);
+      let blob = new Blob([data], { type: "text/html" });
+      let url = URL.createObjectURL(blob);
+
+      window.api.previewComponent(url, (response: any) => {
+        console.log("Main: ", response);
+      });
+      //console.log('Main: ', data);
+    });
+  };
+
+  const handlePrint = function (target: any) {
+    return new Promise(() => {
+      console.log("forwarding print request to the main process...");
+
+      let data = target.contentWindow.document.documentElement.outerHTML;
+      //console.log(data);
+      let blob = new Blob([data], { type: "text/html" });
+      let url = URL.createObjectURL(blob);
+
+      window.api.printComponent(url, (response: any) => {
+        console.log("Main: ", response);
+      });
+      //console.log('Main: ', data);
+    });
+  };
   //close model onclick on close button
   const closeModal = async () => {
     setShowModal(!showModal);
@@ -1343,15 +1389,17 @@ const DeliveryOrders: React.FC = () => {
                 />
               )}
               {showInvoice && (
-                <InvoiceTable
-                  ref={deliveryOrderTableRef}
-                  deliveryOrder={{
-                    ...deliveryOrders[selected],
-                    dealerInfo,
-                  }}
-                  //hsnCode={hsnCode}
-                  invoiceNo={invoiceNo}
-                />
+                <>
+                  <InvoiceTable
+                    ref={deliveryOrderTableRef}
+                    deliveryOrder={{
+                      ...deliveryOrders[selected],
+                      dealerInfo,
+                    }}
+                    //hsnCode={hsnCode}
+                    invoiceNo={invoiceNo}
+                  />
+                </>
               )}
             </ModalBody>
             {!showEditDo && (
@@ -1359,9 +1407,21 @@ const DeliveryOrders: React.FC = () => {
                 <Button color="secondary" onClick={() => closeModal()}>
                   Close
                 </Button>
-                <Button color="primary" onClick={printPage}>
+                <ReactToPrint
+                  content={() => deliveryOrderTableRef.current}
+                  documentTitle="First component"
+                  trigger={previewTrigger}
+                  print={handlePreview}
+                />
+                <ReactToPrint
+                  content={() => deliveryOrderTableRef.current}
+                  documentTitle="First component"
+                  trigger={printTrigger}
+                  print={handlePrint}
+                />
+                {/* <Button color="primary" onClick={printPage}>
                   Print
-                </Button>{" "}
+                </Button>{" "} */}
               </ModalFooter>
             )}
           </Modal>

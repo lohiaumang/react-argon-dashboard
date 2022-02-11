@@ -15,6 +15,17 @@ contextBridge.exposeInMainWorld("api", {
       ipcRenderer.on(channel, (event, args) => func(args));
     }
   },
+
+  printComponent: async (url, callback) => {
+    let response = await ipcRenderer.invoke("printComponent", url);
+    callback(response);
+  },
+
+  previewComponent: async (url, callback) => {
+    let response = await ipcRenderer.invoke("previewComponent", url);
+    callback(response);
+  },
+
   clear: () => {
     ipcRenderer.removeAllListeners();
   },
